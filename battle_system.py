@@ -48,7 +48,7 @@ Below is a breakdown of the essential properties used during combat logic:
                                      Used by: Bulky Delinquent's Skill I.
    self.nerve_disruption_turns    -> (int) Hidden Flag. If > 0, unit deals -80% damage.
                                      Decrements at end of turn.
-                                     Used by: Shigemura's Nerve Disruption.
+                                     Used by: Benikawa (ninja)'s Nerve Disruption.
    self.status_effects            -> List of StatusEffect objects.
                                      Handled in 'process_turn_end_effects' and 'execute_skill'.
                                      Common Effects: Bleed (Logic in execute_skill), Bind, Regen.
