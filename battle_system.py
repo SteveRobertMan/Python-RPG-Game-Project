@@ -1045,9 +1045,9 @@ Modifiers: {status_str}
 
     def log(self, message):
         # PAGING LOGIC: 
-        # If the log has reached the panel height limit (14 lines), 
+        # If the log has reached the panel height limit, 
         # clear the entire list so the new message starts fresh at the top.
-        if len(self.battle_log) >= 13:
+        if len(self.battle_log) >= 11:
             self.battle_log = []
             self.battle_log.append(message)
         else:
@@ -1138,4 +1138,4 @@ Modifiers: {status_str}
         config.console.print(Columns(panels, expand=True))
         config.console.print(Panel("\n".join(self.battle_log), title="Battle Log", height=14))
 
-battle_manager = BattleManager()#
+battle_manager = BattleManager()
