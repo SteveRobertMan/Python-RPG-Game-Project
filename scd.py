@@ -14,7 +14,6 @@ poise_3 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "Boost Crit
 poisecount_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2, type="BUFF")
 
 # --- KATA ID REGISTRY ---
-# 1. Maps Integer IDs to the Unique Keys used in the Game
 KATA_ID_MAP = {
     1: "Akasuke (Default)",
     2: "Yuri (Default)",
@@ -30,7 +29,6 @@ KATA_ID_MAP = {
     12: "Kasakura High School Disciplinary Committee Member"
 }
 
-# 2. Reverse Map for Saving (Name -> ID)
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
 
 def get_kata_data_by_name(name):
@@ -46,7 +44,7 @@ def get_kata_data_by_name(name):
     if name == "Akasuke (Default)":
         res = [1.0, 1.0, 1.2, 0.8, 0.8, 1.0, 1.2]
         k = Kata("Kasakura High School Student", "Akasuke", 1, "I", res)
-        
+        k.source_key = name      
         s1 = Skill("Fist Adjustment", 1, EL_STORGE, 4, "")
         s2 = Skill("Flicker Step", 2, EL_PRAGMA, 5, "[On Use] Take -2 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=2)
         s3 = Skill("Relentless Barrage", 3, EL_EROS, 8, "If the target has 50%- HP, deal +50% damage", effect_type="COND_EXECUTE", effect_val=1.5)
@@ -57,32 +55,23 @@ def get_kata_data_by_name(name):
         )
         return {"kata_obj": k, "max_hp": 72, "description": desc}
 
-    # --- Akasuke Iron Fist Of Heiwa
+    # --- Akasuke 'Iron Fist Of Heiwa' --- #
     elif name == "‘Iron Fist Of Heiwa’ Delinquent Leader":
         res = [1.4, 0.7, 1.3, 0.7, 1.6, 1.6, 1.0]
-        # Note the single quotes inside the string are preserved
         k = Kata("‘Iron Fist Of Heiwa’ Delinquent Leader", "Akasuke", 2, "I", res)
-        # Define Skills      
-        # Logic: BLEED_COUNT_OPENER (Apply Count 3 if empty, else Potency 1)
+        k.source_key = name      
         desc_s1 = "[On Hit] If target has no Bleed, Inflict 3 Bleed Count. Otherwise, inflict 1 Bleed Potency"
         s1 = Skill("Jab Flurry", 1, EL_AGAPE, 6, desc_s1, effect_type="BLEED_COUNT_OPENER", effect_val=3)
-        # We attach the PRIMARY effect (Count 3) to standard slot
         s1.status_effect = bleedcount_3
-        # We attach the SECONDARY effect (Potency 1) to a custom slot for the logic to grab
         s1.alt_status_effect = bleed_1
-        # Skill II: Cheap Nose Shot (Pragma)
-        # Logic: BLEED_POTENCY_STACKER (Apply Potency 3 if target already bleeding)
         desc_s2 = "[On Hit] If target has Bleed, Inflict 3 Bleed Potency"
         s2 = Skill("Cheap Nose Shot", 2, EL_PRAGMA, 9, desc_s2, effect_type="BLEED_POTENCY_STACKER", effect_val=3)
         s2.status_effect = bleed_3
-        # Skill III: Rally (Eros)
-        # Logic: HEIWA_RALLY_EFFECT (Buff allies +2 Dmg, Heiwa allies -2 Taken)
         # Base damage is 0 because this is a buff/utility skill
         desc_s3 = "[On Use] All allies deal +2 Final Damage this turn\n       [On Use] All allies from 'Heiwa Seiritsu' take -2 Final Damage this turn"
         s3 = Skill("Rally", 3, EL_EROS, 0, desc_s3, effect_type="HEIWA_RALLY_EFFECT", effect_val=2)
-        # 4. Deck Distribution (Standard 5/3/1)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
-        # 5. Lore
+
         desc = (
             "Akasuke Hanefuji here has enrolled in Heiwa Seiritsu, embracing a reckless, dirty-fighting style honed "
             "in the school's violent environment. His crimson hair is longer, wilder, and unkempt, the eyepatch more "
@@ -104,7 +93,7 @@ def get_kata_data_by_name(name):
     elif name == "Yuri (Default)":
         res = [1.0, 0.7, 1.3, 1.0, 0.7, 1.3, 1.0]
         k = Kata("Kasakura High School Student", "Yuri", 1, "I", res)
-        
+        k.source_key = name      
         s1 = Skill("Steady Footing", 1, EL_LUDUS, 3, "")
         s2 = Skill("Iron Grip", 2, EL_STORGE, 7, "")
         s3 = Skill("Lock & Throw", 3, EL_PHILIA, 7, "[On Hit] Target deals -15% damage for this turn", effect_type="DEBUFF_ATK_MULT", effect_val=0.85)
@@ -119,24 +108,18 @@ def get_kata_data_by_name(name):
     elif name == "Heiwa Seiritsu High School Student (Yuri)":
         res = [0.5, 1.2, 1.5, 1.5, 0.7, 1.1, 1.4]
         k = Kata("Heiwa Seiritsu High School Student", "Yuri", 1, "I", res)
-        # Skill I: Spike Bat Trick (Eros)
-        # Logic: Standard Apply Status (Bleed 2 Potency)
+        k.source_key = name      
         desc_s1 = "[On Hit] Inflict 2 Bleed Potency"
         s1 = Skill("Spike Bat Trick", 1, EL_EROS, 3, desc_s1, effect_type="APPLY_STATUS")
         s1.status_effect = bleed_2
-        # Skill II: Chained Throw (Philautia)
-        # Logic: BLEED_POTENCY_STACKER (If bleed exists, add +3 Potency)
         desc_s2 = "[On Hit] If target has Bleed, Inflict 3 Bleed Potency"
         s2 = Skill("Chained Throw", 2, EL_PHILAUTIA, 7, desc_s2, effect_type="BLEED_POTENCY_STACKER", effect_val=3)
         s2.status_effect = bleed_3
-        # Skill III: Metal Wrapped Knee (Agape)
-        # Logic: BLEED_POTENCY_DEF_BUFF (Apply Bleed 2 to enemy, give Self -3 Dmg Taken)
         desc_s3 = "[On Hit] Inflict 2 Bleed Potency\n[On Use] Take -3 Final Damage this turn"
         s3 = Skill("Metal Wrapped Knee", 3, EL_AGAPE, 7, desc_s3, effect_type="BLEED_POTENCY_DEF_BUFF", effect_val=3)
         s3.status_effect = bleed_2
-        # Deck Distribution (Standard 5/3/1)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
-        # Lore Description
+
         desc = (
             "Inami Yuri here has enrolled in Heiwa Seiritsu, fully embracing the school's brutal, weapon-heavy "
             "delinquent culture. Her silver ponytail is now let loose, streaked with dirt and blood from constant fights. "
@@ -159,20 +142,13 @@ def get_kata_data_by_name(name):
     elif name == "Kasakura High School Disciplinary Committee President":
         res = [1.4, 1.0, 1.0, 1.1, 0.6, 0.4, 1.3]
         k = Kata("Kasakura High School Disciplinary Committee President", "Yuri", 4, "I", res)
-        
-        # Skill I: Bokken Strike
+        k.source_key = name      
         s1 = Skill("Bokken Strike", 1, EL_PRAGMA, 5, "[On Use] Gain 2 Poise Potency", effect_type="GAIN_STATUS")
         s1.status_effect = poise_2
-        
-        # Skill II: Suriage
         s2 = Skill("Suriage", 2, EL_LUDUS, 7, "[On Use] Gain 2 Poise Count", effect_type="GAIN_STATUS")
         s2.status_effect = poisecount_2
-        
-        # Skill III: Cascading Twin Cut
         desc_s3 = "[On Use] Gain 2 Poise Potency\n       [On Hit] Gain 4 Poise Potency"
         s3 = Skill("Cascading Twin Cut", 3, EL_STORGE, 11, desc_s3, effect_type="GAIN_POISE_SPECIAL_1")
-        # Note: No .status_effect assigned here as per instructions
-        
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
         desc = (
@@ -194,7 +170,7 @@ def get_kata_data_by_name(name):
     elif name == "Benikawa (Default)":
         res = [1.3, 1.3, 0.7, 0.7, 0.9, 0.9, 1.0]
         k = Kata("Kasakura High School Student", "Benikawa", 1, "I", res)
-        
+        k.source_key = name      
         s1 = Skill("Palm Strike", 1, EL_PHILIA, 2, "If target >50% HP, deal +2 Dmg", effect_type="COND_HP_ABOVE_50_FLAT", effect_val=2)
         s2 = Skill("Roundhouse Kick", 2, EL_STORGE, 4, "")
         s3 = Skill("Vital Strike", 3, EL_PHILAUTIA, 8, "[On Hit] Target takes +4 Dmg from other attacks this turn", effect_type="DEBUFF_INCOMING_DMG_FLAT", effect_val=4)
@@ -207,23 +183,19 @@ def get_kata_data_by_name(name):
 
 # --- BENIKAWA (HEIWA SEIRITSU) ---
     elif name == "Heiwa Seiritsu’s Upperclassman | ‘Crusher’":
-        # Resistances: Slash, Pierce, Blunt, Gun (Resistant 0.9) | Heat, Cold, Mind (Weak 1.6+)
         res = [0.9, 0.9, 0.9, 0.9, 1.7, 1.6, 1.6]
         k = Kata("Heiwa Seiritsu’s Upperclassman | ‘Crusher’", "Benikawa", 3, "I", res)
-        # Logic: APPLY_BLEED_HEAVY_STACKS (Apply Potency AND Count)
+        k.source_key = name      
         desc_s1 = "[On Hit] Inflict 2 Bleed Potency\n[On Hit] Inflict 2 Bleed Count"
         s1 = Skill("Disarm", 1, EL_STORGE, 8, desc_s1, effect_type="APPLY_BLEED_HEAVY_STACKS")
-        s1.status_effect = bleed_2        # Potency
-        s1.alt_status_effect = bleedcount_2 # Count
-        # Logic: DEF_BUFF_BASE_PER (Take -30% Damage)
+        s1.status_effect = bleed_2
+        s1.alt_status_effect = bleedcount_2
         desc_s2 = "[On Use] Take -30% Base Damage this turn"
         s2 = Skill("Unfaltering Presence", 2, EL_PRAGMA, 4, desc_s2, effect_type="DEF_BUFF_BASE_PER", effect_val=3)
-        # Logic: COND_TARGET_HAS_BLEED_DMG_PER (+50% Base Dmg if target bleeds)
         desc_s3 = "[On Hit] Deal +50% Base Damage against targets with Bleed"
         s3 = Skill("Crusher", 3, EL_STORGE, 11, desc_s3, effect_type="COND_TARGET_HAS_BLEED_DMG_PER", effect_val=5)
-        # Deck Distribution (Standard 5/3/1)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
-        # Lore
+
         desc = (
             "Ayame Benikawa here has long enrolled in Heiwa Seiritsu and rose on her own to become one of its feared "
             "‘Upperclassmen’ of the school’s legends. Her ginger hair is cropped short and messy, falling unevenly beside "
@@ -246,26 +218,15 @@ def get_kata_data_by_name(name):
             "description": desc
         }
 
-# --- BENIKAWA (KASAKURA DISCIPLINARY COMMITTEE) ---
+    # --- BENIKAWA (KASAKURA DISCIPLINARY COMMITTEE) ---
     elif name == "Kasakura High School Disciplinary Committee Member":
-        # Resistances: [Eros, Philia, Storge, Agape, Ludus, Pragma, Philautia]
         res = [1.3, 1.2, 1.2, 0.8, 1.0, 1.0, 0.9]
-        # Rarity: 2 | Aptitude: I
         k = Kata("Kasakura High School Disciplinary Committee Member", "Benikawa", 2, "I", res)
-
-        # Skill I: Quick Draw (Agape)
-        # Effect: Gain 3 Poise Potency
+        k.source_key = name      
         s1 = Skill("Quick Draw", 1, EL_AGAPE, 4, "[On Use] Gain 3 Poise Potency", effect_type="GAIN_STATUS")
         s1.status_effect = poise_3
-
-        # Skill II: Nuki Waza (Pragma)
-        # Effect: Allies with Poise gain +1 Count
         s2 = Skill("Nuki Waza", 2, EL_PRAGMA, 5, "[On Hit] All allies (including self) with Poise gain 1 Poise Count", effect_type="ON_HIT_PROVIDE_POISE_TYPE1", effect_val=1)
-
-        # Skill III: Zanshin (Ludus)
-        # Effect: Allies with Poise gain +2 Potency and +2 Count
         s3 = Skill("Zanshin", 3, EL_LUDUS, 8, "[On Hit] All allies (including self) with Poise gain 2 Poise Potency and 2 Poise Count", effect_type="ON_HIT_PROVIDE_POISE_TYPE2", effect_val=2)
-
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
         desc = (
@@ -284,7 +245,7 @@ def get_kata_data_by_name(name):
     elif name == "Shigemura (Default)":
         res = [1.4, 1.4, 0.8, 0.8, 0.8, 0.8, 0.8]
         k = Kata("Kasakura High School Student", "Shigemura", 1, "I", res)
-        
+        k.source_key = name
         s1 = Skill("Calibrated Strike", 1, EL_STORGE, 5, "")
         s2 = Skill("Block", 2, EL_LUDUS, 0, "[Combat Start] Take -4 Dmg this turn", effect_type="BUFF_DEF_FLAT", effect_val=4)
         s3 = Skill("Defensive Overhaul", 3, EL_AGAPE, 5, "[On Use] All allies take -3 Dmg this turn", effect_type="AOE_BUFF_DEF_FLAT", effect_val=3)
@@ -299,6 +260,7 @@ def get_kata_data_by_name(name):
     elif name == "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’":
         res = [1.4, 1.1, 0.9, 1.4, 1.0, 1.1, 1.2]
         k = Kata("Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’", "Shigemura", 4, "I", res)
+        k.source_key = name      
         desc_s1 = "[On Hit] Inflict 4 Bleed Potency"
         s1 = Skill("Chained Body Martial Arts", 1, EL_AGAPE, 7, desc_s1, effect_type="APPLY_STATUS")
         s1.status_effect = bleed_4
@@ -308,13 +270,12 @@ def get_kata_data_by_name(name):
             "[On Hit] Deal Another +40% Base Damage against targets with 5+ Bleed Count"
         )
         s2 = Skill("Dual Lashing", 2, EL_LUDUS, 7, desc_s2, effect_type="COND_REAPER_BLEED_SPECIAL")
-        # Skill III: Sadism (Eros)
         # Logic: COND_REAPER_BIND_CONVERT_SPECIAL (Reduce dmg based on bleed total -> Apply Bind)
         desc_s3 = (
             "[On Hit] Deal -3 Base Damage for every 3 Bleed (Potency + Count) on target. (Max -9 Base Damage)\n"
             "For every 3 Base Damage reduced this way, also inflict 1 Bind to target."
         )
-        s3 = Skill("Sadism", 3, EL_EROS, 20, desc_s3, effect_type="COND_REAPER_BIND_CONVERT_SPECIAL")
+        s3 = Skill("Sadism", 3, EL_EROS, 13, desc_s3, effect_type="COND_REAPER_BIND_CONVERT_SPECIAL")
         s3.status_effect = bind_1 # Attached for the logic to grab
         # Deck Distribution (Custom: 3x S1, 4x S2, 2x S3)
         k.skill_pool_def = [(s1, 3), (s2, 4), (s3, 2)]
@@ -346,7 +307,7 @@ def get_kata_data_by_name(name):
     elif name == "Naganohara (Default)":
         res = [1.0, 0.7, 1.3, 1.5, 1.1, 0.7, 1.1] 
         k = Kata("Kasakura High School Student", "Naganohara", 1, "I", res)
-
+        k.source_key = name      
         s1 = Skill("Flail Around", 1, EL_PHILAUTIA, 3, "[Combat Start] Take -2 Final Damage this turn", effect_type="BUFF_DEF_FLAT", effect_val=2)
         s2 = Skill("Cheer Up!", 2, EL_STORGE, 8, "[On Use] Deal 0 damage, then heal lowest HP ally by supposed base damage.", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST", effect_val=0)
         s3 = Skill("Unmatched Energetic Slam!", 3, EL_LUDUS, 5, "[On Hit] Heal lowest HP ally by damage amount", effect_type="ON_HIT_HEAL_LOWEST_BY_DMG", effect_val=0)        
@@ -358,30 +319,17 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 58, "description": desc}   
 
     elif name == "Heiwa Seiritsu High School Student (Naganohara)":
-        # 1. Stats & Metadata
-        # [Eros, Philia, Storge, Agape, Ludus, Pragma, Philautia]
         res = [1.1, 0.8, 0.8, 1.1, 1.5, 1.3, 1.5]
         k = Kata("Heiwa Seiritsu High School Student", "Naganohara", 1, "I", res)
-
-        # 3. Define Skills
-        # Skill I: Slugger Punch (Storge)
+        k.source_key = name
         s1 = Skill("Slugger Punch", 1, EL_STORGE, 7, "[On Hit] Inflict 1 Bleed Potency", effect_type="APPLY_STATUS")
         s1.status_effect = bleed_1
-
-        # Skill II: Simmer Down (Agape)
-        # New Effect Name: COND_TARGET_HAS_BLEED_DMG
         s2 = Skill("Simmer Down", 2, EL_AGAPE, 8, "[On Hit] Deal +2 Final Damage against targets with Bleed", effect_type="COND_TARGET_HAS_BLEED_DMG", effect_val=2)
-
-        # Skill III: One-Handed Throw Down (Philia)
-        # Dual description, but engine only takes one effect_type for now.
-        # We prioritize the Status Application as requested.
         desc_s3 = "[On Hit] Deal +4 Final Damage against targets with Bleed\n       [On Hit] Inflict 2 Bleed Count"
         s3 = Skill("One-Handed Throw Down", 3, EL_PHILIA, 8, desc_s3, effect_type="COND_BLEED_DMG_AND_APPLY", effect_val=4)
         s3.status_effect = bleedcount_2
-        # 4. Deck Distribution (Assumed Standard: 5/3/1)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
-        # 5. Lore
         desc = (
             "Naganohara Tsukimiyama here has enrolled in Heiwa Seiritsu High School instead of Kasakura High School. "
             "Her pink twintails are tied higher and messier, giving a wild, untamed look that matches her short-tempered, "

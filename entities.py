@@ -70,8 +70,8 @@ class Skill:
         self.description = description
         self.effect_type = effect_type
         self.effect_val = effect_val
-        # Optional field for complex effects (like attaching a StatusEffect object)
         self.status_effect = None 
+        self.alt_status_effect = None
 
 class Kata:
     def __init__(self, name, owner_name, rarity, rift_aptitude, resistances):
@@ -81,7 +81,8 @@ class Kata:
         self.rift_aptitude = rift_aptitude
         self.resistances = resistances
         self.skill_pool_def = [] 
-
+        self.source_key = None
+        
     def generate_deck(self):
         deck = []
         if not self.skill_pool_def:
@@ -115,16 +116,11 @@ class Entity:
             "outgoing_dmg_flat": 0
         }
         
-        # --- MECHANICS FOR NEXT HIT ---
         self.next_hit_taken_flat_bonus = 0
         self.next_hit_deal_flat_bonus = 0
         
-        # Hidden Flags (Status effects that are invisible or special)
         self.nerve_disruption_turns = 0
-        
-        # Pending modifiers applied at start of NEXT turn
         self.next_turn_modifiers = {}
-        
         self.status_effects = []
 
     def equip_kata(self, kata_obj):
@@ -161,57 +157,38 @@ class Entity:
             "incoming_dmg_flat": 0,
             "outgoing_dmg_flat": 0
         }
-
-        # --- MECHANICS FOR NEXT HIT ---
         self.next_hit_taken_flat_bonus = 0
         self.next_hit_deal_flat_bonus = 0
-        
-        # Hidden Flags
         self.nerve_disruption_turns = 0
-        self.pending_bind = 0
 
     def apply_next_turn_modifiers(self):
-        """Apply any pending next-turn modifiers at the start of the turn."""
         if "outgoing_dmg_mult" in self.next_turn_modifiers:
             self.temp_modifiers["outgoing_dmg_mult"] *= self.next_turn_modifiers["outgoing_dmg_mult"]
             del self.next_turn_modifiers["outgoing_dmg_mult"]
 
     def apply_status_effect(self, new_effect):
-        """
-        Safely adds or merges a StatusEffect object.
-        Respects Caps: Bleed (99 Potency/Count), Bind (5 Count).
-        """
-        # Find existing effect by name
         existing = next((e for e in self.status_effects if e.name == new_effect.name), None)
         
         if existing:
             if new_effect.name == "Bleed":
-                # Bleed Logic: Merge Potency (Max) and Count (Sum), Cap at 99
                 existing.potency = min(99, max(existing.potency, new_effect.potency))
                 existing.duration = min(99, existing.duration + new_effect.duration)
             elif new_effect.name == "Bind":
-                # Bind Logic: Sum Duration, Cap at 5
                 existing.duration = min(5, existing.duration + new_effect.duration)
             elif existing.name == "Poise":
                 if existing.potency > 0 and existing.duration <= 0:
                     existing.duration = 1
                 if existing.duration > 0 and existing.potency <= 0:
                     existing.potency = 1
-            else:
-                # Standard Logic: Refresh duration to the highest value, stack potency if needed
-                # (Default behavior for generic buffs/debuffs)
                 existing.duration = max(existing.duration, new_effect.duration)
-                # If you want potency to stack (e.g. Strength Up + Strength Up), uncomment below:
-                # existing.potency += new_effect.potency
-
+            else:
+                existing.duration = max(existing.duration, new_effect.duration)
         else:
-            # Special Poise Rule: Initial application
             if new_effect.name == "Poise":
                 if new_effect.potency > 0 and new_effect.duration <= 0:
                     new_effect.duration = 1
                 elif new_effect.duration > 0 and new_effect.potency <= 0:
                     new_effect.potency = 1
-            # Apply Initial Caps for new effects
             if new_effect.name == "Bleed":
                 new_effect.potency = min(99, new_effect.potency)
                 new_effect.duration = min(99, new_effect.duration)
@@ -230,14 +207,11 @@ class Entity:
         self.draw_skills(1)
 
     def get_lowest_hp_ally(self, all_allies):
-        """Return the living ally with lowest HP."""
         living = [u for u in all_allies if u.hp > 0 and u != self]
-        if not living:
-            return self 
+        if not living: return self 
         return min(living, key=lambda u: u.hp)
 
     def apply_aoe_buff(self, all_allies, mod_key, value):
-        """Apply flat mod to all living allies."""
         for ally in all_allies:
             if ally.hp > 0:
                 ally.temp_modifiers[mod_key] += value

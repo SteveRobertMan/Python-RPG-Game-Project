@@ -1,7 +1,19 @@
 import config
 from entities import MATERIALS_DB
+import entities
 # Import the ID Maps from SCD
 from scd import KATA_ID_MAP, KATA_NAME_TO_ID
+
+UNIT_ORDER_MAP = [
+    "Akasuke", 
+    "Yuri", 
+    "Benikawa", 
+    "Shigemura", 
+    "Naganohara", 
+    "Natsume", 
+    "Hana", 
+    "Kagaku"
+]
 
 class SaveManager:
     def __init__(self):
@@ -63,6 +75,21 @@ class SaveManager:
                     kid = KATA_NAME_TO_ID[k_entry]
                     strip += f"kta{kid}=I!"
 
+        # 4. Get Equipped Loadouts
+        # Iterate through player units and match them to the UNIT_ORDER_MAP
+        if hasattr(player_obj, "units"):
+                    for unit in player_obj.units:
+                        if unit.name in UNIT_ORDER_MAP:
+                            u_id = UNIT_ORDER_MAP.index(unit.name) + 1
+                            
+                            # Check for Kata and the new source_key field
+                            if unit.kata and hasattr(unit.kata, 'source_key') and unit.kata.source_key:
+                                
+                                # Use the Unique SCD Key to find the ID
+                                if unit.kata.source_key in KATA_NAME_TO_ID:
+                                    k_id = KATA_NAME_TO_ID[unit.kata.source_key]
+                                    strip += f"u{u_id}=kta{k_id}!"
+                                    
         return strip
 
     def load_save_strip(self, strip_string):
@@ -120,6 +147,17 @@ class SaveManager:
                             "name": name,
                             "aptitude": apt
                         })
+                except: pass
+
+            # Load Loadouts
+            elif part.startswith("u"):
+                try:
+                    # u1=kta5
+                    if "=" in part:
+                        u_part, k_part = part.split("=")
+                        u_idx = int(u_part.replace("u", ""))
+                        k_id = int(k_part.replace("kta", ""))
+                        loaded_data["katas"][u_idx] = k_id
                 except: pass
                 
         return loaded_data
