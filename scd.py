@@ -156,8 +156,8 @@ def get_kata_data_by_name(name):
         res = [1.4, 1.0, 1.0, 1.1, 0.6, 0.4, 1.3]
         k = Kata("Kasakura High School Disciplinary Committee President", "Yuri", 4, "I", res, desc)
         k.source_key = name      
-        s1 = Skill("Bokken Strike", 1, EL_PRAGMA, 5, "[On Use] Gain 2 Poise Potency", effect_type="GAIN_STATUS")
-        s1.status_effect = poise_2
+        s1 = Skill("Bokken Strike", 1, EL_PRAGMA, 5, "[On Use] Gain 3 Poise Potency", effect_type="GAIN_STATUS")
+        s1.status_effect = poise_3
         s2 = Skill("Suriage", 2, EL_LUDUS, 7, "[On Use] Gain 2 Poise Count", effect_type="GAIN_STATUS")
         s2.status_effect = poisecount_2
         desc_s3 = "[On Use] Gain 2 Poise Potency\n       [On Hit] Gain 4 Poise Potency"
@@ -222,7 +222,7 @@ def get_kata_data_by_name(name):
     elif name == "Kasakura High School Disciplinary Committee Member":
         res = [1.3, 1.2, 1.2, 0.8, 1.0, 1.0, 0.9]
         desc = (
-            "Ayame Benikawa, a member in Kasakura High School’s Disciplinary Committee serves loyally under President Inami Yuri, who she dearly looks up to. "
+            "Ayame Benikawa, a member of Kasakura High School’s Disciplinary Committee serves loyally under President Inami Yuri, who she dearly looks up to. "
             "Her ginger hair is tied in a neat, practical ponytail with a few loose strands framing her face, purple eyes sharp and focused rather than playful, exuding quiet respect and discipline. "
             "She wears a variant of the Disciplinary Committee white kimono uniform—similar in cut to Yuri's but with muted gray accents and fewer silver leaf/wave patterns to clearly denote her rank as one of many members; a wooden bokken is always at her side, polished and ready.\n"
             "Benikawa idolizes President Yuri's proficiency with the bokken, studying her techniques obsessively and aspiring to match her versatility—whether facing a single powerful opponent or swarms of fodder enemies. "
@@ -244,7 +244,7 @@ def get_kata_data_by_name(name):
     elif name == "Shigemura (Default)":
         res = [1.4, 1.4, 0.8, 0.8, 0.8, 0.8, 0.8]
         desc = (
-            "Fuyuyama Shigemura is a student of Kasakura High School, one of the most renowned educational institutes of the east. He has short, neatly trimmed purple hair that falls slightly over his sharp violet eyes, giving him a perpetually calm and detached appearance. Shigemura possesses a sharp mind and keen observational skills, often noticing details others miss, and carries himself with an air of quiet confidence that rarely breaks into overt emotion."
+            "Fuyuyama Shigemura is a student of Kasakura High School, one of the most renowned educational institutes of the east. He has short, neatly trimmed brown hair that falls slightly over his sharp violet eyes, giving him a perpetually calm and detached appearance. Shigemura possesses a sharp mind and keen observational skills, often noticing details others miss, and carries himself with an air of quiet confidence that rarely breaks into overt emotion."
         )
         k = Kata("Kasakura High School Student", "Shigemura", 1, "I", res, desc)
         k.source_key = name
