@@ -10,6 +10,7 @@ bleedcount_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing dama
 bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="DEBUFF")
 poise_1 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
+poise_3 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poisecount_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2, type="BUFF")
 
 # --- KATA ID REGISTRY ---
@@ -25,7 +26,8 @@ KATA_ID_MAP = {
     8: "‘Iron Fist Of Heiwa’ Delinquent Leader",
     9: "Heiwa Seiritsu’s Upperclassman | ‘Crusher’",
     10: "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’",
-    11: "Kasakura High School Disciplinary Committee President"
+    11: "Kasakura High School Disciplinary Committee President",
+    12: "Kasakura High School Disciplinary Committee Member"
 }
 
 # 2. Reverse Map for Saving (Name -> ID)
@@ -243,6 +245,40 @@ def get_kata_data_by_name(name):
             "max_hp": 90,
             "description": desc
         }
+
+# --- BENIKAWA (KASAKURA DISCIPLINARY COMMITTEE) ---
+    elif name == "Kasakura High School Disciplinary Committee Member":
+        # Resistances: [Eros, Philia, Storge, Agape, Ludus, Pragma, Philautia]
+        res = [1.3, 1.2, 1.2, 0.8, 1.0, 1.0, 0.9]
+        # Rarity: 2 | Aptitude: I
+        k = Kata("Kasakura High School Disciplinary Committee Member", "Benikawa", 2, "I", res)
+
+        # Skill I: Quick Draw (Agape)
+        # Effect: Gain 3 Poise Potency
+        s1 = Skill("Quick Draw", 1, EL_AGAPE, 4, "[On Use] Gain 3 Poise Potency", effect_type="GAIN_STATUS")
+        s1.status_effect = poise_3
+
+        # Skill II: Nuki Waza (Pragma)
+        # Effect: Allies with Poise gain +1 Count
+        s2 = Skill("Nuki Waza", 2, EL_PRAGMA, 5, "[On Hit] All allies (including self) with Poise gain 1 Poise Count", effect_type="ON_HIT_PROVIDE_POISE_TYPE1", effect_val=1)
+
+        # Skill III: Zanshin (Ludus)
+        # Effect: Allies with Poise gain +2 Potency and +2 Count
+        s3 = Skill("Zanshin", 3, EL_LUDUS, 8, "[On Hit] All allies (including self) with Poise gain 2 Poise Potency and 2 Poise Count", effect_type="ON_HIT_PROVIDE_POISE_TYPE2", effect_val=2)
+
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        desc = (
+            "Ayame Benikawa, a member in Kasakura High School’s Disciplinary Committee serves loyally under President Inami Yuri, who she dearly looks up to. "
+            "Her ginger hair is tied in a neat, practical ponytail with a few loose strands framing her face, purple eyes sharp and focused rather than playful, exuding quiet respect and discipline. "
+            "She wears a variant of the Disciplinary Committee white kimono uniform—similar in cut to Yuri's but with muted gray accents and fewer silver leaf/wave patterns to clearly denote her rank as one of many members; a wooden bokken is always at her side, polished and ready.\n\n"
+            "Benikawa idolizes President Yuri's proficiency with the bokken, studying her techniques obsessively and aspiring to match her versatility—whether facing a single powerful opponent or swarms of fodder enemies. "
+            "She loves fighting as fiercely as her base self, but maintains strict courtesy and self-control until combat begins—work and duty always come first.\n\n"
+            "She fights with controlled aggression: precise bokken strikes, rapid counters, and disciplined footwork, preferring clean, efficient finishes over flashy displays. "
+            "Beneath the formal exterior, her enthusiasm for battle still shines through in subtle grins and eager stances, but she channels it into protecting the committee and upholding Yuri's vision of order."
+        )
+
+        return {"kata_obj": k, "max_hp": 79, "description": desc}
 
     # --- SHIGEMURA DEFAULT ---
     elif name == "Shigemura (Default)":

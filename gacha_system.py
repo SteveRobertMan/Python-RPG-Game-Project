@@ -29,7 +29,8 @@ class GachaSystem:
                 "Heiwa Seiritsu’s Upperclassman | ‘Crusher’"
             ],
             RARITY_2: [
-                "‘Iron Fist Of Heiwa’ Delinquent Leader"
+                "‘Iron Fist Of Heiwa’ Delinquent Leader",
+                "Kasakura High School Disciplinary Committee Member"
             ],
             RARITY_1: [
                 "Akasuke (Default)",

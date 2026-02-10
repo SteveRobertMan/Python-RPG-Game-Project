@@ -707,6 +707,28 @@ class BattleManager:
                         lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
                         self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
 
+                # --- LOGIC: POISE SUPPORT ---
+                if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE1":
+                    # Logic: Grant +1 Poise Count to all allies who already have Poise
+                    team = self.allies if attacker in self.allies else self.enemies
+                    for member in team:
+                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                        if poise_effect:
+                            # Increase Duration (Count) by val (1), cap at 99
+                            poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
+                            # if self.console: self.console.print(f"   [cyan]>{member.name}'s Poise Count +{skill.effect_val}![/cyan]")
+
+                if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE2":
+                    # Logic: Grant +2 Potency AND +2 Count to allies with Poise
+                    team = self.allies if attacker in self.allies else self.enemies
+                    for member in team:
+                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                        if poise_effect:
+                            # Increase Potency and Duration, cap at 99
+                            poise_effect.potency = min(99, poise_effect.potency + skill.effect_val)
+                            poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
+                            # if self.console: self.console.print(f"   [cyan]>{member.name}'s Poise Strengthened![/cyan]")
+
                 # --- NEXT HIT BONUSES ---
                 if skill.effect_type == "ON_HIT_NEXT_TAKEN_FLAT":
                     target.next_hit_taken_flat_bonus += skill.effect_val
