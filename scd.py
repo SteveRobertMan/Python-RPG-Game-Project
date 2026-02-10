@@ -26,7 +26,8 @@ KATA_ID_MAP = {
     9: "Heiwa Seiritsu’s Upperclassman | ‘Crusher’",
     10: "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’",
     11: "Kasakura High School Disciplinary Committee President",
-    12: "Kasakura High School Disciplinary Committee Member"
+    12: "Kasakura High School Disciplinary Committee Member",
+    13: "Kasakura High School Disciplinary Committee Vice President"
 }
 
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
@@ -63,7 +64,7 @@ def get_kata_data_by_name(name):
             "Akasuke Hanefuji here has enrolled in Heiwa Seiritsu, embracing a reckless, dirty-fighting style honed "
             "in the school's violent environment. His crimson hair is longer, wilder, and unkempt, the eyepatch more "
             "prominent against a scarred, cocky grin, uniform untucked and battle-stained, radiating an aggressive, "
-            "taunting aura that deliberately exploits embarrassing weaknesses in opponents.\n"
+            "taunting aura that deliberately exploits embarrassing weaknesses in opponents.\n\n"
             "He favors rapid, overwhelming flurries of jabs and punches to deny any chance of defense or counter, "
             "playing dirty with feints, low blows, and psychological taunts. When merged with original karate precision "
             "and fight theory, these become unconventional, yet lethal combos—turning raw aggression into a dangerously "
@@ -111,7 +112,7 @@ def get_kata_data_by_name(name):
             "delinquent culture. Her silver ponytail is now let loose, streaked with dirt and blood from constant fights. "
             "She wears the Heiwa uniform in classic delinquent fashion: sleeves rolled up, shirt untucked, and often "
             "carries makeshift weapons that feel like Heiwa tradition—spiked metal bats slung over her shoulder or "
-            "chains wrapped tightly around her fists for extra impact.\n"
+            "chains wrapped tightly around her fists for extra impact.\n\n"
             "Her fighting style is ferocious and pragmatic: experienced with improvised weapons, she swings spiked bats "
             "in wide, crushing arcs and uses chain-wrapped fists to deliver bone-breaking punches in close quarters. "
             "When weapons feel too predictable or 'not fun enough,' her judo roots take over—she seamlessly transitions "
@@ -144,11 +145,11 @@ def get_kata_data_by_name(name):
             "Inami Yuri leads Kasakura's Disciplinary Committee with a calm, calculating, and compassionate demeanor. "
             "Her silver ponytail is neatly tied back, sapphire eyes sharp yet serene, clad in a pristine white kimono "
             "adorned with youthful silver leaf and wave patterns; she wields Masayoshi Kouhei's exact wooden bokken, "
-            "carrying spares tucked into her sash for prolonged battles.\n"
+            "carrying spares tucked into her sash for prolonged battles.\n\n"
             "She speaks in an archaic, formal manner—precise, authoritative—while pushing subordinates with intense "
             "physical training regimens far beyond Masayoshi’s original ‘mindset’ focus, forging unbreakable bodies "
             "for her unique 'blitz' strategy: reckless, overwhelming rushes that catch foes off-guard and end fights "
-            "in seconds alongside her Committee.\n"
+            "in seconds alongside her Committee.\n\n"
             "Despite the stoic facade, she shows immense camaraderie and sportsmanship to all that she meets. "
             "Her deep, almost robotic respect for the Student Council President is unwavering, blending Yuri's loyalty "
             "with Kouhei's unyielding discipline into a formidable guardian of order."
@@ -189,13 +190,13 @@ def get_kata_data_by_name(name):
             "‘Upperclassmen’ of the school’s legends. Her ginger hair is cropped short and messy, falling unevenly beside "
             "her face, and her purple eyes are cold, distant, almost careless—betraying none of the playful energy of "
             "her base form. She stands with a perpetual slouch, shoulders rounded, posture deliberately non-threatening "
-            "until the moment she strikes, giving her an unpredictable, almost ghostly presence.\n"
+            "until the moment she strikes, giving her an unpredictable, almost ghostly presence.\n\n"
             "Her body lacks the exaggerated bulk of someone like the original ‘Crusher’ “Upperclassman Tetsuo”, but "
             "every muscle is compact, dense, and terrifyingly efficient—honed through years of controlled, legitimate "
             "training rather than raw size. Her feats speak for themselves: bare fists shatter bones without effort, "
             "thin arms punch clean through plascrete walls, and single strikes crumple steel pipes. She fights with "
             "brutal, minimalist precision—quiet, emotionless, heartless—exploiting any opening with sudden, devastating "
-            "force.\n"
+            "force.\n\n"
             "She inherited Tetsuo’s mindset: weapon-users are weak, reliant on “little toys”; strip them of their tools, "
             "and they become ‘nothing’. Yet she holds quiet respect for those who remain strong with or without weapons—"
             "particularly Yuri’s spiked bat and Fuyuyama’s chains—acknowledging true power that transcends tools."
@@ -224,16 +225,16 @@ def get_kata_data_by_name(name):
         desc = (
             "Ayame Benikawa, a member of Kasakura High School’s Disciplinary Committee serves loyally under President Inami Yuri, who she dearly looks up to. "
             "Her ginger hair is tied in a neat, practical ponytail with a few loose strands framing her face, purple eyes sharp and focused rather than playful, exuding quiet respect and discipline. "
-            "She wears a variant of the Disciplinary Committee white kimono uniform—similar in cut to Yuri's but with muted gray accents and fewer silver leaf/wave patterns to clearly denote her rank as one of many members; a wooden bokken is always at her side, polished and ready.\n"
+            "She wears a variant of the Disciplinary Committee white kimono uniform—similar in cut to Yuri's but with muted gray accents and fewer silver leaf/wave patterns to clearly denote her rank as one of many members; a wooden bokken is always at her side, polished and ready.\n\n"
             "Benikawa idolizes President Yuri's proficiency with the bokken, studying her techniques obsessively and aspiring to match her versatility—whether facing a single powerful opponent or swarms of fodder enemies. "
-            "She loves fighting as fiercely as her base self, but maintains strict courtesy and self-control until combat begins—work and duty always come first.\n"
+            "She loves fighting as fiercely as her base self, but maintains strict courtesy and self-control until combat begins—work and duty always come first.\n\n"
             "She fights with controlled aggression: precise bokken strikes, rapid counters, and disciplined footwork, preferring clean, efficient finishes over flashy displays. "
             "Beneath the formal exterior, her enthusiasm for battle still shines through in subtle grins and eager stances, but she channels it into protecting the committee and upholding Yuri's vision of order."
         )
         k = Kata("Kasakura High School Disciplinary Committee Member", "Benikawa", 2, "I", res, desc)
         k.source_key = name      
-        s1 = Skill("Quick Draw", 1, EL_AGAPE, 4, "[On Use] Gain 3 Poise Potency", effect_type="GAIN_STATUS")
-        s1.status_effect = poise_3
+        s1 = Skill("Quick Draw", 1, EL_AGAPE, 4, "[On Use] Gain 2 Poise Potency", effect_type="GAIN_STATUS")
+        s1.status_effect = poise_2
         s2 = Skill("Nuki Waza", 2, EL_PRAGMA, 5, "[On Hit] All allies (including self) with Poise gain 1 Poise Count", effect_type="ON_HIT_PROVIDE_POISE_TYPE1", effect_val=1)
         s3 = Skill("Zanshin", 3, EL_LUDUS, 8, "[On Hit] All allies (including self) with Poise gain 2 Poise Potency and 2 Poise Count", effect_type="ON_HIT_PROVIDE_POISE_TYPE2", effect_val=2)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
@@ -263,7 +264,7 @@ def get_kata_data_by_name(name):
             "his violet eyes are now colder, emptier—devoid of the usual detached occasional amusement, replaced by "
             "a quiet, sadistic patience. He slouches slightly, posture loose and unassuming, chains draped across "
             "his shoulders and wrapped around his arms like casual accessories, giving him an almost ghostly, "
-            "unthreatening silhouette until he moves.\n"
+            "unthreatening silhouette until he moves.\n\n"
             "Despite inheriting the title ‘Chain Reaper,’ his personality remains eerily calm and composed—opposite "
             "the hotheaded, egotistic original “Upperclassman Kurogane”—making him far more threatening. He rarely "
             "speaks, rarely smiles; the only time his lips curve is when facing truly strong opponents, and only "
@@ -301,6 +302,27 @@ def get_kata_data_by_name(name):
             "description": desc
         }
 
+    # --- SHIGEMURA KASAKURA DISCIPLINARY COMMITTEE ---
+    elif name == "Kasakura High School Disciplinary Committee Vice President":
+        res = [1.5, 1.0, 1.0, 1.2, 0.7, 0.7, 1.2]
+        desc = (
+            "Fuyuyama Shigemura, the vice president of Kasakura High School’s Disciplinary Committee serves loyally under President Inami Yuri as her close colleague and trusted subordinate. "
+            "His short brown hair remains neatly trimmed, violet eyes calm and observant, but with a subtle spark of quiet admiration when watching President Yuri demonstrate bokken techniques. "
+            "He wears the same white kimono Disciplinary Committee uniform as Yuri and Benikawa, though with much restrained silver accents—fewer patterns and a darker gray trim to clearly mark him as a member of unique rank.\n\n"
+            "Shigemura is ever impressed by President Yuri's mastery of the bokken, often sparring with Benikawa after hours to sharpen his own skills while keeping his energetic colleague entertained and challenged. "
+            "He fights with precise, efficient movements—favoring controlled strikes and counters over flashy displays—yet his calm exterior hides a deep competitive drive to match Yuri's level. "
+            "His dry wit and unflappable nature make him a steady presence among the committee's more intense members."
+        )
+        k = Kata("Kasakura High School Disciplinary Committee Vice President", "Shigemura", 3, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Wrist Strike", 1, EL_PHILIA, 5, "[On Use] Gain 2 Poise Count", effect_type="GAIN_STATUS")
+        s1.status_effect = poisecount_2
+        s2 = Skill("Debana Waza", 2, EL_LUDUS, 5, "[On Hit] All allies (including self) with Poise gain 2 Poise Potency", effect_type="ON_HIT_PROVIDE_POISE_TYPE3", effect_val=2)
+        s3 = Skill("Kigurai", 3, EL_STORGE, 9, "[On Hit] All allies (including self) with 2+ Poise Potency convert 1 Poise Potency to Count", effect_type="ON_HIT_CONVERT_POISE_TYPE1", effect_val=1)
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 80, "description": desc}
+
     # --- NAGANOHARA DEFAULT ---
     elif name == "Naganohara (Default)":
         res = [1.0, 0.7, 1.3, 1.5, 1.1, 0.7, 1.1] 
@@ -321,7 +343,7 @@ def get_kata_data_by_name(name):
         desc = (
             "Naganohara Tsukimiyama here has enrolled in Heiwa Seiritsu High School instead of Kasakura High School. "
             "Her pink twintails are tied higher and messier, giving a wild, untamed look that matches her short-tempered, "
-            "aggressive demeanor.\n"
+            "aggressive demeanor.\n\n"
             "She favors close-quarters brawling—sluggish but devastatingly clean hits that rely on raw power and momentum. "
             "Despite her hot-headed nature, she retains her loyalty to her friends, a large, rowdy crew of fellow Heiwa delinquents."
         )

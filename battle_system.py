@@ -717,7 +717,6 @@ class BattleManager:
                             # Increase Duration (Count) by val (1), cap at 99
                             poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
                             # if self.console: self.console.print(f"   [cyan]>{member.name}'s Poise Count +{skill.effect_val}![/cyan]")
-
                 if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE2":
                     # Logic: Grant +2 Potency AND +2 Count to allies with Poise
                     team = self.allies if attacker in self.allies else self.enemies
@@ -728,6 +727,25 @@ class BattleManager:
                             poise_effect.potency = min(99, poise_effect.potency + skill.effect_val)
                             poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
                             # if self.console: self.console.print(f"   [cyan]>{member.name}'s Poise Strengthened![/cyan]")
+                if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE3":
+                            # Logic: Grant +2 Poise Potency to all allies who already have Poise
+                    team = self.allies if attacker in self.allies else self.enemies
+                    for member in team:
+                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                        if poise_effect:
+                            # Increase Potency by val (2), cap at 99
+                            poise_effect.potency = min(99, poise_effect.potency + skill.effect_val)
+                            #if self.console: self.console.print(f"   [cyan]>{member.name}'s Poise Potency +{skill.effect_val}![/cyan]")
+                if skill.effect_type == "ON_HIT_CONVERT_POISE_TYPE1":
+                    # Logic: Convert 1 Potency -> 1 Count if Potency >= 2
+                    team = self.allies if attacker in self.allies else self.enemies
+                    for member in team:
+                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                        # Check condition: Must have at least 2 Potency (to afford the cost of 1)
+                        if poise_effect and poise_effect.potency >= 2:
+                            poise_effect.potency -= 1
+                            poise_effect.duration = min(99, poise_effect.duration + 1)
+                            #if self.console: self.console.print(f"   [cyan]>{member.name} converted Poise Potency to Count![/cyan]")
 
                 # --- NEXT HIT BONUSES ---
                 if skill.effect_type == "ON_HIT_NEXT_TAKEN_FLAT":

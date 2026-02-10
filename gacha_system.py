@@ -26,7 +26,8 @@ class GachaSystem:
                 "Kasakura High School Disciplinary Committee President"
             ],
             RARITY_3: [
-                "Heiwa Seiritsu’s Upperclassman | ‘Crusher’"
+                "Heiwa Seiritsu’s Upperclassman | ‘Crusher’",
+                "Kasakura High School Disciplinary Committee Vice President"
             ],
             RARITY_2: [
                 "‘Iron Fist Of Heiwa’ Delinquent Leader",
