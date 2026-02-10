@@ -152,13 +152,10 @@ def load_stage_enemies(stage_id):
     enemies = []
     
     # Common Status Effects Definitions for easy reuse
-    bleed_1 = StatusEffect("Bleed", "🩸", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-    bleed_2 = StatusEffect("Bleed", "🩸", 2, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-    bleed_3 = StatusEffect("Bleed", "🩸", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-    bleed_4 = StatusEffect("Bleed", "🩸", 4, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-    bleedcount_1 = StatusEffect("Bleed", "🩸", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-    bleedcount_2 = StatusEffect("Bleed", "🩸", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=2, type="DEBUFF_DOT")
-    bind_1 = StatusEffect("Bind", "⛓️", 0, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="DEBUFF_STUN")
+    bleed_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+    bleed_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+    bleed_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+    bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 0, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="DEBUFF")
     
     if stage_id == 0: 
         thief = Entity("Underwear Thief", is_player=False)

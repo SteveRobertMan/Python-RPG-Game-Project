@@ -1167,7 +1167,7 @@ def play_stage_1_8_story():
     
     show_story_box("Ayame Benikawa", "Of course. A job’s a job. That’s what us ninjas do. We don’t question anything, just move according to the orders.", affiliation="Benikawa Ninja Clan")
     
-    show_story_box("Akasuke", "Look here. I won’t try anything, yeah? I already failed my mission and that’s that. I have no obligation to do anything to you all anymore.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Ayame Benikawa", "Look here. I won’t try anything, yeah? I already failed my mission and that’s that. I have no obligation to do anything to you all anymore.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Natsume", "Tch, how convenient. If so, at least leave us with something we can work with—like why are they targeting us?", affiliation="Kasakura High School Student / Seven Wonders")
     

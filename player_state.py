@@ -1,10 +1,10 @@
 import os
+import config
 from entities import Entity
 # Import the save manager
 from save_system import save_manager
-import config
 
-# We change this to .txt because we are saving a "Strip" string, not a JSON object
+# We change this to .txt because we are saving a "Strip" string
 SAVE_FILE = "savegame.txt"
 
 class PlayerState:
@@ -23,18 +23,23 @@ class PlayerState:
         self.unlocked_units = [] 
         self.party = [] 
 
-    # ... [add_unit method remains the same] ...
+    def add_unit(self, unit_name):
+        if unit_name not in [u.name for u in self.units]:
+            new_unit = Entity(unit_name, is_player=True)
+            self.units.append(new_unit)
+            self.unlocked_units.append(unit_name)
+            if len(self.party) < 4:
+                self.party.append(new_unit)
 
     def save_game(self):
         """
         Generates the Save Strip and writes it to the file.
         """
-        # 1. Update global config data with local currency/unit data if needed
-        # (Assuming config.player_data shares references, but let's be safe)
+        # 1. Update global config data if needed
         if "materials" not in config.player_data:
             config.player_data["materials"] = {}
             
-        # 2. Generate the String !stgX!ktaY!...
+        # 2. Generate the String using self (the Player Object)
         save_string = save_manager.generate_save_strip(self)
         
         # 3. Write String to File
@@ -59,12 +64,16 @@ class PlayerState:
                 loaded_data = save_manager.load_save_strip(save_string)
                 
                 if loaded_data:
-                    # 3. Apply to Config (Global State)
+                    # 3. Apply Stage
                     config.player_data["latest_stage"] = loaded_data["latest_stage"]
-                    config.player_data["materials"] = loaded_data["materials"]
                     
-                    # 4. Apply to Player (Inventory State)
-                    # CRITICAL: This restores the "Owned Katas" list
+                    # 4. Apply Currencies (Extract from loaded materials)
+                    # We map the loaded materials back to currencies
+                    mats = loaded_data.get("materials", {})
+                    self.currencies["microchips"] = mats.get("Microchip", 0)
+                    self.currencies["microprocessors"] = mats.get("Microprocessor", 0)
+                    
+                    # 5. Apply Inventory (The Fix!)
                     self.inventory["katas"] = loaded_data["katas"]
                     
                     print("Save Loaded.")
@@ -73,5 +82,5 @@ class PlayerState:
                 print(f"Load Failed: {e}")
         return False
 
-# Create the instance
+# Initialize
 player = PlayerState()

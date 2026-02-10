@@ -1,16 +1,19 @@
 from entities import Kata, Skill, ELEMENT_NAMES, EL_EROS, EL_PHILIA, EL_STORGE, EL_AGAPE, EL_LUDUS, EL_PRAGMA, EL_PHILAUTIA, StatusEffect
 # Common Status Effects Definitions for easy reuse
-bleed_1 = StatusEffect("Bleed", "🩸", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-bleed_2 = StatusEffect("Bleed", "🩸", 2, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-bleed_3 = StatusEffect("Bleed", "🩸", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-bleed_4 = StatusEffect("Bleed", "🩸", 4, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-bleedcount_1 = StatusEffect("Bleed", "🩸", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF_DOT")
-bleedcount_2 = StatusEffect("Bleed", "🩸", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=2, type="DEBUFF_DOT")
-bleedcount_3 = StatusEffect("Bleed", "🩸", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=3, type="DEBUFF_DOT")
-bind_1 = StatusEffect("Bind", "⛓️", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="DEBUFF_STUN")
+bleed_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleed_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleed_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleed_4 = StatusEffect("Bleed", "[red]💧︎[/red]", 4, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleedcount_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleedcount_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF")
+bleedcount_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3, type="DEBUFF")
+bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="DEBUFF")
+poise_1 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
+poise_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
+poisecount_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2, type="BUFF")
 
 # --- KATA ID REGISTRY ---
-# Maps Integer IDs to the Unique Keys used in the Game
+# 1. Maps Integer IDs to the Unique Keys used in the Game
 KATA_ID_MAP = {
     1: "Akasuke (Default)",
     2: "Yuri (Default)",
@@ -21,10 +24,11 @@ KATA_ID_MAP = {
     7: "Heiwa Seiritsu High School Student (Naganohara)",
     8: "‘Iron Fist Of Heiwa’ Delinquent Leader",
     9: "Heiwa Seiritsu’s Upperclassman | ‘Crusher’",
-    10: "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’"
+    10: "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’",
+    11: "Kasakura High School Disciplinary Committee President"
 }
 
-# Reverse Map for Saving (Name -> ID)
+# 2. Reverse Map for Saving (Name -> ID)
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
 
 def get_kata_data_by_name(name):
@@ -148,6 +152,41 @@ def get_kata_data_by_name(name):
             "max_hp": 70,
             "description": desc
         }
+
+# --- YURI DISCIPLINARY COMMITTEE --- #
+    elif name == "Kasakura High School Disciplinary Committee President":
+        res = [1.4, 1.0, 1.0, 1.1, 0.6, 0.4, 1.3]
+        k = Kata("Kasakura High School Disciplinary Committee President", "Yuri", 4, "I", res)
+        
+        # Skill I: Bokken Strike
+        s1 = Skill("Bokken Strike", 1, EL_PRAGMA, 5, "[On Use] Gain 2 Poise Potency", effect_type="GAIN_STATUS")
+        s1.status_effect = poise_2
+        
+        # Skill II: Suriage
+        s2 = Skill("Suriage", 2, EL_LUDUS, 7, "[On Use] Gain 2 Poise Count", effect_type="GAIN_STATUS")
+        s2.status_effect = poisecount_2
+        
+        # Skill III: Cascading Twin Cut
+        desc_s3 = "[On Use] Gain 2 Poise Potency\n       [On Hit] Gain 4 Poise Potency"
+        s3 = Skill("Cascading Twin Cut", 3, EL_STORGE, 11, desc_s3, effect_type="GAIN_POISE_SPECIAL_1")
+        # Note: No .status_effect assigned here as per instructions
+        
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        desc = (
+            "Inami Yuri leads Kasakura's Disciplinary Committee with a calm, calculating, and compassionate demeanor. "
+            "Her silver ponytail is neatly tied back, sapphire eyes sharp yet serene, clad in a pristine white kimono "
+            "adorned with youthful silver leaf and wave patterns; she wields Masayoshi Kouhei's exact wooden bokken, "
+            "carrying spares tucked into her sash for prolonged battles.\n\n"
+            "She speaks in an archaic, formal manner—precise, authoritative—while pushing subordinates with intense "
+            "physical training regimens far beyond Masayoshi’s original ‘mindset’ focus, forging unbreakable bodies "
+            "for her unique 'blitz' strategy: reckless, overwhelming rushes that catch foes off-guard and end fights "
+            "in seconds alongside her Committee.\n\n"
+            "Despite the stoic facade, she shows immense camaraderie and sportsmanship to all that she meets. "
+            "Her deep, almost robotic respect for the Student Council President is unwavering, blending Yuri's loyalty "
+            "with Kouhei's unyielding discipline into a formidable guardian of order."
+        )
+        return {"kata_obj": k, "max_hp": 91, "description": desc}
 
     # --- BENIKAWA DEFAULT ---
     elif name == "Benikawa (Default)":

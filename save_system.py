@@ -17,42 +17,47 @@ class SaveManager:
         Generates a save string using IDs.
         Format: !stg{X}!mat{ID}:{QTY}!kta{ID}={APTITUDE}!
         
-        Arguments:
-            player_obj: The PlayerState instance (containing the .inventory attribute)
+        Args:
+            player_obj: The actual PlayerState instance.
         """
-        # 1. Get Stage (From Global Config Dictionary)
-        # We use config.player_data because that is where the main game loop updates stage progress
+        # 1. Get Stage (From Global Config)
         stg_val = config.player_data.get("latest_stage", -1)
         strip = f"!stg{stg_val}!"
         
-        # 2. Get Materials (From Global Config Dictionary)
+        # 2. Get Materials (From Player Currencies & Global Materials)
+        # Combine player.currencies (Microchips) with generic materials
+        
+        # A. Map specific currencies to Material IDs (if defined in entities)
+        # Microchip (ID 01), Microprocessor (ID 02)
+        if hasattr(player_obj, "currencies"):
+            mc = player_obj.currencies.get("microchips", 0)
+            mp = player_obj.currencies.get("microprocessors", 0)
+            strip += f"mat01:{mc}!mat02:{mp}!"
+
+        # B. Generic Materials from config (if any)
         mats = config.player_data.get("materials", {})
         for name, qty in mats.items():
-            if name in MATERIALS_DB:
+            if name in MATERIALS_DB and name not in ["Microchip", "Microprocessor"]:
                 mid = MATERIALS_DB[name].save_id
                 strip += f"mat{mid}:{qty}!"
         
-        # 3. Get Katas (From Player Object Inventory)
-        # player_obj is the Class Instance, so we access .inventory directly
+        # 3. Get Katas (From Player Inventory)
+        # FIX: Access attribute directly, do not use .get() on the object
+        katas = []
         if hasattr(player_obj, "inventory"):
             katas = player_obj.inventory.get("katas", [])
-        else:
-            katas = []
         
         for k_entry in katas:
-            # Check for Dictionary format (Standard New Format)
+            # Handle Dictionary Format (Standard)
             if isinstance(k_entry, dict):
                 name = k_entry.get("name")
                 apt = k_entry.get("aptitude", "I")
                 
-                # Convert Name -> ID
                 if name in KATA_NAME_TO_ID:
                     kid = KATA_NAME_TO_ID[name]
                     strip += f"kta{kid}={apt}!"
-                else:
-                    print(f"Warning: Cannot save unknown Kata '{name}'")
             
-            # Check for String format (Legacy/Fallback)
+            # Handle Legacy String Format
             elif isinstance(k_entry, str):
                  if k_entry in KATA_NAME_TO_ID:
                     kid = KATA_NAME_TO_ID[k_entry]
@@ -63,7 +68,6 @@ class SaveManager:
     def load_save_strip(self, strip_string):
         """
         Parses the save string back into a Data Dictionary.
-        Output: {'katas': [{'name': '...', 'aptitude': '...'}], ...}
         """
         loaded_data = {
             "latest_stage": -1,
@@ -112,7 +116,6 @@ class SaveManager:
                         name = KATA_ID_MAP[kid]
                         
                         # Reconstruct the Dictionary
-                        # This matches exactly what Gacha System creates
                         loaded_data["katas"].append({
                             "name": name,
                             "aptitude": apt

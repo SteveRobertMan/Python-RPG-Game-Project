@@ -111,7 +111,8 @@ class Entity:
             "final_dmg_reduction": 0, 
             "outgoing_dmg_mult": 1.0,
             "incoming_dmg_mult": 1.0,
-            "incoming_dmg_flat": 0 
+            "incoming_dmg_flat": 0,
+            "outgoing_dmg_flat": 0
         }
         
         # --- MECHANICS FOR NEXT HIT ---
@@ -157,8 +158,17 @@ class Entity:
             "final_dmg_reduction": 0, 
             "outgoing_dmg_mult": 1.0,
             "incoming_dmg_mult": 1.0,
-            "incoming_dmg_flat": 0
+            "incoming_dmg_flat": 0,
+            "outgoing_dmg_flat": 0
         }
+
+        # --- MECHANICS FOR NEXT HIT ---
+        self.next_hit_taken_flat_bonus = 0
+        self.next_hit_deal_flat_bonus = 0
+        
+        # Hidden Flags
+        self.nerve_disruption_turns = 0
+        self.pending_bind = 0
 
     def apply_next_turn_modifiers(self):
         """Apply any pending next-turn modifiers at the start of the turn."""
@@ -166,7 +176,7 @@ class Entity:
             self.temp_modifiers["outgoing_dmg_mult"] *= self.next_turn_modifiers["outgoing_dmg_mult"]
             del self.next_turn_modifiers["outgoing_dmg_mult"]
 
-    def add_status_effect(self, new_effect):
+    def apply_status_effect(self, new_effect):
         """
         Safely adds or merges a StatusEffect object.
         Respects Caps: Bleed (99 Potency/Count), Bind (5 Count).
@@ -182,19 +192,34 @@ class Entity:
             elif new_effect.name == "Bind":
                 # Bind Logic: Sum Duration, Cap at 5
                 existing.duration = min(5, existing.duration + new_effect.duration)
+            elif existing.name == "Poise":
+                if existing.potency > 0 and existing.duration <= 0:
+                    existing.duration = 1
+                if existing.duration > 0 and existing.potency <= 0:
+                    existing.potency = 1
             else:
                 # Standard Logic: Refresh duration to the highest value, stack potency if needed
                 # (Default behavior for generic buffs/debuffs)
                 existing.duration = max(existing.duration, new_effect.duration)
                 # If you want potency to stack (e.g. Strength Up + Strength Up), uncomment below:
                 # existing.potency += new_effect.potency
+
         else:
+            # Special Poise Rule: Initial application
+            if new_effect.name == "Poise":
+                if new_effect.potency > 0 and new_effect.duration <= 0:
+                    new_effect.duration = 1
+                elif new_effect.duration > 0 and new_effect.potency <= 0:
+                    new_effect.potency = 1
             # Apply Initial Caps for new effects
             if new_effect.name == "Bleed":
                 new_effect.potency = min(99, new_effect.potency)
                 new_effect.duration = min(99, new_effect.duration)
             elif new_effect.name == "Bind":
                 new_effect.duration = min(5, new_effect.duration)
+            elif new_effect.name == "Poise":
+                new_effect.potency = min(99, new_effect.potency)
+                new_effect.duration = min(99, new_effect.duration)
                 
             self.status_effects.append(new_effect)
 
@@ -203,3 +228,16 @@ class Entity:
             self.hand.remove(skill)
         self.discard_pile.append(skill)
         self.draw_skills(1)
+
+    def get_lowest_hp_ally(self, all_allies):
+        """Return the living ally with lowest HP."""
+        living = [u for u in all_allies if u.hp > 0 and u != self]
+        if not living:
+            return self 
+        return min(living, key=lambda u: u.hp)
+
+    def apply_aoe_buff(self, all_allies, mod_key, value):
+        """Apply flat mod to all living allies."""
+        for ally in all_allies:
+            if ally.hp > 0:
+                ally.temp_modifiers[mod_key] += value

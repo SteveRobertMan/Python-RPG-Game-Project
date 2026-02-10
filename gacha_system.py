@@ -22,7 +22,8 @@ class GachaSystem:
         # Updated Pool with specific Kata Strings matching SCD
         self.pool = {
             RARITY_4: [
-                "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’"
+                "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’",
+                "Kasakura High School Disciplinary Committee President"
             ],
             RARITY_3: [
                 "Heiwa Seiritsu’s Upperclassman | ‘Crusher’"

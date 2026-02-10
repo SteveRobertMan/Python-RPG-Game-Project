@@ -60,24 +60,66 @@ def console_print_load_prompt():
     clear_screen()
     console.print("[bold cyan]Paste your Save Strip below:[/bold cyan]")
     strip = get_player_input()
+    
+    # 1. Parse the strip into a dictionary
     loaded_data = save_manager.load_save_strip(strip)
+    
     if loaded_data:
+        # 2. Update Global Config (Stages, Node Progress)
         config.player_data = loaded_data
-        if "node_progress" not in config.player_data: config.player_data["node_progress"] = None
+        
+        if "node_progress" not in config.player_data: 
+            config.player_data["node_progress"] = None
+        
+        # 3. CRITICAL FIX: Inject Inventory into Player Object
+        # The save manager returns 'katas' as a list of dicts: [{'name':..., 'aptitude':...}]
+        # We must put this where the Gacha/UI expects it: player.inventory
+        player.inventory["katas"] = loaded_data.get("katas", [])
+        
+        # 4. Clean up Config (Optional but clean)
+        # We remove it from the global dict so we don't have two sources of truth
+        if "katas" in config.player_data:
+            del config.player_data["katas"]
+        
+        # 5. Sync Currencies
+        # This function (defined in main.py) usually maps config['materials'] -> player.currencies
         sync_currencies() 
+        
         console.print("[green]Save Loaded Successfully![/green]")
-        if config.player_data["latest_stage"] == -1: config.current_state = config.STATE_PROLOGUE
-        else: config.current_state = config.STATE_MAIN_MENU
+        
+        # 6. Determine State
+        if config.player_data.get("latest_stage", -1) == -1: 
+            config.current_state = config.STATE_PROLOGUE
+        else: 
+            config.current_state = config.STATE_MAIN_MENU
+            
         get_player_input("Press Enter to continue...")
     else:
         console.print("[bold red]Invalid Save Strip![/bold red]")
         get_player_input("Press Enter to return to Title...")
 
 def confirm_quit():
-    if config.player_data:
-        strip = save_manager.generate_save_strip(config.player_data)
-        console.print(f"\n[bold]Here is your Save Strip, copy it:[/bold]\n{strip}\n")
-    sys.exit()
+    clear_screen()
+    console.print(Panel("Are you sure you want to quit?", style="bold red"))
+    console.print("[1] Yes (Generate Save Strip)\n[0] No")
+    
+    choice = get_player_input()
+    
+    if choice == "1":
+        # CRITICAL FIX: Pass the 'player' instance, NOT 'config.player_data'
+        # The save manager needs to access player.inventory and player.currencies
+        if player:
+            # Sync any stage progress first just in case
+            # (Assuming stage logic updates config.player_data, 
+            # save_manager reads that from config global, but reads inventory from player object)
+            strip = save_manager.generate_save_strip(player)
+            
+            console.print(f"\n[bold]Here is your Save Strip, copy it:[/bold]\n")
+            console.print(Panel(f"{strip}", style="yellow"))
+            console.print("\n[dim]Select text and Ctrl+C to copy.[/dim]")
+            
+        get_player_input("Press Enter to exit...")
+        sys.exit()
 
 def sync_player_roster():
     """

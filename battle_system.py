@@ -55,10 +55,10 @@ Below is a breakdown of the essential properties used during combat logic:
    self.pending_bind              -> (int) DYNAMIC ATTRIBUTE (Added by BattleManager).
                                      Stores Bind count to be applied next turn to prevent
                                      immediate decay or immediate penalty on the same turn.
-    How does adding 'first time' bleed work?
-    1. When adding 'bleed potency' while the target has no bleed, the duration inflicted always starts at +1 count.
-    2. When adding 'bleed count' while the target has no bleed, the potency inflict always starts at 1.
-    ! Whether or not this debuff can be stacked well by the attacker of the target is up to them. If the effect runs out easily, then that's the result.
+    How does adding status effects with both potency and count for the ‘first time’ work?
+    1. When adding 'potency' while the target has no ‘count’, the duration/count inflicted always starts at +1 count.
+    2. When adding ‘count' while the target has no ‘potency’, the potency inflicted always starts at 1.
+    ! Whether or not this debuff can be stacked well by the attacker of the target is up to them. If the effect runs out easily, then that is the result.
 --------------------------------------------------------------------------------
 """
 
@@ -186,7 +186,17 @@ class BattleManager:
             # ---------------------------------------------------------
             
     def apply_status_modifiers(self, unit):
-        """Re-applies modifiers from active status effects AND hidden flags."""
+        """
+        Calculates stat penalties derived from status effects.
+        """
+        # 1. Reset Modifiers handled elsewhere (reset_turn_modifiers)
+        
+        # 2. Apply Visible Status Effects
+        for effect in unit.status_effects:
+            if effect.name == "Bind":
+                # Logic: Reduce Damage by 10% per duration, capped (min 10% dmg remaining)
+                penalty = 1.0 - (0.1 * effect.duration)
+                unit.temp_modifiers["outgoing_dmg_mult"] *= max(0.1, penalty)
         
         # 1. Apply Hidden Flags (Invisible to Player UI, but affects logic)
         # Check for Nerve Disruption (Dynamic attribute)
@@ -259,7 +269,9 @@ class BattleManager:
                 # 2. Bind Logic (Decay Count by 1 every turn)
                 elif effect.name == "Bind":
                     effect.duration -= 1
-                    # Log optional, keeping it clean for now
+                # 2. Bind Logic (Decay Count by 1 every turn)
+                elif effect.name == "Poise":
+                    effect.duration -= 1
                 
                 # 3. Standard DOT / Regen (Legacy support)
                 elif effect.type == "DOT":
@@ -290,7 +302,7 @@ class BattleManager:
                     unit.status_effects.pop(i)
                     effects_triggered = True
 
-            # --- NEW: PROCESS PENDING BIND (Hidden -> Visible) ---
+            # --- PROCESS PENDING BIND (Hidden -> Visible) ---
             # This happens AFTER the decay loop above. 
             # This ensures the new Bind is applied fresh for the start of the next turn.
             if getattr(unit, "pending_bind", 0) > 0:
@@ -300,7 +312,7 @@ class BattleManager:
                 
                 bind_effect = StatusEffect(
                     name="Bind", 
-                    symbol="⛓️", 
+                    symbol="[dim gold1]⛓[/dim gold1]", 
                     potency=1, 
                     duration=actual_duration, 
                     description="Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5"
@@ -522,119 +534,70 @@ class BattleManager:
         self.render_battle_screen() 
         time.sleep(0.8) 
 
-        # [On Use] Effects
+        # Initialize specific variable for Shigemura's Sadism to avoid scope errors
+        sadism_bind_to_apply = 0
+        is_crit = False
+
+# --- [STEP 1] [On Use] EFFECTS ---
         if "[On Use]" in skill.description:
             if skill.effect_type == "BUFF_DEF_FLAT":
-                 attacker.temp_modifiers["final_dmg_reduction"] += skill.effect_val
+                 attacker.temp_modifiers["final_dmg_reduction"] = attacker.temp_modifiers.get("final_dmg_reduction", 0) + skill.effect_val
 
+        # --- [STEP 2] DAMAGE CALCULATION ---
         if skill.base_damage > 0:
-            # --- BASE DAMAGE CALCULATION ---
-            # 1. Start with Skill Base
+            # 1. Base Damage & Variance
             base_dmg_val = float(skill.base_damage)
 
-            # --- [NEW] SHIGEMURA SKILL III: SADISM PRE-CALC ---
-            # Logic: Reduce Base Damage based on Target Bleed -> Store Bind to apply later
-            sadism_bind_to_apply = 0
-            
+            # Shigemura Sadism Pre-Calc
             if skill.effect_type == "COND_REAPER_BIND_CONVERT_SPECIAL":
-                # 1. Calculate Total Bleed (Potency + Count)
-                total_bleed = 0
-                for s in target.status_effects:
-                    if s.name == "Bleed":
-                        total_bleed = s.potency + s.duration
-                        break # Only one bleed instance per target in this system
-                
-                # 2. Calculate Steps (1 step per 3 Bleed, Max 3 steps)
+                total_bleed = sum(s.potency + s.duration for s in target.status_effects if s.name == "Bleed")
                 steps = min(3, total_bleed // 3)
-                
                 if steps > 0:
-                    damage_reduction = steps * 3
-                    # Reduce the Base Damage variable directly
-                    base_dmg_val = max(0, base_dmg_val - damage_reduction)
-                    
-                    # Store the amount of Bind to apply in the Status Phase
+                    base_dmg_val = max(0, base_dmg_val - (steps * 3))
                     sadism_bind_to_apply = steps
-                    
-                    # Visual Log (Optional, keeps player informed of the trade-off)
-                    # self.log(f"[dim]Sadism: Base Dmg reduced by {damage_reduction} to power Bind![/dim]")
 
-            # 2. Apply BIND Penalty: -(10% * Count) of base damage
+            # 2. Bind Penalty
             bind_effect = next((s for s in attacker.status_effects if s.name == "Bind"), None)
             if bind_effect:
-                # Limit bind count to 5 for calculation
                 b_count = min(5, bind_effect.duration) 
-                penalty_mult = 0.10 * b_count
-                mult = max(0.0, 1.0 - penalty_mult)
-                base_dmg_val *= mult
+                base_dmg_val *= max(0.0, 1.0 - (0.10 * b_count))
 
             # 3. Random Variance
-            rand_mult = random.uniform(1.0, 1.5)
-            dmg = base_dmg_val * rand_mult
-            
-            # --- CONDITIONAL LOGIC (Multipliers) ---
-            # --- [NEW] SHIGEMURA SKILL II: DUAL LASHING ---
-            # Logic: +40% Base Dmg at 2+ Count, +40% Base Dmg at 5+ Count
-            if skill.effect_type == "COND_REAPER_BLEED_SPECIAL":
-                # Find Bleed Count (stored in .duration)
-                bleed_count = 0
-                for s in target.status_effects:
-                    if s.name == "Bleed":
-                        bleed_count = s.duration
-                        break
-                # Calculate Bonus Multiplier
-                bonus_mult = 0.0
-                if bleed_count >= 2: bonus_mult += 0.40
-                if bleed_count >= 5: bonus_mult += 0.40
-                
-                if bonus_mult > 0:
-                    # Calculate amount based on the ORIGINAL skill base (7), not modified
-                    added_dmg = skill.base_damage * bonus_mult
-                    dmg += added_dmg
+            dmg = base_dmg_val * random.uniform(1.0, 1.5)
 
-            if skill.effect_type == "COND_EXECUTE":
-                if target.hp < (target.max_hp * 0.5): 
-                    dmg *= skill.effect_val
-            
-            if skill.effect_type == "COND_HP_THRESH_BONUS_DMG":
-                if target.hp < (target.max_hp * skill.condition_val):
-                    dmg += skill.effect_val
+            # 4. Handle [On Use] Status (Skill I, II, III Poise Gains)
+            if skill.effect_type == "GAIN_STATUS":
+                self.apply_status_logic(attacker, copy.deepcopy(skill.status_effect))
+            elif skill.effect_type == "GAIN_POISE_SPECIAL_1":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "", duration=0))
 
-            # --- ELEMENTAL CALC ---
+            # 5. Critical Hit Roll (POISE CHECK)
+            poise = next((se for se in attacker.status_effects if se.name == "Poise"), None)
+            if poise and poise.potency > 0 and poise.duration > 0:
+                crit_chance = min(100, poise.potency * 5)
+                if random.randint(1, 100) <= crit_chance:
+                    is_crit = True
+                    dmg *= 1.2  # 20% Crit Multiplier
+
+            # 6. Elemental & Global Multipliers (CRASH PROTECTION: Added .get())
             res_mult = target.resistances[skill.element]
             nbd = dmg * res_mult
+            nbd *= attacker.temp_modifiers.get("outgoing_dmg_mult", 1.0)
+            nbd *= target.temp_modifiers.get("incoming_dmg_mult", 1.0)
             
-            # --- MODIFIERS ---
-            nbd *= attacker.temp_modifiers["outgoing_dmg_mult"]
-            nbd *= target.temp_modifiers["incoming_dmg_mult"]
-            
-            # --- DEBUFFS (Immediate) ---
-            if skill.effect_type == "DEBUFF_ATK_MULT":
-                target.temp_modifiers["outgoing_dmg_mult"] *= skill.effect_val
-            if skill.effect_type == "DEBUFF_INCOMING_DMG":
-                target.temp_modifiers["incoming_dmg_mult"] *= skill.effect_val
-            
-            final_dmg = nbd 
-            # Apply Incoming Flat Modifiers (Debuffs on target)
-            final_dmg += target.temp_modifiers["incoming_dmg_flat"]
-            
-            # [NEW] Apply Outgoing Flat Modifiers (Buffs on attacker, e.g., from Rally)
-            # We use .get() safely in case the key wasn't initialized
+            # 7. Flat Modifiers
+            final_dmg = nbd + target.temp_modifiers.get("incoming_dmg_flat", 0)
             final_dmg += attacker.temp_modifiers.get("outgoing_dmg_flat", 0)
 
-            # --- MECHANIC: CONSUME 'NEXT HIT TAKEN' BONUS (Benikawa) ---
+            # Consume Hit Bonuses
             if target.next_hit_taken_flat_bonus > 0:
                 final_dmg += target.next_hit_taken_flat_bonus
                 target.next_hit_taken_flat_bonus = 0 
-
-            # --- MECHANIC: CONSUME 'NEXT HIT DEAL' BONUS (Bulky Delinquent) ---
             if attacker.next_hit_deal_flat_bonus > 0:
                 final_dmg += attacker.next_hit_deal_flat_bonus
-                attacker.next_hit_deal_flat_bonus = 0 
+                attacker.next_hit_deal_flat_bonus = 0
 
-            # ------------------------------------------------------------------
-            # NAGANOHARA LOGIC: CONDITIONAL FLAT DAMAGE (SKILL II & III)
-            # ------------------------------------------------------------------
-            # Check for Bleed on Target
+            # --- NAGANOHARA CONDITIONAL FLATS ---
             target_has_bleed = any(s.name == "Bleed" and s.duration > 0 for s in target.status_effects)
             
             # Skill II: Simmer Down (+2 Dmg if Bleed)
@@ -646,39 +609,33 @@ class BattleManager:
             if skill.effect_type == "COND_BLEED_DMG_AND_APPLY":
                 if target_has_bleed:
                     final_dmg += skill.effect_val
-            # ------------------------------------------------------------------
 
-            # --- DEFENSE ---
+            # --- DEFENSE TIER REDUCTION ---
             def_max_tier = self.get_max_skill_tier(target)
             if skill.tier > def_max_tier:
-                diff = skill.tier - def_max_tier
-                reduction_pct = min(0.80, 0.20 * diff) 
-                reduced_amount = final_dmg * reduction_pct
-                final_dmg -= reduced_amount
+                final_dmg -= (final_dmg * min(0.80, 0.20 * (skill.tier - def_max_tier)))
 
-            damage = int(final_dmg)
-            
-            # COND_HP_ABOVE_50_FLAT
+            damage = int(final_dmg) - target.temp_modifiers.get("final_dmg_reduction", 0)
+
+            # --- FINAL CHECKS ---
             if skill.effect_type == "COND_HP_ABOVE_50_FLAT":
                 if target.hp >= (target.max_hp * 0.5): 
                     damage += int(skill.effect_val)
 
-            # COND_LOW_HP_MERCY
             if skill.effect_type == "COND_LOW_HP_MERCY":
                 if target.hp <= (target.max_hp * 0.7): 
                     damage -= int(skill.effect_val)
 
-            # COND_HP_BELOW_80_FLAT
             if skill.effect_type == "COND_HP_BELOW_80_FLAT":
                 if target.hp <= (target.max_hp * 0.8): 
                     damage += int(skill.effect_val)
 
-            # Final Defense Reduction
+            # Final Defense Reduction (Armor)
             flat_def = target.temp_modifiers["final_dmg_reduction"]
             damage = damage - flat_def
             damage = max(1, damage) # Minimum 1 damage if hit connects
 
-            # SKILL II: CONVERT DAMAGE TO HEAL
+            # [MECHANIC] CONVERT DAMAGE TO HEAL
             if skill.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
                 team = self.allies if attacker in self.allies else self.enemies
                 living_teammates = [u for u in team if u.hp > 0]
@@ -689,16 +646,26 @@ class BattleManager:
                     self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
                 damage = 0
 
+            # --- APPLY DAMAGE ---
             if damage > 0:
                 target.hp -= damage
                 el_color = get_element_color(skill.element)
-                eff_text = ""
-                if res_mult > 1.0: eff_text = " [bold yellow](WEAK!)[/bold yellow]"
-                elif res_mult < 1.0: eff_text = " [dim](Resist)[/dim]"
+                eff_text = " [bold yellow](WEAK!)[/]" if res_mult > 1.0 else (" [dim](Resist)[/]" if res_mult < 1.0 else "")
+                crit_text = "[khaki1]Critical![/] " if is_crit else ""
                 
-                self.log(f"-> Hit {target.name} for [bold {el_color}]{damage}[/bold {el_color}]{eff_text}")
+                self.log(f"-> {crit_text}Hit {target.name} for [bold {el_color}]{damage}[/bold {el_color}]!{eff_text}")
                 
-                # --- BLEED TRIGGER (Recoil) ---
+                # Skill III On Hit
+                if skill.effect_type == "GAIN_POISE_SPECIAL_1":
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, "", duration=0))
+                
+                # Consume Poise Count on Crit
+                if is_crit and poise:
+                    poise.duration -= 1
+                    if poise.duration <= 0:
+                        attacker.status_effects.remove(poise)
+                
+                # --- [MECHANIC] BLEED TRIGGER (Recoil on Attacker) ---
                 bleed_idx = -1
                 for i, se in enumerate(attacker.status_effects):
                     if se.name == "Bleed":
@@ -706,19 +673,21 @@ class BattleManager:
                         break
                 
                 if bleed_idx != -1:
-                    bleed_eff = attacker.status_effects[bleed_idx]
-                    recoil_dmg = bleed_eff.potency
-                    attacker.hp -= recoil_dmg
-                    bleed_eff.duration -= 1 
-                    self.log(f"[bold dim red]{attacker.name} Received {recoil_dmg} Bleed Dmg.[/bold dim red]")
+                    bleed_eff = next((se for se in attacker.status_effects if se.name == "Bleed"), None)
+                    if bleed_eff:
+                        recoil = bleed_eff.potency
+                        attacker.hp -= recoil
+                        bleed_eff.duration -= 1
+                        self.log(f"[bold dim red]{attacker.name} took {recoil} Bleed damage.[/bold dim red]")
+                        if bleed_eff.duration <= 0: attacker.status_effects.remove(bleed_eff)
 
                     if attacker.hp <= 0:
                         attacker.hp = 0
                     
-                    if bleed_eff.duration <= 0:
+                    if bleed_eff.duration <= 0 and bleed_idx in attacker.status_effects:
                         attacker.status_effects.pop(bleed_idx)
 
-                # SKILL III: ON HIT HEAL LOWEST
+                # --- [MECHANIC] ON HIT HEAL LOWEST ---
                 if skill.effect_type == "ON_HIT_HEAL_LOWEST_BY_DMG":
                     team = self.allies if attacker in self.allies else self.enemies
                     living_teammates = [u for u in team if u.hp > 0]
@@ -728,7 +697,7 @@ class BattleManager:
                         lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
                         self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
 
-                # NEXT HIT BONUSES
+                # --- NEXT HIT BONUSES ---
                 if skill.effect_type == "ON_HIT_NEXT_TAKEN_FLAT":
                     target.next_hit_taken_flat_bonus += skill.effect_val
                 if skill.effect_type == "ON_HIT_NEXT_DEAL_FLAT":
@@ -742,32 +711,30 @@ class BattleManager:
                 if skill.effect_type != "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
                     self.log(f"-> The move dealt no damage.")
 
-        # --- STATUS EFFECT / SPECIAL APPLICATION ---
+        
+
+        # --- [STEP 3] STATUS EFFECT / SPECIAL APPLICATION ---
         
         # AOE BUFF
         if skill.effect_type == "AOE_BUFF_DEF_FLAT":
             team = self.allies if attacker in self.allies else self.enemies
             for member in team:
                 if member.hp > 0:
-                    member.temp_modifiers["final_dmg_reduction"] += skill.effect_val
-
+                    member.temp_modifiers["final_dmg_reduction"] = member.temp_modifiers.get("final_dmg_reduction", 0) + skill.effect_val
         # --- AKASUKE SKILLS ---
 
         # Skill I: Jab Flurry (Bleed Count Opener)
         elif skill.effect_type == "BLEED_COUNT_OPENER":
-            # Check for existing bleed
             has_bleed = any(s.name == "Bleed" for s in target.status_effects)
             
             if not has_bleed:
                 # Target has NO Bleed -> Apply Primary Effect (Count 3, Pot 1)
-                # This uses the status_effect attached to s1
                 if hasattr(skill, "status_effect"):
-                     self.apply_status_logic(target, copy.deepcopy(skill.status_effect))
+                      self.apply_status_logic(target, copy.deepcopy(skill.status_effect))
             else:
                 # Target HAS Bleed -> Apply Alternative Effect (Pot 1, Count 1)
-                # This uses the alt_status_effect we attached in scd.py
                 if hasattr(skill, "alt_status_effect"):
-                     self.apply_status_logic(target, copy.deepcopy(skill.alt_status_effect))
+                      self.apply_status_logic(target, copy.deepcopy(skill.alt_status_effect))
 
         # Skill II: Cheap Nose Shot (Bleed Potency Stacker)
         elif skill.effect_type == "BLEED_POTENCY_STACKER":
@@ -783,89 +750,67 @@ class BattleManager:
             for member in team:
                 if member.hp > 0:
                     # 1. Universal Buff: All allies deal +2 Final Dmg (Outgoing Flat)
-                    # We use .get() to initialize the key if it doesn't exist yet
                     current_bonus = member.temp_modifiers.get("outgoing_dmg_flat", 0)
                     member.temp_modifiers["outgoing_dmg_flat"] = current_bonus + skill.effect_val
                     
                     # 2. Conditional Buff: "Heiwa" allies take -2 Final Dmg (Incoming Reduction)
-                    # We check if the unit's Kata Name contains "Heiwa"
                     if hasattr(member, "kata") and "Heiwa" in member.kata.name:
                         member.temp_modifiers["final_dmg_reduction"] += skill.effect_val
             
             #self.log(f"[bold gold1]{attacker.name} rallies the team![/bold gold1]")
 
         # BLEED_POTENCY_DEF_BUFF (Yuri Heiwa S3)
-        # Logic: Apply Status to Target, Apply Defense Buff to User
         elif skill.effect_type == "BLEED_POTENCY_DEF_BUFF":
-            # A. Apply the Bleed (Status Effect attached to skill) to Target
             if skill.status_effect:
-            # CRITICAL: Create a deepcopy. 
-            # scd.py uses global templates (e.g. bleed_1). If we use them directly,
-            # reducing duration on one enemy will permanently break the skill for everyone.
+                # Apply deepcopy of status to prevent template corruption
                 effect_instance = copy.deepcopy(skill.status_effect)
+                self.apply_status_logic(target, effect_instance)
             
-            # Delegate logic to the Entity class (entities.py)
-            target.add_status_effect(effect_instance)
-            
-            # Add a log entry so the player knows it happened
-            # self.log(f"[bold yellow]{target.name} is inflicted with {effect_instance.name}![/bold yellow]")
-            # B. Apply Defense Buff to User
+            # Apply Defense Buff to User
             attacker.temp_modifiers["final_dmg_reduction"] += skill.effect_val
-            #self.log(f"[bold cyan]{attacker.name} hardens their stance! (-{skill.effect_val} Dmg Taken)[/bold cyan]")
         
         # --- BENIKAWA SKILL LOGIC ---
-        # 2. DEF_BUFF_BASE_PER (Benikawa S2)
-        # Reduces damage taken by a Percentage (val=3 -> 30%)
+        
+        # DEF_BUFF_BASE_PER (Benikawa S2)
         elif skill.effect_type == "DEF_BUFF_BASE_PER":
-            # Convert 3 to 0.3, then multiplier becomes 0.7
             reduction_pct = skill.effect_val / 10.0
-            
-            # FIX: Access the dictionary key, not a direct attribute
             attacker.temp_modifiers["incoming_dmg_mult"] *= (1.0 - reduction_pct)
-            
-            self.log(f"[bold cyan]{attacker.name} presence reduces incoming damage by {int(reduction_pct*100)}%![/bold cyan]")
+            #self.log(f"[bold cyan]{attacker.name} presence reduces incoming damage by {int(reduction_pct*100)}%![/bold cyan]")
 
-        # 3. COND_TARGET_HAS_BLEED_DMG_PER (Benikawa S3)
-        # If target has Bleed, deal +X0% Base Damage immediately as bonus
+        # COND_TARGET_HAS_BLEED_DMG_PER (Benikawa S3)
         elif skill.effect_type == "COND_TARGET_HAS_BLEED_DMG_PER":
             has_bleed = any(s.name == "Bleed" for s in target.status_effects)
             if has_bleed:
-                # Calculate bonus (e.g. Base 11 * 0.5 = 5.5 -> 5)
                 bonus_dmg = int(skill.base_damage * (skill.effect_val / 10.0))
                 target.hp -= bonus_dmg
                 #self.log(f"[bold red]CRUSHER! The wound is exploited for +{bonus_dmg} Bonus Damage![/bold red]")
-            #else:
-                #self.log("[dim]Target not bleeding; no bonus damage.[/dim]")
                 
-# --- [NEW] SHIGEMURA SKILL III: SADISM BIND APPLY ---
+        # --- SADISM BIND APPLY ---
         # Checks the variable we set back in Phase 1
-        # Note: We use 'locals().get' or check existence to prevent errors if variable wasn't init defined
         if 'sadism_bind_to_apply' in locals() and sadism_bind_to_apply > 0:
-            # Create Bind Effect
-            # Name, Symbol, Potency (always 1 for Bind), Desc, Duration (stacks)
+            # Create Bind Effect manually based on calculation
             bind_eff = StatusEffect(
-                "Bind", "⛓️", 1, 
+                "Bind", "[dim gold1]⛓[/dim gold1]", 1, 
                 "Deal -(10%*Count) of base damage. Lose 1 count/turn. Max: 5", 
                 duration=sadism_bind_to_apply
             )
-            
             # Use existing logic to stack it (Handles the Max 5 Cap and Duration merging)
             self.apply_status_logic(target, bind_eff)
             self.log(f"[bold violet]Sadism inflicts {sadism_bind_to_apply} Bind![/bold violet]")
 
         # --- EXISTING KUROGANE & GENERIC EFFECTS ---
         elif skill.effect_type == "APPLY_BLEED_HEAVY_STACKS":
-            bleed = StatusEffect("Bleed", "🩸", 2, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=2)
+            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=2)
             self.apply_status_logic(target, bleed)
         elif skill.effect_type == "APPLY_BLEED_AND_BIND":
-            bleed = StatusEffect("Bleed", "🩸", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1)
+            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1)
             self.apply_status_logic(target, bleed)
-            bind = StatusEffect("Bind", "⛓️", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1)
+            bind = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1)
             self.apply_status_logic(target, bind)
         elif skill.effect_type == "APPLY_BLEED_AND_BIND_HEAVY":
-            bleed = StatusEffect("Bleed", "🩸", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1)
+            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1)
             self.apply_status_logic(target, bleed)
-            bind = StatusEffect("Bind", "⛓️", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2)
+            bind = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2)
             self.apply_status_logic(target, bind)
 
         # Generic Status + Naganohara Skill III Dual Type
@@ -896,6 +841,7 @@ class BattleManager:
             if existing_bind:
                 existing_bind.duration = min(5, existing_bind.duration + new_status.duration)
             else:
+                # Handles pending_bind if target doesn't have it yet (delayed application)
                 if not hasattr(target, "pending_bind"): target.pending_bind = 0
                 target.pending_bind = min(5, target.pending_bind + new_status.duration)
             return
@@ -917,34 +863,21 @@ class BattleManager:
                 existing.potency += new_status.potency
         else:
             # --- NEW APPLICATION (FIRST TIME LOGIC) ---
-            
-            if new_status.name == "Bleed":
-                # Rule 1: If adding Potency (Skill I typically has high potency, low/no duration bonus intended),
-                # ensure Duration starts at least 1.
+            if new_status.name in ["Bleed", "Poise"]:
+                # Rule 1: Ensure Duration starts at least 1.
                 if new_status.duration < 1:
                     new_status.duration = 1
-                
-                # Rule 2: If adding Count (Skill III typically has low/no potency, high duration),
-                # ensure Potency starts at least 1.
+                # Rule 2: Ensure Potency starts at least 1.
                 if new_status.potency < 1:
                     new_status.potency = 1
-                
                 # Cap Checks
                 new_status.duration = min(99, new_status.duration)
                 new_status.potency = min(99, new_status.potency)
-
             target.status_effects.append(new_status)
-            # self.log(f"Applied [bold]{new_status.name}[/bold] to {target.name}!")
 
-    """
-    End of Status Effect code part. Comments if needed:
-    #
-    #
-    #
-    #
-    #
-    #
-    """
+            """
+            End of execute_skill()
+            """
 
     def inspect_unit_menu(self):
         clear_screen()
