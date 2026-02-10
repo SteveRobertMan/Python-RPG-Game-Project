@@ -242,7 +242,6 @@ def draw_council_logs_menu():
     
     [1] Enemies (Bestiary)
     [2] Materials
-    [3] Status Effects (Coming Soon)
     [0] Return
     """
     config.console.print(Panel(Align.center(content), style="white on black"))
@@ -390,12 +389,13 @@ def manage_unit_loadout(unit, player_obj):
         k_rare = ("㊋" * unit.kata.rarity) if unit.kata else "-"
         k_apt = unit.kata.rift_aptitude if unit.kata else "-"
 
+        kata_desc = unit.kata.description if unit.kata.description else "No description available."
         info_panel = Panel(
             f"Equipped Kata: [bold yellow]{k_name}[/bold yellow]\n"
             f"Rarity: {k_rare}\n"
             f"Rift Aptitude: [gold1]{k_apt}[/gold1]\n"
             f"Max HP: {unit.max_hp}\n\n"
-            f"[italic]{unit.kata.description}[/italic]\n\n"
+            f"[italic]{kata_desc}[/italic]\n\n"
             f"Resistances:\n{res_text}",
             title="Current Loadout"
         )
