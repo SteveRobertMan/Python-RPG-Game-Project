@@ -189,6 +189,16 @@ class BattleManager:
         """
         Calculates stat penalties derived from status effects.
         """
+        # --- NEW: SAFETY CLAMP LOGIC ---
+        # Ensures that no matter how an effect was added, it never exceeds game limits.
+        for effect in unit.status_effects:
+            if effect.name in ["Poise", "Bleed"]:
+                # Cap Potency and Count at 99
+                if effect.potency > 99: effect.potency = 99
+                if effect.duration > 99: effect.duration = 99
+            elif effect.name == "Bind":
+                # Cap Count at 5 (Bind has no potency)
+                if effect.duration > 5: effect.duration = 5
         # 1. Reset Modifiers handled elsewhere (reset_turn_modifiers)
         
         # 2. Apply Visible Status Effects
