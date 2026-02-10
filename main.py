@@ -71,20 +71,49 @@ def console_print_load_prompt():
         if "node_progress" not in config.player_data: 
             config.player_data["node_progress"] = None
         
-        # 3. CRITICAL FIX: Inject Inventory into Player Object
-        # The save manager returns 'katas' as a list of dicts: [{'name':..., 'aptitude':...}]
-        # We must put this where the Gacha/UI expects it: player.inventory
+        # 3. Inject Inventory into Player Object
         player.inventory["katas"] = loaded_data.get("katas", [])
         
-        # 4. Clean up Config (Optional but clean)
-        # We remove it from the global dict so we don't have two sources of truth
+        # 4. Clean up Config
         if "katas" in config.player_data:
             del config.player_data["katas"]
         
         # 5. Sync Currencies
-        # This function (defined in main.py) usually maps config['materials'] -> player.currencies
         sync_currencies() 
         
+        # --- [NEW] LOADOUT APPLICATION LOGIC ---
+        
+        # A. Sync Roster First (Ensures player.units exists in strict order)
+        sync_player_roster()
+        
+        # B. Apply Equipped Katas
+        equipped = loaded_data.get("equipped", {})
+        
+        for u_idx, k_id in equipped.items():
+            # Safety Check: Unit index matches unlocked roster size
+            if 1 <= u_idx <= len(player.units):
+                # Map 1-based index (Save) to 0-based index (List)
+                unit = player.units[u_idx - 1]
+                
+                # Fetch Kata Data
+                if k_id in scd.KATA_ID_MAP:
+                    k_name = scd.KATA_ID_MAP[k_id]
+                    k_data = scd.get_kata_data_by_name(k_name)
+                    
+                    if k_data:
+                        # 1. Equip the Kata Object (Resets deck/stats)
+                        unit.equip_kata(k_data["kata_obj"])
+                        
+                        # 2. Restore HP to Max
+                        unit.max_hp = k_data["max_hp"]
+                        unit.hp = unit.max_hp 
+                        
+                        # 3. Restore Rift Aptitude (Check Inventory for Upgrades)
+                        for inv_kata in player.inventory["katas"]:
+                            if inv_kata["name"] == k_name:
+                                unit.kata.rift_aptitude = inv_kata.get("aptitude", "I")
+                                break
+
         console.print("[green]Save Loaded Successfully![/green]")
         
         # 6. Determine State
@@ -106,12 +135,8 @@ def confirm_quit():
     choice = get_player_input()
     
     if choice == "1":
-        # CRITICAL FIX: Pass the 'player' instance, NOT 'config.player_data'
-        # The save manager needs to access player.inventory and player.currencies
+        # Pass the 'player' instance so inventory/units are accessible
         if player:
-            # Sync any stage progress first just in case
-            # (Assuming stage logic updates config.player_data, 
-            # save_manager reads that from config global, but reads inventory from player object)
             strip = save_manager.generate_save_strip(player)
             
             console.print(f"\n[bold]Here is your Save Strip, copy it:[/bold]\n")
@@ -128,11 +153,9 @@ def sync_player_roster():
     """
     latest = config.player_data.get("latest_stage", 0)
     
-    # Get list of names currently in our persistent roster
     current_roster_names = [u.name for u in player.units]
 
     # Definition of Unlocks: (Name, Required Stage Clear, Factory Function)
-    # Note: stages.py has these create functions.
     unlock_milestones = [
         ("Akasuke", 0, stages.create_akasuke),
         ("Yuri", 0, stages.create_yuri),
@@ -142,35 +165,24 @@ def sync_player_roster():
     ]
 
     for name, req_stage, factory_func in unlock_milestones:
-        # If we passed the stage AND we don't have the unit yet:
         if latest >= req_stage and name not in current_roster_names:
             new_member = factory_func()
-            
-            # Ensure the unit knows it's a player unit (crucial for UI/Save)
             new_member.is_player = True 
-            
             player.units.append(new_member)
-            
-            # Optional: Notify console purely for debug
-            # config.console.print(f"[dim]Debug: Added {name} to persistent roster.[/dim]")
 
 def get_equipped_data(unit_name):
     """
     Searches the persistent player roster for a specific unit.
-    If found, returns a dictionary packet formatted for stages.create_X().
-    If not found (e.g., first time meeting), returns None.
+    Returns dictionary for Guest injection logic.
     """
-    # 1. Find the unit in persistent storage
     found_unit = next((u for u in player.units if u.name == unit_name), None)
     
     if found_unit:
-        # 2. Package the data exactly how create_naganohara expects it
         return {
-            "kata_obj": found_unit.kata,         # The equipped Kata object
-            "max_hp": found_unit.max_hp,         # The modified HP
-            "description": found_unit.description # The modified Lore
+            "kata_obj": found_unit.kata,         
+            "max_hp": found_unit.max_hp,         
+            "description": found_unit.description 
         }
-    
     return None
 
 def run_game():
@@ -191,33 +203,27 @@ def run_game():
             if config.player_data.get("latest_stage", 0) == -1: stage_id = 0
 
             ### GUEST INJECTION LOGIC ###
-            # --- BENIKAWA INJECTION LOGIC ---
             latest_cleared = config.player_data.get("latest_stage", -1)
             
             if (latest_cleared >= 4 or stage_id == 4) and stage_id != 7:
                 has_beni = any(u.name == "Benikawa" for u in party)
                 if not has_beni:
-                    # UPDATED: Pass the persistent loadout data
                     loadout = get_equipped_data("Benikawa")
                     party.append(stages.create_benikawa(loadout))
             
             if stage_id == 7:
                 party = [p for p in party if p.name != "Benikawa"]
 
-            # --- SHIGEMURA INJECTION LOGIC ---
             if (latest_cleared >= 15 or stage_id in [151,152,153]):
                 has_shige = any(u.name == "Shigemura" for u in party)
                 if not has_shige:
-                    # UPDATED: Pass the persistent loadout data
                     loadout = get_equipped_data("Shigemura")
                     party.append(stages.create_shigemura(loadout))
             
-            # --- NAGANOHARA INJECTION LOGIC ---
             is_guest_appearance = (stage_id == 16 or stage_id in [161, 162, 163, 164, 165])
             is_officially_unlocked = (latest_cleared >= 24)
             if is_guest_appearance:
                 has_naga = any(u.name == "Naganohara" for u in party)
-                
                 if not has_naga:
                     if is_guest_appearance:
                         guest_loadout = scd.get_kata_data_by_name("Heiwa Seiritsu High School Student (Naganohara)")
@@ -226,35 +232,24 @@ def run_game():
                         loadout = get_equipped_data("Naganohara")
                         party.append(stages.create_naganohara(loadout))
 
-            # --- AKASUKE SPECIAL INJECTION LOGIC ---
             if stage_id == 21:
-                # 1. Fetch the forced Guest Data
                 guest_loadout = scd.get_kata_data_by_name("‘Iron Fist Of Heiwa’ Delinquent Leader")
                 guest_akasuke = stages.create_akasuke(guest_loadout)
                 
-                # 2. Check if Akasuke is already in the party
                 aka_index = -1
                 for i, unit in enumerate(party):
                     if unit.name == "Akasuke":
                         aka_index = i
                         break
                 
-                # 3. Inject Logic
                 if aka_index != -1:
-                    # FOUND: Replace the player's Akasuke with the Guest Version
-                    # This ensures no clones, and forces the guest stats/loadout
                     party[aka_index] = guest_akasuke
-                    #print("Existing Akasuke swapped for Guest Version.")
                 else:
-                    # NOT FOUND: Add the Guest Akasuke to the end
                     party.append(guest_akasuke)
-                    #print("Guest Akasuke added to party.")
 
-            # Stage 6 Special: Akasuke Solo
             if stage_id == 6:
                 party = [member for member in party if member.name == "Akasuke"]
 
-            # Stage 18-21 Special: Akasuke, Yuri, Benikawa only team
             if stage_id in [18,19,20,21]:
                 party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa"]]
             
@@ -289,27 +284,19 @@ def run_game():
                 rewards_text = []
                 mats = config.player_data["materials"]
                 
-                # --- NODE STAGE HANDLING (Unified Logic) ---
-                # Check if this battle belongs to the currently active Node Stage
+                # --- NODE STAGE HANDLING ---
                 np = config.player_data.get("node_progress")
-                
-                # SAFEGUARD & VALIDATION
                 is_valid_node_battle = False
                 
-                # 1. We must have active node progress (np)
-                # 2. The battle ID (e.g. 51) divided by 10 must match the active Stage ID (e.g. 5)
                 if np is not None:
                     parent_of_current_stage = stage_id // 10
                     if parent_of_current_stage == np["stage"]:
                         is_valid_node_battle = True
 
-                # ONLY execute if validation passed
                 if is_valid_node_battle: 
                     is_first_node_clear = stage_id not in config.player_data.get("cleared_stages", [])
 
-                            # --- 1. REWARD DISTRIBUTION ---
-                            
-                            # >> STAGE 1-5 (IDs 51, 52, 53)
+                    # >> STAGE 1-5 (IDs 51, 52, 53)
                     if np["stage"] == 5:
                         if stage_id in [51, 52]:
                             if is_first_node_clear:
@@ -409,7 +396,7 @@ def run_game():
                                     rewards_text.append("1x Vending Machine Coffee")
                                     mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
 
-                            # --- 2. HP PERSISTENCE & HEALING (Unified) ---
+                            # HP PERSISTENCE
                             for p in party:
                                 if p.hp > 0:
                                     missing = p.max_hp - p.hp
@@ -418,16 +405,14 @@ def run_game():
                                     if heal > 0: console.print(f"{p.name} recovers {heal} HP.")
                                 np["party_hp"][p.name] = p.hp
 
-                    # --- 3. PROGRESS TRACKING (The Fix) ---
-                    # Calculate Index: 51 - 50 - 1 = 0
+                    # PROGRESS TRACKING
                     node_idx = stage_id - (np["stage"] * 10) - 1
                     
                     if node_idx not in np["cleared_indices"]:
                         np["cleared_indices"].append(node_idx)
-                        # CRITICAL: Force save back to config to ensure persistence
                         config.player_data["node_progress"] = np
 
-                    # --- 4. COMPLETION CHECK ---
+                    # COMPLETION CHECK
                     nodes_required_map = {5: 3, 10: 4, 14: 2, 15: 3, 16: 5}
                     req_count = nodes_required_map.get(np["stage"], 99)
 
@@ -437,7 +422,6 @@ def run_game():
                         s_name = stage_name_map.get(np["stage"], "??")
                         console.print(f"[bold green]STAGE {s_name} COMPLETE![/bold green]")
 
-                        # Play Story / Update Latest Stage
                         if config.player_data["latest_stage"] < np["stage"]:
                             if np["stage"] == 10:
                                 story_manager.play_stage_1_10_end()
@@ -451,10 +435,8 @@ def run_game():
                             
                             config.player_data["latest_stage"] = np["stage"]
 
-                        # Cleanup & Save to Permanent Cleared List
                         cl = config.player_data.get("cleared_stages", [])
                         
-                        # Add individual nodes to cleared list so they don't drop First Clear rewards again
                         start_id = (np["stage"] * 10) + 1
                         for i in range(req_count):
                             nid = start_id + i
@@ -465,7 +447,6 @@ def run_game():
 
                         config.current_state = config.STATE_MAIN_MENU
                     else:
-                        # -- STAGE ONGOING --
                         config.current_state = config.STATE_NODE_SELECT
 
                 # --- STANDARD STAGES ---
@@ -523,10 +504,10 @@ def run_game():
                         else:
                             if random.random() < 0.50: rewards_text.append("1x Cafeteria Melon Bread"); mats["Cafeteria Melon Bread"] = mats.get("Cafeteria Melon Bread", 0) + 1
 
-                    elif stage_id == 8: # Rewards for 1-8 replay
+                    elif stage_id == 8: 
                         if random.random() < 0.50: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
 
-                    elif stage_id == 9: # Rewards for 1-9 replay
+                    elif stage_id == 9: 
                         if random.random() < 0.50: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
 
                     elif stage_id == 18:
@@ -591,7 +572,6 @@ def run_game():
 
                 sync_currencies()
             else:
-                # DEFEAT / RETREAT
                 console.print("[bold red]DEFEAT...[/bold red]")
                 if config.player_data.get("node_progress"):
                     config.player_data["node_progress"] = None
@@ -614,7 +594,7 @@ def run_game():
             console.print("\n[1] Stage Select")
             console.print("[2] Gacha (Parallaxis)")
             console.print("[3] Council Logs")
-            console.print("[4] Party Management") # <--- NEW OPTION
+            console.print("[4] Party Management") 
             console.print("[5] Save & Quit")
             choice = get_player_input("Select Option: ")
             if choice == "1":
@@ -731,19 +711,12 @@ def run_game():
                         console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
                         console.print("2x Microchip")
                         console.print("2x Microprocessor")
-                        
                         mats = config.player_data["materials"]
                         mats["Microchip"] = mats.get("Microchip", 0) + 2
                         mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
-                        
-                        if config.player_data["latest_stage"] < 8: 
-                            config.player_data["latest_stage"] = 8
-                        
+                        if config.player_data["latest_stage"] < 8: config.player_data["latest_stage"] = 8
                         cl = config.player_data.get("cleared_stages", [])
-                        if 8 not in cl: 
-                            cl.append(8)
-                            config.player_data["cleared_stages"] = cl
-
+                        if 8 not in cl: cl.append(8); config.player_data["cleared_stages"] = cl
                         sync_currencies()
                         get_player_input("Press Enter...")
                 else:
@@ -760,19 +733,12 @@ def run_game():
                         console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
                         console.print("2x Microchip")
                         console.print("2x Microprocessor")
-                        
                         mats = config.player_data["materials"]
                         mats["Microchip"] = mats.get("Microchip", 0) + 2
                         mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
-                        
-                        if config.player_data["latest_stage"] < 9: 
-                            config.player_data["latest_stage"] = 9
-                        
+                        if config.player_data["latest_stage"] < 9: config.player_data["latest_stage"] = 9
                         cl = config.player_data.get("cleared_stages", [])
-                        if 9 not in cl: 
-                            cl.append(9)
-                            config.player_data["cleared_stages"] = cl
-
+                        if 9 not in cl: cl.append(9); config.player_data["cleared_stages"] = cl
                         sync_currencies()
                         get_player_input("Press Enter...")
                 else:
@@ -804,18 +770,11 @@ def run_game():
                         story_manager.play_stage_1_11_story()
                         console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
                         console.print("5x Microchip")
-                        
                         mats = config.player_data["materials"]
                         mats["Microchip"] = mats.get("Microchip", 0) + 5
-                        
-                        if config.player_data["latest_stage"] < 11: 
-                            config.player_data["latest_stage"] = 11
-                        
+                        if config.player_data["latest_stage"] < 11: config.player_data["latest_stage"] = 11
                         cl = config.player_data.get("cleared_stages", [])
-                        if 11 not in cl: 
-                            cl.append(11)
-                            config.player_data["cleared_stages"] = cl
-
+                        if 11 not in cl: cl.append(11); config.player_data["cleared_stages"] = cl
                         sync_currencies()
                         get_player_input("Press Enter...")
                 else:
@@ -832,19 +791,12 @@ def run_game():
                         console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
                         console.print("2x Microchip")
                         console.print("2x Microprocessor")
-                        
                         mats = config.player_data["materials"]
                         mats["Microchip"] = mats.get("Microchip", 0) + 2
                         mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
-                        
-                        if config.player_data["latest_stage"] < 12: 
-                            config.player_data["latest_stage"] = 12
-                        
+                        if config.player_data["latest_stage"] < 12: config.player_data["latest_stage"] = 12
                         cl = config.player_data.get("cleared_stages", [])
-                        if 12 not in cl: 
-                            cl.append(12)
-                            config.player_data["cleared_stages"] = cl
-
+                        if 12 not in cl: cl.append(12); config.player_data["cleared_stages"] = cl
                         sync_currencies()
                         get_player_input("Press Enter...")
                 else:
@@ -997,9 +949,7 @@ def run_game():
                 config.current_state = config.STATE_MAIN_MENU
                 continue
             
-            # --- NODE SELECT LOGIC (DON'T DELETE) ---#
             stage_num = np["stage"]
-            
             if stage_num == 5:
                 draw_node_select_menu("1-5: Weekday Errands", np["cleared_indices"])
                 valid_indices = ["1", "2", "3"]
@@ -1021,7 +971,6 @@ def run_game():
                 valid_indices = ["1", "2", "3", "4", "5"]
                 start_id = 161
             else:
-                # Fallback / Error
                 config.current_state = config.STATE_MAIN_MENU
                 continue
 
@@ -1052,14 +1001,7 @@ def run_game():
             elif choice == "2": draw_material_logs()
 
         elif config.current_state == config.STATE_PARTY_MANAGEMENT:
-            # We pass the 'player' object so the UI can read units and inventory
-            # We expect the function to return a 'next_state' string or Handle the loop internally
-            # For consistency with your code, we'll assume a loop pattern similar to Council Logs:
             draw_party_management_menu(player)
-            
-            # Note: We assume draw_party_management_menu contains its own internal loop 
-            # for selecting characters/equipment to avoid cluttering main.py. 
-            # When it breaks that loop, we return here.  
             config.current_state = config.STATE_MAIN_MENU
 
 if __name__ == "__main__":

@@ -74,7 +74,7 @@ class Skill:
         self.alt_status_effect = None
 
 class Kata:
-    def __init__(self, name, owner_name, rarity, rift_aptitude, resistances):
+    def __init__(self, name, owner_name, rarity, rift_aptitude, resistances, description):
         self.name = name
         self.owner_name = owner_name
         self.rarity = rarity
@@ -82,6 +82,7 @@ class Kata:
         self.resistances = resistances
         self.skill_pool_def = [] 
         self.source_key = None
+        self.description = description
         
     def generate_deck(self):
         deck = []
