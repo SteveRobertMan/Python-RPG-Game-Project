@@ -11,7 +11,7 @@ def create_akasuke(equipped_kata_data=None):
 
     # 1. Resolve Loadout
     if not equipped_kata_data:
-        equipped_kata_data = scd.get_kata_data_by_name("Akasuke (Default)")
+        equipped_kata_data = scd.get_kata_data_by_name("Kasakura High School Student Akasuke")
 
     # 2. Apply Stats & Kata
     if equipped_kata_data:
@@ -30,7 +30,7 @@ def create_yuri(equipped_kata_data=None):
     unit = Entity("Yuri", is_player=True)
 
     if not equipped_kata_data:
-        equipped_kata_data = scd.get_kata_data_by_name("Yuri (Default)")
+        equipped_kata_data = scd.get_kata_data_by_name("Kasakura High School Student Yuri")
 
     if equipped_kata_data:
         custom_kata = equipped_kata_data["kata_obj"]
@@ -48,7 +48,7 @@ def create_benikawa(equipped_kata_data=None):
     unit = Entity("Benikawa", is_player=True)
 
     if not equipped_kata_data:
-        equipped_kata_data = scd.get_kata_data_by_name("Benikawa (Default)")
+        equipped_kata_data = scd.get_kata_data_by_name("Kasakura High School Student Benikawa")
 
     if equipped_kata_data:
         custom_kata = equipped_kata_data["kata_obj"]
@@ -66,7 +66,7 @@ def create_shigemura(equipped_kata_data=None):
     unit = Entity("Shigemura", is_player=True)
 
     if not equipped_kata_data:
-        equipped_kata_data = scd.get_kata_data_by_name("Shigemura (Default)")
+        equipped_kata_data = scd.get_kata_data_by_name("Kasakura High School Student Shigemura")
 
     if equipped_kata_data:
         custom_kata = equipped_kata_data["kata_obj"]
@@ -84,7 +84,7 @@ def create_naganohara(equipped_kata_data=None):
     unit = Entity("Naganohara", is_player=True)
 
     if not equipped_kata_data:
-        equipped_kata_data = scd.get_kata_data_by_name("Naganohara (Default)")
+        equipped_kata_data = scd.get_kata_data_by_name("Kasakura High School Student Naganohara")
 
     if equipped_kata_data:
         custom_kata = equipped_kata_data["kata_obj"]
@@ -101,7 +101,7 @@ def create_natsume(equipped_kata_data=None):
     unit = Entity("Natsume", is_player=True)
 
     if not equipped_kata_data:
-        equipped_kata_data = scd.get_kata_data_by_name("Natsume (Default)")
+        equipped_kata_data = scd.get_kata_data_by_name("Kasakura High School Student Natsume")
 
     if equipped_kata_data:
         custom_kata = equipped_kata_data["kata_obj"]
@@ -118,7 +118,7 @@ def create_hana(equipped_kata_data=None):
     unit = Entity("Hana", is_player=True)
 
     if not equipped_kata_data:
-        equipped_kata_data = scd.get_kata_data_by_name("Hana (Default)")
+        equipped_kata_data = scd.get_kata_data_by_name("Kasakura High School Student Hana")
 
     if equipped_kata_data:
         custom_kata = equipped_kata_data["kata_obj"]
@@ -135,7 +135,7 @@ def create_kagaku(equipped_kata_data=None):
     unit = Entity("Kagaku", is_player=True)
 
     if not equipped_kata_data:
-        equipped_kata_data = scd.get_kata_data_by_name("Kagaku (Default)")
+        equipped_kata_data = scd.get_kata_data_by_name("Kasakura High School Student Kagaku")
 
     if equipped_kata_data:
         custom_kata = equipped_kata_data["kata_obj"]
@@ -255,7 +255,7 @@ def load_stage_enemies(stage_id):
         leader.equip_kata(k_lead)
         enemies.append(leader)
 
-    elif stage_id == 51:
+    elif stage_id == 5001:
         res = [0.8, 0.8, 0.9, 0.9, 0.9, 0.9, 0.8]
         for i, label in enumerate(["A", "B", "C"]):
             fresh = Entity(f"Class-Skipping Freshman {label}", is_player=False)
@@ -268,7 +268,7 @@ def load_stage_enemies(stage_id):
             fresh.equip_kata(k)
             enemies.append(fresh)
 
-    elif stage_id == 52:
+    elif stage_id == 5002:
         res = [1.5] * 7
         for i, label in enumerate(["A", "B", "C", "D"]):
             hool = Entity(f"Kidnapper Hooligan {label}", is_player=False)
@@ -280,7 +280,7 @@ def load_stage_enemies(stage_id):
             hool.equip_kata(k)
             enemies.append(hool)
 
-    elif stage_id == 53:
+    elif stage_id == 5003:
         res_f = [0.8, 0.8, 0.9, 0.9, 0.9, 0.9, 0.8]
         for label in ["A", "B"]:
             fresh = Entity(f"Class-Skipping Freshman {label}", is_player=False)
@@ -371,7 +371,7 @@ def load_stage_enemies(stage_id):
             enemies.append(double)
 
     # --- ACT 1 DELINQUENT NODES ---
-    elif stage_id == 101:
+    elif stage_id == 10001:
         res = [1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2]
         for i, label in enumerate(["A", "B", "C"]):
             slender = Entity(f"Slender Heiwa Seiritsu Delinquent {label}", is_player=False)
@@ -386,7 +386,7 @@ def load_stage_enemies(stage_id):
             slender.equip_kata(k)
             enemies.append(slender)
 
-    elif stage_id == 102:
+    elif stage_id == 10002:
         res = [1.2, 1.4, 1.6, 1.4, 1.6, 1.4, 1.6]
         for i, label in enumerate(["A", "B", "C"]):
             bulky = Entity(f"Bulky Heiwa Seiritsu Delinquent {label}", is_player=False)
@@ -401,7 +401,7 @@ def load_stage_enemies(stage_id):
             bulky.equip_kata(k)
             enemies.append(bulky)
 
-    elif stage_id == 103:
+    elif stage_id == 10003:
         res_s = [1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2]
         for label in ["A", "B"]:
             slender = Entity(f"Slender Heiwa Seiritsu Delinquent {label}", is_player=False)
@@ -425,7 +425,7 @@ def load_stage_enemies(stage_id):
         bulky.equip_kata(k_b)
         enemies.append(bulky)
 
-    elif stage_id == 104:
+    elif stage_id == 10004:
         res_b = [1.2, 1.4, 1.6, 1.4, 1.6, 1.4, 1.6]
         for label in ["A", "B"]:
             bulky = Entity(f"Bulky Heiwa Seiritsu Delinquent {label}", is_player=False)
@@ -521,60 +521,60 @@ def load_stage_enemies(stage_id):
         return bulky
 
     # Stage 2-3 (Node 1)
-    if stage_id == 141:
+    if stage_id == 14001:
         enemies.append(make_slender("A"))
         enemies.append(make_slender("B"))
         enemies.append(make_bulky())
 
     # Stage 2-3 (Node 2)
-    elif stage_id == 142:
+    elif stage_id == 14002:
         enemies.append(make_slender())
         enemies.append(make_bulky("A"))
         enemies.append(make_bulky("B"))
 
     # Stage 2-4 (Node 1)
-    elif stage_id == 151:
+    elif stage_id == 15001:
         enemies.append(make_spike("A"))
         enemies.append(make_spike("B"))
 
     # Stage 2-4 (Node 2)
-    elif stage_id == 152:
+    elif stage_id == 15002:
         enemies.append(make_chain("A"))
         enemies.append(make_chain("B"))
 
     # Stage 2-4 (Node 3)
-    elif stage_id == 153:
+    elif stage_id == 15003:
         enemies.append(make_spike())
         enemies.append(make_chain())
 
     # Stage 2-5 (Node 1)
-    elif stage_id == 161:
+    elif stage_id == 16001:
         enemies.append(make_slender("A"))
         enemies.append(make_slender("B"))
         enemies.append(make_spike("A"))
         enemies.append(make_spike("B"))
 
     # Stage 2-5 (Node 2)
-    elif stage_id == 162:
+    elif stage_id == 16002:
         enemies.append(make_bulky("A"))
         enemies.append(make_bulky("B"))
         enemies.append(make_chain("A"))
         enemies.append(make_chain("B"))
 
     # Stage 2-5 (Node 3)
-    elif stage_id == 163:
+    elif stage_id == 16003:
         enemies.append(make_spike("A"))
         enemies.append(make_spike("B"))
         enemies.append(make_chain())
 
     # Stage 2-5 (Node 4)
-    elif stage_id == 164:
+    elif stage_id == 16004:
         enemies.append(make_spike())
         enemies.append(make_chain("A"))
         enemies.append(make_chain("B"))
 
     # Stage 2-5 (Node 5)
-    elif stage_id == 165:
+    elif stage_id == 16005:
         enemies.append(make_slender())
         enemies.append(make_bulky())
         enemies.append(make_spike())

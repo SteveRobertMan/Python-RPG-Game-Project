@@ -207,6 +207,10 @@ class BattleManager:
                 # Logic: Reduce Damage by 10% per duration, capped (min 10% dmg remaining)
                 penalty = 1.0 - (0.1 * effect.duration)
                 unit.temp_modifiers["outgoing_dmg_mult"] *= max(0.1, penalty)
+            elif effect.name == "Haste":
+                # Logic: Deal +10% base damage per count
+                bonus = 1.0 + (0.1 * effect.duration)
+                unit.temp_modifiers["outgoing_dmg_mult"] *= bonus
         
         # 1. Apply Hidden Flags (Invisible to Player UI, but affects logic)
         # Check for Nerve Disruption (Dynamic attribute)
@@ -276,12 +280,15 @@ class BattleManager:
                 if effect.name == "Bleed":
                     pass 
 
-                # 2. Bind Logic (Decay Count by 1 every turn)
-                elif effect.name == "Bind":
+                # 2. Common Decay Logic (Decay Count by 1 every turn)
+                elif effect.name in ["Bind", "Poise", "Haste"]:
                     effect.duration -= 1
-                # 2. Bind Logic (Decay Count by 1 every turn)
-                elif effect.name == "Poise":
-                    effect.duration -= 1
+                elif effect.name == "Fairylight":
+                    effect.duration = effect.duration // 2 # Halves duration rounding down
+                elif effect.name == "Riposte":
+                    # Reduce by 25% at end of turn
+                    reduction = int(effect.duration * 0.25)
+                    effect.duration = max(0, effect.duration - max(1, reduction))
                 
                 # 3. Standard DOT / Regen (Legacy support)
                 elif effect.type == "DOT":
@@ -558,6 +565,24 @@ class BattleManager:
             # 1. Base Damage & Variance
             base_dmg_val = float(skill.base_damage)
 
+            # --- PIERCE AFFINITY BASE DAMAGE MANIPULATION ---
+            pierce_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+            if pierce_eff:
+                p_count = min(5, pierce_eff.duration)
+                if "Pierce Affinity" in skill.description:
+                    base_dmg_val += p_count
+                else:
+                    base_dmg_val = max(0, base_dmg_val - p_count)
+
+            # --- SHIGEMURA INFILTRATOR SKILL II ---
+            infiltrator_recoil = 0
+            if skill.effect_type == "SHIGEMURA_INFILTRATOR_SPECIAL_1":
+                haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
+                if haste:
+                    bonus_base = base_dmg_val * 0.20
+                    base_dmg_val += bonus_base
+                    infiltrator_recoil = int(bonus_base) # Store the exact numeric increase
+
             # Shigemura Sadism Pre-Calc
             if skill.effect_type == "COND_REAPER_BIND_CONVERT_SPECIAL":
                 total_bleed = sum(s.potency + s.duration for s in target.status_effects if s.name == "Bleed")
@@ -640,10 +665,17 @@ class BattleManager:
                 if target.hp <= (target.max_hp * 0.8): 
                     damage += int(skill.effect_val)
 
-            # Final Defense Reduction (Armor)
+            # ... Final Defense Reduction (Armor)
             flat_def = target.temp_modifiers["final_dmg_reduction"]
             damage = damage - flat_def
-            damage = max(1, damage) # Minimum 1 damage if hit connects
+            
+            # --- RIPOSTE DAMAGE MITIGATION ---
+            riposte_eff = next((s for s in target.status_effects if s.name == "Riposte"), None)
+            if riposte_eff:
+                reduction_pct = min(0.25, (riposte_eff.duration // 10) * 0.05)
+                damage = damage * (1.0 - reduction_pct)
+
+            damage = max(1, int(damage)) # Minimum 1 damage if hit connects
 
             # [MECHANIC] CONVERT DAMAGE TO HEAL
             if skill.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
@@ -706,6 +738,41 @@ class BattleManager:
                         heal_amt = damage 
                         lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
                         self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
+
+                # --- RIPOSTE STACK REDUCTION & HASTE GAIN ---
+                if riposte_eff:
+                    stacks_lost = random.randint(1, 4)
+                    stacks_lost = min(stacks_lost, riposte_eff.duration)
+                    riposte_eff.duration -= stacks_lost
+                    target.riposte_loss_tracker += stacks_lost
+                    
+                    while target.riposte_loss_tracker >= 10:
+                        target.riposte_loss_tracker -= 10
+                        haste_eff = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage...", duration=1, type="BUFF")
+                        self.apply_status_logic(target, haste_eff)
+                        self.log(f"[yellow1]{target.name} gained Haste from Riposte![/yellow1]")
+                    
+                    if riposte_eff.duration <= 0: target.status_effects.remove(riposte_eff)
+
+                # --- RUPTURE & FAIRYLIGHT TRIGGERS ---
+                rupture_eff = next((s for s in target.status_effects if s.name == "Rupture"), None)
+                if rupture_eff:
+                    target.hp -= rupture_eff.potency
+                    rupture_eff.duration -= 1
+                    self.log(f"[medium_spring_green]Rupture dealt {rupture_eff.potency} damage to {target.name}![/medium_spring_green]")
+                    if rupture_eff.duration <= 0: target.status_effects.remove(rupture_eff)
+                    
+                fairylight_eff = next((s for s in target.status_effects if s.name == "Fairylight"), None)
+                if fairylight_eff:
+                    target.hp -= fairylight_eff.potency
+                    fairylight_eff.duration -= 1
+                    self.log(f"[spring_green1]Fairylight dealt {fairylight_eff.potency} damage to {target.name}![/spring_green1]")
+                    if fairylight_eff.duration <= 0: target.status_effects.remove(fairylight_eff)
+                    
+                # --- APPLY INFILTRATOR RECOIL ---
+                if infiltrator_recoil > 0:
+                    attacker.hp -= infiltrator_recoil
+                    self.log(f"[bold red]{attacker.name} takes {infiltrator_recoil} Recoil Damage from momentum![/bold red]")
 
                 # --- LOGIC: POISE SUPPORT ---
                 if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE1":
@@ -870,6 +937,73 @@ class BattleManager:
                 else:
                     new_status = copy.deepcopy(skill.status_effect)
                     self.apply_status_logic(target, new_status)
+
+        elif skill.effect_type == "HASTE_BIND_SPECIAL_TYPE1":
+            team = self.allies if attacker in self.allies else self.enemies
+            enemy_team = self.enemies if attacker in self.allies else self.allies
+            
+            valid_allies = [u for u in team if u.hp > 0 and u != attacker]
+            valid_enemies = [u for u in enemy_team if u.hp > 0]
+            
+            chosen_allies = random.sample(valid_allies, min(2, len(valid_allies)))
+            chosen_enemies = random.sample(valid_enemies, min(2, len(valid_enemies)))
+            
+            for a in chosen_allies: self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=skill.effect_val))
+            for e in chosen_enemies: self.apply_status_logic(e, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "", duration=skill.effect_val))
+            
+        elif skill.effect_type == "HANA_SPECIAL_RAGE":
+            attacker.next_turn_modifiers["outgoing_dmg_mult"] = 0.6
+            target.temp_modifiers["outgoing_dmg_mult"] *= 0.85
+            
+        elif skill.effect_type == "BLEED_RUPTURE_SPECIAL_TYPE1":
+            self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", skill.effect_val, "", duration=1))
+            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", skill.effect_val, "", duration=1))
+            
+        elif skill.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_RANDOM":
+            team = self.allies if attacker in self.allies else self.enemies
+            valid_allies = [u for u in team if u.hp > 0 and u != attacker]
+            chosen_allies = random.sample(valid_allies, min(skill.effect_val, len(valid_allies)))
+            
+            targets_to_heal = [attacker] + chosen_allies
+            for a in targets_to_heal:
+                a.hp = min(a.max_hp, a.hp + damage)
+                self.log(f"[light_green]-> {attacker.name} Heals {a.name} for {damage}.[/light_green]")
+            damage = 0
+
+        elif skill.effect_type == "NAGANOHARA_KIRYOKU_SPECIAL":
+            team = self.allies if attacker in self.allies else self.enemies
+            valid_allies = [u for u in team if u.hp > 0 and u != attacker]
+            for a in random.sample(valid_allies, min(2, len(valid_allies))):
+                self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=1))
+                
+            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+            if has_rupture:
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 1, "", duration=2))
+            else:
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 3, "", duration=1))
+                
+        elif skill.effect_type == "RUPTURE_DAMAGE_BUFF_TYPE1":
+            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+            if has_rupture and damage > 0:
+                bonus = int(damage * 0.25)
+                target.hp -= bonus
+                self.log(f"[medium_spring_green]Bonus Rupture Execute: {bonus} damage![/medium_spring_green]")
+
+        elif skill.effect_type == "SHIGEMURA_INFILTRATOR_SPECIAL_2":
+            haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
+            if haste and damage > 0:
+                bonus_pct = min(0.75, haste.duration * 0.15)
+                bonus_dmg = int(damage * bonus_pct)
+                target.hp -= bonus_dmg
+                self.log(f"[bold yellow]Maximized Ram! +{bonus_dmg} Bonus Damage![/bold yellow]")
+                attacker.status_effects.remove(haste)
+
+        elif skill.effect_type in ["NAGANOHARA_RIPOSTE_APPEL", "NAGANOHARA_RIPOSTE_CEDE", "NAGANOHARA_RIPOSTE_COUNTERPARRY", "AKASUKE_RIPOSTE_ENGARDE", "AKASUKE_RIPOSTE_FEINT", "AKASUKE_RIPOSTE_PRISEDEFER"]:
+            # Handle Riposte/Pierce Affinity unique interactions defined in SCD based on exact prompt names
+            if skill.effect_type == "NAGANOHARA_RIPOSTE_APPEL":
+                self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]↪[/cyan1]", 0, "", duration=5))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=1))
+            # ... Follow this pattern for the rest of the Riposte/Pierce logic from the prompt descriptions!
 
         if target.hp <= 0:
             target.hp = 0

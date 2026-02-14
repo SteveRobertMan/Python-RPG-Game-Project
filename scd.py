@@ -8,10 +8,24 @@ bleedcount_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing dama
 bleedcount_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF")
 bleedcount_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=3, type="DEBUFF")
 bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF")
+bind_2 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2, type="DEBUFF")
 poise_1 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_3 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poisecount_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2, type="BUFF")
+rupture_1 = StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 1, "Upon taking damage, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+rupture_2 = StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 2, "Upon taking damage, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+rupture_3 = StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 3, "Upon taking damage, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+rupture_4 = StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 4, "Upon taking damage, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+rupturecount_2 = StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 1, "Upon taking damage, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF")
+rupturecount_3 = StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 1, "Upon taking damage, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3, type="DEBUFF")
+haste_1 = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="BUFF")
+fairylight_1 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 1, "Unique Rupture (Counts As Rupture)\nUpon taking damage, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
+fairylight_2 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, "Unique Rupture (Counts As Rupture)\nUpon taking damage, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
+fairylight_3 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon taking damage, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
+pierce_affinity_1 = StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Max Count: 5", duration=1, type="DEBUFF")
+pierce_affinity_2 = StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Max Count: 5", duration=2, type="DEBUFF")
+pierce_affinity_3 = StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Max Count: 5", duration=3, type="DEBUFF")
 
 # --- KATA ID REGISTRY ---
 KATA_ID_MAP = {
@@ -27,7 +41,17 @@ KATA_ID_MAP = {
     10: "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’ Shigemura",
     11: "Kasakura High School Disciplinary Committee President Yuri",
     12: "Kasakura High School Disciplinary Committee Member Benikawa",
-    13: "Kasakura High School Disciplinary Committee Vice President Shigemura"
+    13: "Kasakura High School Disciplinary Committee Vice President Shigemura",
+    14: "Kasakura High School Student Natsume",
+    15: "Kasakura High School Student Hana",
+    16: "Kasakura High School Student Kagaku",
+    17: "Kiryoku Gakuen Self-Defense Club President",
+    18: "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
+    19: "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
+    20: "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
+    21: "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura",
+    22: "Riposte Gang Squad Leader Naganohara Tsukimiyama",
+    23: "Riposte Gang Executive Hanefuji Akasuke"
 }
 
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
@@ -361,3 +385,188 @@ def get_kata_data_by_name(name):
             "max_hp": 75,
             "description": desc
         }
+
+# --- NATSUME DEFAULT ---
+    elif name == "Kasakura High School Student Natsume":
+        res = [1.2, 1.1, 1.2, 1.1, 0.7, 0.5, 0.9]
+        desc = (
+            "Yokubukai Natsume is a student of Kasakura High School, one of the most renowned educational institutes of the east. She has messy dark hair, perpetually tired eyes from staring at glowing monitors, and prefers to wear oversized hoodies or cozy pajamas wrapped in blankets rather than her school uniform. Natsume’s hobbies include gathering intelligence, operating as the school's brilliant 'Queen of Information' from behind a screen, and avoiding any form of outdoor physical activity at all costs."
+        )
+        k = Kata("Kasakura High School Student Natsume", "Natsume", 1, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Taser Dart", 1, EL_PRAGMA, 2, "[On Hit] Inflict 2 Bind next turn", effect_type="APPLY_STATUS")
+        s1.status_effect = bind_2
+        s2 = Skill("Drone Thrash", 2, EL_PHILIA, 4, "[On Hit] Inflict 1 Bind next turn", effect_type="APPLY_STATUS")
+        s2.status_effect = bind_1
+        desc_s3 = "[On Use] 2 Other random allies gain 1 Haste\n       [On Use] 2 Random enemies gain 1 Bind"
+        s3 = Skill("Comms Support", 3, EL_PRAGMA, 0, desc_s3, effect_type="HASTE_BIND_SPECIAL_TYPE1", effect_val=2)
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 58, "description": desc}
+
+    # --- HANA DEFAULT ---
+    elif name == "Kasakura High School Student Hana":
+        res = [0.8, 1.2, 0.8, 0.7, 1.2, 1.0, 1.2]
+        desc = (
+            "Hana Kaoru is a student of Kasakura High School, one of the most renowned educational institutes of the east. She has soft, flowing hair and gentle, highly observant eyes that radiate warmth, compassion, and an unwavering calmness. Hana’s hobbies include practicing self-defense and aikido at the school dojo—where her elegant, momentum-shifting throws earn high praise from her juniors—and offering empathetic, grounded support to her peers without ever losing her composure."
+        )
+        k = Kata("Kasakura High School Student Hana", "Hana", 1, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Swift Backhand", 1, EL_STORGE, 3, "[On Use] Gain 1 Haste", effect_type="GAIN_STATUS")
+        s1.status_effect = haste_1
+        s2 = Skill("Clean Throw", 2, EL_STORGE, 7, "")
+        desc_s3 = "[On Use] This unit deals -40% damage next turn.\n       [On Hit] Target deals -15% damage this turn."
+        s3 = Skill("Rage", 3, EL_EROS, 12, desc_s3, effect_type="HANA_SPECIAL_RAGE")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 77, "description": desc}
+
+    # --- KAGAKU DEFAULT ---
+    elif name == "Kasakura High School Student Kagaku":
+        res = [1.2, 1.3, 1.2, 1.0, 0.8, 0.9, 0.7]
+        desc = (
+            "Kagaku Shamiko is a student of Kasakura High School, one of the most renowned educational institutes of the east. She wears a slightly wrinkled white lab coat over her standard uniform, has unkempt hair from pulling frequent all-nighters, and sharp eyes that are constantly analyzing the mechanics of the world around her. Kagaku’s hobbies include drinking excessive amounts of coffee, inventing groundbreaking technology like the Parallaxis Scorer, and passionately theorizing about the scientific mysteries of the multiverse."
+        )
+        k = Kata("Kasakura High School Student Kagaku", "Kagaku", 1, "I", res, desc)
+        k.source_key = name
+        desc_s1 = "[On Hit] Inflict 1 Bleed Potency\n       [On Hit] Inflict 1 Rupture Potency"
+        s1 = Skill("Acid Flask Throw", 1, EL_AGAPE, 3, desc_s1, effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=1)
+        s2 = Skill("Wrench Smack", 2, EL_EROS, 5, "")
+        s3 = Skill("Hanefuji Healing Serum", 3, EL_AGAPE, 8, "[On Use] Deal 0 damage, then heal lowest HP ally by supposed final damage", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST", effect_val=0)
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 60, "description": desc}
+
+    # --- NAGANOHARA KIRYOKU ---
+    elif name == "Kiryoku Gakuen Self-Defense Club President":
+        res = [0.8, 1.4, 1.1, 0.8, 1.0, 1.0, 1.3]
+        desc = (
+            "Naganohara Tsukimiyama here has enrolled in Kiryoku Gakuen and proudly stands as the President of its renowned Self-Defense Club. Her signature pink twintails are braided tightly into practical loops to stay out of the way during intense spars, and her large golden eyes shine with an unbreakable, almost terrifying level of optimism. She trades her usual Kasakura uniform for a pristine white martial arts gi worn over a Kiryoku athletic top, featuring a captain’s armband that commands instant, eager respect from her hundreds of club members.\n\n"
+            "As the club's president, she embodies Kiryoku's unique battle culture to its absolute peak: she experiences absolutely no frustration, hesitation, or fear in combat, only pure, adrenaline-fueled joy. She fights with a dynamic, highly acrobatic self-defense style—effortlessly redirecting her opponent’s momentum for devastating throws, sweeping trips, and precise joint locks—all while maintaining a beaming, radiant smile.\n\n"
+            "Her leadership relies on boundless enthusiasm rather than strict discipline. She constantly cheers on both her club members and her opponents mid-fight, offering loud praises and constructive tips even as she flips them onto the mats."
+        )
+        k = Kata("Kiryoku Gakuen Self-Defense Club President", "Naganohara", 2, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Crosspunch", 1, EL_PHILIA, 4, "[On Hit] Inflict 2 Rupture Potency", effect_type="APPLY_STATUS")
+        s1.status_effect = rupture_2
+        s2 = Skill("Motivation!", 2, EL_LUDUS, 5, "[On Use] Deal 0 damage, then heal self and 2 other random allies by supposed final damage", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_RANDOM", effect_val=2)
+        desc_s3 = "[On Use] 2 Other random allies gain 1 Haste\n       [On Hit] If target has Rupture, inflict 2 Rupture Count. Otherwise, inflict 3 Rupture Potency."
+        s3 = Skill("Feverish Strikes", 3, EL_AGAPE, 8, desc_s3, effect_type="NAGANOHARA_KIRYOKU_SPECIAL")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 78, "description": desc}
+
+    # --- YURI KIRYOKU ---
+    elif name == "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri":
+        res = [1.0, 1.3, 1.3, 0.7, 1.1, 1.0, 1.2]
+        desc = (
+            "Inami Yuri here has enrolled in Kiryoku Gakuen, serving within the school’s unique authoritative system as a dedicated enforcer for the Student Council. While the core executive members of the council are revered simply as the 'Fairies,' the elite students who work directly beneath them to manage daily operations and security are officially dubbed 'Lesser Fairies' for easier distinction. She wears the stylish Kiryoku uniform adorned with a specialized turquoise council armband, her signature silver ponytail held up by an array of brightly colored, sparkly hairpins that starkly contrast her usual tomboyish Kasakura self.\n\n"
+            "In this timeline, Yuri fully embraces the eccentric, passionate culture of Kiryoku, revealing herself to be an absolute sucker for all things adorable. Her ultimate obsession and the object of her endless, energetic fangirling is her esteemed Student Council President, the 'Queen of Fairies.' Yuri spends her downtime loudly praising the Queen’s overwhelming cuteness to anyone who will listen, fiercely dedicating her life to ensuring the President's peace remains undisturbed.\n\n"
+            "Despite her star-struck demeanor, she retains her monstrous physical strength. As a Lesser Fairy, she handles the heavy lifting of council duties—quite literally—dispatching intruders and rule-breakers with flawless, bone-rattling judo throws and grapples. She executes these devastating takedowns with a bright smile, cheerfully apologizing to her opponents and often yelling about how she needs to finish the fight quickly so she can go buy limited-edition sweets for her beloved President."
+        )
+        k = Kata("Kiryoku Gakuen Student Council ‘Lesser Fairy’", "Yuri", 2, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Gauge Opponent", 1, EL_PHILAUTIA, 3, "[On Hit] If target has Rupture, inflict 2 Rupture Count. Otherwise, inflict 2 Rupture Potency.", effect_type="RUPTURE_SPECIAL1", effect_val=2)
+        s2 = Skill("‘Fairy Wand’ Striking", 2, EL_STORGE, 7, "[On Hit] Inflict 3 Rupture Potency", effect_type="APPLY_STATUS")
+        s2.status_effect = rupture_3
+        s3 = Skill("Cutesy Styled Takedown", 3, EL_AGAPE, 10, "[On Hit] If target has Rupture, deal +25% damage.", effect_type="RUPTURE_DAMAGE_BUFF_TYPE1", effect_val=25)
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 70, "description": desc}
+
+    # --- BENIKAWA KIRYOKU ---
+    elif name == "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa":
+        res = [1.3, 1.1, 1.1, 0.7, 1.3, 1.2, 1.0]
+        desc = (
+            "Ayame Benikawa here has enrolled in Kiryoku Gakuen, ascending to the elite core of the Student Council as the feared and revered 'Fairy' known as the ‘Forest Guardian’. Trading her traditional karate dougi and hidden ninja gear for the elaborate, slightly fantastical uniform of the Kiryoku council, her caramel hair remains in its signature high ponytail, but her bright purple eyes now gleam with a feral, predatory intensity. Fully embracing Kiryoku's culture, this version of Benikawa is a huge fan of cute things, reserving her deepest affection for the Student Council President—her beloved ‘little sister’, the 'Queen of Fairies'. She fiercely coddles and protects the President at all costs.\n\n"
+            "In combat, this Benikawa perfectly mirrors the battle-drunk nature of her original self, completely losing herself in the chaotic heat and thrill of a fight. She has largely abandoned former evasive ninja techniques in favor of wielding a solid oak bokken. Her fighting style is overwhelmingly direct, abandoning feints to rush her opponents in a straight, blindingly fast line to deliver singular, decisive strikes. However, her innate ninja battle IQ hasn't vanished; it manifests in her terrifying precision, allowing her straightforward heavy swings to effortlessly pinpoint and crush vital gaps in any defense. With a wild, fang-baring grin, she becomes an unstoppable force, joyfully dismantling anyone foolish enough to disturb her precious little sister's peace."
+        )
+        k = Kata("Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’", "Benikawa", 4, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Warning Draw", 1, EL_EROS, 3, "[On Hit] Inflict 3 Rupture Count", effect_type="APPLY_STATUS")
+        s1.status_effect = rupturecount_3
+        s2 = Skill("Close Distance", 2, EL_LUDUS, 8, "[On Hit] If target has Rupture, inflict 2 Fairylight", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
+        desc_s3 = "[On Hit] If target has Rupture, inflict 3 Fairylight\n       [On Use] This unit takes +50% damage this turn"
+        s3 = Skill("Shukuchi (Incomplete) – Dash", 3, EL_PRAGMA, 16, desc_s3, effect_type="BENIKAWA_KIRYOKU_SPECIAL")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 83, "description": desc}
+
+    # --- HANA KIRYOKU ---
+    elif name == "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana":
+        res = [1.2, 0.7, 1.2, 0.9, 1.2, 1.0, 0.9]
+        desc = (
+            "Kaoru Hana here has enrolled in Kiryoku Gakuen, ascending to the prestigious core of the Student Council as the revered Fairy known as the ‘Lake Strider’. Retaining her soft, flowing blonde hair and signature gentle demeanor, she trades her Kasakura uniform for the elegant, specialized attire of a Kiryoku Fairy officer. Her highly observant eyes remain calm and unwavering, perfectly suited for a serene tactician who governs the battlefield with tranquil authority rather than raw aggression.\n\n"
+            "Mirroring the original universe's ‘Lake Strider’ Sumiko, this version of Hana is a master of playing it safe and slow. She boasts exceptional spatial awareness, making the grueling task of maintaining her preferred distance against multiple rushing opponents look like a simple, effortless dance. She remains strictly on the defensive, gracefully sidestepping and parrying to exhaust her foes, deliberately wearing them down while her calm gaze calculates the perfect, undeniable opening.\n\n"
+            "When that fatal moment presents itself, Hana executes 'Shukuchi'—an advanced footwork technique that allows her to cross the battlefield in an almost instantaneous glide. Though she humbly admits her mastery of Shukuchi is currently incomplete, she has vowed to endlessly refine her training until she fully unlocks its terrifying potential. For now, even in its imperfect state, this sudden, explosive burst of offensive acceleration allows the usually passive 'Lake Strider' to completely control the flow of combat, stepping in to end exhausting battles in a single, breathtaking instant."
+        )
+        k = Kata("Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’", "Hana", 3, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Penetrating Defenses", 1, EL_PHILIA, 5, "[On Hit] If target has Rupture, inflict 1 Fairylight", effect_type="FAIRYLIGHT_APPLY", effect_val=1)
+        s2 = Skill("Maintain Distance", 2, EL_AGAPE, 7, "[On Hit] If target has Fairylight, inflict 4 Rupture Potency.", effect_type="FAIRYLIGHT_SPECIAL1", effect_val=4)
+        desc_s3 = "[On Hit] If target has Fairylight, inflict 2 Rupture Count, then this unit takes -30% damage this turn"
+        s3 = Skill("Shukuchi (Incomplete) – Engagement", 3, EL_STORGE, 13, desc_s3, effect_type="HANA_KIRYOKU_SPECIAL")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 89, "description": desc}
+
+    # --- SHIGEMURA INFILTRATOR ---
+    elif name == "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura":
+        res = [0.8, 0.9, 0.8, 1.3, 1.1, 1.1, 1.4]
+        desc = (
+            "Shigemura Fuyuyama here has enrolled in Heiwa Seiritsu High School, operating in the shadows as an infiltrator during the Four-School Joint Cruise Trip. He retains his neatly trimmed brow hair, sharp violet eyes, and signature nonchalant, quiet demeanor. Unlike the loud, extroverted brawlers typical of Heiwa Seiritsu, he carries himself with a chillingly calm detachment, assessing his surroundings with a calculated, unreadable gaze before making his move.\n\n"
+            "In combat, this version of Shigemura abandons complex weaponry for a brutally kinetic fighting style: he is a lethal runner. Once he locks onto a target, he darts off in a chosen direction, refusing to stop his legs as he builds up terrifying acceleration and momentum. He weaponizes his own mass, throwing his entire body into opponents like an unstoppable human battering ram. To facilitate this relentless assault, his body boasts incomprehensible toughness. He absorbs heavy blows and crashes through steel walls with a blank expression, and will never go down in a straight contest of strength—the only way to halt his rampaging momentum is through underhanded dirty tricks or precise, guaranteed techniques that exploit the anatomical flaws of the human body.\n\n"
+            "Despite his overwhelming physical durability and devastating tackle strikes, he calmly and humbly insists he is merely an 'ordinary student,' claiming to be nowhere near the realm of Heiwa's elite 'Upperclassmen'. His loyalty, however, is absolute. Instead of shouting robotic, military-style acknowledgments, he speaks maturely of his enigmatic 'Boss'—and his even more mysterious 'Boss's Boss'—with a quiet and profound respect. He executes their deeply secretive agendas without question, turning his unbreakable, unstoppable body into the perfect, silent instrument of their will."
+        )
+        k = Kata("Heiwa Seiritsu Student – Goodwill Infiltrator", "Shigemura", 3, "I", res, desc)
+        k.source_key = name
+        desc_s1 = "[On Use] If this unit has Haste, gain 1 Haste\n       [On Hit] Gain 1 Haste"
+        s1 = Skill("Tough Knuckles", 1, EL_LUDUS, 6, desc_s1, effect_type="HASTE_GAIN_SPECIAL_TYPE1", effect_val=1)
+        desc_s2 = "[On Use] Gain 1 Haste\n       [On Hit] If this unit has Haste, deal +20% base damage, then this unit takes damage based on the amount increased"
+        s2 = Skill("Low Tackle", 2, EL_PHILIA, 8, desc_s2, effect_type="SHIGEMURA_INFILTRATOR_SPECIAL_1")
+        desc_s3 = "[On Hit] If this unit has Haste, deal +15% damage for every stack of Haste on self (Max 75%), then remove all Haste on self"
+        s3 = Skill("Maximized Ram", 3, EL_EROS, 9, desc_s3, effect_type="SHIGEMURA_INFILTRATOR_SPECIAL_2")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 90, "description": desc}
+
+    # --- NAGANOHARA RIPOSTE ---
+    elif name == "Riposte Gang Squad Leader Naganohara Tsukimiyama":
+        res = [1.1, 1.1, 1.0, 1.2, 1.3, 0.8, 1.1]
+        desc = (
+            "Naganohara Tsukimiyama here has strayed far from the moral path, rising through the criminal underworld to become a deeply respected Squad Leader of the notorious Absconder syndicate, the Riposte Gang. She trades her Kasakura uniform for the gang’s signature dark sandy yellow long coat, her bright pink twintails tied back securely for combat. Her slender, fairly smaller-than-average build perfectly suits the syndicate's lethal fighting philosophy, making her an elusive and dangerously underestimated target in the middle of a chaotic battlefield.\n\n"
+            "In combat, Naganohara abandons her usual close combat brawling methods for the refined, deadly art of the rapier. She is blindingly fast and surprisingly tough, obsessively focusing her entire battle IQ on reading her opponent to find the perfect counterattack. True to the Riposte way, she is unafraid of taking a hit, willingly enduring damage to create a fatal opening before stepping into her opponent's guard to deliver a singular, devastating thrust. Her ruthless efficiency and unshakeable nerve have earned her the absolute loyalty of her subordinates, whom she leads in everything from full-frontal gang war assaults to secretive kidnapping and smuggling operations around school grounds.\n\n"
+            "Despite her hardened criminal lifestyle, Naganohara's mind is occupied by only two people. The first is Hanefuji Akasuke, who in this timeline is a young, immensely talented Executive of the Riposte Gang. Having survived the underworld much longer than him, she harbors a deep, quiet pity for Akasuke, lamenting that someone so young and gifted was dragged into such a dark life. The second is her enigmatic 'Boss,' who her subordinates often whisper that whenever she comes to visit, Naganohara’s ruthless gang-leader facade completely melts away, and she spends the entire day smiling with the same innocent, radiant joy she had on the very first day she was admitted into the syndicate."
+        )
+        k = Kata("Riposte Gang Squad Leader", "Naganohara", 4, "I", res, desc)
+        k.source_key = name
+        desc_s1 = "[On Use] Gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Affinity"
+        s1 = Skill("Appel", 1, EL_STORGE, 5, desc_s1, effect_type="NAGANOHARA_RIPOSTE_APPEL")
+        desc_s2 = "[On Use] Gain 10 Riposte\n       [On Hit] If this unit has 20+ Riposte, deal +40% damage, then take +50% more damage this turn.\n       [On Hit] Inflict 2 Pierce Affinity"
+        s2 = Skill("Cede", 2, EL_LUDUS, 9, desc_s2, effect_type="NAGANOHARA_RIPOSTE_CEDE")
+        desc_s3 = "[On Use] If this unit has 25+ Riposte, fix Riposte stack count to 50. Otherwise, gain 20 Riposte\n       [On Hit] Inflict 3 Pierce Affinity"
+        s3 = Skill("Counter-Parry", 3, EL_PHILIA, 13, desc_s3, effect_type="NAGANOHARA_RIPOSTE_COUNTERPARRY")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 74, "description": desc}
+
+    # --- AKASUKE RIPOSTE ---
+    elif name == "Riposte Gang Executive Hanefuji Akasuke":
+        res = [1.2, 1.0, 1.1, 1.0, 1.4, 0.7, 1.0]
+        desc = (
+            "Hanefuji Akasuke here has strayed far from the light of Kasakura High, ascending rapidly through the violent underworld to become a feared Executive of the Absconder syndicate, the Riposte Gang. Trading his school uniform for the gang’s signature sandy-colored long coat—though retaining his iconic eyepatch—he has adapted his peerless martial arts talent into the refined, lethal counter-attacking rapier style of his syndicate. Recognizing his immense strength and unnatural battle IQ, the older gang members revere him, ensuring the young prodigy accompanies them on every major operation. In return, Akasuke constantly pushes himself on the frontlines to build trust and earn the complete acceptance of his hardened colleagues.\n\n"
+            "Despite his ruthless position, Akasuke’s daily life within the syndicate harbors a surprising warmth. Outside of combat, he utilizes his exceptional culinary skills to cook for his seniors, sharing meals with them daily and forging a twisted but genuine camaraderie. However, the constant exposure to the dark elements of the underground world takes a heavy, exhausting toll on the young executive. He knows his immense strength is used for grim tasks: securing secretive kidnapping routes, crippling rival gangsters to the point of permanent immobility, and intimidating completely innocent people. He understands this is simply his job as an executive, but the weight of his actions leaves him perpetually tired.\n\n"
+            "Self-aware enough to know he still has much to learn about surviving this dark world, Akasuke relies heavily on the wisdom of his peers. He frequently seeks guidance from trusted veterans like Squad Leader Naganohara, who watches over him with a quiet, knowing pity. Above all, Akasuke idolizes the gang's mysterious 'Boss.' Whenever the enigmatic leader occasionally visits, Akasuke studies her flawless, overwhelming fighting prowess with absolute reverence, dedicating his blood, sweat, and unyielding loyalty to following exactly in her footsteps."
+        )
+        k = Kata("Riposte Gang Executive", "Akasuke", 4, "I", res, desc)
+        k.source_key = name
+        desc_s1 = "[On Use] If this unit does not have Riposte, gain 10 Riposte. Otherwise, gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Affinity"
+        s1 = Skill("En Garde", 1, EL_LUDUS, 7, desc_s1, effect_type="AKASUKE_RIPOSTE_ENGARDE")
+        desc_s2 = "[On Use] Gain 1 Haste\n       [On Use] If this unit has 10+ Riposte, Gain 1 Haste\n       [On Hit] If target has Pierce Affinity, gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Affinity"
+        s2 = Skill("Feint", 2, EL_STORGE, 6, desc_s2, effect_type="AKASUKE_RIPOSTE_FEINT")
+        desc_s3 = "This skill deals +2% base damage for each stack of Riposte owned (Max +100%)\n       [On Use] Gain 10 Riposte\n       [On Hit] Inflict 3 Pierce Affinity"
+        s3 = Skill("Prise De Fer", 3, EL_LUDUS, 15, desc_s3, effect_type="AKASUKE_RIPOSTE_PRISEDEFER")
+        # Custom Skill Pool setup based on prompt!
+        k.skill_pool_def = [(s1, 4), (s2, 3), (s3, 2)]
+
+        return {"kata_obj": k, "max_hp": 80, "description": desc}

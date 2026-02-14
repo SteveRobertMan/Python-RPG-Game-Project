@@ -128,6 +128,7 @@ class Entity:
         self.nerve_disruption_turns = 0
         self.next_turn_modifiers = {}
         self.status_effects = []
+        self.riposte_loss_tracker = 0
 
     def equip_kata(self, kata_obj):
         self.kata = kata_obj
@@ -176,12 +177,19 @@ class Entity:
         existing = next((e for e in self.status_effects if e.name == new_effect.name), None)
         
         if existing:
-            if new_effect.name == "Bleed":
+            if new_effect.name in ["Bleed", "Rupture", "Fairylight"]:
                 existing.potency = min(99, max(existing.potency, new_effect.potency))
                 existing.duration = min(99, existing.duration + new_effect.duration)
             elif new_effect.name == "Bind":
                 existing.duration = min(5, existing.duration + new_effect.duration)
+            elif new_effect.name == "Haste":
+                existing.duration = min(5, existing.duration + new_effect.duration)
+            elif new_effect.name == "Pierce Affinity":
+                existing.duration = min(5, existing.duration + new_effect.duration) # Updated to 5!
+            elif new_effect.name == "Riposte":
+                existing.duration = min(50, existing.duration + new_effect.duration)
             elif existing.name == "Poise":
+                # ... existing poise logic ...
                 if existing.potency > 0 and existing.duration <= 0:
                     existing.duration = 1
                 if existing.duration > 0 and existing.potency <= 0:
@@ -190,19 +198,17 @@ class Entity:
             else:
                 existing.duration = max(existing.duration, new_effect.duration)
         else:
-            if new_effect.name == "Poise":
+            if new_effect.name in ["Bleed", "Rupture", "Fairylight", "Poise"]:
                 if new_effect.potency > 0 and new_effect.duration <= 0:
                     new_effect.duration = 1
                 elif new_effect.duration > 0 and new_effect.potency <= 0:
                     new_effect.potency = 1
-            if new_effect.name == "Bleed":
                 new_effect.potency = min(99, new_effect.potency)
                 new_effect.duration = min(99, new_effect.duration)
-            elif new_effect.name == "Bind":
+            elif new_effect.name in ["Bind", "Haste", "Pierce Affinity"]:
                 new_effect.duration = min(5, new_effect.duration)
-            elif new_effect.name == "Poise":
-                new_effect.potency = min(99, new_effect.potency)
-                new_effect.duration = min(99, new_effect.duration)
+            elif new_effect.name == "Riposte":
+                new_effect.duration = min(50, new_effect.duration)
                 
             self.status_effects.append(new_effect)
 

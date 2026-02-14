@@ -163,7 +163,7 @@ def sync_player_roster():
         ("Shigemura", 15, stages.create_shigemura),
         ("Naganohara", 24, stages.create_naganohara)
     ]
-
+    
     for name, req_stage, factory_func in unlock_milestones:
         if latest >= req_stage and name not in current_roster_names:
             new_member = factory_func()
@@ -202,8 +202,20 @@ def run_game():
             stage_id = config.player_data.get("selected_stage", 0) 
             if config.player_data.get("latest_stage", 0) == -1: stage_id = 0
 
-            ### GUEST INJECTION LOGIC ###
+            ### INJECTION LOGIC ###
             latest_cleared = config.player_data.get("latest_stage", -1)
+            
+            if (latest_cleared >= 0 or stage_id == 0):
+                has_aka = any(u.name == "Akasuke" for u in party)
+                if not has_aka:
+                    loadout = get_equipped_data("Akasuke")
+                    party.append(stages.create_akasuke(loadout))
+
+            if (latest_cleared >= 0 or stage_id == 0):
+                has_yuri = any(u.name == "Yuri" for u in party)
+                if not has_yuri:
+                    loadout = get_equipped_data("Yuri")
+                    party.append(stages.create_yuri(loadout))
             
             if (latest_cleared >= 4 or stage_id == 4) and stage_id != 7:
                 has_beni = any(u.name == "Benikawa" for u in party)
@@ -233,6 +245,7 @@ def run_game():
                         party.append(stages.create_naganohara(loadout))
 
             if stage_id == 21:
+                party = [p for p in party if p.name != "Akasuke"]
                 guest_loadout = scd.get_kata_data_by_name("‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke")
                 guest_akasuke = stages.create_akasuke(guest_loadout)
                 aka_index = -1
@@ -524,7 +537,7 @@ def run_game():
 
                         cl = config.player_data.get("cleared_stages", [])
                         
-                        start_id = (np["stage"] * 10) + 1
+                        start_id = (np["stage"] * 1000) + 1
                         for i in range(req_count):
                             nid = start_id + i
                             if nid not in cl: cl.append(nid)
