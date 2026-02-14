@@ -15,19 +15,19 @@ poisecount_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost
 
 # --- KATA ID REGISTRY ---
 KATA_ID_MAP = {
-    1: "Akasuke (Default)",
-    2: "Yuri (Default)",
-    3: "Benikawa (Default)",
-    4: "Shigemura (Default)",
-    5: "Naganohara (Default)",
-    6: "Heiwa Seiritsu High School Student (Yuri)",
-    7: "Heiwa Seiritsu High School Student (Naganohara)",
-    8: "‘Iron Fist Of Heiwa’ Delinquent Leader",
-    9: "Heiwa Seiritsu’s Upperclassman | ‘Crusher’",
-    10: "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’",
-    11: "Kasakura High School Disciplinary Committee President",
-    12: "Kasakura High School Disciplinary Committee Member",
-    13: "Kasakura High School Disciplinary Committee Vice President"
+    1: "Kasakura High School Student Akasuke",
+    2: "Kasakura High School Student Yuri",
+    3: "Kasakura High School Student Benikawa",
+    4: "Kasakura High School Student Shigemura",
+    5: "Kasakura High School Student Naganohara",
+    6: "Heiwa Seiritsu High School Student Yuri",
+    7: "Heiwa Seiritsu High School Student Naganohara",
+    8: "‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke",
+    9: "Heiwa Seiritsu’s Upperclassman | ‘Crusher’ Benikawa",
+    10: "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’ Shigemura",
+    11: "Kasakura High School Disciplinary Committee President Yuri",
+    12: "Kasakura High School Disciplinary Committee Member Benikawa",
+    13: "Kasakura High School Disciplinary Committee Vice President Shigemura"
 }
 
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
@@ -42,7 +42,7 @@ def get_kata_data_by_name(name):
     """
 
     # --- Akasuke DEFAULT ---
-    if name == "Akasuke (Default)":
+    if name == "Kasakura High School Student Akasuke":
         res = [1.0, 1.0, 1.2, 0.8, 0.8, 1.0, 1.2]
         desc = (
             "Akasuke Hanefuji is a student of Kasakura High School, one of the most renowned educational institutes of the east. He wears a red coat with a white shirt underneath, black trousers, black tie and an eye patch over one of his red eyes, he has a strong sense of duty and protection for his peers. Akasuke’s hobbies include cooking and training as a karateka at his school’s club dojo, where he is also the club captain."
@@ -58,7 +58,7 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 72, "description": desc}
 
     # --- Akasuke 'Iron Fist Of Heiwa' --- #
-    elif name == "‘Iron Fist Of Heiwa’ Delinquent Leader":
+    elif name == "‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke":
         res = [1.4, 0.7, 1.3, 0.7, 1.6, 1.6, 1.0]
         desc = (
             "Akasuke Hanefuji here has enrolled in Heiwa Seiritsu, embracing a reckless, dirty-fighting style honed "
@@ -91,7 +91,7 @@ def get_kata_data_by_name(name):
         }
 
     # --- YURI DEFAULT ---
-    elif name == "Yuri (Default)":
+    elif name == "Kasakura High School Student Yuri":
         desc = (
             "Inami Yuri is a student of Kasakura High School, one of the most renowned educational institutes of the east. She has silver hair tied into a ponytail, wears a white windbreaker jacket over a black tracksuit, and has clear sapphire blue eyes that are always beaming with confidence. Yuri’s hobbies include running and training as a judoka at her school’s club dojo, where she is also the club captain."
         )
@@ -106,7 +106,7 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 63, "description": desc}
     
 # --- YURI HEIWA SEIRITSU ---
-    elif name == "Heiwa Seiritsu High School Student (Yuri)":
+    elif name == "Heiwa Seiritsu High School Student Yuri":
         desc = (
             "Inami Yuri here has enrolled in Heiwa Seiritsu, fully embracing the school's brutal, weapon-heavy "
             "delinquent culture. Her silver ponytail is now let loose, streaked with dirt and blood from constant fights. "
@@ -140,7 +140,7 @@ def get_kata_data_by_name(name):
         }
 
 # --- YURI DISCIPLINARY COMMITTEE --- #
-    elif name == "Kasakura High School Disciplinary Committee President":
+    elif name == "Kasakura High School Disciplinary Committee President Yuri":
         desc = (
             "Inami Yuri leads Kasakura's Disciplinary Committee with a calm, calculating, and compassionate demeanor. "
             "Her silver ponytail is neatly tied back, sapphire eyes sharp yet serene, clad in a pristine white kimono "
@@ -168,7 +168,7 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 91, "description": desc}
 
     # --- BENIKAWA DEFAULT ---
-    elif name == "Benikawa (Default)":
+    elif name == "Kasakura High School Student Benikawa":
         res = [1.3, 1.3, 0.7, 0.7, 0.9, 0.9, 1.0]
         desc = (
             "Benikawa Ayame is a student of Kasakura High School, known among her peers as a cheerful and highly talented member of the karate club. She wears a standard white karate dougi with a black belt tied firmly at the waist, caramel-colored hair pulled into a high ponytail, and bright purple eyes that sparkle with playful energy. Benikawa’s hobbies include practicing karate at the school dojo, where she often seeks out strong opponents for sparring, and exploring the city’s food stalls."
@@ -183,7 +183,7 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 70, "description": desc}
 
 # --- BENIKAWA (HEIWA SEIRITSU) ---
-    elif name == "Heiwa Seiritsu’s Upperclassman | ‘Crusher’":
+    elif name == "Heiwa Seiritsu’s Upperclassman | ‘Crusher’ Benikawa":
         res = [0.9, 0.9, 0.9, 0.9, 1.7, 1.6, 1.6]
         desc = (
             "Ayame Benikawa here has long enrolled in Heiwa Seiritsu and rose on her own to become one of its feared "
@@ -220,7 +220,7 @@ def get_kata_data_by_name(name):
         }
 
     # --- BENIKAWA (KASAKURA DISCIPLINARY COMMITTEE) ---
-    elif name == "Kasakura High School Disciplinary Committee Member":
+    elif name == "Kasakura High School Disciplinary Committee Member Benikawa":
         res = [1.3, 1.2, 1.2, 0.8, 1.0, 1.0, 0.9]
         desc = (
             "Ayame Benikawa, a member of Kasakura High School’s Disciplinary Committee serves loyally under President Inami Yuri, who she dearly looks up to. "
@@ -242,7 +242,7 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 79, "description": desc}
 
     # --- SHIGEMURA DEFAULT ---
-    elif name == "Shigemura (Default)":
+    elif name == "Kasakura High School Student Shigemura":
         res = [1.4, 1.4, 0.8, 0.8, 0.8, 0.8, 0.8]
         desc = (
             "Fuyuyama Shigemura is a student of Kasakura High School, one of the most renowned educational institutes of the east. He has short, neatly trimmed brown hair that falls slightly over his sharp violet eyes, giving him a perpetually calm and detached appearance. Shigemura possesses a sharp mind and keen observational skills, often noticing details others miss, and carries himself with an air of quiet confidence that rarely breaks into overt emotion."
@@ -257,7 +257,7 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 81, "description": desc} 
 
     # --- SHIGEMURA (HEIWA SEIRITSU) ---
-    elif name == "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’":
+    elif name == "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’ Shigemura":
         desc = (
             "Fuyuyama Shigemura has long enrolled in Heiwa Seiritsu and rose on his own to become one of its most "
             "feared ‘Upperclassmen’ of the school’s legends. His short brown hair is kept neat and disciplined, but "
@@ -303,7 +303,7 @@ def get_kata_data_by_name(name):
         }
 
     # --- SHIGEMURA KASAKURA DISCIPLINARY COMMITTEE ---
-    elif name == "Kasakura High School Disciplinary Committee Vice President":
+    elif name == "Kasakura High School Disciplinary Committee Vice President Shigemura":
         res = [1.5, 1.0, 1.0, 1.2, 0.7, 0.7, 1.2]
         desc = (
             "Fuyuyama Shigemura, the vice president of Kasakura High School’s Disciplinary Committee serves loyally under President Inami Yuri as her close colleague and trusted subordinate. "
@@ -324,7 +324,7 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 80, "description": desc}
 
     # --- NAGANOHARA DEFAULT ---
-    elif name == "Naganohara (Default)":
+    elif name == "Kasakura High School Student Naganohara":
         res = [1.0, 0.7, 1.3, 1.5, 1.1, 0.7, 1.1] 
         desc = (
             "Naganohara Tsukimiyama is a student of Kasakura High School, one of the most renowned educational institutes of the east. She has bright pink twintails that bounce energetically with every movement and large, sparkling golden eyes full of life and mischief. Naganohara’s hobbies include dragging her friends into fun (and sometimes chaotic) group activities, collecting cute accessories, and being the loudest cheerleader in any situation. Despite her bubbly exterior, she is fiercely loyal and surprisingly perceptive when it comes to her friends’ feelings."
@@ -338,7 +338,7 @@ def get_kata_data_by_name(name):
 
         return {"kata_obj": k, "max_hp": 58, "description": desc}   
 
-    elif name == "Heiwa Seiritsu High School Student (Naganohara)":
+    elif name == "Heiwa Seiritsu High School Student Naganohara":
         res = [1.1, 0.8, 0.8, 1.1, 1.5, 1.3, 1.5]
         desc = (
             "Naganohara Tsukimiyama here has enrolled in Heiwa Seiritsu High School instead of Kasakura High School. "

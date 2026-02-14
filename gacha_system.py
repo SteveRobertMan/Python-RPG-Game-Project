@@ -22,25 +22,25 @@ class GachaSystem:
         # Updated Pool with specific Kata Strings matching SCD
         self.pool = {
             RARITY_4: [
-                "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’",
-                "Kasakura High School Disciplinary Committee President"
+                "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’ Shigemura",
+                "Kasakura High School Disciplinary Committee President Yuri"
             ],
             RARITY_3: [
-                "Heiwa Seiritsu’s Upperclassman | ‘Crusher’",
-                "Kasakura High School Disciplinary Committee Vice President"
+                "Heiwa Seiritsu’s Upperclassman | ‘Crusher’ Benikawa",
+                "Kasakura High School Disciplinary Committee Vice President Shigemura"
             ],
             RARITY_2: [
-                "‘Iron Fist Of Heiwa’ Delinquent Leader",
-                "Kasakura High School Disciplinary Committee Member"
+                "‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke",
+                "Kasakura High School Disciplinary Committee Member Benikawa"
             ],
             RARITY_1: [
-                "Akasuke (Default)",
-                "Yuri (Default)",
-                "Benikawa (Default)",
-                "Shigemura (Default)",
-                "Naganohara (Default)",
-                "Heiwa Seiritsu High School Student (Yuri)",
-                "Heiwa Seiritsu High School Student (Naganohara)"
+                "Kasakura High School Student Akasuke",
+                "Kasakura High School Student Yuri",
+                "Kasakura High School Student Benikawa",
+                "Kasakura High School Student Shigemura",
+                "Kasakura High School Student Naganohara",
+                "Heiwa Seiritsu High School Student Yuri",
+                "Heiwa Seiritsu High School Student Naganohara"
             ]
         }
         

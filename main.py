@@ -214,45 +214,74 @@ def run_game():
             if stage_id == 7:
                 party = [p for p in party if p.name != "Benikawa"]
 
-            if (latest_cleared >= 15 or stage_id in [151,152,153]):
+            if (latest_cleared >= 15 or stage_id in [15001,15002,15003]):
                 has_shige = any(u.name == "Shigemura" for u in party)
                 if not has_shige:
                     loadout = get_equipped_data("Shigemura")
                     party.append(stages.create_shigemura(loadout))
             
-            is_guest_appearance = (stage_id == 16 or stage_id in [161, 162, 163, 164, 165])
-            is_officially_unlocked = (latest_cleared >= 24)
-            if is_guest_appearance:
+            is_guest_appearance1 = (stage_id in [16, 16001, 16002, 16003, 16004, 16005, 41, 41001, 41002, 41003, 41004])
+            is_officially_unlocked = (latest_cleared >= 41 and not stage_id == 42)
+            if is_guest_appearance1:
                 has_naga = any(u.name == "Naganohara" for u in party)
                 if not has_naga:
-                    if is_guest_appearance:
-                        guest_loadout = scd.get_kata_data_by_name("Heiwa Seiritsu High School Student (Naganohara)")
+                    if is_guest_appearance1:
+                        guest_loadout = scd.get_kata_data_by_name("Heiwa Seiritsu High School Student Naganohara")
                         party.append(stages.create_naganohara(guest_loadout))
                     elif is_officially_unlocked:
                         loadout = get_equipped_data("Naganohara")
                         party.append(stages.create_naganohara(loadout))
 
             if stage_id == 21:
-                guest_loadout = scd.get_kata_data_by_name("‘Iron Fist Of Heiwa’ Delinquent Leader")
+                guest_loadout = scd.get_kata_data_by_name("‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke")
                 guest_akasuke = stages.create_akasuke(guest_loadout)
-                
                 aka_index = -1
                 for i, unit in enumerate(party):
                     if unit.name == "Akasuke":
                         aka_index = i
                         break
-                
                 if aka_index != -1:
                     party[aka_index] = guest_akasuke
                 else:
                     party.append(guest_akasuke)
 
-            if stage_id == 6:
+            if stage_id in [6,39]:
                 party = [member for member in party if member.name == "Akasuke"]
 
             if stage_id in [18,19,20,21]:
                 party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa"]]
-            
+
+            if stage_id in [25, 26, 28, 29]:
+                has_hana = any(u.name == "Hana" for u in party)
+                if not has_hana:
+                    loadout = get_equipped_data("Hana")
+                    party.append(stages.create_hana(loadout))
+                party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa","Hana"]]
+
+            if stage_id == 31:
+                party = [member for member in party if member.name == "Benikawa"]
+
+            if stage_id in [32, 33, 34, 35, 36]:
+                party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa","Shigemura"]]
+
+            if stage_id == 38:
+                guest_loadout = scd.get_kata_data_by_name("Kasakura High School Disciplinary Committee Member Kagaku")
+                guest_kagaku = stages.create_kagaku(guest_loadout)
+                party[0] = guest_kagaku
+                party = [member for member in party if member.name == "Kagaku"]
+    
+            if stage_id == 42:
+                guest_loadout = scd.get_kata_data_by_name("Riposte Gang Squad Leader Kagaku")
+                guest_kagaku = stages.create_kagaku(guest_loadout)
+                party.append(guest_kagaku)
+                guest_loadout = scd.get_kata_data_by_name("Riposte Gang Squad Leader Akasuke")
+                guest_akasuke = stages.create_akasuke(guest_loadout)
+                party.append(guest_akasuke)
+                guest_loadout = scd.get_kata_data_by_name("Riposte Gang Squad Leader Naganohara")
+                guest_naganohara = stages.create_naganohara(guest_loadout)
+                party.append(guest_naganohara)
+                party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa","Shigemura","Naganohara","Kagaku"]]
+
             enemies = stages.load_stage_enemies(stage_id)
             if not enemies:
                 console.print("[red]Error: Enemies not found for this stage![/red]")
@@ -274,6 +303,16 @@ def run_game():
                 elif stage_id == 19: story_manager.play_stage_2_8_start()
                 elif stage_id == 20: story_manager.play_stage_2_9_start()
                 elif stage_id == 21: story_manager.play_stage_2_10_start()
+                elif stage_id == 25: story_manager.play_stage_3_3_start()
+                elif stage_id == 26: story_manager.play_stage_3_4_start()
+                elif stage_id == 28: story_manager.play_stage_3_6_start()
+                elif stage_id == 31: story_manager.play_stage_3_9_start()
+                elif stage_id == 33: story_manager.play_stage_3_11_start()
+                elif stage_id == 35: story_manager.play_stage_3_13_start()
+                elif stage_id == 36: story_manager.play_stage_3_14_start()
+                elif stage_id == 38: story_manager.play_stage_3_16_start()
+                elif stage_id == 39: story_manager.play_stage_3_17_start()
+                elif stage_id == 42: story_manager.play_stage_3_20_start()
 
             battle_manager.start_battle(party, enemies, stage_id)
             
@@ -296,9 +335,9 @@ def run_game():
                 if is_valid_node_battle: 
                     is_first_node_clear = stage_id not in config.player_data.get("cleared_stages", [])
 
-                    # >> STAGE 1-5 (IDs 51, 52, 53)
+                    # >> STAGE 1-5 (IDs 5001, 5002, 5003)
                     if np["stage"] == 5:
-                        if stage_id in [51, 52]:
+                        if stage_id in [5001, 5002]:
                             if is_first_node_clear:
                                 rewards_text.extend(["2x Microchip", "2x Microprocessor"])
                                 mats["Microchip"] = mats.get("Microchip", 0) + 2
@@ -307,7 +346,7 @@ def run_game():
                                 if random.random() < 0.25:
                                     rewards_text.append("1x Cafeteria Melon Bread")
                                     mats["Cafeteria Melon Bread"] = mats.get("Cafeteria Melon Bread", 0) + 1
-                        elif stage_id == 53:
+                        elif stage_id == 5003:
                             if is_first_node_clear:
                                 rewards_text.extend(["2x Microchip", "2x Microprocessor", "2x Cafeteria Melon Bread"])
                                 mats["Microchip"] = mats.get("Microchip", 0) + 2
@@ -318,9 +357,9 @@ def run_game():
                                     rewards_text.append("1x Cafeteria Melon Bread")
                                     mats["Cafeteria Melon Bread"] = mats.get("Cafeteria Melon Bread", 0) + 1
 
-                    # >> STAGE 1-10 (IDs 101, 102, 103, 104)
+                    # >> STAGE 1-10 (IDs 10001, 10002, 10003, 10004)
                     elif np["stage"] == 10:
-                        if stage_id in [101, 102]:
+                        if stage_id in [10001, 10002]:
                             if is_first_node_clear:
                                 rewards_text.extend(["2x Microchip", "2x Microprocessor"])
                                 mats["Microchip"] = mats.get("Microchip", 0) + 2
@@ -329,7 +368,7 @@ def run_game():
                                 if random.random() < 0.30:
                                     rewards_text.append("1x Microchip")
                                     mats["Microchip"] = mats.get("Microchip", 0) + 1
-                        elif stage_id in [103, 104]:
+                        elif stage_id in [10003, 10004]:
                             if is_first_node_clear:
                                 rewards_text.extend(["3x Microchip", "3x Microprocessor"])
                                 mats["Microchip"] = mats.get("Microchip", 0) + 3
@@ -339,9 +378,9 @@ def run_game():
                                     rewards_text.append("1x Microprocessor")
                                     mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
 
-                    # >> STAGE 2-3 (IDs 141, 142)
+                    # >> STAGE 2-3 (IDs 14001, 14002)
                     elif np["stage"] == 14:
-                        if stage_id in [141, 142]:
+                        if stage_id in [14001, 14002]:
                             if is_first_node_clear:
                                 rewards_text.extend(["1x Cafeteria Melon Bread", "1x Vending Machine Coffee"])
                                 mats["Cafeteria Melon Bread"] = mats.get("Cafeteria Melon Bread", 0) + 1
@@ -354,9 +393,9 @@ def run_game():
                                     rewards_text.append("1x Vending Machine Coffee")
                                     mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
 
-                    # >> STAGE 2-4 (IDs 151, 152, 153)
+                    # >> STAGE 2-4 (IDs 15001, 15002, 15003)
                     elif np["stage"] == 15:
-                        if stage_id in [151, 152, 153]:
+                        if stage_id in [15001, 15002, 15003]:
                             if is_first_node_clear:
                                 rewards_text.extend(["1x Microchip", "1x Microprocessor"])
                                 mats["Microchip"] = mats.get("Microchip", 0) + 1
@@ -369,9 +408,9 @@ def run_game():
                                     rewards_text.append("1x Vending Machine Coffee")
                                     mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
 
-                    # >> STAGE 2-5 (IDs 161, 162, 163, 164, 165)
+                    # >> STAGE 2-5 (IDs 16001, 16002, 16003, 16004, 16005)
                     elif np["stage"] == 16:
-                        if stage_id in [161, 162]: # Nodes 1 & 2
+                        if stage_id in [16001, 16002]: # Nodes 1 & 2
                             if is_first_node_clear:
                                 rewards_text.append("2x Microchip")
                                 mats["Microchip"] = mats.get("Microchip", 0) + 2
@@ -379,7 +418,7 @@ def run_game():
                                 if random.random() < 0.50:
                                     rewards_text.append("1x Vending Machine Coffee")
                                     mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
-                        elif stage_id in [163, 164]: # Nodes 3 & 4
+                        elif stage_id in [16003, 16004]: # Nodes 3 & 4
                             if is_first_node_clear:
                                 rewards_text.append("2x Vending Machine Coffee")
                                 mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 2
@@ -387,7 +426,7 @@ def run_game():
                                 if random.random() < 0.50:
                                     rewards_text.append("1x Vending Machine Coffee")
                                     mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
-                        elif stage_id == 165: # Node 5
+                        elif stage_id == 16005: # Node 5
                             if is_first_node_clear:
                                 rewards_text.append("3x Cafeteria Melon Bread")
                                 mats["Cafeteria Melon Bread"] = mats.get("Cafeteria Melon Bread", 0) + 3
@@ -395,6 +434,53 @@ def run_game():
                                 if random.random() < 0.50:
                                     rewards_text.append("1x Vending Machine Coffee")
                                     mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
+
+                    # >> STAGE 3-10 (IDs 32001, 32002, 32003)
+                    elif np["stage"] == 32:
+                        if stage_id in [32001, 32002]:
+                            if is_first_node_clear:
+                                rewards_text.append("2x Microchip")
+                                mats["Microchip"] = mats.get("Microchip", 0) + 2
+                            else:
+                                if random.random() < 0.25:
+                                    rewards_text.append("1x Sports Water Bottle")
+                                    mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
+                        elif stage_id == 32003:
+                            if is_first_node_clear:
+                                rewards_text.append("1x Sports Water Bottle")
+                                mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 3
+                            else:
+                                if random.random() < 0.25:
+                                    rewards_text.append("1x Sports Water Bottle")
+                                    mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
+
+                    # >> STAGE 3-12 (IDs 34001, 34002, 34003)
+                    elif np["stage"] == 32:
+                        if stage_id in [34001, 34002, 34003]:
+                            if is_first_node_clear:
+                                rewards_text.append("1x Sports Water Bottle")
+                                rewards_text.append("2x Microprocessor")
+                                mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
+                                mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                            else:
+                                if random.random() < 0.65:
+                                    rewards_text.append("1x Microchip")
+                                    mats["Microchip"] = mats.get("Microchip", 0) + 1
+
+                    # >> STAGE 3-19 (IDs 41001, 41002, 41003, 41004)
+                    elif np["stage"] == 41:
+                        if stage_id in [41001, 41002, 41003, 41004]:
+                            if is_first_node_clear:
+                                rewards_text.append("1x Microchip")
+                                mats["Microchip"] = mats.get("Microchip", 0) + 1
+                            else:
+                                if random.random() < 0.375:
+                                    rewards_text.append("1x Cafeteria Melon Bread")
+                                    rewards_text.append("1x Vending Machine Coffee")
+                                    rewards_text.append("1x Sports Water Bottle")
+                                    mats["Cafeteria Melon Bread"] = mats.get("Cafeteria Melon Bread", 0) + 1
+                                    mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
+                                    mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
 
                             # HP PERSISTENCE
                             for p in party:
@@ -406,19 +492,19 @@ def run_game():
                                 np["party_hp"][p.name] = p.hp
 
                     # PROGRESS TRACKING
-                    node_idx = stage_id - (np["stage"] * 10) - 1
+                    node_idx = stage_id - (np["stage"] * 1000) - 1
                     
                     if node_idx not in np["cleared_indices"]:
                         np["cleared_indices"].append(node_idx)
                         config.player_data["node_progress"] = np
 
                     # COMPLETION CHECK
-                    nodes_required_map = {5: 3, 10: 4, 14: 2, 15: 3, 16: 5}
+                    nodes_required_map = {5: 3, 10: 4, 14: 2, 15: 3, 16: 5, 32: 3, 34: 3, 41: 4}
                     req_count = nodes_required_map.get(np["stage"], 99)
 
                     if len(np["cleared_indices"]) >= req_count:
                         # -- STAGE COMPLETE --
-                        stage_name_map = {5: "1-5", 10: "1-10", 14: "2-3", 15: "2-4", 16: "2-5"}
+                        stage_name_map = {5: "1-5", 10: "1-10", 14: "2-3", 15: "2-4", 16: "2-5", 32: "3-10", 34: "3-12", 41: "3-19"}
                         s_name = stage_name_map.get(np["stage"], "??")
                         console.print(f"[bold green]STAGE {s_name} COMPLETE![/bold green]")
 
@@ -432,6 +518,11 @@ def run_game():
                                 rewards_text.append("[bold magenta]NEW MEMBER: Shigemura[/bold magenta]")
                             elif np["stage"] == 16:
                                 story_manager.play_stage_2_5_end()
+                            # Stage 3-10 has no story end sequence
+                            # Stage 3-12 has no story end sequence
+                            elif np["stage"] == 41:
+                                story_manager.play_stage_3_19_end()
+                                rewards_text.append("[bold magenta]NEW MEMBER: Naganohara[/bold magenta]")
                             
                             config.player_data["latest_stage"] = np["stage"]
 
@@ -561,6 +652,55 @@ def run_game():
                         else:
                             if random.random() < 0.65: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
                             if random.random() < 0.65: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
+
+                    elif stage_id in [25, 26, 28, 29, 31]:
+                        checklatest = stage_id
+                        if should_play_story:
+                            if stage_id == 29:
+                                story_manager.play_stage_3_7_end()
+                            elif stage_id == 31:
+                                story_manager.play_stage_3_9_end()
+                            rewards_text.extend(["3x Microchip", "3x Microprocessor"])
+                            mats["Microchip"] = mats.get("Microchip", 0) + 3
+                            mats["Microprocessor"] = mats.get("Microprocessor", 0) + 3
+                            if config.player_data["latest_stage"] < checklatest: config.player_data["latest_stage"] = checklatest
+                            cl = config.player_data.get("cleared_stages", [])
+                            if checklatest not in cl: cl.append(checklatest); config.player_data["cleared_stages"] = cl
+                        else:
+                            if random.random() < 0.75: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
+                            if random.random() < 0.75: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
+
+                    elif stage_id in [33, 35, 36, 38, 39]:
+                        checklatest = stage_id
+                        if should_play_story:
+                            if stage_id == 33:
+                                story_manager.play_stage_3_11_end()
+                            if stage_id == 35:
+                                story_manager.play_stage_3_13_end()
+                            if stage_id == 38:
+                                story_manager.play_stage_3_16_end()
+                            if stage_id == 39:
+                                story_manager.play_stage_3_17_end()
+                            rewards_text.extend(["2x Microprocessor", "1x Sports Water Bottle"])
+                            mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                            mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
+                            if config.player_data["latest_stage"] < checklatest: config.player_data["latest_stage"] = checklatest
+                            cl = config.player_data.get("cleared_stages", [])
+                            if checklatest not in cl: cl.append(checklatest); config.player_data["cleared_stages"] = cl
+                        else:
+                            if random.random() < 0.25: rewards_text.append("1x Sports Water Bottle"); mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
+                            if random.random() < 0.8: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
+
+                    elif stage_id == 42:
+                        checklatest = stage_id
+                        if should_play_story:
+                            rewards_text.extend(["5x Microchip"])
+                            mats["Microchip"] = mats.get("Microchip", 0) + 5
+                            if config.player_data["latest_stage"] < checklatest: config.player_data["latest_stage"] = checklatest
+                            cl = config.player_data.get("cleared_stages", [])
+                            if checklatest not in cl: cl.append(checklatest); config.player_data["cleared_stages"] = cl
+                        else:
+                            if random.random() < 0.8: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
 
                     config.current_state = config.STATE_MAIN_MENU
 
@@ -943,6 +1083,184 @@ def run_game():
                     console.print("[red]Locked![/red]")
                     time.sleep(1)
 
+            elif choice == "3-1":
+                if unlocked >= 22:
+                    if unlocked >= 23:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_1_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("2x Microchip")
+                        console.print("2x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 2
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        if config.player_data["latest_stage"] < 23: config.player_data["latest_stage"] = 23
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-2":
+                if unlocked >= 23:
+                    if unlocked >= 24:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_2_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("2x Microchip")
+                        console.print("2x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 2
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        if config.player_data["latest_stage"] < 24: config.player_data["latest_stage"] = 24
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-5":
+                if unlocked >= 26:
+                    if unlocked >= 27:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_5_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("2x Microchip")
+                        console.print("2x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 2
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        if config.player_data["latest_stage"] < 27: config.player_data["latest_stage"] = 27
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-8":
+                if unlocked >= 29:
+                    if unlocked >= 30:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_8_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("2x Microchip")
+                        console.print("2x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 2
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        if config.player_data["latest_stage"] < 30: config.player_data["latest_stage"] = 30
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-15":
+                if unlocked >= 36:
+                    if unlocked >= 37:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_15_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("2x Microchip")
+                        console.print("2x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 2
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        if config.player_data["latest_stage"] < 37: config.player_data["latest_stage"] = 37
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-18":
+                if unlocked >= 39:
+                    if unlocked >= 40:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_18_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("2x Microchip")
+                        console.print("2x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 2
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        if config.player_data["latest_stage"] < 40: config.player_data["latest_stage"] = 40
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-21":
+                if unlocked >= 42:
+                    if unlocked >= 43:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_21_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("1x Microchip")
+                        console.print("1x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 1
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
+                        if config.player_data["latest_stage"] < 43: config.player_data["latest_stage"] = 43
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-22":
+                if unlocked >= 43:
+                    if unlocked >= 44:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_22_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("1x Microchip")
+                        console.print("1x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 1
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
+                        if config.player_data["latest_stage"] < 44: config.player_data["latest_stage"] = 44
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)\
+
+            elif choice == "3-23":
+                if unlocked >= 44:
+                    if unlocked >= 45:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_3_23_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("5x Microchip")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 5
+                        if config.player_data["latest_stage"] < 45: config.player_data["latest_stage"] = 45
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+                    
         elif config.current_state == config.STATE_NODE_SELECT:
             np = config.player_data.get("node_progress")
             if not np:
@@ -953,23 +1271,35 @@ def run_game():
             if stage_num == 5:
                 draw_node_select_menu("1-5: Weekday Errands", np["cleared_indices"])
                 valid_indices = ["1", "2", "3"]
-                start_id = 51
+                start_id = 5001
             elif stage_num == 10:
                 draw_node_select_menu("1-10: Raid", np["cleared_indices"])
                 valid_indices = ["1", "2", "3", "4"]
-                start_id = 101
+                start_id = 10001
             elif stage_num == 14:
                 draw_node_select_menu("2-3: Stalemate At The Gates", np["cleared_indices"])
                 valid_indices = ["1", "2"]
-                start_id = 141
+                start_id = 14001
             elif stage_num == 15:
                 draw_node_select_menu("2-4: Breakthrough Plan", np["cleared_indices"])
                 valid_indices = ["1", "2", "3"]
-                start_id = 151
+                start_id = 15001
             elif stage_num == 16:
                 draw_node_select_menu("2-5: Labyrinth Of Motives", np["cleared_indices"])
                 valid_indices = ["1", "2", "3", "4", "5"]
-                start_id = 161
+                start_id = 16001
+            elif stage_num == 32:
+                draw_node_select_menu("3-10: Silent Passenger", np["cleared_indices"])
+                valid_indices = ["1", "2", "3"]
+                start_id = 32001
+            elif stage_num == 34:
+                draw_node_select_menu("3-12: Weapons", np["cleared_indices"])
+                valid_indices = ["1", "2", "3"]
+                start_id = 34001
+            elif stage_num == 41:
+                draw_node_select_menu("3-19: Riposte", np["cleared_indices"])
+                valid_indices = ["1", "2", "3", "4"]
+                start_id = 41001
             else:
                 config.current_state = config.STATE_MAIN_MENU
                 continue

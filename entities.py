@@ -49,6 +49,11 @@ MATERIALS_DB = {
         "Vending Machine Coffee",
         "Bitter and heartless cold coffee sold in vending machines throughout Kasakura High School. Students often cram exams on these.",
         "04"
+    ),
+    "Sports Water Bottle": Material(
+        "Sports Water Bottle",
+        "A bottle athelete students across all the four major schools commonly use to replenish themselves with cool water during long workout sessions.",
+        "05"
     )
 }
 

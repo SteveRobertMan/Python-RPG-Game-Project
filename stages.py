@@ -97,6 +97,57 @@ def create_naganohara(equipped_kata_data=None):
         
     return unit
 
+def create_natsume(equipped_kata_data=None):
+    unit = Entity("Natsume", is_player=True)
+
+    if not equipped_kata_data:
+        equipped_kata_data = scd.get_kata_data_by_name("Natsume (Default)")
+
+    if equipped_kata_data:
+        custom_kata = equipped_kata_data["kata_obj"]
+
+        unit.max_hp = equipped_kata_data.get("max_hp", 58)
+        unit.hp = unit.max_hp
+
+        unit.description = equipped_kata_data.get("description", "Yokubukai Natsume is a student of Kasakura High School, one of the most renowned educational institutes of the east. She has messy dark hair, perpetually tired eyes from staring at glowing monitors, and prefers to wear oversized hoodies or cozy pajamas wrapped in blankets rather than her school uniform. Natsume’s hobbies include gathering intelligence, operating as the school's brilliant 'Queen of Information' from behind a screen, and avoiding any form of outdoor physical activity at all costs.")
+        unit.equip_kata(custom_kata)
+        
+    return unit
+
+def create_hana(equipped_kata_data=None):
+    unit = Entity("Hana", is_player=True)
+
+    if not equipped_kata_data:
+        equipped_kata_data = scd.get_kata_data_by_name("Hana (Default)")
+
+    if equipped_kata_data:
+        custom_kata = equipped_kata_data["kata_obj"]
+
+        unit.max_hp = equipped_kata_data.get("max_hp", 77)
+        unit.hp = unit.max_hp
+
+        unit.description = equipped_kata_data.get("description", "Hana Kaoru is a student of Kasakura High School, one of the most renowned educational institutes of the east. She has soft, flowing hair and gentle, highly observant eyes that radiate warmth, compassion, and an unwavering calmness. Hana’s hobbies include practicing self-defense and aikido at the school dojo—where her elegant, momentum-shifting throws earn high praise from her juniors—and offering empathetic, grounded support to her peers without ever losing her composure.")
+        unit.equip_kata(custom_kata)
+        
+    return unit
+
+def create_kagaku(equipped_kata_data=None):
+    unit = Entity("Kagaku", is_player=True)
+
+    if not equipped_kata_data:
+        equipped_kata_data = scd.get_kata_data_by_name("Kagaku (Default)")
+
+    if equipped_kata_data:
+        custom_kata = equipped_kata_data["kata_obj"]
+
+        unit.max_hp = equipped_kata_data.get("max_hp", 60)
+        unit.hp = unit.max_hp
+
+        unit.description = equipped_kata_data.get("description", "Kagaku Shamiko is a student of Kasakura High School, one of the most renowned educational institutes of the east. She wears a slightly wrinkled white lab coat over her standard uniform, has unkempt hair from pulling frequent all-nighters, and sharp eyes that are constantly analyzing the mechanics of the world around her. Kagaku’s hobbies include drinking excessive amounts of coffee, inventing groundbreaking technology like the Parallaxis Scorer, and passionately theorizing about the scientific mysteries of the multiverse.")
+        unit.equip_kata(custom_kata)
+        
+    return unit
+
 def get_player_party():
     """
     Creates the battle party based on the unlocked roster.
