@@ -204,18 +204,13 @@ def run_game():
 
             ### INJECTION LOGIC ###
             latest_cleared = config.player_data.get("latest_stage", -1)
-            
-            if (latest_cleared >= 0 or stage_id == 0):
-                has_aka = any(u.name == "Akasuke" for u in party)
-                if not has_aka:
-                    loadout = get_equipped_data("Akasuke")
-                    party.append(stages.create_akasuke(loadout))
 
-            if (latest_cleared >= 0 or stage_id == 0):
-                has_yuri = any(u.name == "Yuri" for u in party)
-                if not has_yuri:
-                    loadout = get_equipped_data("Yuri")
-                    party.append(stages.create_yuri(loadout))
+            party = [p for p in party if p.name != "Akasuke"]
+            loadout = get_equipped_data("Akasuke")
+            party.append(stages.create_akasuke(loadout))
+            party = [p for p in party if p.name != "Yuri"]
+            loadout = get_equipped_data("Yuri")
+            party.append(stages.create_yuri(loadout))
             
             if (latest_cleared >= 4 or stage_id == 4) and stage_id != 7:
                 has_beni = any(u.name == "Benikawa" for u in party)
@@ -248,15 +243,7 @@ def run_game():
                 party = [p for p in party if p.name != "Akasuke"]
                 guest_loadout = scd.get_kata_data_by_name("‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke")
                 guest_akasuke = stages.create_akasuke(guest_loadout)
-                aka_index = -1
-                for i, unit in enumerate(party):
-                    if unit.name == "Akasuke":
-                        aka_index = i
-                        break
-                if aka_index != -1:
-                    party[aka_index] = guest_akasuke
-                else:
-                    party.append(guest_akasuke)
+                party.insert(0, guest_akasuke)
 
             if stage_id in [6,39]:
                 party = [member for member in party if member.name == "Akasuke"]
@@ -337,7 +324,7 @@ def run_game():
                 is_valid_node_battle = False
                 
                 if np is not None:
-                    parent_of_current_stage = stage_id // 10
+                    parent_of_current_stage = stage_id // 1000
                     if parent_of_current_stage == np["stage"]:
                         is_valid_node_battle = True
 

@@ -1,3 +1,4 @@
+import copy
 from entities import Entity, Kata, Skill, StatusEffect
 from entities import EL_EROS, EL_PHILIA, EL_STORGE, EL_AGAPE, EL_LUDUS, EL_PRAGMA, EL_PHILAUTIA
 import config
@@ -198,441 +199,156 @@ def get_player_party():
             
     return party
 
+
 # --- ENEMY LOADING ---
 def load_stage_enemies(stage_id):
     enemies = []
     
-    # Common Status Effects Definitions for easy reuse
-    bleed_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
-    bleed_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
-    bleed_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
-    bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 0, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF")
+    # Cache the enemy database into a dictionary keyed by the enemy's name for easy lookup
+    db_enemies = {e.name: e for e in get_enemy_database()}
     
+    def spawn(base_name, label=""):
+        """
+        Deepcopies an enemy from the template database and attaches an identifying label.
+        Deepcopying is essential so status effects, hp, and skill instances aren't 
+        shared globally among identically named enemies.
+        """
+        if base_name not in db_enemies:
+            return None
+        new_enemy = copy.deepcopy(db_enemies[base_name])
+        if label:
+            new_enemy.name = f"{new_enemy.name} {label}"
+        return new_enemy
+
     if stage_id == 0: 
-        thief = Entity("Underwear Thief", is_player=False)
-        thief.max_hp = 30; thief.hp = 30
-        k_thief = Kata("Thief Intent", "Thief", 1, "0", [0.5, 1.2, 1.2, 1.2, 1.2, 0.5, 1.2])
-        ts1 = Skill("Stumble Around", 1, EL_EROS, 0, "Does nothing")
-        ts2 = Skill("Weak Bag Swing", 2, EL_AGAPE, 3, "")
-        k_thief.skill_pool_def = [(ts1, 3), (ts2, 6)]
-        k_thief.rift_aptitude = 0
-        thief.equip_kata(k_thief)
-        enemies.append(thief)
+        enemies.append(spawn("Underwear Thief"))
 
     elif stage_id == 2: 
-        for i, label in enumerate(["A", "B", "C"]):
-            fresh = Entity(f"Class-Skipping Freshman {label}", is_player=False)
-            fresh.max_hp = 10; fresh.hp = 10
-            res = [1.3, 1.3, 1.4, 1.4, 1.4, 1.4, 1.3]
-            k_fresh = Kata("Delinquent Attitude", "Freshman", 1, "0", res)
-            fs1 = Skill("Flimsy Punch", 1, EL_AGAPE, 3, "")
-            fs2 = Skill("Kick", 2, EL_STORGE, 5, "")
-            k_fresh.skill_pool_def = [(fs1, 4), (fs2, 5)]
-            k_fresh.rift_aptitude = 0
-            fresh.equip_kata(k_fresh)
-            enemies.append(fresh)
+        for label in ["A", "B", "C"]:
+            enemies.append(spawn("Class-Skipping Freshman", label))
             
     elif stage_id == 4: 
-        for i, label in enumerate(["A", "B", "C", "D", "E"]):
-            hooligan = Entity(f"Kidnapper Hooligan {label}", is_player=False)
-            hooligan.max_hp = 5; hooligan.hp = 5
-            res = [1.5] * 7
-            k_hool = Kata("Hooligan", "Hooligan", 1, "0", res)
-            s1 = Skill("Bash", 1, EL_PRAGMA, 5, "")
-            k_hool.skill_pool_def = [(s1, 9)]
-            k_hool.rift_aptitude = 0
-            hooligan.equip_kata(k_hool)
-            enemies.append(hooligan)
-        
-        leader = Entity("Kidnapper Hooligan Leader", is_player=False)
-        leader.max_hp = 20; leader.hp = 20
-        res_l = [1.15, 1.15, 1.05, 1.05, 1.05, 1.05, 1.15]
-        k_lead = Kata("Leader", "Leader", 1, "0", res_l)
-        ls1 = Skill("Heavy Bash", 1, EL_PRAGMA, 6, "")
-        ls2 = Skill("Block", 2, EL_LUDUS, 0, "[Combat Start] Take -4 Final Damage this turn", effect_type="BUFF_DEF_FLAT", effect_val=4)
-        k_lead.skill_pool_def = [(ls1, 7), (ls2, 2)]
-        k_lead.rift_aptitude = 0
-        leader.equip_kata(k_lead)
-        enemies.append(leader)
+        for label in ["A", "B", "C", "D", "E"]:
+            enemies.append(spawn("Kidnapper Hooligan", label))
+        enemies.append(spawn("Kidnapper Hooligan Leader"))
 
     elif stage_id == 5001:
-        res = [0.8, 0.8, 0.9, 0.9, 0.9, 0.9, 0.8]
-        for i, label in enumerate(["A", "B", "C"]):
-            fresh = Entity(f"Class-Skipping Freshman {label}", is_player=False)
-            fresh.max_hp = 10; fresh.hp = 10
-            k = Kata("Freshman", "Freshman", 1, "0", res)
-            s1 = Skill("Flimsy Punch", 1, EL_AGAPE, 3, "")
-            s2 = Skill("Kick", 2, EL_STORGE, 5, "")
-            k.skill_pool_def = [(s1, 4), (s2, 5)]
-            k.rift_aptitude = 0
-            fresh.equip_kata(k)
-            enemies.append(fresh)
+        for label in ["A", "B", "C"]:
+            enemies.append(spawn("Class-Skipping Freshman", label))
 
     elif stage_id == 5002:
-        res = [1.5] * 7
-        for i, label in enumerate(["A", "B", "C", "D"]):
-            hool = Entity(f"Kidnapper Hooligan {label}", is_player=False)
-            hool.max_hp = 5; hool.hp = 5
-            k = Kata("Hooligan", "Hooligan", 1, "0", res)
-            s1 = Skill("Bash", 1, EL_PRAGMA, 5, "")
-            k.skill_pool_def = [(s1, 9)]
-            k.rift_aptitude = 0
-            hool.equip_kata(k)
-            enemies.append(hool)
+        for label in ["A", "B", "C", "D"]:
+            enemies.append(spawn("Kidnapper Hooligan", label))
 
     elif stage_id == 5003:
-        res_f = [0.8, 0.8, 0.9, 0.9, 0.9, 0.9, 0.8]
         for label in ["A", "B"]:
-            fresh = Entity(f"Class-Skipping Freshman {label}", is_player=False)
-            fresh.max_hp = 10; fresh.hp = 10
-            k = Kata("Freshman", "Freshman", 1, "0", res_f)
-            s1 = Skill("Flimsy Punch", 1, EL_AGAPE, 3, "")
-            s2 = Skill("Kick", 2, EL_STORGE, 5, "")
-            k.skill_pool_def = [(s1, 4), (s2, 5)]
-            k.rift_aptitude = 0
-            fresh.equip_kata(k)
-            enemies.append(fresh)
-
-        res_h = [1.5] * 7
+            enemies.append(spawn("Class-Skipping Freshman", label))
         for label in ["A", "B"]:
-            hool = Entity(f"Kidnapper Hooligan {label}", is_player=False)
-            hool.max_hp = 5; hool.hp = 5
-            k = Kata("Hooligan", "Hooligan", 1, "0", res_h)
-            s1 = Skill("Bash", 1, EL_PRAGMA, 5, "")
-            k.skill_pool_def = [(s1, 9)]
-            k.rift_aptitude = 0
-            hool.equip_kata(k)
-            enemies.append(hool)
-
-        lead = Entity("Kidnapper Hooligan Leader", is_player=False)
-        lead.max_hp = 20; lead.hp = 20
-        res_l = [1.15, 1.15, 1.05, 1.05, 1.05, 1.05, 1.15]
-        k_lead = Kata("Leader", "Leader", 1, "0", res_l)
-        ls1 = Skill("Heavy Bash", 1, EL_PRAGMA, 6, "")
-        ls2 = Skill("Block", 2, EL_LUDUS, 0, "[Combat Start] Take -4 Final Damage this turn", effect_type="BUFF_DEF_FLAT", effect_val=4)
-        k_lead.skill_pool_def = [(ls1, 7), (ls2, 2)]
-        k_lead.rift_aptitude = 0
-        lead.equip_kata(k_lead)
-        enemies.append(lead)
+            enemies.append(spawn("Kidnapper Hooligan", label))
+        enemies.append(spawn("Kidnapper Hooligan Leader"))
 
     elif stage_id == 6:
-        benikawa = Entity("Ayame Benikawa", is_player=False)
-        benikawa.max_hp = 29; benikawa.hp = 29
-        res_b = [1.3, 1.3, 0.7, 0.7, 0.9, 0.9, 1.0]
-        k_spar = Kata("Sparring Style", "Benikawa", 1, 2, res_b)
-        s1 = Skill("Palm Strike", 1, EL_PHILIA, 2, "If the target has 70%- HP, deal -1 Final Damage", effect_type="COND_LOW_HP_MERCY", effect_val=1)
-        s2 = Skill("Roundhouse Kick", 2, EL_STORGE, 3, "If the target has 70%- HP, deal -1 Final Damage", effect_type="COND_LOW_HP_MERCY", effect_val=1)
-        s3 = Skill("Vital Strike", 3, EL_PHILAUTIA, 5, "[On Hit] Target will take +4 Final Damage from the next attack", effect_type="ON_HIT_NEXT_TAKEN_FLAT", effect_val=4)
-        k_spar.skill_pool_def = [(s1, 3), (s2, 3), (s3, 3)]
-        k_spar.rift_aptitude = 2
-        benikawa.equip_kata(k_spar)
-        enemies.append(benikawa)
+        # In the original code, the node spawned her simply as "Ayame Benikawa". 
+        # The database names her "Ayame Benikawa (Sparring)". We rename it here to match standard text.
+        enemy = spawn("Ayame Benikawa (Sparring)")
+        if enemy:
+            enemy.name = "Ayame Benikawa"
+            enemies.append(enemy)
 
     elif stage_id == 7:
-        # --- NINJA BATTLE: Ayame Benikawa (Ninja) ---
-        ninja = Entity("Ayame Benikawa (Ninja)", is_player=False)
-        ninja.max_hp = 60; ninja.hp = 60
-        res_n = [1.5, 0.6, 0.6, 0.9, 1.5, 0.9, 0.6]
-        
-        k_ninja = Kata("Benikawa Ninja Arts", "Benikawa", 1, 4, res_n)
-        
-        # Ninja Skills
-        s1 = Skill("Aim Vitals", 1, EL_EROS, 4, "[On Hit] Target takes +4 Dmg from next attack", effect_type="ON_HIT_NEXT_TAKEN_FLAT", effect_val=4)
-        s2 = Skill("Crescent Kick", 2, EL_LUDUS, 5, "If target has 80%- HP, deal +2 Dmg", effect_type="COND_HP_BELOW_80_FLAT", effect_val=2)
-        
-        nerve_debuff = StatusEffect("Nerve Disruption", "⚡", 0, "Deals -80% Damage.", duration=2, type="DEBUFF")
-        s3 = Skill("Reroute Nerves", 3, EL_PHILAUTIA, 8, "[On Hit] Target deals -80% damage next turn", effect_type="APPLY_STATUS")
-        s3.status_effect = nerve_debuff 
-        
-        k_ninja.skill_pool_def = [(s1, 4), (s2, 3), (s3, 2)]
-        k_ninja.rift_aptitude = 4
-        ninja.equip_kata(k_ninja)
-        
-        ninja.description = (
-            "Benikawa Ayame sheds her cheerful high-school karateka disguise to reveal her true identity as a trained assassin of the Benikawa ninja clan. "
-            "Her ginger hair flows freely now, purple eyes sharp and predatory, movements silent and precise as she strikes with nerve-disrupting pressure-point techniques."
-        )
-        ninja.unlock_stage_id = 7
-        enemies.append(ninja)
-
-        # --- NINJA BATTLE: Body Doubles ---
-        res_d = [1.4, 1.4, 1.5, 1.5, 1.4, 1.5, 1.4]
+        enemies.append(spawn("Ayame Benikawa (Ninja)"))
         for label in ["A", "B"]:
-            double = Entity(f"Benikawa Body Double {label}", is_player=False)
-            double.max_hp = 20; double.hp = 20
-            
-            k_double = Kata("Paper Clone", "Body Double", 1, 4, res_d)
-            ds1 = Skill("Chop Strike", 1, EL_PRAGMA, 3, "")
-            ds2 = Skill("Flying Kick", 2, EL_LUDUS, 5, "")
-            
-            k_double.skill_pool_def = [(ds1, 5), (ds2, 4)]
-            k_double.rift_aptitude = 4
-            double.equip_kata(k_double)
-            enemies.append(double)
+            enemies.append(spawn("Benikawa Body Double", label))
 
     # --- ACT 1 DELINQUENT NODES ---
     elif stage_id == 10001:
-        res = [1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2]
-        for i, label in enumerate(["A", "B", "C"]):
-            slender = Entity(f"Slender Heiwa Seiritsu Delinquent {label}", is_player=False)
-            slender.max_hp = 40; slender.hp = 40
-            
-            k = Kata("Heiwa Slender", "Delinquent", 1, "0", res)
-            s1 = Skill("Pipe Smack", 1, EL_AGAPE, 4, "[On Hit] Target takes +1 Final Damage from next attack", effect_type="ON_HIT_NEXT_TAKEN_FLAT", effect_val=1)
-            s2 = Skill("Stubborn Rush", 2, EL_EROS, 4, "[Combat Start] Take +8 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=-8)
-            
-            k.skill_pool_def = [(s1, 5), (s2, 4)]
-            k.rift_aptitude = 0
-            slender.equip_kata(k)
-            enemies.append(slender)
+        for label in ["A", "B", "C"]:
+            enemies.append(spawn("Slender Heiwa Seiritsu Delinquent", label))
 
     elif stage_id == 10002:
-        res = [1.2, 1.4, 1.6, 1.4, 1.6, 1.4, 1.6]
-        for i, label in enumerate(["A", "B", "C"]):
-            bulky = Entity(f"Bulky Heiwa Seiritsu Delinquent {label}", is_player=False)
-            bulky.max_hp = 45; bulky.hp = 45
-            
-            k = Kata("Heiwa Bulky", "Delinquent", 1, "0", res)
-            s1 = Skill("Bat Bash", 1, EL_PHILAUTIA, 4, "[On Hit] Deal +1 Final Damage with next attack", effect_type="ON_HIT_NEXT_DEAL_FLAT", effect_val=1)
-            s2 = Skill("Stubborn Rush", 2, EL_EROS, 4, "[Combat Start] Take +8 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=-8)
-            
-            k.skill_pool_def = [(s1, 5), (s2, 4)]
-            k.rift_aptitude = 0
-            bulky.equip_kata(k)
-            enemies.append(bulky)
+        for label in ["A", "B", "C"]:
+            enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent", label))
 
     elif stage_id == 10003:
-        res_s = [1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2]
         for label in ["A", "B"]:
-            slender = Entity(f"Slender Heiwa Seiritsu Delinquent {label}", is_player=False)
-            slender.max_hp = 40; slender.hp = 40
-            k = Kata("Heiwa Slender", "Delinquent", 1, "0", res_s)
-            s1 = Skill("Pipe Smack", 1, EL_AGAPE, 4, "[On Hit] Target takes +1 Final Damage from next attack", effect_type="ON_HIT_NEXT_TAKEN_FLAT", effect_val=1)
-            s2 = Skill("Stubborn Rush", 2, EL_EROS, 4, "[Combat Start] Take +8 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=-8)
-            k.skill_pool_def = [(s1, 5), (s2, 4)]
-            k.rift_aptitude = 0
-            slender.equip_kata(k)
-            enemies.append(slender)
-        
-        res_b = [1.2, 1.4, 1.6, 1.4, 1.6, 1.4, 1.6]
-        bulky = Entity("Bulky Heiwa Seiritsu Delinquent", is_player=False)
-        bulky.max_hp = 45; bulky.hp = 45
-        k_b = Kata("Heiwa Bulky", "Delinquent", 1, "0", res_b)
-        bs1 = Skill("Bat Bash", 1, EL_PHILAUTIA, 4, "[On Hit] Deal +1 Final Damage with next attack", effect_type="ON_HIT_NEXT_DEAL_FLAT", effect_val=1)
-        bs2 = Skill("Stubborn Rush", 2, EL_EROS, 4, "[Combat Start] Take +8 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=-8)
-        k_b.skill_pool_def = [(bs1, 5), (bs2, 4)]
-        k_b.rift_aptitude = 0
-        bulky.equip_kata(k_b)
-        enemies.append(bulky)
+            enemies.append(spawn("Slender Heiwa Seiritsu Delinquent", label))
+        enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent"))
 
     elif stage_id == 10004:
-        res_b = [1.2, 1.4, 1.6, 1.4, 1.6, 1.4, 1.6]
         for label in ["A", "B"]:
-            bulky = Entity(f"Bulky Heiwa Seiritsu Delinquent {label}", is_player=False)
-            bulky.max_hp = 45; bulky.hp = 45
-            k = Kata("Heiwa Bulky", "Delinquent", 1, "0", res_b)
-            s1 = Skill("Bat Bash", 1, EL_PHILAUTIA, 4, "[On Hit] Deal +1 Final Damage with next attack", effect_type="ON_HIT_NEXT_DEAL_FLAT", effect_val=1)
-            s2 = Skill("Stubborn Rush", 2, EL_EROS, 4, "[Combat Start] Take +8 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=-8)
-            k.skill_pool_def = [(s1, 5), (s2, 4)]
-            k.rift_aptitude = 0
-            bulky.equip_kata(k)
-            enemies.append(bulky)
-            
-        res_s = [1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2]
-        slender = Entity("Slender Heiwa Seiritsu Delinquent", is_player=False)
-        slender.max_hp = 40; slender.hp = 40
-        k_s = Kata("Heiwa Slender", "Delinquent", 1, "0", res_s)
-        ss1 = Skill("Pipe Smack", 1, EL_AGAPE, 4, "[On Hit] Target takes +1 Final Damage from next attack", effect_type="ON_HIT_NEXT_TAKEN_FLAT", effect_val=1)
-        ss2 = Skill("Stubborn Rush", 2, EL_EROS, 4, "[Combat Start] Take +8 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=-8)
-        k_s.skill_pool_def = [(ss1, 5), (ss2, 4)]
-        k_s.rift_aptitude = 0
-        slender.equip_kata(k_s)
-        enemies.append(slender)
+            enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent", label))
+        enemies.append(spawn("Slender Heiwa Seiritsu Delinquent"))
 
     # --- ACT 2 ENEMY LOGIC ---
-    
-    # Helper to create Spike Bat
-    def make_spike(label=""):
-        e = Entity(f"Spike Bat Heiwa Seiritsu Delinquent {label}".strip(), is_player=False)
-        e.max_hp = 30; e.hp = 30
-        res = [1.1, 1.6, 1.1, 1.2, 1.6, 1.6, 1.1]
-        k = Kata("Spike Bat Style", "Delinquent", 1, "0", res)
-        s1 = Skill("Knock", 1, EL_STORGE, 5, "")
-        s2 = Skill("Sharp Swing", 2, EL_EROS, 5, "[On Hit] Inflict 1 Bleed Potency", effect_type="APPLY_STATUS")
-        s2.status_effect = bleed_1
-        k.skill_pool_def = [(s1, 5), (s2, 4)]
-        k.rift_aptitude = 0
-        e.equip_kata(k)
-        return e
+    elif stage_id == 14001:
+        enemies.append(spawn("Slender Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Slender Heiwa Seiritsu Delinquent", "B"))
+        enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent"))
 
-    # Helper to create Chain Fist
-    def make_chain(label=""):
-        e = Entity(f"Chain Fist Heiwa Seiritsu Delinquent {label}".strip(), is_player=False)
-        e.max_hp = 30; e.hp = 30
-        res = [1.6, 1.1, 1.6, 1.2, 1.2, 1.1, 1.6]
-        k = Kata("Chain Fist Style", "Delinquent", 1, "0", res)
-        s1 = Skill("Shove", 1, EL_PHILIA, 6, "")
-        s2 = Skill("Cutting Fist", 2, EL_PRAGMA, 3, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
-        s2.status_effect = bleed_2
-        k.skill_pool_def = [(s1, 5), (s2, 4)]
-        k.rift_aptitude = 0
-        e.equip_kata(k)
-        return e
-
-    # Helper to create Leader
-    def make_leader(label=""):
-        e = Entity(f"Heiwa Seiritsu Delinquent Leader Fighter {label}".strip(), is_player=False)
-        e.max_hp = 40; e.hp = 40
-        res = [1.7, 1.7, 1.3, 1.3, 1.3, 1.3, 1.3]
-        k = Kata("Leader Style", "Leader", 1, "0", res)
-        s1 = Skill("Headbutting", 1, EL_PHILIA, 5, "[On Hit] Inflict 1 Bleed Potency", effect_type="APPLY_STATUS")
-        s1.status_effect = bleed_1
-        s2 = Skill("Chained Bat Combo", 2, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
-        s2.status_effect = bleed_2
-        s3 = Skill("Rally", 3, EL_PRAGMA, 0, "[On Use] All allied units take +1 Final Damage this turn", effect_type="AOE_BUFF_DEF_FLAT", effect_val=-1)
-        k.skill_pool_def = [(s1, 4), (s2, 3), (s3, 2)]
-        k.rift_aptitude = 1
-        e.equip_kata(k)
-        return e
-        
-    # Helpers for old units re-use
-    def make_slender(label=""):
-        slender = Entity(f"Slender Heiwa Seiritsu Delinquent {label}".strip(), is_player=False)
-        slender.max_hp = 40; slender.hp = 40
-        res = [1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2]
-        k = Kata("Heiwa Slender", "Delinquent", 1, "0", res)
-        s1 = Skill("Pipe Smack", 1, EL_AGAPE, 4, "[On Hit] Target takes +1 Final Damage from next attack", effect_type="ON_HIT_NEXT_TAKEN_FLAT", effect_val=1)
-        s2 = Skill("Stubborn Rush", 2, EL_EROS, 4, "[Combat Start] Take +8 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=-8)
-        k.skill_pool_def = [(s1, 5), (s2, 4)]
-        k.rift_aptitude = 0
-        slender.equip_kata(k)
-        return slender
-
-    def make_bulky(label=""):
-        bulky = Entity(f"Bulky Heiwa Seiritsu Delinquent {label}".strip(), is_player=False)
-        bulky.max_hp = 45; bulky.hp = 45
-        res = [1.2, 1.4, 1.6, 1.4, 1.6, 1.4, 1.6]
-        k = Kata("Heiwa Bulky", "Delinquent", 1, "0", res)
-        s1 = Skill("Bat Bash", 1, EL_PHILAUTIA, 4, "[On Hit] Deal +1 Final Damage with next attack", effect_type="ON_HIT_NEXT_DEAL_FLAT", effect_val=1)
-        s2 = Skill("Stubborn Rush", 2, EL_EROS, 4, "[Combat Start] Take +8 Final Damage for the turn", effect_type="BUFF_DEF_FLAT", effect_val=-8)
-        k.skill_pool_def = [(s1, 5), (s2, 4)]
-        k.rift_aptitude = 0
-        bulky.equip_kata(k)
-        return bulky
-
-    # Stage 2-3 (Node 1)
-    if stage_id == 14001:
-        enemies.append(make_slender("A"))
-        enemies.append(make_slender("B"))
-        enemies.append(make_bulky())
-
-    # Stage 2-3 (Node 2)
     elif stage_id == 14002:
-        enemies.append(make_slender())
-        enemies.append(make_bulky("A"))
-        enemies.append(make_bulky("B"))
+        enemies.append(spawn("Slender Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent", "B"))
 
-    # Stage 2-4 (Node 1)
     elif stage_id == 15001:
-        enemies.append(make_spike("A"))
-        enemies.append(make_spike("B"))
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent", "B"))
 
-    # Stage 2-4 (Node 2)
     elif stage_id == 15002:
-        enemies.append(make_chain("A"))
-        enemies.append(make_chain("B"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent", "B"))
 
-    # Stage 2-4 (Node 3)
     elif stage_id == 15003:
-        enemies.append(make_spike())
-        enemies.append(make_chain())
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent"))
 
-    # Stage 2-5 (Node 1)
     elif stage_id == 16001:
-        enemies.append(make_slender("A"))
-        enemies.append(make_slender("B"))
-        enemies.append(make_spike("A"))
-        enemies.append(make_spike("B"))
+        enemies.append(spawn("Slender Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Slender Heiwa Seiritsu Delinquent", "B"))
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent", "B"))
 
-    # Stage 2-5 (Node 2)
     elif stage_id == 16002:
-        enemies.append(make_bulky("A"))
-        enemies.append(make_bulky("B"))
-        enemies.append(make_chain("A"))
-        enemies.append(make_chain("B"))
+        enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent", "B"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent", "B"))
 
-    # Stage 2-5 (Node 3)
     elif stage_id == 16003:
-        enemies.append(make_spike("A"))
-        enemies.append(make_spike("B"))
-        enemies.append(make_chain())
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent", "B"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent"))
 
-    # Stage 2-5 (Node 4)
     elif stage_id == 16004:
-        enemies.append(make_spike())
-        enemies.append(make_chain("A"))
-        enemies.append(make_chain("B"))
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent", "A"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent", "B"))
 
-    # Stage 2-5 (Node 5)
     elif stage_id == 16005:
-        enemies.append(make_slender())
-        enemies.append(make_bulky())
-        enemies.append(make_spike())
-        enemies.append(make_chain())
+        enemies.append(spawn("Slender Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent"))
 
-    # Stage 2-7
     elif stage_id == 18:
-        enemies.append(make_spike())
-        enemies.append(make_chain())
-        enemies.append(make_leader())
+        enemies.append(spawn("Spike Bat Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Chain Fist Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Heiwa Seiritsu Delinquent Leader Fighter"))
 
-    # Stage 2-8
     elif stage_id == 19:
-        enemies.append(make_slender())
-        enemies.append(make_bulky())
-        enemies.append(make_leader("A"))
-        enemies.append(make_leader("B"))
+        enemies.append(spawn("Slender Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Bulky Heiwa Seiritsu Delinquent"))
+        enemies.append(spawn("Heiwa Seiritsu Delinquent Leader Fighter", "A"))
+        enemies.append(spawn("Heiwa Seiritsu Delinquent Leader Fighter", "B"))
 
-    # Stage 2-9: Upperclassman
     elif stage_id == 20:
-        upper = Entity("Heiwa Seiritsu Upperclassman Fighter", is_player=False)
-        upper.max_hp = 1523; upper.hp = 534
-        res = [1.0, 1.2, 1.0, 1.1, 1.1, 1.2, 0.7]
-        k = Kata("Upperclassman Style", "Upperclassman", 1, "0", res)
-        s1 = Skill("Chained Limb Combo", 1, EL_LUDUS, 14, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
-        s1.status_effect = bleed_2
-        s2 = Skill("Chain Whip", 2, EL_AGAPE, 15, "[On Hit] Inflict 3 Bleed Potency", effect_type="APPLY_STATUS")
-        s2.status_effect = bleed_3
-        s3 = Skill("Pull In And Thrash", 3, EL_AGAPE, 17, "[On Hit] Inflict 1 Bind next turn", effect_type="APPLY_STATUS")
-        s3.status_effect = bind_1
-        k.skill_pool_def = [(s1, 3), (s2, 3), (s3, 3)]
-        k.rift_aptitude = 5
-        upper.equip_kata(k)
-        enemies.append(upper)
+        enemies.append(spawn("Heiwa Seiritsu Upperclassman Fighter"))
 
-    # Stage 2-10: Kurogane
     elif stage_id == 21:
-        kuro = Entity("‘Chain Reaper Of Heiwa’ Kurogane", is_player=False)
-        kuro.max_hp = 150; kuro.hp = 150
-        res = [1.3, 1.3, 1.1, 1.6, 1.6, 1.1, 1.6]
-        k = Kata("Reaper Style", "Kurogane", 1, "0", res)
-        
-        # Skill 1: Inflict 2 Bleed AND 2 Bleed Count.
-        # Implies a heavy bleed application. Custom type for logic.
-        s1 = Skill("Chained Limb Flurry", 1, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency\n      [On Hit] Inflict 2 Bleed Count", effect_type="APPLY_BLEED_HEAVY_STACKS")
-        
-        # Skill 2: Inflict 3 Bleed and 1 Bind.
-        s2 = Skill("Heavy Chain Whip", 2, EL_AGAPE, 6, "[On Hit] Inflict 3 Bleed Potency\n      [On Hit] Inflict 1 Bind", effect_type="APPLY_BLEED_AND_BIND")
-        
-        # Skill 3: Inflict 3 Bleed and 2 Bind.
-        s3 = Skill("Pull In For A Beatdown", 3, EL_AGAPE, 8, "[On Hit] Inflict 3 Bleed Potency\n      [On Hit] Inflict 2 Bind", effect_type="APPLY_BLEED_AND_BIND_HEAVY")
-        
-        k.skill_pool_def = [(s1, 3), (s2, 4), (s3, 2)]
-        k.rift_aptitude = 6
-        kuro.equip_kata(k)
-        enemies.append(kuro)
+        enemies.append(spawn("‘Chain Reaper Of Heiwa’ Kurogane"))
 
-    return enemies
+    # Return ignoring any potential NoneType errors from typos in db
+    return [e for e in enemies if e is not None]
 
 def get_enemy_database():
     # Existing enemies...

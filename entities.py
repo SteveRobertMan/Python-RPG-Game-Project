@@ -185,7 +185,7 @@ class Entity:
             elif new_effect.name == "Haste":
                 existing.duration = min(5, existing.duration + new_effect.duration)
             elif new_effect.name == "Pierce Affinity":
-                existing.duration = min(5, existing.duration + new_effect.duration) # Updated to 5!
+                existing.duration = min(5, existing.duration + new_effect.duration)
             elif new_effect.name == "Riposte":
                 existing.duration = min(50, existing.duration + new_effect.duration)
             elif existing.name == "Poise":
