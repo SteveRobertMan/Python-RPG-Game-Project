@@ -23,15 +23,22 @@ class GachaSystem:
         self.pool = {
             RARITY_4: [
                 "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’ Shigemura",
-                "Kasakura High School Disciplinary Committee President Yuri"
+                "Kasakura High School Disciplinary Committee President Yuri",
+                "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
+                "Riposte Gang Squad Leader Naganohara",
+                "Riposte Gang Executive Hanefuji Akasuke"
             ],
             RARITY_3: [
                 "Heiwa Seiritsu’s Upperclassman | ‘Crusher’ Benikawa",
-                "Kasakura High School Disciplinary Committee Vice President Shigemura"
+                "Kasakura High School Disciplinary Committee Vice President Shigemura",
+                "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
+                "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura"
             ],
             RARITY_2: [
                 "‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke",
-                "Kasakura High School Disciplinary Committee Member Benikawa"
+                "Kasakura High School Disciplinary Committee Member Benikawa",
+                "Kiryoku Gakuen Self-Defense Club President",
+                "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri"
             ],
             RARITY_1: [
                 "Kasakura High School Student Akasuke",
@@ -39,6 +46,9 @@ class GachaSystem:
                 "Kasakura High School Student Benikawa",
                 "Kasakura High School Student Shigemura",
                 "Kasakura High School Student Naganohara",
+                "Kasakura High School Student Natsume",
+                "Kasakura High School Student Hana",
+                "Kasakura High School Student Kagaku",
                 "Heiwa Seiritsu High School Student Yuri",
                 "Heiwa Seiritsu High School Student Naganohara"
             ]

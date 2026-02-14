@@ -1,13 +1,13 @@
 from entities import Kata, Skill, ELEMENT_NAMES, EL_EROS, EL_PHILIA, EL_STORGE, EL_AGAPE, EL_LUDUS, EL_PRAGMA, EL_PHILAUTIA, StatusEffect
 # Common Status Effects Definitions for easy reuse
-bleed_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
-bleed_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
-bleed_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
-bleed_4 = StatusEffect("Bleed", "[red]💧︎[/red]", 4, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
-bleedcount_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
-bleedcount_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF")
-bleedcount_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3, type="DEBUFF")
-bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="DEBUFF")
+bleed_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleed_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleed_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleed_4 = StatusEffect("Bleed", "[red]💧︎[/red]", 4, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleedcount_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
+bleedcount_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF")
+bleedcount_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=3, type="DEBUFF")
+bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF")
 poise_1 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_3 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
@@ -54,7 +54,6 @@ def get_kata_data_by_name(name):
         s3 = Skill("Relentless Barrage", 3, EL_EROS, 8, "If the target has 50%- HP, deal +50% damage", effect_type="COND_EXECUTE", effect_val=1.5)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
-
         return {"kata_obj": k, "max_hp": 72, "description": desc}
 
     # --- Akasuke 'Iron Fist Of Heiwa' --- #
@@ -100,7 +99,7 @@ def get_kata_data_by_name(name):
         k.source_key = name      
         s1 = Skill("Steady Footing", 1, EL_LUDUS, 3, "")
         s2 = Skill("Iron Grip", 2, EL_STORGE, 7, "")
-        s3 = Skill("Lock & Throw", 3, EL_PHILIA, 7, "[On Hit] Target deals -15% damage for this turn", effect_type="DEBUFF_ATK_MULT", effect_val=0.85)
+        s3 = Skill("Lock & Throw", 3, EL_PHILIA, 7, "[On Hit] Target deals -15% damage this turn", effect_type="DEBUFF_ATK_MULT", effect_val=0.85)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
         return {"kata_obj": k, "max_hp": 63, "description": desc}
@@ -332,7 +331,7 @@ def get_kata_data_by_name(name):
         k = Kata("Kasakura High School Student", "Naganohara", 1, "I", res, desc)
         k.source_key = name      
         s1 = Skill("Flail Around", 1, EL_PHILAUTIA, 3, "[Combat Start] Take -2 Final Damage this turn", effect_type="BUFF_DEF_FLAT", effect_val=2)
-        s2 = Skill("Cheer Up!", 2, EL_STORGE, 8, "[On Use] Deal 0 damage, then heal lowest HP ally by supposed base damage.", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST", effect_val=0)
+        s2 = Skill("Cheer Up!", 2, EL_STORGE, 8, "[On Use] Deal 0 damage, then heal lowest HP ally by supposed final damage", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST", effect_val=0)
         s3 = Skill("Unmatched Energetic Slam!", 3, EL_LUDUS, 5, "[On Hit] Heal lowest HP ally by damage amount", effect_type="ON_HIT_HEAL_LOWEST_BY_DMG", effect_val=0)        
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 

@@ -5952,7 +5952,8 @@ def play_stage_3_20_start():
     show_story_box("Adam", "I am Adam. Executive of the Riposte Gang.", affiliation="Riposte Gang Executive")
     
     show_story_box("", "He drew his blade again. The air in the corridor grew heavy.", is_narrator=True)
-    
+    show_story_box("", "Ugh..!\nMy Kata had just run out of time, too, but Kagaku and Naganohara seems to still be holding on to hers...", is_narrator=True)
+
     show_story_box("Adam", "My Boss will be arriving soon. I hope to have a proud victory to report to him.", affiliation="Riposte Gang Executive")
     show_story_box("Adam", "En garde.", affiliation="Riposte Gang Executive")
 

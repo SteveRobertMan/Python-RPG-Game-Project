@@ -325,7 +325,7 @@ class BattleManager:
                     symbol="[dim gold1]⛓[/dim gold1]", 
                     potency=1, 
                     duration=actual_duration, 
-                    description="Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5"
+                    description="Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5"
                 )
                 #self.log(f"[gold1]{unit.name}! Becomes bound for {bind_effect.duration}[/gold1]")
                 #time.sleep(0.5)
@@ -850,17 +850,17 @@ class BattleManager:
 
         # --- EXISTING KUROGANE & GENERIC EFFECTS ---
         elif skill.effect_type == "APPLY_BLEED_HEAVY_STACKS":
-            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=2)
+            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=2, type="DEBUFF")
             self.apply_status_logic(target, bleed)
         elif skill.effect_type == "APPLY_BLEED_AND_BIND":
-            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1)
+            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF")
             self.apply_status_logic(target, bleed)
-            bind = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1)
+            bind = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF")
             self.apply_status_logic(target, bind)
         elif skill.effect_type == "APPLY_BLEED_AND_BIND_HEAVY":
-            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to amount of Potency, then reduce count by 1 Max potency or count: 99", duration=1)
+            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF")
             self.apply_status_logic(target, bleed)
-            bind = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2)
+            bind = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2, type="DEBUFF")
             self.apply_status_logic(target, bind)
 
         # Generic Status + Naganohara Skill III Dual Type

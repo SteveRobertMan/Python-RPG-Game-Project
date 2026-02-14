@@ -64,7 +64,7 @@ class StatusEffect:
         self.potency = potency
         self.description = description
         self.duration = duration
-        self.type = type # "DOT", "REGEN", "DEBUFF", "BUFF"
+        self.type = type # "DEBUFF", "BUFF", "UNIQUEDEBUFF", "UNIQUEBUFF"
 
 class Skill:
     def __init__(self, name, tier, element_idx, base_damage, description="", effect_type=None, effect_val=0):
