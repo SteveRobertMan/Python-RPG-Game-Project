@@ -52,8 +52,9 @@ KATA_ID_MAP = {
     19: "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
     20: "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
     21: "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura",
-    22: "Riposte Gang Squad Leader Naganohara Tsukimiyama",
-    23: "Riposte Gang Executive Hanefuji Akasuke"
+    22: "Riposte Gang Squad Leader Naganohara",
+    23: "Riposte Gang Executive Hanefuji Akasuke",
+    24: "Kasakura High School Disciplinary Committee Member Kagaku"
 }
 
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
@@ -533,7 +534,7 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 90, "description": desc}
 
     # --- NAGANOHARA RIPOSTE ---
-    elif name == "Riposte Gang Squad Leader Naganohara Tsukimiyama":
+    elif name == "Riposte Gang Squad Leader Naganohara":
         res = [1.1, 1.1, 1.0, 1.2, 1.3, 0.8, 1.1]
         desc = (
             "Naganohara Tsukimiyama here has strayed far from the moral path, rising through the criminal underworld to become a deeply respected Squad Leader of the notorious Absconder syndicate, the Riposte Gang. She trades her Kasakura uniform for the gang’s signature dark sandy yellow long coat, her bright pink twintails tied back securely for combat. Her slender, fairly smaller-than-average build perfectly suits the syndicate's lethal fighting philosophy, making her an elusive and dangerously underestimated target in the middle of a chaotic battlefield.\n\n"
@@ -572,3 +573,25 @@ def get_kata_data_by_name(name):
         k.skill_pool_def = [(s1, 4), (s2, 3), (s3, 2)]
 
         return {"kata_obj": k, "max_hp": 80, "description": desc}
+
+    # --- KAGAKU DISCIPLINARY COMMITTEE ---
+    elif name == "Kasakura High School Disciplinary Committee Member Kagaku":
+        res = [1.1, 1.2, 1.2, 0.9, 0.9, 0.9, 1.1]
+        desc = (
+            "Kagaku Shamiko here serves as a frontline combatant in Kasakura High School’s Disciplinary Committee, a role that heavily contrasts her fundamentally laid-back nature. She begrudgingly wears the Committee’s standard white kimono uniform with muted gray accents denoting her rank, though she still lazily drapes her signature wrinkled white lab coat over her shoulders. Her unkempt hair and perpetually tired eyes remain unchanged, but instead of just carrying gadgets, she now keeps a standard-issue wooden bokken—tucked into her sash, ready for the physical altercations she desperately wishes to avoid.\n\n"
+            "Despite her position in a highly active security faction, Kagaku is still the same lazy girl who wants nothing to do with fighting. Her presence on the frontlines is purely born out of gratitude. After being rescued from a violent group of Heiwa thugs by the Committee's President, Inami Yuri, Kagaku felt a deep debt to her savior. Knowing no other way to properly repay the fiercely disciplined President, Kagaku signed up to stand by her side. As a result, her daily life is a constant, exhausting tug-of-war between her innate desire to slack off in her lab and sudden, fierce spikes of overnight motivation to uphold her duties for Yuri.\n\n"
+            "In battle, Kagaku fights with a reluctant but terrifyingly efficient style, utilizing her sharp analytical mind to calculate precise angles and leverage. She minimizes her own physical movement, relying on smart counters to end skirmishes as quickly as possible so she can go back to resting. Though she constantly complains about the grueling physical training regimens mandated by the President, her hidden combat talent and genuine efforts do not go unnoticed. Vice President Shigemura frequently observes her brilliant, low-energy takedowns from the sidelines, silently cheering her on and ensuring she stays just motivated enough to reach her true potential."
+        )
+        k = Kata("Kasakura High School Disciplinary Committee Member", "Kagaku", 2, "I", res, desc)
+        k.source_key = name
+        
+        s1 = Skill("Heavy Draw", 1, EL_LUDUS, 5, "[On Use] Gain 2 Poise Potency", effect_type="GAIN_STATUS")
+        s1.status_effect = poise_2
+        
+        s2 = Skill("Harai Waza", 2, EL_PHILAUTIA, 7, "[On Hit] All allies (including self) with 4+ Poise Potency convert 2 Poise Potency to Count", effect_type="ON_HIT_CONVERT_POISE_TYPE2", effect_val=2)
+        
+        s3 = Skill("Theory Of Discipline", 3, EL_EROS, 7, "[On Hit] All allies (including self) with Poise gain 4 Poise Count. Gain 4 Poise Potency instead if they do not have Poise", effect_type="ON_HIT_PROVIDE_POISE_TYPE4", effect_val=4)
+        
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 71, "description": desc}

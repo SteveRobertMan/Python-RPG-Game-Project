@@ -5922,17 +5922,17 @@ def play_stage_3_20_start():
     # --- SCENE 4: KAGAKU'S SURPRISE ATTACK ---
     show_story_box("", "Suddenly—\nWHOOSH.", is_narrator=True)
     show_story_box("", "A shadow dropped from the stairwell railing above.\nCRACK!", is_narrator=True)
-    show_story_box("", "A metal rapier handle smashed directly onto the young man’s head.", is_narrator=True)
+    show_story_box("", "A wooden bokken handle smashed directly onto the young man’s head.", is_narrator=True)
     
     show_story_box("Young Man", "Guh?!", affiliation="Riposte Gang")
     show_story_box("", "He stumbled backward, stunned, clutching his skull.", is_narrator=True)
     
     show_story_box("", "A figure landed gracefully (mostly) behind him.\nIt was Kagaku.", is_narrator=True)
-    show_story_box("", "She was battered, bruised, and holding a stolen rapier. Her aura was flaring…", is_narrator=True)
-    show_story_box("", "She was also using a Riposte Squad Leader Kata.", is_narrator=True)
+    show_story_box("", "She was battered, bruised, and holding a stolen broom. Her aura was flaring…", is_narrator=True)
+    show_story_box("", "She was using a Kasakura Disciplinary Committee Kata.", is_narrator=True)
     
     show_story_box("Kagaku", "You have terrible manners, you know that?!", affiliation="Kasakura High School Student / Seven Wonders")
-    show_story_box("", "She pointed her blade at him, panting heavily.", is_narrator=True)
+    show_story_box("", "She pointed her bokken at him, panting heavily.", is_narrator=True)
     show_story_box("Kagaku", "You kidnap me! You threaten me! You feed me delicious pancakes! And you never even introduced yourself!", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("Akasuke", "...Kagaku?", affiliation="Kasakura High School Student / Seven Wonders")
@@ -5952,7 +5952,7 @@ def play_stage_3_20_start():
     show_story_box("Adam", "I am Adam. Executive of the Riposte Gang.", affiliation="Riposte Gang Executive")
     
     show_story_box("", "He drew his blade again. The air in the corridor grew heavy.", is_narrator=True)
-    show_story_box("", "Ugh..!\nMy Kata had just run out of time, too, but Kagaku and Naganohara seems to still be holding on to hers...", is_narrator=True)
+    show_story_box("", "Ugh..!\nMy Kata had just run out of time, too, but Kagaku and Naganohara seems to still be holding on to theirs...", is_narrator=True)
 
     show_story_box("Adam", "My Boss will be arriving soon. I hope to have a proud victory to report to him.", affiliation="Riposte Gang Executive")
     show_story_box("Adam", "En garde.", affiliation="Riposte Gang Executive")
@@ -5975,10 +5975,10 @@ def play_stage_3_21_story():
     show_story_box("Kagaku", "You’re an idiot, you know that?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Adam froze, panting, sweat dripping from his bangs.", is_narrator=True)
-    show_story_box("Adam", "Haah...Excuse me?", affiliation="Riposte Gang Executive")
+    show_story_box("Adam", "Ugh...Excuse me?", affiliation="Riposte Gang Executive")
     
     show_story_box("Kagaku", "You have talent. Real talent. Not this criminal stuff. I mean the cooking. And your discipline.", affiliation="Kasakura High School Student / Seven Wonders")
-    show_story_box("", "I lowered the rapier in my hand slightly.", is_narrator=True)
+    show_story_box("", "I lowered the bokken in my hand slightly.", is_narrator=True)
     show_story_box("Kagaku", "You’re young. You’re just following orders because you have nowhere else to go, right? That’s a waste.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "He blinked. The aggression in his eyes wavered.", is_narrator=True)
@@ -6001,7 +6001,7 @@ def play_stage_3_21_story():
     show_story_box("", "Adam reached into his coat pocket. His hand was shaking. He pulled out the blue pendant and placed it in my palm.", is_narrator=True)
     
     show_story_box("Adam", "...You win.", affiliation="Riposte Gang Executive")
-    show_story_box("", "It was a gesture of respect. A duelist acknowledging his loss, even though the fight was not a duel at all.", is_narrator=True)
+    show_story_box("", "Hm, it must be a gesture of respect. A duelist acknowledging his loss, well, even though the fight was not a duel at all.", is_narrator=True)
 
     # --- SCENE 2: THE HENCHMAN'S WARNING ---
     show_story_box("", "Just then—\nTHUD THUD THUD—", is_narrator=True)
@@ -6030,7 +6030,7 @@ def play_stage_3_21_story():
     show_story_box("", "He started to tremble.", is_narrator=True)
     
     show_story_box("Adam", "No…he was on the island. The whole time. He’s been watching.", affiliation="Riposte Gang Executive")
-    show_story_box("Adam", "He used us as bait. He watched us scramble… watched us fight… just to confirm the Katas were real. And now that you have the Anchor here…", affiliation="Riposte Gang Executive")
+    show_story_box("Adam", "He used us as bait. He watched us scramble… watched us fight… just to confirm the Katas were real. And now you have the Anchor...", affiliation="Riposte Gang Executive")
     
     show_story_box("", "He looked at me.", is_narrator=True)
     show_story_box("Adam", "...He’s coming to collect it.", affiliation="Riposte Gang Executive")

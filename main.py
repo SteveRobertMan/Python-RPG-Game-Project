@@ -277,12 +277,15 @@ def run_game():
                 party = [member for member in party if member.name == "Kagaku"]
     
             if stage_id == 42:
-                has_kaga = any(u.name == "Kagaku" for u in party)
-                if not has_kaga:
-                    guest_loadout = scd.get_kata_data_by_name("Riposte Gang Squad Leader Kagaku")
-                    guest_kagaku = stages.create_kagaku(guest_loadout)
-                    party.append(guest_kagaku)
                 party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa","Shigemura","Naganohara","Kagaku"]]
+                party = [p for p in party if p.name != "Naganohara"]
+                guest_loadout = scd.get_kata_data_by_name("Riposte Gang Squad Leader Naganohara")
+                guest_naganohara = stages.create_naganohara(guest_loadout)
+                party.insert(4, guest_naganohara)
+                party = [p for p in party if p.name != "Kagaku"]
+                guest_loadout = scd.get_kata_data_by_name("Kasakura High School Disciplinary Committee Member Kagaku")
+                guest_kagaku = stages.create_kagaku(guest_loadout)
+                party.insert(5, guest_kagaku)
 
             enemies = stages.load_stage_enemies(stage_id)
             if not enemies:

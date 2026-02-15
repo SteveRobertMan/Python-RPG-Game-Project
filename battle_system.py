@@ -980,6 +980,16 @@ class BattleManager:
                         poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
                         if poise_effect:
                             poise_effect.potency = min(99, poise_effect.potency + skill.effect_val)
+                elif skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE4":
+                    # Logic: If they have Poise, grant x Count. Else, grant x Potency.
+                    team = self.allies if attacker in self.allies else self.enemies
+                    for member in team:
+                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                        if poise_effect:
+                            poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
+                        else:
+                            new_poise = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", skill.effect_val, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0)
+                            self.apply_status_logic(member, new_poise)
                 elif skill.effect_type == "ON_HIT_CONVERT_POISE_TYPE1":
                     # Logic: Convert 1 Potency -> 1 Count if Potency >= 2
                     team = self.allies if attacker in self.allies else self.enemies
@@ -988,6 +998,15 @@ class BattleManager:
                         if poise_effect and poise_effect.potency >= 2:
                             poise_effect.potency -= 1
                             poise_effect.duration = min(99, poise_effect.duration + 1)
+                # --- KAGAKU DISCIPLINARY COMMITTEE POISE FLAGS ---
+                elif skill.effect_type == "ON_HIT_CONVERT_POISE_TYPE2":
+                    # Logic: Convert x Potency -> x Count if Potency >= 4
+                    team = self.allies if attacker in self.allies else self.enemies
+                    for member in team:
+                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                        if poise_effect and poise_effect.potency >= 4:
+                            poise_effect.potency -= skill.effect_val
+                            poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
 
                 # --- NEXT HIT BONUSES ---
                 elif skill.effect_type == "ON_HIT_NEXT_TAKEN_FLAT":
