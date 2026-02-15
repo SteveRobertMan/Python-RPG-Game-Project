@@ -10,6 +10,8 @@ import config
 from ui_components import clear_screen, get_player_input
 from entities import ELEMENT_NAMES, get_element_color, get_tier_roman, to_subscript, StatusEffect
 
+DURATION_ONLY_EFFECTS = ["Bind", "Haste", "Pierce Affinity", "Riposte"]
+
 """
 --------------------------------------------------------------------------------
 CORE DATA STRUCTURES & BATTLE SYSTEM PROPERTIES
@@ -602,12 +604,32 @@ class BattleManager:
         # Initialize specific variable for Shigemura's Sadism to avoid scope errors
         sadism_bind_to_apply = 0
         is_crit = False
+        
+        # FIX 4: UnboundLocalError Risk - Default initialize damage to 0 at the start of the function
+        damage = 0
 
         # --- [STEP 1] [On Use] EFFECTS ---
         if "[On Use]" in skill.description:
             if skill.effect_type == "BUFF_DEF_FLAT":
                  attacker.temp_modifiers["final_dmg_reduction"] = attacker.temp_modifiers.get("final_dmg_reduction", 0) + skill.effect_val
             
+            # FIX 2 & FIX 5: Moved DEF_BUFF_BASE_PER to Step 1 and handled Enemy phase vulnerability
+            elif skill.effect_type == "DEF_BUFF_BASE_PER":
+                reduction_pct = skill.effect_val / 10.0
+                if attacker in self.enemies:
+                    if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                    attacker.next_turn_modifiers["incoming_dmg_mult"] = attacker.next_turn_modifiers.get("incoming_dmg_mult", 1.0) * (1.0 - reduction_pct)
+                else:
+                    attacker.temp_modifiers["incoming_dmg_mult"] *= (1.0 - reduction_pct)
+                    
+            # FIX 2: Moved BLEED_POTENCY_DEF_BUFF's [On Use] defense buff to Step 1
+            elif skill.effect_type == "BLEED_POTENCY_DEF_BUFF":
+                attacker.temp_modifiers["final_dmg_reduction"] += skill.effect_val
+                
+            # FIX 2: Moved BENIKAWA_KIRYOKU_SPECIAL's [On Use] self-debuff to Step 1
+            elif skill.effect_type == "BENIKAWA_KIRYOKU_SPECIAL":
+                attacker.temp_modifiers["incoming_dmg_mult"] *= 1.50
+
             # KIRYOKU / SUMIKO / FALCON
             elif skill.effect_type == "BASE_DAMAGE_DEBUFF_ALL":
                 team = self.allies if attacker in self.allies else self.enemies
@@ -729,7 +751,7 @@ class BattleManager:
                     is_crit = True
                     dmg *= 1.2  # 20% Crit Multiplier
 
-            # 6. Elemental & Global Multipliers (CRASH PROTECTION: Added .get())
+            # 6. Elemental & Global Multipliers
             res_mult = target.resistances[skill.element]
             nbd = dmg * res_mult
             nbd *= attacker.temp_modifiers.get("outgoing_dmg_mult", 1.0)
@@ -828,7 +850,6 @@ class BattleManager:
                 
                 elif skill.effect_type == "JOKE_SKILL":
                     damage = 0
-                    #self.log(f"[dim]-> The attack was completely harmless![/dim]")
 
             # --- APPLY DAMAGE ---
             if damage > 0:
@@ -846,13 +867,11 @@ class BattleManager:
                         target.next_turn_modifiers = {}
                         
                     # Add the potency to next turn's outgoing damage multiplier
-                    # Example: 1.0 + 0.20 = 1.20x damage next turn
                     current_mult = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0)
                     target.next_turn_modifiers["outgoing_dmg_mult"] = current_mult + target.counter_potency
                     
                     # Deactivate so multi-hit skills don't stack the counter infinitely
                     target.counter_active = False 
-                    #self.log(f"[bold white]⮌ {target.name} absorbs the blow and primes a devastating counter![/bold white]")
                 
                 # GAIN_POISE_SPECIAL_1 On Hit
                 if skill.effect_type == "GAIN_POISE_SPECIAL_1":
@@ -930,7 +949,6 @@ class BattleManager:
                 pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
                 if pierce_target_eff:
                     pierce_target_eff.duration -= 1
-                    # self.log(f"[dim]Pierce Affinity count reduced to {pierce_target_eff.duration}.[/dim]")
                     if pierce_target_eff.duration <= 0: target.status_effects.remove(pierce_target_eff)
                     
                 # --- APPLY INFILTRATOR RECOIL ---
@@ -938,6 +956,7 @@ class BattleManager:
                     attacker.hp -= infiltrator_recoil
                     self.log(f"[bold red]{attacker.name} takes {infiltrator_recoil} Recoil Damage from momentum![/bold red]")
 
+                # FIX 1: Optimization - Chained the [On Hit] conditional checks with elif
                 # --- LOGIC: POISE SUPPORT ---
                 if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE1":
                     # Logic: Grant +1 Poise Count to all allies who already have Poise
@@ -945,54 +964,44 @@ class BattleManager:
                     for member in team:
                         poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
                         if poise_effect:
-                            # Increase Duration (Count) by val (1), cap at 99
                             poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
-                            # if self.console: self.console.print(f"   [cyan]>{member.name}'s Poise Count +{skill.effect_val}![/cyan]")
-                if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE2":
+                elif skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE2":
                     # Logic: Grant +2 Potency AND +2 Count to allies with Poise
                     team = self.allies if attacker in self.allies else self.enemies
                     for member in team:
                         poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
                         if poise_effect:
-                            # Increase Potency and Duration, cap at 99
                             poise_effect.potency = min(99, poise_effect.potency + skill.effect_val)
                             poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
-                            # if self.console: self.console.print(f"   [cyan]>{member.name}'s Poise Strengthened![/cyan]")
-                if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE3":
-                            # Logic: Grant +2 Poise Potency to all allies who already have Poise
+                elif skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE3":
+                    # Logic: Grant +2 Poise Potency to all allies who already have Poise
                     team = self.allies if attacker in self.allies else self.enemies
                     for member in team:
                         poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
                         if poise_effect:
-                            # Increase Potency by val (2), cap at 99
                             poise_effect.potency = min(99, poise_effect.potency + skill.effect_val)
-                            #if self.console: self.console.print(f"   [cyan]>{member.name}'s Poise Potency +{skill.effect_val}![/cyan]")
-                if skill.effect_type == "ON_HIT_CONVERT_POISE_TYPE1":
+                elif skill.effect_type == "ON_HIT_CONVERT_POISE_TYPE1":
                     # Logic: Convert 1 Potency -> 1 Count if Potency >= 2
                     team = self.allies if attacker in self.allies else self.enemies
                     for member in team:
                         poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
-                        # Check condition: Must have at least 2 Potency (to afford the cost of 1)
                         if poise_effect and poise_effect.potency >= 2:
                             poise_effect.potency -= 1
                             poise_effect.duration = min(99, poise_effect.duration + 1)
-                            #if self.console: self.console.print(f"   [cyan]>{member.name} converted Poise Potency to Count![/cyan]")
 
                 # --- NEXT HIT BONUSES ---
-                if skill.effect_type == "ON_HIT_NEXT_TAKEN_FLAT":
+                elif skill.effect_type == "ON_HIT_NEXT_TAKEN_FLAT":
                     target.next_hit_taken_flat_bonus += skill.effect_val
-                if skill.effect_type == "ON_HIT_NEXT_DEAL_FLAT":
+                elif skill.effect_type == "ON_HIT_NEXT_DEAL_FLAT":
                     attacker.next_hit_deal_flat_bonus += skill.effect_val
-                if skill.effect_type == "SELF_NEXT_TAKEN_FLAT":
+                elif skill.effect_type == "SELF_NEXT_TAKEN_FLAT":
                     attacker.next_hit_taken_flat_bonus += skill.effect_val
-                if skill.effect_type == "DEBUFF_INCOMING_DMG_FLAT":
+                elif skill.effect_type == "DEBUFF_INCOMING_DMG_FLAT":
                     target.temp_modifiers["incoming_dmg_flat"] += skill.effect_val
 
             else:
                 if skill.effect_type != "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
                     self.log(f"-> The move dealt no damage.")
-
-        
 
         # --- [STEP 3] STATUS EFFECT / SPECIAL APPLICATION ---
         
@@ -1002,6 +1011,7 @@ class BattleManager:
             for member in team:
                 if member.hp > 0:
                     member.temp_modifiers["final_dmg_reduction"] = member.temp_modifiers.get("final_dmg_reduction", 0) + skill.effect_val
+                    
         # --- AKASUKE SKILLS ---
 
         # Skill I: Jab Flurry (Bleed Count Opener)
@@ -1037,26 +1047,17 @@ class BattleManager:
                     # 2. Conditional Buff: "Heiwa" allies take -2 Final Dmg (Incoming Reduction)
                     if hasattr(member, "kata") and "Heiwa" in member.kata.name:
                         member.temp_modifiers["final_dmg_reduction"] += skill.effect_val
-            
-            #self.log(f"[bold gold1]{attacker.name} rallies the team![/bold gold1]")
 
         # BLEED_POTENCY_DEF_BUFF (Yuri Heiwa S3)
+        # FIX 2: Removed the self-buff segment of this block as it was properly placed in Step 1
         elif skill.effect_type == "BLEED_POTENCY_DEF_BUFF":
             if skill.status_effect:
                 # Apply deepcopy of status to prevent template corruption
                 effect_instance = copy.deepcopy(skill.status_effect)
                 self.apply_status_logic(target, effect_instance)
-            
-            # Apply Defense Buff to User
-            attacker.temp_modifiers["final_dmg_reduction"] += skill.effect_val
         
         # --- BENIKAWA SKILL LOGIC ---
-        
-        # DEF_BUFF_BASE_PER (Benikawa S2)
-        elif skill.effect_type == "DEF_BUFF_BASE_PER":
-            reduction_pct = skill.effect_val / 10.0
-            attacker.temp_modifiers["incoming_dmg_mult"] *= (1.0 - reduction_pct)
-            #self.log(f"[bold cyan]{attacker.name} presence reduces incoming damage by {int(reduction_pct*100)}%![/bold cyan]")
+        # FIX 2: DEF_BUFF_BASE_PER (Benikawa S2) removed entirely from Step 3 and shifted to Step 1
 
         # COND_TARGET_HAS_BLEED_DMG_PER (Benikawa S3)
         elif skill.effect_type == "COND_TARGET_HAS_BLEED_DMG_PER":
@@ -1064,7 +1065,6 @@ class BattleManager:
             if has_bleed:
                 bonus_dmg = int(skill.base_damage * (skill.effect_val / 10.0))
                 target.hp -= bonus_dmg
-                #self.log(f"[bold red]CRUSHER! The wound is exploited for +{bonus_dmg} Bonus Damage![/bold red]")
                 
                 # --- SADISM BIND APPLY ---
                 if 'sadism_bind_to_apply' in locals() and sadism_bind_to_apply > 0:
@@ -1074,7 +1074,6 @@ class BattleManager:
                         duration=sadism_bind_to_apply
                     )
                     self.apply_status_logic(target, bind_eff)
-                    #self.log(f"[bold violet]Sadism inflicts {sadism_bind_to_apply} Bind![/bold violet]")
 
         # --- EXISTING KUROGANE & GENERIC EFFECTS ---
         elif skill.effect_type == "APPLY_BLEED_HEAVY_STACKS":
@@ -1113,6 +1112,8 @@ class BattleManager:
             for e in chosen_enemies: self.apply_status_logic(e, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=skill.effect_val))
             
         elif skill.effect_type == "HANA_SPECIAL_RAGE":
+            # FIX 3: Safety logic check injected
+            if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
             attacker.next_turn_modifiers["outgoing_dmg_mult"] = 0.6
             target.temp_modifiers["outgoing_dmg_mult"] *= 0.85
             
@@ -1298,48 +1299,45 @@ class BattleManager:
             # Yuri Kiryoku S1: If target has Rupture (or Fairylight), +Count. Else, +Potency.
             has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
             if has_rupture:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 1, "", duration=skill.effect_val))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=skill.effect_val))
             else:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", skill.effect_val, "", duration=1))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", skill.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
 
         elif skill.effect_type == "FAIRYLIGHT_APPLY":
             # Benikawa Kiryoku S2 / Hana Kiryoku S1: If target has Rupture (or Fairylight), apply Fairylight
             has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
             if has_rupture:
-                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", skill.effect_val, "", duration=1))
+                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", skill.effect_val, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1))
 
+        # FIX 2: Removed [On Use] self modifier portion from BENIKAWA_KIRYOKU_SPECIAL entirely since it is in Step 1
         elif skill.effect_type == "BENIKAWA_KIRYOKU_SPECIAL":
-            # Benikawa Kiryoku S3: [On Use] take +50% dmg, [On Hit] if Rupture, apply 3 Fairylight
-            attacker.temp_modifiers["incoming_dmg_mult"] *= 1.50
             has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
             if has_rupture:
-                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "", duration=1))
+                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1))
 
         elif skill.effect_type == "FAIRYLIGHT_SPECIAL1":
             # Hana Kiryoku S2: If target has Fairylight (specifically), inflict Rupture Potency
             has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
             if has_fairylight:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", skill.effect_val, "", duration=1))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", skill.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
 
         elif skill.effect_type == "HANA_KIRYOKU_SPECIAL":
             # Hana Kiryoku S3: If target has Fairylight (specifically), inflict 2 Rupture Count, then take -30% dmg this turn
             has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
             if has_fairylight:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 1, "", duration=2))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
                 attacker.temp_modifiers["incoming_dmg_mult"] *= 0.70
 
         elif skill.effect_type == "HASTE_GAIN_SPECIAL_TYPE1":
             # Shigemura Infiltrator S1: [On Use] If has Haste, gain 1 Haste. [On Hit] Gain 1 Haste.
             has_haste = any(s.name == "Haste" for s in attacker.status_effects)
             if has_haste:
-                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=1))
-            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=skill.effect_val))
+                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
+            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=skill.effect_val))
 
         elif skill.effect_type == "DEBUFF_ATK_MULT":
             # Target deals reduced damage for the rest of the turn
             target.temp_modifiers["outgoing_dmg_mult"] *= skill.effect_val
-            # Optional: Add a log message to show it worked
-            # self.log(f"[dim]{target.name}'s outgoing damage was reduced by the attack![/dim]")
 
         if target.hp <= 0:
             target.hp = 0
@@ -1467,7 +1465,7 @@ class BattleManager:
             se_text = ""
             if unit.status_effects:
                 for i, effect in enumerate(unit.status_effects):
-                    if effect.name in ["Bind", "Haste", "Pierce Affinity", "Riposte"]:
+                    if effect.name in DURATION_ONLY_EFFECTS:
                         # Bind and some others don't show potency, only count
                         se_text += f"[bold cyan]SE{i+1}[/bold cyan]: {effect.symbol} {effect.name} (Count: {effect.duration})\n"
                     else:
@@ -1499,7 +1497,17 @@ Modifiers: {status_str}
                 idx = int(choice[2:]) - 1
                 if 0 <= idx < len(unit.status_effects):
                     eff = unit.status_effects[idx]
-                    config.console.print(Panel(f"[bold]{eff.name}[/bold]\n\n{eff.description}", title="Status Effect", style="green"))
+                    
+                    # --- FIX: Ensure Fairylight and Rupture always display correct descriptions ---
+                    disp_name = eff.name
+                    disp_desc = eff.description
+                    
+                    if disp_name == "Fairylight":
+                        disp_desc = "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99"
+                    elif disp_name == "Rupture":
+                        disp_desc = "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99"
+                    
+                    config.console.print(Panel(f"[bold]{disp_name}[/bold]\n\n{disp_desc}", title="Status Effect", style="green"))
                     get_player_input("Press Enter...")
 
     def check_win_condition(self):
@@ -1540,7 +1548,7 @@ Modifiers: {status_str}
             se_display = ""
             for se in e.status_effects:
                 # Visual distinction: Bind and many more status effects don't show potency
-                if se.name in ["Bind", "Haste", "Pierce Affinity", "Riposte"]:
+                if se.name in DURATION_ONLY_EFFECTS:
                     se_display += f"{se.symbol} x{se.duration} "
                 else:
                     sub = to_subscript(se.potency)
@@ -1554,7 +1562,7 @@ Modifiers: {status_str}
 
         config.console.print("\n" + "-"*30 + "\n")
         
-# Two-panel ally display (left: 1-4, right: 5-8)
+        # Two-panel ally display (left: 1-4, right: 5-8)
         ally_displays = []
         for a in self.allies:
             active_marker = ">>" if a == active_unit else "  "
@@ -1565,7 +1573,7 @@ Modifiers: {status_str}
             auto_badge = "[bold yellow][AUTO][/bold yellow] " if self.auto_battle else ""
             se_display = ""
             for se in a.status_effects:
-                if se.name in ["Bind", "Haste", "Pierce Affinity", "Riposte"]:
+                if se.name in DURATION_ONLY_EFFECTS:
                     se_display += f"{se.symbol} x{se.duration} "
                 else:
                     sub = to_subscript(se.potency)

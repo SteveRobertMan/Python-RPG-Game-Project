@@ -219,6 +219,7 @@ def load_stage_enemies(stage_id):
         new_enemy = copy.deepcopy(db_enemies[base_name])
         if label:
             new_enemy.name = f"{new_enemy.name} {label}"
+        new_enemy.hp = new_enemy.max_hp
         return new_enemy
 
     if stage_id == 0: 
