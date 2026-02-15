@@ -1066,6 +1066,54 @@ class BattleManager:
                 self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "", "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
                 self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Max Count: 5", duration=3))
                 # Base damage increase handled in Step 2!
+            
+        # --- KIRYOKU FAIRY & INFILTRATOR ---
+        elif skill.effect_type == "RUPTURE_SPECIAL1":
+            # Yuri Kiryoku S1: If target has Rupture (or Fairylight), +Count. Else, +Potency.
+            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+            if has_rupture:
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 1, "", duration=skill.effect_val))
+            else:
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", skill.effect_val, "", duration=1))
+
+        elif skill.effect_type == "FAIRYLIGHT_APPLY":
+            # Benikawa Kiryoku S2 / Hana Kiryoku S1: If target has Rupture (or Fairylight), apply Fairylight
+            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+            if has_rupture:
+                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", skill.effect_val, "", duration=1))
+
+        elif skill.effect_type == "BENIKAWA_KIRYOKU_SPECIAL":
+            # Benikawa Kiryoku S3: [On Use] take +50% dmg, [On Hit] if Rupture, apply 3 Fairylight
+            attacker.temp_modifiers["incoming_dmg_mult"] *= 1.50
+            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+            if has_rupture:
+                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "", duration=1))
+
+        elif skill.effect_type == "FAIRYLIGHT_SPECIAL1":
+            # Hana Kiryoku S2: If target has Fairylight (specifically), inflict Rupture Potency
+            has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
+            if has_fairylight:
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", skill.effect_val, "", duration=1))
+
+        elif skill.effect_type == "HANA_KIRYOKU_SPECIAL":
+            # Hana Kiryoku S3: If target has Fairylight (specifically), inflict 2 Rupture Count, then take -30% dmg this turn
+            has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
+            if has_fairylight:
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]𖠇[/medium_spring_green]", 1, "", duration=2))
+                attacker.temp_modifiers["incoming_dmg_mult"] *= 0.70
+
+        elif skill.effect_type == "HASTE_GAIN_SPECIAL_TYPE1":
+            # Shigemura Infiltrator S1: [On Use] If has Haste, gain 1 Haste. [On Hit] Gain 1 Haste.
+            has_haste = any(s.name == "Haste" for s in attacker.status_effects)
+            if has_haste:
+                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=1))
+            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=skill.effect_val))
+
+        elif skill.effect_type == "DEBUFF_ATK_MULT":
+            # Target deals reduced damage for the rest of the turn
+            target.temp_modifiers["outgoing_dmg_mult"] *= skill.effect_val
+            # Optional: Add a log message to show it worked
+            # self.log(f"[dim]{target.name}'s outgoing damage was reduced by the attack![/dim]")
 
         if target.hp <= 0:
             target.hp = 0

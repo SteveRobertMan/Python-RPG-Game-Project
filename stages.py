@@ -4,6 +4,7 @@ from entities import EL_EROS, EL_PHILIA, EL_STORGE, EL_AGAPE, EL_LUDUS, EL_PRAGM
 import config
 import scd
 from player_state import player
+from scd import bleed_1, bleed_2, bleed_3, bind_1
 
 # --- PARTY MEMBER CREATION ---
 
@@ -388,7 +389,7 @@ def get_enemy_database():
     lead.max_hp = 20
     k_lead = Kata("Leader", "Leader", 1, "0", [1.15, 1.15, 1.05, 1.05, 1.05, 1.05, 1.15])
     ls1 = Skill("Heavy Bash", 1, EL_PRAGMA, 6, "")
-    ls2 = Skill("Block", 2, EL_LUDUS, 0, "[Combat Start] Take -4 Final Damage this turn.")
+    ls2 = Skill("Block", 2, EL_LUDUS, 0, "[Combat Start] This unit takes -4 Final Damage this turn.", effect_type="BUFF_DEF_FLAT", effect_val=4)
     k_lead.skill_pool_def = [(ls1, 7), (ls2, 2)]
     k_lead.rift_aptitude = 0
     lead.equip_kata(k_lead)
@@ -464,13 +465,14 @@ def get_enemy_database():
     bulky.description = "An underperforming student who always acts before thinking. Eats a whole lot at all times, but under all the fat exists brawn that is not to be underestimated."
     bulky.unlock_stage_id = 10
 
-    # --- NEW ENEMIES DATABASE ENTRIES ---
     spike = Entity("Spike Bat Heiwa Seiritsu Delinquent", is_player=False)
     spike.max_hp = 30
     res_sp = [1.1, 1.6, 1.1, 1.2, 1.6, 1.6, 1.1]
     k_spike = Kata("Spike Bat Style", "Delinquent", 1, "0", res_sp)
     spi1 = Skill("Knock", 1, EL_STORGE, 5, "")
-    spi2 = Skill("Sharp Swing", 2, EL_EROS, 5, "[On Hit] Inflict 1 Bleed Potency")
+    # FIXED: Added APPLY_STATUS flag and mapped bleed_1
+    spi2 = Skill("Sharp Swing", 2, EL_EROS, 5, "[On Hit] Inflict 1 Bleed Potency", effect_type="APPLY_STATUS")
+    spi2.status_effect = bleed_1
     k_spike.skill_pool_def = [(spi1, 5), (spi2, 4)]
     k_spike.rift_aptitude = 0
     spike.equip_kata(k_spike)
@@ -482,7 +484,9 @@ def get_enemy_database():
     res_ch = [1.6, 1.1, 1.6, 1.2, 1.2, 1.1, 1.6]
     k_chain = Kata("Chain Fist Style", "Delinquent", 1, "0", res_ch)
     ch1 = Skill("Shove", 1, EL_PHILIA, 6, "")
-    ch2 = Skill("Cutting Fist", 2, EL_PRAGMA, 3, "[On Hit] Inflict 2 Bleed Potency")
+    # FIXED: Added APPLY_STATUS flag and mapped bleed_2
+    ch2 = Skill("Cutting Fist", 2, EL_PRAGMA, 3, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
+    ch2.status_effect = bleed_2
     k_chain.skill_pool_def = [(ch1, 5), (ch2, 4)]
     k_chain.rift_aptitude = 0
     chain.equip_kata(k_chain)
@@ -493,9 +497,13 @@ def get_enemy_database():
     h_lead.max_hp = 40
     res_hl = [1.7, 1.7, 1.3, 1.3, 1.3, 1.3, 1.3]
     k_hlead = Kata("Leader Style", "Leader", 1, "0", res_hl)
-    hl1 = Skill("Headbutting", 1, EL_PHILIA, 5, "[On Hit] Inflict 1 Bleed Potency")
-    hl2 = Skill("Chained Bat Combo", 2, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency")
-    hl3 = Skill("Rally", 3, EL_PRAGMA, 0, "[On Use] All allied units take +1 Final Damage this turn")
+    # FIXED: Added APPLY_STATUS flags and mapped bleed_1 / bleed_2
+    hl1 = Skill("Headbutting", 1, EL_PHILIA, 5, "[On Hit] Inflict 1 Bleed Potency", effect_type="APPLY_STATUS")
+    hl1.status_effect = bleed_1
+    hl2 = Skill("Chained Bat Combo", 2, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
+    hl2.status_effect = bleed_2
+    # FIXED: Corrected text typo from 'take +1' to 'take -1' and used AOE_BUFF_DEF_FLAT
+    hl3 = Skill("Rally", 3, EL_PRAGMA, 0, "[On Use] All allied units of this unit take -1 Final Damage this turn", effect_type="AOE_BUFF_DEF_FLAT", effect_val=1)
     k_hlead.skill_pool_def = [(hl1, 4), (hl2, 3), (hl3, 2)]
     k_hlead.rift_aptitude = 1
     h_lead.equip_kata(k_hlead)
@@ -506,9 +514,13 @@ def get_enemy_database():
     upper.max_hp = 1523
     res_up = [1.0, 1.2, 1.0, 1.1, 1.1, 1.2, 0.7]
     k_up = Kata("Upperclassman Style", "Upperclassman", 1, "0", res_up)
-    u1 = Skill("Chained Limb Combo", 1, EL_LUDUS, 14, "[On Hit] Inflict 2 Bleed Potency")
-    u2 = Skill("Chain Whip", 2, EL_AGAPE, 15, "[On Hit] Inflict 3 Bleed Potency")
-    u3 = Skill("Pull In And Thrash", 3, EL_AGAPE, 17, "[On Hit] Inflict 1 Bind next turn")
+    # FIXED: Added APPLY_STATUS flags and mapped the corresponding generic statuses
+    u1 = Skill("Chained Limb Combo", 1, EL_LUDUS, 14, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
+    u1.status_effect = bleed_2
+    u2 = Skill("Chain Whip", 2, EL_AGAPE, 15, "[On Hit] Inflict 3 Bleed Potency", effect_type="APPLY_STATUS")
+    u2.status_effect = bleed_3
+    u3 = Skill("Pull In And Thrash", 3, EL_AGAPE, 17, "[On Hit] Inflict 1 Bind next turn", effect_type="APPLY_STATUS")
+    u3.status_effect = bind_1
     k_up.skill_pool_def = [(u1, 3), (u2, 3), (u3, 3)]
     k_up.rift_aptitude = 5
     upper.equip_kata(k_up)
@@ -519,13 +531,14 @@ def get_enemy_database():
     kuro.max_hp = 150
     res_ku = [1.3, 1.3, 1.1, 1.6, 1.6, 1.1, 1.6]
     k_ku = Kata("Reaper Style", "Kurogane", 1, "0", res_ku)
-    ku1 = Skill("Chained Limb Flurry", 1, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency\n     [On Hit] Inflict 2 Bleed Count")
-    ku2 = Skill("Heavy Chain Whip", 2, EL_AGAPE, 6, "[On Hit] Inflict 3 Bleed Potency\n     [On Hit] Inflict 1 Bind next turn")
-    ku3 = Skill("Pull In For A Beatdown", 3, EL_AGAPE, 8, "[On Hit] Inflict 3 Bleed Potency\n       [On Hit] Inflict 2 Bind next turn")
+    # FIXED: Mapped straight to the existing hardcoded unique flags in battle_system.py
+    ku1 = Skill("Chained Limb Flurry", 1, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency\n     [On Hit] Inflict 2 Bleed Count", effect_type="APPLY_BLEED_HEAVY_STACKS")
+    ku2 = Skill("Heavy Chain Whip", 2, EL_AGAPE, 6, "[On Hit] Inflict 3 Bleed Potency\n     [On Hit] Inflict 1 Bind next turn", effect_type="APPLY_BLEED_AND_BIND")
+    ku3 = Skill("Pull In For A Beatdown", 3, EL_AGAPE, 8, "[On Hit] Inflict 3 Bleed Potency\n       [On Hit] Inflict 2 Bind next turn", effect_type="APPLY_BLEED_AND_BIND_HEAVY")
     k_ku.skill_pool_def = [(ku1, 3), (ku2, 4), (ku3, 2)]
     k_ku.rift_aptitude = 6
     kuro.equip_kata(k_ku)
-    kuro.description = "The true identity of the Heiwa Seiritsu Upperclassman: “Chain Reaper Of  Heiwa” Kurogane, has been revealed. A veteran hotblooded gangster on the run who tortures his opponents with masterful chain movements paired with his reckless fighting style. His motives are taking down Kasakura’s key figures and extracting information about the existence of “Katas”."
+    kuro.description = "The true identity of the Heiwa Seiritsu Upperclassman: 'Chain Reaper Of Heiwa' Kurogane, has been revealed. A veteran hotblooded gangster on the run who tortures his opponents with masterful chain movements paired with his reckless fighting style. His motives are taking down Kasakura’s key figures and extracting information about the existence of “Katas”."
     kuro.unlock_stage_id = 21
 
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro]
