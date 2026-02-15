@@ -8,7 +8,9 @@ bleedcount_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing dama
 bleedcount_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF")
 bleedcount_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=3, type="DEBUFF")
 bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF")
-bind_2 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10%*Count) of base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2, type="DEBUFF")
+bind_2 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2, type="DEBUFF")
+bind_3 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=3, type="DEBUFF")
+bind_4 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=4, type="DEBUFF")
 poise_1 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_3 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
@@ -45,7 +47,7 @@ KATA_ID_MAP = {
     14: "Kasakura High School Student Natsume",
     15: "Kasakura High School Student Hana",
     16: "Kasakura High School Student Kagaku",
-    17: "Kiryoku Gakuen Self-Defense Club President",
+    17: "Kiryoku Gakuen Self-Defense Club President Yuri",
     18: "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
     19: "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
     20: "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
@@ -438,14 +440,14 @@ def get_kata_data_by_name(name):
         return {"kata_obj": k, "max_hp": 60, "description": desc}
 
     # --- NAGANOHARA KIRYOKU ---
-    elif name == "Kiryoku Gakuen Self-Defense Club President":
+    elif name == "Kiryoku Gakuen Self-Defense Club President Yuri":
         res = [0.8, 1.4, 1.1, 0.8, 1.0, 1.0, 1.3]
         desc = (
             "Naganohara Tsukimiyama here has enrolled in Kiryoku Gakuen and proudly stands as the President of its renowned Self-Defense Club. Her signature pink twintails are braided tightly into practical loops to stay out of the way during intense spars, and her large golden eyes shine with an unbreakable, almost terrifying level of optimism. She trades her usual Kasakura uniform for a pristine white martial arts gi worn over a Kiryoku athletic top, featuring a captain’s armband that commands instant, eager respect from her hundreds of club members.\n\n"
             "As the club's president, she embodies Kiryoku's unique battle culture to its absolute peak: she experiences absolutely no frustration, hesitation, or fear in combat, only pure, adrenaline-fueled joy. She fights with a dynamic, highly acrobatic self-defense style—effortlessly redirecting her opponent’s momentum for devastating throws, sweeping trips, and precise joint locks—all while maintaining a beaming, radiant smile.\n\n"
             "Her leadership relies on boundless enthusiasm rather than strict discipline. She constantly cheers on both her club members and her opponents mid-fight, offering loud praises and constructive tips even as she flips them onto the mats."
         )
-        k = Kata("Kiryoku Gakuen Self-Defense Club President", "Naganohara", 2, "I", res, desc)
+        k = Kata("Kiryoku Gakuen Self-Defense Club President Yuri", "Naganohara", 2, "I", res, desc)
         k.source_key = name
         s1 = Skill("Crosspunch", 1, EL_PHILIA, 4, "[On Hit] Inflict 2 Rupture Potency", effect_type="APPLY_STATUS")
         s1.status_effect = rupture_2

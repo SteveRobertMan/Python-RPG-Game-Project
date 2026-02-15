@@ -561,7 +561,7 @@ class BattleManager:
         sadism_bind_to_apply = 0
         is_crit = False
 
-# --- [STEP 1] [On Use] EFFECTS ---
+        # --- [STEP 1] [On Use] EFFECTS ---
         if "[On Use]" in skill.description:
             if skill.effect_type == "BUFF_DEF_FLAT":
                  attacker.temp_modifiers["final_dmg_reduction"] = attacker.temp_modifiers.get("final_dmg_reduction", 0) + skill.effect_val
@@ -790,6 +790,13 @@ class BattleManager:
                     fairylight_eff.duration -= 1
                     self.log(f"[spring_green1]Fairylight dealt {fairylight_eff.potency} damage to {target.name}![/spring_green1]")
                     if fairylight_eff.duration <= 0: target.status_effects.remove(fairylight_eff)
+
+                # --- PIERCE AFFINITY TRIGGER (STACK REDUCTION) ---
+                pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                if pierce_target_eff:
+                    pierce_target_eff.duration -= 1
+                    # self.log(f"[dim]Pierce Affinity count reduced to {pierce_target_eff.duration}.[/dim]")
+                    if pierce_target_eff.duration <= 0: target.status_effects.remove(pierce_target_eff)
                     
                 # --- APPLY INFILTRATOR RECOIL ---
                 if infiltrator_recoil > 0:

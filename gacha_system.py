@@ -37,8 +37,9 @@ class GachaSystem:
             RARITY_2: [
                 "‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke",
                 "Kasakura High School Disciplinary Committee Member Benikawa",
-                "Kiryoku Gakuen Self-Defense Club President",
-                "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri"
+                "Kiryoku Gakuen Self-Defense Club President Yuri",
+                "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
+                "Kasakura High School Disciplinary Committee Member Kagaku"
             ],
             RARITY_1: [
                 "Kasakura High School Student Akasuke",

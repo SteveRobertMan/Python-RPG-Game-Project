@@ -245,8 +245,14 @@ def run_game():
                 guest_akasuke = stages.create_akasuke(guest_loadout)
                 party.insert(0, guest_akasuke)
 
-            if stage_id in [6,39]:
+            if stage_id in [6]:
                 party = [member for member in party if member.name == "Akasuke"]
+
+            if stage_id == 39:
+                party = [p for p in party if p.name != "Akasuke"]
+                guest_loadout = scd.get_kata_data_by_name("Kasakura High School Student Akasuke")
+                guest_akasuke = stages.create_akasuke(guest_loadout)
+                party.insert(0, guest_akasuke)
 
             if stage_id in [18,19,20,21]:
                 party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa"]]
