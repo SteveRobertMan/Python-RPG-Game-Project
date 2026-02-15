@@ -130,6 +130,9 @@ class Entity:
         self.status_effects = []
         self.riposte_loss_tracker = 0
 
+        self.pending_bind = 0
+        self.pending_haste = 0
+
     def equip_kata(self, kata_obj):
         self.kata = kata_obj
         self.resistances = kata_obj.resistances

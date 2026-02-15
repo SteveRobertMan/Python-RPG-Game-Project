@@ -77,7 +77,7 @@ def show_story_box(speaker, text, affiliation="", is_thought=False, is_narrator=
                 box_color = "sea_green2"
             
             # --- COMMON ENEMY CHARACTERS ---
-            elif speaker in ["Underwear Thief", "Freshman 1", "Freshman 2", "Freshman 3", "Goons", "Gang Member 1", "Gang Member 2", "Gang Member 3", "Gang Member 4", "Henchman A", "Henchman B"]:
+            elif speaker in ["Underwear Thief", "Freshman 1", "Freshman 2", "Freshman 3", "Goons", "Gang Member 1", "Gang Member 2", "Gang Member 3", "Gang Member 4", "Henchman A", "Henchman B", "Deadly Laser Beam World-Threatening Monster"]:
                 box_color = "red"
             elif speaker in ["Raven", "Falcon", "Eagle"]:
                 box_color = "dark_violet"
