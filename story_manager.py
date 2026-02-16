@@ -77,8 +77,8 @@ def show_story_box(speaker, text, affiliation="", is_thought=False, is_narrator=
                 box_color = "sea_green2"
             
             # --- COMMON ENEMY CHARACTERS ---
-            elif speaker in ["Underwear Thief", "Freshman 1", "Freshman 2", "Freshman 3", "Goons", "Gang Member 1", "Gang Member 2", "Gang Member 3", "Gang Member 4", "Henchman A", "Henchman B", "Deadly Laser Beam World-Threatening Monster"]:
-                box_color = "red"
+            elif speaker in ["Underwear Thief", "Freshman 1", "Freshman 2", "Freshman 3", "Goons", "Gang Member 1", "Gang Member 2", "Gang Member 3", "Gang Member 4", "Clueless Heiwa Thug", "Henchman A", "Henchman B", "Deadly Laser Beam World-Threatening Monster"]:
+                box_color = "bright_red"
             elif speaker in ["Raven", "Falcon", "Eagle"]:
                 box_color = "dark_violet"
 
@@ -3831,18 +3831,18 @@ def play_stage_3_7_end():
     show_story_box("", "A flood of girls in gi and athletic wear poured into the room. The Self-Defense Club members—the ones we’d just sparred with.", is_narrator=True)
     show_story_box("", "They rushed between us and the Fairies, arms waved frantically.", is_narrator=True)
     
-    show_story_box("Kiryoku Club Member A", "Ayako-sama! Please stop! It’s a misunderstanding!", affiliation="Kiryoku Gakuen Student")
+    show_story_box("Kiryoku Girl A", "Ayako-sama! Please stop! It’s a misunderstanding!", affiliation="Kiryoku Gakuen Student")
     show_story_box("", "Ayako froze mid-step.", is_narrator=True)
     
     show_story_box("Forest Guardian Ayako", "Huh? Move! These intruders hurt Aina!", affiliation="Kiryoku Gakuen Fairy")
-    show_story_box("Kiryoku Club Member B", "No! No, they didn’t!", affiliation="Kiryoku Gakuen Student")
+    show_story_box("Kiryoku Girl B", "No! No, they didn’t!", affiliation="Kiryoku Gakuen Student")
     
     show_story_box("", "Kageyama stepped forward—unruffled, despite having been attacked seconds ago.", is_narrator=True)
     show_story_box("Kageyama", "It seems your student body has an explanation for Aina-san’s condition.", affiliation="Kasakura High School Student Council President / Seven Wonders")
     
     show_story_box("", "The club leader—a tall girl with a ponytail—bowed frantically to Ayako.", is_narrator=True)
     show_story_box("Club Leader", "It was us! The sparring session earlier…it was so, so intense! We must have been so excited! We were projecting so much fighting spirit and adrenaline!", affiliation="Kiryoku Gakuen Student")
-    show_story_box("Kiryoku Club Member A", "Yeah! Aina-sama must have been working overtime to filter out our aggression and keep the mood friendly! We exhausted her!", affiliation="Kiryoku Gakuen Student")
+    show_story_box("Kiryoku Girl A", "Yeah! Aina-sama must have been working overtime to filter out our aggression and keep the mood friendly! We exhausted her!", affiliation="Kiryoku Gakuen Student")
     
     show_story_box("", "Ayako blinked. She lowered her bokken.", is_narrator=True)
     show_story_box("Forest Guardian Ayako", "...You guys did?", affiliation="Kiryoku Gakuen Fairy")
@@ -4088,22 +4088,22 @@ def play_stage_3_8_story():
     
     show_story_box("", "I turned to see a guy from Heiwa Seiritsu tappin’ Akasuke-kun’s shoulder with a smug grin. Blue streaks hair, jacket slung over one shoulder like he practiced that pose every mornin’.", is_narrator=True)
     
-    show_story_box("Heiwa Student", "Yer that Kasakura guy, right?", affiliation="Heiwa Seiritsu High School Student")
+    show_story_box("Clueless Heiwa Thug", "Yer that Kasakura guy, right?", affiliation="Heiwa Seiritsu High School Student")
     show_story_box("", "Akasuke-kun licked his ice cream calmly.", is_narrator=True)
     show_story_box("Akasuke", "...Yeah?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Heiwa Student", "Heh. Thought so. Yer the karate freak. Wanna spar sometime? Heard yer tough. Let’s see if that’s real.", affiliation="Heiwa Seiritsu High School Student")
+    show_story_box("Clueless Heiwa Thug", "Heh. Thought so. Yer the karate freak. Wanna spar sometime? Heard yer tough. Let’s see if that’s real.", affiliation="Heiwa Seiritsu High School Student")
     show_story_box("", "I narrowed my eyes.", is_narrator=True)
     show_story_box("Yuri", "Can ya not pick fights on a school trip?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "He ignored me completely.", is_narrator=True)
-    show_story_box("Heiwa Student", "Or are those rumors exaggerated, hm?", affiliation="Heiwa Seiritsu High School Student")
+    show_story_box("Clueless Heiwa Thug", "Or are those rumors exaggerated, hm?", affiliation="Heiwa Seiritsu High School Student")
     
     show_story_box("", "Akasuke-kun didn’t react. Didn’t even blink.", is_narrator=True)
     show_story_box("Akasuke", "I’m on vacation.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "The guy clicked his tongue.", is_narrator=True)
-    show_story_box("Heiwa Student", "Tch. Figures. Kasakura’s ‘Wonder’ is all talk.", affiliation="Heiwa Seiritsu High School Student")
+    show_story_box("Clueless Heiwa Thug", "Tch. Figures. Kasakura’s ‘Wonder’ is all talk.", affiliation="Heiwa Seiritsu High School Student")
     
     show_story_box("", "Akasuke-kun just kept eatin’. Not givin’ him what he wanted.", is_narrator=True)
     show_story_box("", "I admired that. Really did.\nThat didn’t mean I could let it slide.", is_narrator=True)
@@ -4838,7 +4838,7 @@ def play_stage_3_13_start():
     
     show_story_box("", "The brawl erupted.", is_narrator=True)
 
-def play_stage_3_13_end():
+def play_stage_3_14_start():
     # --- SCENE 3: AFTERMATH OF BAY A ---
     show_story_box("", "CRASH!\nRaven slammed into a stack of crates, coughing blood.", is_narrator=True)
     show_story_box("", "He looked at us—at Akasuke’s glowing blue aura, at Yuri’s impossible strength, at Benikawa’s speed.", is_narrator=True)
@@ -4880,18 +4880,18 @@ def play_stage_3_13_end():
     show_story_box("Raven", "Shut up. They’re strong. Watch the redhead.", affiliation="Ninja Clan Infiltrator")
     
     show_story_box("", "Falcon grinned, shifting into a combat stance that looked eerily similar to Akasuke’s karate style, but lower, more feral.", is_narrator=True)
-    show_story_box("Falcon", "Strong? Good. I was getting bored.", affiliation="Ninja Clan Infiltrator")
+    show_story_box("Falcon", "Strong? Good. I was getting bored. You just sit back and watch.", affiliation="Ninja Clan Infiltrator")
     
     show_story_box("", "He signaled the goons—a mix of Heiwa thugs, Kiryoku fighters, and Kasakura traitors.", is_narrator=True)
     show_story_box("Falcon", "Kill them.", affiliation="Ninja Clan Infiltrator")
     
     show_story_box("", "Akasuke took a breath, blue energy flickering around him.", is_narrator=True)
-    show_story_box("Akasuke", "Two ninjas. One army. And us.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "Another ninja and an army versus us.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Yuri grinned.", is_narrator=True)
     show_story_box("Yuri", "Sounds fair.", affiliation="Kasakura High School Student / Seven Wonders")
 
-def play_stage_3_14_start():
+def play_stage_3_15_start():
     # --- SCENE 1: NATSUME'S POV (THE CHASE) ---
     show_story_box("", "********* ◆ *********\nNatsume’s POV", is_narrator=True)
     show_story_box("", "The metal corridor vibrated with the sound of retreating footsteps.", is_narrator=True)
@@ -4989,7 +4989,7 @@ def play_stage_3_14_start():
     show_story_box("", "Akasuke raised his fists, blue aura flaring to life.", is_narrator=True)
     show_story_box("Akasuke", "Let’s go, everyone. One last push.", affiliation="Kasakura High School Student / Seven Wonders")
 
-def play_stage_3_15_story():
+def play_stage_3_15_end():
     # --- SCENE 1: AKASUKE'S POV (THE HAZARD VAULT AFTERMATH) ---
     show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
     show_story_box("", "The battle in the Hazard Vault was finally over.", is_narrator=True)
@@ -6481,7 +6481,7 @@ def play_stage_3_23_story():
     show_story_box("", "My blood ran cold.", is_narrator=True)
     show_story_box("", "A Rescue Observation Report.\nMidori… was observing us?", is_narrator=True)
     
-    show_story_box("Midori", "M-more importantly… I never thought you would be interested in observing as well…f-finding some Miyabi lapdog competing with me…uwaa…it’s the last thing I’ll ever need for my report…", affiliation="Kiryoku Gakuen Student?")
+    show_story_box("Midori", "M-more importantly… I never thought you would be interested in observing as well…f-finding some Miyabi lapdog competing with me… uwaa… \nit’s the last thing I’ll ever need for my report…", affiliation="Kiryoku Gakuen Student?")
     
     show_story_box("Fuyuki", "As you know, they were revived without a single injury back at the hotel. I am quite glad I chose to come along on this field trip to observe it firsthand.", affiliation="Miyabi Academy Student?")
     
@@ -6517,7 +6517,8 @@ def play_stage_3_23_story():
     show_story_box("Kojima-sensei", "You almost got yourself killed.", affiliation="Kasakura High School Teacher")
 
     # --- SCENE 6: THE TRAITORS' AWARENESS ---
-    show_story_box("", "…\nOn the secluded deck, Fuyuki kept his grip on Midori’s wrist. He leaned back after whispering to her.", is_narrator=True)
+    show_story_box("", "…", is_narrator=True)
+    show_story_box("", "On the secluded deck, the man named Fuyuki kept his grip on Midori’s wrist. He leaned back after whispering to her.", is_narrator=True)
     show_story_box("", "What he had whispered was simple: “Someone is eavesdropping.”", is_narrator=True)
     
     show_story_box("", "He released her wrist smoothly, adjusting his thick winter jacket.", is_narrator=True)

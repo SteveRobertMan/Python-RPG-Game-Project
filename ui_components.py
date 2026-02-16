@@ -47,6 +47,8 @@ def draw_stage_select_menu(unlocked_stage):
     current_page = 1
     if unlocked_stage >= 11:
         current_page = 2
+    if unlocked_stage >= 22:
+        current_page = 3
 
     while True:
         clear_screen()
@@ -64,17 +66,17 @@ def draw_stage_select_menu(unlocked_stage):
 
             # List of (Stage ID, Title, Unlock Index Requirement)
             act1_stages = [
-                ("1-1", "Voluntold", 0),
-                ("1-2", "Class-Skipper", 1),
-                ("1-3", "Chromatic Divergence Phenomenon", 2),
-                ("1-4", "Kidnapping Case", 3),
-                ("1-5", "Weekday Errands", 4),
-                ("1-6", "Sparring Match", 5),
-                ("1-7", "A Job", 6),
-                ("1-8", "Interrogation", 7),
-                ("1-9", "Meeting", 8),
-                ("1-10", "Raid", 9),
-                ("1-11", "Overthrown", 10),
+                ("1-1", "Voluntold 🕮", 0),
+                ("1-2", "Class-Skipper ♖", 1),
+                ("1-3", "Chromatic Divergence Phenomenon 🕮", 2),
+                ("1-4", "Kidnapping Case ♖", 3),
+                ("1-5", "Weekday Errands ♗", 4),
+                ("1-6", "Sparring Match ♖", 5),
+                ("1-7", "A Job ♕", 6),
+                ("1-8", "Interrogation 🕮", 7),
+                ("1-9", "Meeting 🕮", 8),
+                ("1-10", "Raid ♗", 9),
+                ("1-11", "Overthrown 🕮", 10),
             ]
 
             for s_id, s_title, req_idx in act1_stages:
@@ -99,17 +101,17 @@ def draw_stage_select_menu(unlocked_stage):
 
             # Act 2 Stages (Indices 11 to 21)
             act2_stages = [
-                ("2-1", "Pyrrhic Victory", 11),
-                ("2-2", "Immediate Return", 12),
-                ("2-3", "Stalemate At The Gates", 13),
-                ("2-4", "Breakthrough Plan", 14),
-                ("2-5", "Labyrinth Of Motives", 15),
-                ("2-6", "Upperclassman", 16),
-                ("2-7", "Kokoro’s Echo", 17),
-                ("2-8", "Heart's Burden", 18),
-                ("2-9", "Chains Of Fury", 19),
-                ("2-10", "Iron & Fists", 20),
-                ("2-11", "Parallaxis Scorer", 21),
+                ("2-1", "Pyrrhic Victory 🕮", 11),
+                ("2-2", "Immediate Return 🕮", 12),
+                ("2-3", "Stalemate At The Gates ♗", 13),
+                ("2-4", "Breakthrough Plan ♗", 14),
+                ("2-5", "Labyrinth Of Motives ♗", 15),
+                ("2-6", "Upperclassman 🕮", 16),
+                ("2-7", "Kokoro’s Echo ♖", 17),
+                ("2-8", "Heart's Burden ♖", 18),
+                ("2-9", "Chains Of Fury ♖", 19),
+                ("2-10", "Iron & Fists ♖", 20),
+                ("2-11", "Parallaxis Scorer 🕮", 21),
             ]
 
             for s_id, s_title, req_idx in act2_stages:
@@ -122,7 +124,53 @@ def draw_stage_select_menu(unlocked_stage):
                     table.add_row(s_id, "???", "[dim]LOCKED[/dim]")
 
             config.console.print(table)
-            config.console.print("\n[P] Previous Page (Act 1) | [0] Return")
+            config.console.print("\n[P] Previous Page (Act 1) | [N] Next Page (Act 3) | [0] Return")
+
+        elif current_page == 3:
+            # --- ACT 3: RESCUE OBSERVATION REPORT ---
+            table = Table(title="Act 3: Rescue Observation Report", expand=True, style="bold cyan1", border_style="cyan1")
+            table.add_column("Stage", justify="center", style="cyan")
+            table.add_column("Title", justify="left", style="white")
+            table.add_column("Status", justify="center")
+
+            get_status = lambda req, current: "[green]CLEAR[/green]" if current > req else "[yellow]OPEN[/yellow]"
+
+            # Act 3 Stages (Indices 22 to 44)
+            act3_stages = [
+                ("3-1", "Night Shift 🕮", 22),
+                ("3-2", "Missing Spark 🕮", 23),
+                ("3-3", "Uncharted Waters ♖", 24),
+                ("3-4", "Fairy ♖", 25),
+                ("3-5", "The Fabricated Timer 🕮", 26),
+                ("3-6", "Fangs Bared ♖", 27),
+                ("3-7", "Malice ♖", 28),
+                ("3-8", "The Calm Before 🕮", 29),
+                ("3-9", "Hidden Currents ♖", 30),
+                ("3-10", "Silent Passenger ♗", 31),
+                ("3-11", "Decoy Runner ♕", 32),
+                ("3-12", "Weapons ♗", 33),
+                ("3-13", "The Pack ♖", 34),
+                ("3-14", "Purple Haze ♖", 35),
+                ("3-15", "Starry Eyes ♕", 36),
+                ("3-16", "The Countdown ♖", 37),
+                ("3-17", "Tropical Puzzle ♖", 38),
+                ("3-18", "Hotel Siege 🕮", 39),
+                ("3-19", "Riposte ♗", 40),
+                ("3-20", "The Executive ♕", 41),
+                ("3-21", "The Exchange 🕮", 42),
+                ("3-22", "The Black Box 🕮", 43),
+                ("3-23", "Rescue Observation Report 🕮", 44),
+            ]
+
+            for s_id, s_title, req_idx in act3_stages:
+                if unlocked_stage >= req_idx:
+                    status = get_status(req_idx, unlocked_stage)
+                    table.add_row(s_id, s_title, status)
+                else:
+                    table.add_row(s_id, "???", "[dim]LOCKED[/dim]")
+
+            config.console.print(table)
+            config.console.print("\n[P] Previous Page (Act 2) | [0] Return")
 
         # --- INPUT HANDLING ---
         choice = get_player_input("Enter Stage ID (e.g. \"1-1\") or Option > ").lower()
@@ -130,12 +178,12 @@ def draw_stage_select_menu(unlocked_stage):
         if choice == "0":
             return "0"
         
-        elif choice == "n" and current_page == 1:
-            current_page = 2
+        elif choice == "n" and not current_page == 3:
+            current_page += 1
             continue
         
-        elif choice == "p" and current_page == 2:
-            current_page = 1
+        elif choice == "p" and not current_page == 1:
+            current_page -= 1
             continue
 
         # Check for valid stage ID pattern (e.g. "1-1", "2-10")
@@ -150,7 +198,9 @@ def draw_stage_select_menu(unlocked_stage):
                 if act == 1:
                     required_idx = sub - 1
                 elif act == 2:
-                    required_idx = 10 + sub 
+                    required_idx = 10 + sub
+                elif act == 3:
+                    required_idx = 21 + sub
                 
                 if required_idx != -1:
                     if unlocked_stage >= required_idx:
@@ -216,6 +266,31 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 3", "Spike Bat Heiwa Seiritsu Delinquent(s) (Mixed Group)"),
             ("Node 4", "Chain Fist Heiwa Seiritsu Delinquent(s) (Mixed Group)"),
             ("Node 5", "Slender Heiwa Seiritsu Delinquent(s) (Mixed Group)"),
+        ]
+
+    # Stage 3-10: Silent Passenger
+    elif stage_name == "3-10: Silent Passenger":
+        nodes = [
+            ("Node 1", "Infiltrating Heiwa Seiritsu High School Student(s) (Mixed Group)"),
+            ("Node 2", "Infiltrating Kiryoku Gakuen Student(s) (Mixed Group)"),
+            ("Node 3", "Infiltrating Kasakura High School Student(s) (Mixed Group)")
+        ]
+
+    # Stage 3-12: Weapons
+    elif stage_name == "3-12: Weapons":
+        nodes = [
+            ("Node 1", "Infiltrating Heiwa Seiritsu Delinquent Leader(s) (Mixed Group)"),
+            ("Node 2", "Infiltrating Kiryoku Gakuen Student Council Combatant(s) (Mixed Group)"),
+            ("Node 3", "Infiltrating Kasakura High School Disciplinary Committee Combatant(s) (Mixed Group)")
+        ]
+
+    # Stage 3-19: Riposte
+    elif stage_name == "3-19: Riposte":
+        nodes = [
+            ("Node 1", "Riposte Gang Henchman(s)"),
+            ("Node 2", "Riposte Gang Squad Leader"),
+            ("Node 3", "Riposte Gang Henchman(s) (Mixed Group)"),
+            ("Node 4", "Riposte Gang Squad Leader(s) (Mixed Group)")
         ]
     
     # Render the selected list

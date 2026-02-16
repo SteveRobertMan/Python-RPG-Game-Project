@@ -248,12 +248,6 @@ def run_game():
             if stage_id in [6]:
                 party = [member for member in party if member.name == "Akasuke"]
 
-            if stage_id == 39:
-                party = [p for p in party if p.name != "Akasuke"]
-                guest_loadout = scd.get_kata_data_by_name("Kasakura High School Student Akasuke")
-                guest_akasuke = stages.create_akasuke(guest_loadout)
-                party.insert(0, guest_akasuke)
-
             if stage_id in [18,19,20,21]:
                 party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa"]]
 
@@ -271,10 +265,21 @@ def run_game():
                 party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa","Shigemura"]]
 
             if stage_id == 38:
+                party = [p for p in party if p.name != "Kagaku"]
                 guest_loadout = scd.get_kata_data_by_name("Kasakura High School Disciplinary Committee Member Kagaku")
                 guest_kagaku = stages.create_kagaku(guest_loadout)
-                party[0] = guest_kagaku
+                party.insert(0, guest_kagaku)
                 party = [member for member in party if member.name == "Kagaku"]
+    
+            if stage_id == 39:
+                party = [p for p in party if p.name != "Akasuke"]
+                guest_loadout = scd.get_kata_data_by_name("Kasakura High School Student Akasuke")
+                guest_akasuke = stages.create_akasuke(guest_loadout)
+                party.insert(0, guest_akasuke)
+                party = [member for member in party if member.name == "Akasuke"]
+    
+            if stage_id == 41:
+                party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa","Shigemura","Naganohara"]]
     
             if stage_id == 42:
                 party = [member for member in party if member.name in ["Akasuke","Yuri","Benikawa","Shigemura","Naganohara","Kagaku"]]
@@ -315,6 +320,7 @@ def run_game():
                 elif stage_id == 33: story_manager.play_stage_3_11_start()
                 elif stage_id == 35: story_manager.play_stage_3_13_start()
                 elif stage_id == 36: story_manager.play_stage_3_14_start()
+                elif stage_id == 37: story_manager.play_stage_3_15_start()
                 elif stage_id == 38: story_manager.play_stage_3_16_start()
                 elif stage_id == 39: story_manager.play_stage_3_17_start()
                 elif stage_id == 42: story_manager.play_stage_3_20_start()
@@ -460,7 +466,7 @@ def run_game():
                                     mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
 
                     # >> STAGE 3-12 (IDs 34001, 34002, 34003)
-                    elif np["stage"] == 32:
+                    elif np["stage"] == 34:
                         if stage_id in [34001, 34002, 34003]:
                             if is_first_node_clear:
                                 rewards_text.append("1x Sports Water Bottle")
@@ -487,14 +493,8 @@ def run_game():
                                     mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
                                     mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
 
-                            # HP PERSISTENCE
-                            for p in party:
-                                if p.hp > 0:
-                                    missing = p.max_hp - p.hp
-                                    heal = missing // 2
-                                    p.hp += heal
-                                    if heal > 0: console.print(f"{p.name} recovers {heal} HP.")
-                                np["party_hp"][p.name] = p.hp
+                    # HP HEALING MESSAGE
+                    console.print(f"Party HP Fully Recovered.")
 
                     # PROGRESS TRACKING
                     node_idx = stage_id - (np["stage"] * 1000) - 1
@@ -525,6 +525,8 @@ def run_game():
                                 story_manager.play_stage_2_5_end()
                             # Stage 3-10 has no story end sequence
                             # Stage 3-12 has no story end sequence
+                            elif np["stage"] == 38:
+                                story_manager.play_stage_3_15_end()
                             elif np["stage"] == 41:
                                 story_manager.play_stage_3_19_end()
                                 rewards_text.append("[bold magenta]NEW MEMBER: Naganohara[/bold magenta]")
@@ -675,13 +677,13 @@ def run_game():
                             if random.random() < 0.75: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
                             if random.random() < 0.75: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
 
-                    elif stage_id in [33, 35, 36, 38, 39]:
+                    elif stage_id in [33, 35, 36, 37, 38, 39, 40]:
                         checklatest = stage_id
                         if should_play_story:
                             if stage_id == 33:
                                 story_manager.play_stage_3_11_end()
-                            if stage_id == 35:
-                                story_manager.play_stage_3_13_end()
+                            if stage_id == 37:
+                                story_manager.play_stage_3_15_end()
                             if stage_id == 38:
                                 story_manager.play_stage_3_16_end()
                             if stage_id == 39:
@@ -1128,6 +1130,22 @@ def run_game():
                     console.print("[red]Locked![/red]")
                     time.sleep(1)
 
+            elif choice == "3-3":
+                if unlocked >= 24:
+                    config.player_data["selected_stage"] = 25
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-4":
+                if unlocked >= 25:
+                    config.player_data["selected_stage"] = 26
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
             elif choice == "3-5":
                 if unlocked >= 26:
                     if unlocked >= 27:
@@ -1144,6 +1162,22 @@ def run_game():
                         if config.player_data["latest_stage"] < 27: config.player_data["latest_stage"] = 27
                         sync_currencies()
                         get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-6":
+                if unlocked >= 27:
+                    config.player_data["selected_stage"] = 28
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-7":
+                if unlocked >= 28:
+                    config.player_data["selected_stage"] = 29
+                    config.current_state = config.STATE_BATTLE
                 else:
                     console.print("[red]Locked![/red]")
                     time.sleep(1)
@@ -1168,22 +1202,88 @@ def run_game():
                     console.print("[red]Locked![/red]")
                     time.sleep(1)
 
+            elif choice == "3-9":
+                if unlocked >= 30:
+                    config.player_data["selected_stage"] = 31
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-10":
+                if unlocked >= 31:
+                    latest = config.player_data.get("latest_stage", 0)
+                    if latest < 32:
+                        story_manager.play_stage_3_10_start()
+                    config.player_data["node_progress"] = {
+                        "stage": 32,
+                        "cleared_indices": [],
+                        "party_hp": {}
+                    }
+                    config.current_state = config.STATE_NODE_SELECT
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-11":
+                if unlocked >= 32:
+                    config.player_data["selected_stage"] = 33
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-12":
+                if unlocked >= 33:
+                    latest = config.player_data.get("latest_stage", 0)
+                    if latest < 34:
+                        story_manager.play_stage_3_12_start()
+                    config.player_data["node_progress"] = {
+                        "stage": 34,
+                        "cleared_indices": [],
+                        "party_hp": {}
+                    }
+                    config.current_state = config.STATE_NODE_SELECT
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-13":
+                if unlocked >= 34:
+                    config.player_data["selected_stage"] = 35
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-14":
+                if unlocked >= 35:
+                    config.player_data["selected_stage"] = 36
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
             elif choice == "3-15":
                 if unlocked >= 36:
-                    if unlocked >= 37:
-                        console.print("[dim]Stage Cleared.[/dim]")
-                        time.sleep(0.5)
-                    else:
-                        story_manager.play_stage_3_15_story()
-                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
-                        console.print("2x Microchip")
-                        console.print("2x Microprocessor")
-                        mats = config.player_data["materials"]
-                        mats["Microchip"] = mats.get("Microchip", 0) + 2
-                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
-                        if config.player_data["latest_stage"] < 37: config.player_data["latest_stage"] = 37
-                        sync_currencies()
-                        get_player_input("Press Enter...")
+                    config.player_data["selected_stage"] = 37
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-16":
+                if unlocked >= 37:
+                    config.player_data["selected_stage"] = 38
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-17":
+                if unlocked >= 38:
+                    config.player_data["selected_stage"] = 39
+                    config.current_state = config.STATE_BATTLE
                 else:
                     console.print("[red]Locked![/red]")
                     time.sleep(1)
@@ -1204,6 +1304,29 @@ def run_game():
                         if config.player_data["latest_stage"] < 40: config.player_data["latest_stage"] = 40
                         sync_currencies()
                         get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-19":
+                if unlocked >= 40:
+                    latest = config.player_data.get("latest_stage", 0)
+                    if latest < 41:
+                        story_manager.play_stage_3_19_start()
+                    config.player_data["node_progress"] = {
+                        "stage": 41,
+                        "cleared_indices": [],
+                        "party_hp": {}
+                    }
+                    config.current_state = config.STATE_NODE_SELECT
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "3-20":
+                if unlocked >= 41:
+                    config.player_data["selected_stage"] = 42
+                    config.current_state = config.STATE_BATTLE
                 else:
                     console.print("[red]Locked![/red]")
                     time.sleep(1)
@@ -1246,7 +1369,7 @@ def run_game():
                         get_player_input("Press Enter...")
                 else:
                     console.print("[red]Locked![/red]")
-                    time.sleep(1)\
+                    time.sleep(1)
 
             elif choice == "3-23":
                 if unlocked >= 44:
