@@ -272,7 +272,7 @@ class BattleManager:
             for a in team:
                 if a.hp > 0:
                     a.temp_modifiers["outgoing_dmg_flat"] = a.temp_modifiers.get("outgoing_dmg_flat", 0) + 3
-                    a.temp_modifiers["final_dmg_reduction"] = a.temp_modifiers.get("final_dmg_reduction", 0) + 5
+                    a.temp_modifiers["final_dmg_reduction"] = a.temp_modifiers.get("final_dmg_reduction", 0) + 2
                     
         elif skill.effect_type == "ADAM_SPECIAL_3":
             unit.temp_modifiers["incoming_dmg_flat"] = unit.temp_modifiers.get("incoming_dmg_flat", 0) + 3
@@ -710,8 +710,6 @@ class BattleManager:
                 p_count = min(5, pierce_eff.duration)
                 if "Pierce Affinity" in skill.description:
                     base_dmg_val += p_count
-                else:
-                    base_dmg_val = max(0, base_dmg_val - p_count)
 
             # --- RIPOSTE UNIQUE DAMAGE BUFFS FOR STEP 2 ---
             if skill.effect_type == "NAGANOHARA_RIPOSTE_CEDE":
@@ -806,7 +804,7 @@ class BattleManager:
             if skill.tier > def_max_tier:
                 final_dmg -= (final_dmg * min(0.80, 0.20 * (skill.tier - def_max_tier)))
 
-            damage = int(final_dmg) - target.temp_modifiers.get("final_dmg_reduction", 0)
+            damage = int(final_dmg)
 
             # --- FINAL CHECKS ---
             if skill.effect_type == "COND_HP_ABOVE_50_FLAT":
@@ -1255,33 +1253,33 @@ class BattleManager:
                 self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
         elif skill.effect_type == "PIERCE_AFFINITY_INFLICT_SPECIAL_1":
             if any(s.name == "Pierce Affinity" for s in target.status_effects):
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
             else:
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
         elif skill.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_1":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
         elif skill.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_2":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
         elif skill.effect_type == "ADAM_SPECIAL_1":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
             self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
         elif skill.effect_type == "ADAM_SPECIAL_2":
             pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
             if pierce_target_eff:
                 self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5 * pierce_target_eff.duration))
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
         elif skill.effect_type == "ADAM_SPECIAL_3":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=5))
+            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=5))
             riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
             if riposte_eff: riposte_eff.duration = 50
             else: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=50))
         
         # --- COUNTER SKILLS [ON HIT] EFFECTS ---
         elif skill.effect_type == "COUNTER_SKILL_SPECIAL_TYPE1":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
             
         elif skill.effect_type == "COUNTER_SKILL_SPECIAL_TYPE3":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
 
         # --- RIPOSTE GANG KATAS SKILL EFFECTS ---
         elif skill.effect_type in [
@@ -1293,11 +1291,11 @@ class BattleManager:
             # --- NAGANOHARA SKILLS ---
             if skill.effect_type == "NAGANOHARA_RIPOSTE_APPEL":
                 self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
                 
             elif skill.effect_type == "NAGANOHARA_RIPOSTE_CEDE":
                 self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
                 # Damage and debuff logic is handled in Step 2!
                 
             elif skill.effect_type == "NAGANOHARA_RIPOSTE_COUNTERPARRY":
@@ -1306,7 +1304,7 @@ class BattleManager:
                     self.log(f"[cyan1]{attacker.name} maxes out their Riposte Stance![/cyan1]")
                 else:
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=20))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
                 
             # --- AKASUKE SKILLS ---
             elif skill.effect_type == "AKASUKE_RIPOSTE_ENGARDE":
@@ -1314,7 +1312,7 @@ class BattleManager:
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
                 else:
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
                 
             elif skill.effect_type == "AKASUKE_RIPOSTE_FEINT":
                 # [On Use] Gain 1 Haste
@@ -1329,11 +1327,11 @@ class BattleManager:
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
                     
                 # [On Hit] Inflict 2 Pierce Affinity
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
                 
             elif skill.effect_type == "AKASUKE_RIPOSTE_PRISEDEFER":
                 self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
                 # Base damage increase handled in Step 2!
             
         # --- KIRYOKU FAIRY & INFILTRATOR ---
@@ -1405,6 +1403,9 @@ class BattleManager:
             target.pending_haste = min(5, target.pending_haste + new_status.duration)
             return
 
+        if new_status.name == "Pierce Affinity":
+            new_status.duration = min(5, new_status.duration)
+
         # --- PRE-PROCESS: DUAL-STACK MINIMUM 1 RULE ---
         if new_status.name in DUAL_STACK_EFFECTS:
             if new_status.duration > 0 and new_status.potency <= 0:
@@ -1417,11 +1418,11 @@ class BattleManager:
         
         if existing:
             # --- MERGE LOGIC ---
-            if new_status.name == "Bleed":
-                # Stack Duration (Count)
+            if new_status.name in ["Bleed", "Poise", "Rupture", "Fairylight"]:
                 existing.duration = min(99, existing.duration + new_status.duration)
-                # Stack Potency
                 existing.potency = min(99, existing.potency + new_status.potency)
+            elif new_status.name in ["Bind", "Haste", "Pierce Affinity"]:
+                existing.duration = min(5, existing.duration + new_status.duration)
             
             else:
                 # Generic Stacking
@@ -1429,7 +1430,7 @@ class BattleManager:
                 existing.potency += new_status.potency
         else:
             # --- NEW APPLICATION (FIRST TIME LOGIC) ---
-            if new_status.name in ["Bleed", "Poise"]:
+            if new_status.name in ["Bleed", "Poise", "Rupture", "Fairylight"]:
                 # Rule 1: Ensure Duration starts at least 1.
                 if new_status.duration < 1:
                     new_status.duration = 1
@@ -1440,6 +1441,7 @@ class BattleManager:
                 new_status.duration = min(99, new_status.duration)
                 new_status.potency = min(99, new_status.potency)
             target.status_effects.append(new_status)
+            
 
             """
             End of execute_skill()

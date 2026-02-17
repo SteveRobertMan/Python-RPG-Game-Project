@@ -16,6 +16,7 @@ poise_1 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "Boost Crit
 poise_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_3 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poisecount_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2, type="BUFF")
+poisecount_3 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=3, type="BUFF")
 rupture_1 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
 rupture_2 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
 rupture_3 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
@@ -25,9 +26,9 @@ rupturecount_3 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_sprin
 fairylight_1 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 1, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
 fairylight_2 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
 fairylight_3 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
-pierce_affinity_1 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1, type="DEBUFF")
-pierce_affinity_2 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2, type="DEBUFF")
-pierce_affinity_3 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity and -Base Damage from any skill that cannot inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3, type="DEBUFF")
+pierce_affinity_1 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1, type="DEBUFF")
+pierce_affinity_2 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2, type="DEBUFF")
+pierce_affinity_3 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3, type="DEBUFF")
 
 # --- KATA ID REGISTRY ---
 KATA_ID_MAP = {
@@ -185,8 +186,8 @@ def get_kata_data_by_name(name):
         k.source_key = name      
         s1 = Skill("Bokken Strike", 1, EL_PRAGMA, 5, "[On Use] Gain 3 Poise Potency", effect_type="GAIN_STATUS")
         s1.status_effect = poise_3
-        s2 = Skill("Suriage", 2, EL_LUDUS, 7, "[On Use] Gain 2 Poise Count", effect_type="GAIN_STATUS")
-        s2.status_effect = poisecount_2
+        s2 = Skill("Suriage", 2, EL_LUDUS, 7, "[On Use] Gain 3 Poise Count", effect_type="GAIN_STATUS")
+        s2.status_effect = poisecount_3
         desc_s3 = "[On Use] Gain 2 Poise Potency\n      [On Hit] Gain 4 Poise Potency"
         s3 = Skill("Cascading Twin Cut", 3, EL_STORGE, 11, desc_s3, effect_type="GAIN_POISE_SPECIAL_1")
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
@@ -201,9 +202,9 @@ def get_kata_data_by_name(name):
         )
         k = Kata("Kasakura High School Student", "Benikawa", 1, "I", res, desc)
         k.source_key = name      
-        s1 = Skill("Palm Strike", 1, EL_PHILIA, 2, "If target >50% HP, deal +2 Dmg", effect_type="COND_HP_ABOVE_50_FLAT", effect_val=2)
+        s1 = Skill("Palm Strike", 1, EL_PHILIA, 2, "If target >50% HP, deal +2 Final Damage", effect_type="COND_HP_ABOVE_50_FLAT", effect_val=2)
         s2 = Skill("Roundhouse Kick", 2, EL_STORGE, 4, "")
-        s3 = Skill("Vital Strike", 3, EL_PHILAUTIA, 8, "[On Hit] Target takes +4 Dmg from other attacks this turn", effect_type="DEBUFF_INCOMING_DMG_FLAT", effect_val=4)
+        s3 = Skill("Vital Strike", 3, EL_PHILAUTIA, 8, "[On Hit] Target takes +4 Final Damage from other attacks this turn", effect_type="DEBUFF_INCOMING_DMG_FLAT", effect_val=4)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
         return {"kata_obj": k, "max_hp": 70, "description": desc}
@@ -276,8 +277,8 @@ def get_kata_data_by_name(name):
         k = Kata("Kasakura High School Student", "Shigemura", 1, "I", res, desc)
         k.source_key = name
         s1 = Skill("Calibrated Strike", 1, EL_STORGE, 5, "")
-        s2 = Skill("Block", 2, EL_LUDUS, 0, "[Combat Start] Take -4 Dmg this turn", effect_type="BUFF_DEF_FLAT", effect_val=4)
-        s3 = Skill("Defensive Overhaul", 3, EL_AGAPE, 5, "[On Use] All allies take -3 Dmg this turn", effect_type="AOE_BUFF_DEF_FLAT", effect_val=3)
+        s2 = Skill("Block", 2, EL_LUDUS, 0, "[Combat Start] This unit takes -4 Final Damage this turn", effect_type="BUFF_DEF_FLAT", effect_val=4)
+        s3 = Skill("Defensive Overhaul", 3, EL_AGAPE, 5, "[On Use] All allies take -3 Final Damage this turn", effect_type="AOE_BUFF_DEF_FLAT", effect_val=3)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
         return {"kata_obj": k, "max_hp": 81, "description": desc} 
@@ -411,7 +412,7 @@ def get_kata_data_by_name(name):
     elif name == "Kasakura High School Student Hana":
         res = [0.8, 1.2, 0.8, 0.7, 1.2, 1.0, 1.2]
         desc = (
-            "Hana Kaoru is a student of Kasakura High School, one of the most renowned educational institutes of the east. She has soft, flowing hair and gentle, highly observant eyes that radiate warmth, compassion, and an unwavering calmness. Hana’s hobbies include practicing self-defense and aikido at the school dojo—where her elegant, momentum-shifting throws earn high praise from her juniors—and offering empathetic, grounded support to her peers without ever losing her composure."
+            "Kaoru Hana is a student of Kasakura High School, one of the most renowned educational institutes of the east. She has soft, flowing hair and gentle, highly observant eyes that radiate warmth, compassion, and an unwavering calmness. Hana’s hobbies include practicing self-defense and aikido at the school dojo—where her elegant, momentum-shifting throws earn high praise from her juniors—and offering empathetic, grounded support to her peers without ever losing her composure."
         )
         k = Kata("Kasakura High School Student Hana", "Hana", 1, "I", res, desc)
         k.source_key = name

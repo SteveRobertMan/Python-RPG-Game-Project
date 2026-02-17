@@ -896,9 +896,9 @@ def get_enemy_database():
 
     adam = Entity("Adam", is_player=False)
     adam.max_hp = 295
-    k_adam = Kata("Executive Rapier", "Adam", 1, 8, [1.0, 1.0, 1.0, 1.15, 1.15, 1.0, 1.15])
+    k_adam = Kata("Executive Rapier", "Adam", 1, 9, [1.0, 1.0, 1.0, 1.15, 1.15, 1.0, 1.15])
     ad1 = Skill("En Garde", 1, EL_PRAGMA, 6, "[On Use] If this unit does not have Haste, gain 2 Haste next turn\n      [On Hit] Inflict 2 Pierce Affinity\n      [On Hit] Gain 10 Riposte", effect_type="ADAM_SPECIAL_1")
-    ad2 = Skill("Advance-Lunge", 2, EL_LUDUS, 10, "[Combat Start] All of this unit’s allies deal +3 Final Damage this turn\n      [Combat Start] All of this unit’s allies take -5 Final Damage this turn\n      [On Hit] Gain 5 Riposte for every stack of Pierce Affinity the target has\n      [On Hit] Inflict 3 Pierce Affinity", effect_type="ADAM_SPECIAL_2")
+    ad2 = Skill("Advance-Lunge", 2, EL_LUDUS, 10, "[Combat Start] All of this unit’s allies deal +3 Final Damage this turn\n      [Combat Start] All of this unit’s allies take -2 Final Damage this turn\n      [On Hit] Gain 5 Riposte for every stack of Pierce Affinity the target has\n      [On Hit] Inflict 3 Pierce Affinity", effect_type="ADAM_SPECIAL_2")
     ad3 = Skill("Fleche Riposte (Incomplete)", 3, EL_LUDUS, 35, "[Combat Start] This unit takes +3 Final Damage this turn\n      [Combat Start] This unit deals -20 Base Damage this turn\n      [On Hit] Inflict 5 Pierce Affinity\n      [On Hit] Fix this unit’s Riposte stack to 50", effect_type="ADAM_SPECIAL_3")
     k_adam.skill_pool_def = [(ad1, 4), (ad2, 3), (ad3, 2)]
     adam.equip_kata(k_adam)

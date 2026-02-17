@@ -183,11 +183,7 @@ class Entity:
             if new_effect.name in ["Bleed", "Rupture", "Fairylight"]:
                 existing.potency = min(99, max(existing.potency, new_effect.potency))
                 existing.duration = min(99, existing.duration + new_effect.duration)
-            elif new_effect.name == "Bind":
-                existing.duration = min(5, existing.duration + new_effect.duration)
-            elif new_effect.name == "Haste":
-                existing.duration = min(5, existing.duration + new_effect.duration)
-            elif new_effect.name == "Pierce Affinity":
+            elif new_effect.name in ["Bind", "Haste", "Pierce Affinity"]:
                 existing.duration = min(5, existing.duration + new_effect.duration)
             elif new_effect.name == "Riposte":
                 existing.duration = min(50, existing.duration + new_effect.duration)
