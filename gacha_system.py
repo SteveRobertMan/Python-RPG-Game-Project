@@ -26,7 +26,8 @@ class GachaSystem:
                 "Kasakura High School Disciplinary Committee President Yuri",
                 "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
                 "Riposte Gang Squad Leader Naganohara",
-                "Riposte Gang Executive Hanefuji Akasuke"
+                "Riposte Gang Executive Hanefuji Akasuke",
+                "Benikawa Ninja Clan – Ayame Benikawa"
             ],
             RARITY_3: [
                 "Heiwa Seiritsu’s Upperclassman | ‘Crusher’ Benikawa",

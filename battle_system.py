@@ -293,6 +293,17 @@ class BattleManager:
         elif skill.effect_type == "COUNTER_SKILL_SPECIAL_TYPE3":
             unit.counter_active = True
             unit.counter_potency = 0.30  # +30% damage
+        
+        # --- BENIKAWA NINJA CLAN ---
+        elif skill.effect_type in ["BENIKAWA_CLAN_SPECIAL_1", "BENIKAWA_CLAN_SPECIAL_3"]:
+            unit.temp_modifiers["incoming_dmg_mult"] *= 1.30
+            #self.log(f"[dim]{unit.name} assumes a reckless stance, taking +30% damage this turn![/dim]")
+            
+        elif skill.effect_type == "BENIKAWA_CLAN_SPECIAL_2":
+            unit.temp_modifiers["incoming_dmg_mult"] *= 0.70
+            # Set the next turn's incoming damage multiplier safely
+            unit.next_turn_modifiers["incoming_dmg_mult"] = unit.next_turn_modifiers.get("incoming_dmg_mult", 1.0) * 0.50
+            #self.log(f"[dim]{unit.name} nullifies their pain receptors, reducing incoming damage significantly![/dim]")
 
     def process_turn_end_effects(self):
         """
@@ -1378,6 +1389,48 @@ class BattleManager:
         elif skill.effect_type == "DEBUFF_ATK_MULT":
             # Target deals reduced damage for the rest of the turn
             target.temp_modifiers["outgoing_dmg_mult"] *= skill.effect_val
+
+        # --- BENIKAWA NINJA CLAN ---
+        elif skill.effect_type == "BENIKAWA_CLAN_SPECIAL_1":
+            # Target takes +4 Final Damage from other attacks this turn (by reducing their flat defense by 4)
+            target.temp_modifiers["final_dmg_reduction"] -= 4
+            
+            # If target has Bleed, Inflict 3 Bleed Potency
+            has_bleed = any(s.name == "Bleed" for s in target.status_effects)
+            if has_bleed:
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=1))
+                
+            # Inflict 1 Pierce Affinity
+            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=1))
+
+        elif skill.effect_type == "BENIKAWA_CLAN_SPECIAL_2":
+            # If this unit does not have Poise, gain 4 Poise Count (we assign 1 Potency to obey the minimum rule)
+            has_poise = any(s.name == "Poise" for s in attacker.status_effects)
+            if not has_poise:
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "", duration=4))
+                
+            # Gain 3 Poise Potency
+            self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=1))
+            
+            # Gain 2 Haste next turn (Auto-intercepted by our delayed application queue!)
+            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=2))
+
+        elif skill.effect_type == "BENIKAWA_CLAN_SPECIAL_3":
+            # Target deals -15% damage this turn, then deals -25% damage next turn
+            target.temp_modifiers["outgoing_dmg_mult"] *= 0.85
+            target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.75
+            
+            # If target has Bleed, inflict 3 Bleed Count and 3 Bleed Potency, then this unit gains 2 Haste next turn
+            has_bleed = any(s.name == "Bleed" for s in target.status_effects)
+            if has_bleed:
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=3))
+                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=2))
+                
+            # If target has Pierce Affinity, inflict 2 Pierce Affinity, then this unit gains 3 Poise Potency and 2 Poise Count
+            has_pierce = any(s.name == "Pierce Affinity" for s in target.status_effects)
+            if has_pierce:
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=2))
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=2))
 
         if target.hp <= 0:
             target.hp = 0

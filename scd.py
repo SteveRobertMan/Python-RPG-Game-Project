@@ -55,7 +55,8 @@ KATA_ID_MAP = {
     21: "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura",
     22: "Riposte Gang Squad Leader Naganohara",
     23: "Riposte Gang Executive Hanefuji Akasuke",
-    24: "Kasakura High School Disciplinary Committee Member Kagaku"
+    24: "Kasakura High School Disciplinary Committee Member Kagaku",
+    25: "Benikawa Ninja Clan – Ayame Benikawa"
 }
 
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
@@ -596,3 +597,27 @@ def get_kata_data_by_name(name):
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
         return {"kata_obj": k, "max_hp": 71, "description": desc}
+
+    # --- BENIKAWA NINJA CLAN ---
+    elif name == "Benikawa Ninja Clan – Ayame Benikawa":
+        res = [1.2, 0.6, 0.6, 1.4, 1.4, 1.2, 0.8]
+        desc = (
+            "Ayame Benikawa here has fully shed the need for secrecy, standing proudly as a true operative of the Benikawa Ninja Clan while fighting alongside her trusted Kasakura Vanguard. While she still wears her standard Kasakura High School formal uniform, she no longer bothers to conceal the hidden kunai strapped to her thighs, and her bright purple eyes—the undeniable mark of her bloodline—gleam with unrestricted, feral battle hunger. Free from the heavy burden of hiding her true nature from Akasuke, Yuri, and the rest of her friends, she can finally let loose and fight with her absolute, terrifying full strength.\n\n"
+            "In combat, she completely abandons the strict, holding-back mindset she previously used to maintain her 'normal high schooler' cover. She seamlessly weaves her devastating, heavy-hitting karate strikes with lethal, shadow-stepping ninja arts, moving with blistering speed to systematically dismantle her opponents. She fights with a ruthless pragmatism, no longer afraid of looking 'too lethal' in front of her peers.\n\n"
+            "However, the greatest advantage of her revealed identity is the freedom to openly utilize and hone her specialized Awakening: Nerve Rerouting and Pain Nullification. Having awakened this unique physical specialty only a few months prior to receiving her mission, her mastery over it is still incomplete—yet, by continuing to fight openly alongside the Vanguard, Benikawa treats the brutal battlefield as her ultimate training ground. She freely experiments with her techniques mid-fight, pushing her limits in a relentless, joyful drive to perfect her deadly arts."
+        )
+        k = Kata("Benikawa Ninja Clan", "Benikawa", 4, "I", res, desc)
+        k.source_key = name
+        
+        desc_s1 = "[Combat Start] This unit takes +30% damage this turn\n       [On Hit] Target takes +4 Final Damage from other attacks this turn\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 1 Pierce Affinity"
+        s1 = Skill("Break Vitals", 1, EL_PHILAUTIA, 9, desc_s1, effect_type="BENIKAWA_CLAN_SPECIAL_1")
+        
+        desc_s2 = "[Combat Start] This unit takes -30% damage for this turn, then takes -50% damage in the next turn\n       [On Use] If this unit does not have Poise, gain 4 Poise Count\n       [On Use] Gain 3 Poise Potency\n       [On Use] Gain 2 Haste next turn"
+        s2 = Skill("Focus – Painlessness", 2, EL_LUDUS, 0, desc_s2, effect_type="BENIKAWA_CLAN_SPECIAL_2")
+        
+        desc_s3 = "[Combat Start] This unit takes +30% damage this turn\n       [On Hit] Target deals -15% damage this turn, then deals -25% damage next turn\n       [On Hit] If target has Bleed, inflict 3 Bleed Count and 3 Bleed Potency, then this unit gains 2 Haste next turn\n       [On Hit] If target has Pierce Affinity, inflict 2 Pierce Affinity, then this unit gains 3 Poise Potency and 2 Poise Count"
+        s3 = Skill("Specialty – Chaotic Nervous Redefinition", 3, EL_PHILAUTIA, 14, desc_s3, effect_type="BENIKAWA_CLAN_SPECIAL_3")
+        
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 68, "description": desc}
