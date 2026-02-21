@@ -686,7 +686,7 @@ def get_enemy_database():
     ck1 = Skill("Suppression", 1, EL_AGAPE, 7, "[On Hit] Inflict 3 Rupture Potency", effect_type="APPLY_STATUS")
     ck1.status_effect = rupture_3
     ck2 = Skill("Focusing On Protection", 2, EL_PHILAUTIA, 5, "[On Use] All ally units deal -2 Base Damage this turn", effect_type="BASE_DAMAGE_DEBUFF_ALL", effect_val=2)
-    ck3 = Skill("Rush In", 3, EL_PHILIA, 9, "[On Hit] Inflict 2 Rupture Count\n      [On Hit] Inflict 1 Fairylight", effect_type="KIRYOKU_COUNCIL_SPECIAL")
+    ck3 = Skill("Rush In", 3, EL_PHILIA, 9, "[On Hit] Inflict 2 Rupture Count\n      [On Hit] Inflict 2 Fairylight Potency", effect_type="KIRYOKU_COUNCIL_SPECIAL")
     k_c_kiryoku.skill_pool_def = [(ck1, 4), (ck2, 2), (ck3, 3)]
     c_kiryoku.equip_kata(k_c_kiryoku)
     c_kiryoku.description = "These trusted enforcers serve directly beneath the Fairies of Kiryoku Gakuen’s student council, utilizing the precise, highly disciplined martial arts cultivated within the school’s top athletic clubs. They fight with unshakeable focus and coordinated teamwork, partially abandoning the usual friendly Kiryoku demeanor to efficiently suppress their targets. Those who work under the Fairies are often called “Lesser Fairies” for easier distinction, although they are all considered a part of the student council’s theme."
@@ -697,8 +697,8 @@ def get_enemy_database():
     k_ayako = Kata("Forest Guardian", "Ayako", 1, 7, [1.3, 1.0, 1.0, 0.9, 1.2, 1.0, 1.3])
     ay1 = Skill("Cross Distance", 1, EL_AGAPE, 5, "[On Hit] Inflict 3 Rupture Potency", effect_type="APPLY_STATUS")
     ay1.status_effect = rupture_3
-    ay2 = Skill("Quickdraw Bokken", 2, EL_LUDUS, 7, "[On Hit] If target has Rupture, inflict 2 Fairylight", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
-    ay3 = Skill("Shukuchi (Incomplete)", 3, EL_PRAGMA, 10, "[On Hit] Inflict 3 Rupture Count\n      [On Hit] Inflict 4 Fairylight", effect_type="AYAKO_SPECIAL")
+    ay2 = Skill("Quickdraw Bokken", 2, EL_LUDUS, 7, "[On Hit] If target has Rupture, Inflict 2 Fairylight Potency", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
+    ay3 = Skill("Shukuchi (Incomplete)", 3, EL_PRAGMA, 10, "[On Hit] Inflict 3 Rupture Count\n      [On Hit] Inflict 4 Fairylight Potency", effect_type="AYAKO_SPECIAL")
     k_ayako.skill_pool_def = [(ay1, 3), (ay2, 3), (ay3, 3)]
     ayako.equip_kata(k_ayako)
     ayako.description = "Serving as the Security Head of the Kiryoku Student Council, Ayako is a feral, battle-hungry warrior who wields a solid oak bokken with devastating power. She fights using chaotic, bouncing trajectories and explosive acceleration that makes meeting her head-on incredibly dangerous. Fiercely protective of her empathic 'Queen', she relies on her overwhelming speed and predatory instincts to effortlessly overwhelm seasoned fighters."
@@ -775,7 +775,7 @@ def get_enemy_database():
     inf_council.max_hp = 53
     k_inf_council = Kata("Fake Council", "Fake Council", 1, 1, [1.1, 1.5, 1.5, 1.0, 1.2, 1.5, 1.3])
     ic1 = Skill("Baton Smack", 1, EL_AGAPE, 7, "[On Hit] Inflict 2 Rupture Potency\n      [On Hit] Inflict 2 Rupture Count", effect_type="APPLY_RUPTURE_HEAVY_STACKS")
-    ic2 = Skill("Fairy Blessing (Fake)", 2, EL_PRAGMA, 7, "[On Hit] If target has Rupture, inflict 1 Fairylight", effect_type="FAIRYLIGHT_APPLY", effect_val=1)
+    ic2 = Skill("Fairy Blessing (Fake)", 2, EL_PRAGMA, 7, "[On Hit] If target has Rupture, Inflict 2 Fairylight Potency", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
     ic3 = Skill("Shukuchi (Fake)", 3, EL_EROS, 14, "[On Use] Gain 4 Bind next turn", effect_type="GAIN_STATUS")
     ic3.status_effect = bind_4
     k_inf_council.skill_pool_def = [(ic1, 3), (ic2, 4), (ic3, 2)]

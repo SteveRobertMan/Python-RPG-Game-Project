@@ -23,12 +23,12 @@ rupture_3 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_gre
 rupture_4 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
 rupturecount_2 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF")
 rupturecount_3 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3, type="DEBUFF")
-fairylight_1 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 1, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
-fairylight_2 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
-fairylight_3 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Fairylight Potency. On turn end, reduce Fairylight Count by half. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
-pierce_affinity_1 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1, type="DEBUFF")
-pierce_affinity_2 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2, type="DEBUFF")
-pierce_affinity_3 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill that can inflict Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3, type="DEBUFF")
+fairylight_1 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 1, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
+fairylight_2 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
+fairylight_3 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
+pierce_affinity_1 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1, type="DEBUFF")
+pierce_affinity_2 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2, type="DEBUFF")
+pierce_affinity_3 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3, type="DEBUFF")
 
 # --- KATA ID REGISTRY ---
 KATA_ID_MAP = {
@@ -490,8 +490,8 @@ def get_kata_data_by_name(name):
         k.source_key = name
         s1 = Skill("Warning Draw", 1, EL_EROS, 3, "[On Hit] Inflict 3 Rupture Count", effect_type="APPLY_STATUS")
         s1.status_effect = rupturecount_3
-        s2 = Skill("Close Distance", 2, EL_LUDUS, 8, "[On Hit] If target has Rupture, inflict 2 Fairylight", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
-        desc_s3 = "[On Hit] If target has Rupture, inflict 3 Fairylight\n      [On Use] This unit takes +50% damage this turn"
+        s2 = Skill("Close Distance", 2, EL_LUDUS, 8, "[On Hit] If target has Rupture, inflict 2 Fairylight Potency", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
+        desc_s3 = "[On Hit] If target has Rupture, inflict 3 Fairylight Potency\n      [On Use] This unit takes +50% damage this turn"
         s3 = Skill("Shukuchi (Incomplete) – Dash", 3, EL_PRAGMA, 16, desc_s3, effect_type="BENIKAWA_KIRYOKU_SPECIAL")
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -507,7 +507,7 @@ def get_kata_data_by_name(name):
         )
         k = Kata("Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’", "Hana", 3, "I", res, desc)
         k.source_key = name
-        s1 = Skill("Penetrating Defenses", 1, EL_PHILIA, 5, "[On Hit] If target has Rupture, inflict 1 Fairylight", effect_type="FAIRYLIGHT_APPLY", effect_val=1)
+        s1 = Skill("Penetrating Defenses", 1, EL_PHILIA, 5, "[On Hit] If target has Rupture, inflict 2 Fairylight Potency", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
         s2 = Skill("Maintain Distance", 2, EL_AGAPE, 7, "[On Hit] If target has Fairylight, inflict 4 Rupture Potency", effect_type="FAIRYLIGHT_SPECIAL1", effect_val=4)
         desc_s3 = "[On Hit] If target has Fairylight, inflict 2 Rupture Count, then this unit takes -30% damage this turn"
         s3 = Skill("Shukuchi (Incomplete) – Engagement", 3, EL_STORGE, 13, desc_s3, effect_type="HANA_KIRYOKU_SPECIAL")

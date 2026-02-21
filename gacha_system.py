@@ -19,7 +19,6 @@ RARITY_4 = 4
 
 class GachaSystem:
     def __init__(self):
-        # Updated Pool with specific Kata Strings matching SCD
         self.pool = {
             RARITY_4: [
                 "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’ Shigemura",
