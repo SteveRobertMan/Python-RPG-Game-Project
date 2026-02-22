@@ -121,13 +121,18 @@ class Entity:
         self.is_player = is_player
         self.max_hp = 100
         self.hp = 100
-        self.resistances = [1.0] * 7 
+        self.resistances = [1.0] * 7
+
+        self.pace = 1
+        self.slot_targets = []
+        self.turn_committed_skills = []
         
         self.kata = None
         self.hand = []
         self.deck = []
         self.discard_pile = []
-        self.intent = None 
+        self.intent = None
+        self.intents = []
         self.auto_target = None 
         
         self.temp_modifiers = {
@@ -231,7 +236,6 @@ class Entity:
         if skill in self.hand:
             self.hand.remove(skill)
         self.discard_pile.append(skill)
-        self.draw_skills(1)
 
     def get_lowest_hp_ally(self, all_allies):
         living = [u for u in all_allies if u.hp > 0 and u != self]

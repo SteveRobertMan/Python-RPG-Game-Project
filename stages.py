@@ -999,7 +999,36 @@ def get_enemy_database():
     guard_leader.description = "infiltratingyunhaiborderguardleaderdesc"
     guard_leader.unlock_stage_id = 50
 
+    # --- ACT 4 ENEMY: LUOXIA MARTIAL ARTS STUDENT ---
+    luoxia_student = Entity("Luoxia Martial Arts Practitioner Student", is_player=False)
+    luoxia_student.max_hp = 76
+    luoxia_student.pace = 2
+    k_luoxia = Kata("Luoxia Arts", "Luoxia", 1, 1, [1.1, 1.2, 1.3, 0.9, 1.1, 1.0, 1.3])
+
+    # Skill I ◈◈
+    ls_s1_c1 = Chip(base_damage=3, effect_type="APPLY_RUPTURE_HEAVY_STACKS")
+    ls_s1_c2 = Chip(base_damage=3, effect_type="APPLY_RUPTURE_HEAVY_STACKS")
+    ls_s1_desc_brief = "[On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
+    ls_s1_desc_inspect = "◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count"
+    ls_s1 = ChipSkill("Palm Heel Strike ◈◈", 1, EL_PHILIA, [ls_s1_c1, ls_s1_c2], description=ls_s1_desc_brief, inspect_description=ls_s1_desc_inspect)
+
+    # Skill II ◈◈
+    ls_s2_c1 = Chip(base_damage=3, effect_type="RUPTURE_BUFF_DEF_SPECIAL_1")
+    ls_s2_c2 = Chip(base_damage=3, effect_type="RUPTURE_BUFF_DEF_SPECIAL_2")
+    ls_s2_desc_brief = "[Combat Start] Take -2 Final Damage this turn\n       [On Hit] Take -Final Damage next turn\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
+    ls_s2_desc_inspect = "[Combat Start] Take -2 Final Damage this turn\n       ◈ Base Damage: 3\n       [On Hit] Take -1 Final Damage next turn\n       [On Hit] Inflict 3 Rupture Potency\n       ◈ Base Damage: 3\n       [On Hit] Take -1 Final Damage next turn\n       [On Hit] Inflict 3 Rupture Count"
+    ls_s2 = ChipSkill("Outward Block ◈◈", 2, EL_STORGE, [ls_s2_c1, ls_s2_c2], description=ls_s2_desc_brief, inspect_description=ls_s2_desc_inspect, effect_type="BUFF_DEF_FLAT", effect_val=2)
+
+    # Skill III
+    ls_s3_desc = "[On Use] Gain 3 Poise Count\n       [On Hit] Gain 3 Poise Potency\n       [On Hit] Inflict 3 Rupture Potency"
+    ls_s3 = Skill("Centerline Punch", 3, EL_STORGE, 10, ls_s3_desc, effect_type="POISE_RUPTURE_SPECIAL_TYPE1", effect_val=3)
+
+    k_luoxia.skill_pool_def = [(ls_s1, 4), (ls_s2, 2), (ls_s3, 2)]
+    luoxia_student.equip_kata(k_luoxia)
+    luoxia_student.description = "luoxiamartialartspractitionerstudent"
+    luoxia_student.unlock_stage_id = 52
+
     # Append to existing return list in stages.py:
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro, 
             sp_kiryoku, c_kiryoku, ayako, sumiko, inf_heiwa, inf_kiryoku, inf_kasa, inf_lead, hisayuki, inf_council, inf_disc, 
-            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader]
+            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student]

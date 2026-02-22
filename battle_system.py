@@ -88,10 +88,9 @@ class BattleManager:
         
         for unit in self.allies + self.enemies:
             unit.refresh_deck()
-            unit.draw_skills(2)
-            # Reset Statuses
+            # Draw Pace * 2 at the start of battle
+            unit.draw_skills(unit.pace * 2)
             unit.status_effects = []
-            # Reset Hidden Flags
             unit.nerve_disruption_turns = 0 
             unit.pending_bind = 0
             unit.pending_haste = 0
@@ -114,21 +113,26 @@ class BattleManager:
                 # Modifiers reset at start of turn
                 if self.turn_count > 1:
                     unit.reset_turn_modifiers()
-                    unit.apply_next_turn_modifiers() # Apply delayed modifiers
+                    unit.apply_next_turn_modifiers()
                 
-                # Apply Status Effect Modifiers (Buffs/Debuffs/Hidden Flags)
                 self.apply_status_modifiers(unit)
                 
-                unit.auto_target = None 
+                # --- BUG FIX: CLEAN HAND BEFORE DRAWING ---
+                # Remove any 'None' placeholders left over from the previous command phase
+                unit.hand = [s for s in unit.hand if s is not None]
+                
+                # REFILL HAND TO FULL PACE (Pace * 2)
+                skills_to_draw = (unit.pace * 2) - len(unit.hand)
+                if skills_to_draw > 0:
+                    unit.draw_skills(skills_to_draw)
 
-            self.assign_auto_targets(self.allies, self.enemies)
-            self.assign_auto_targets(self.enemies, self.allies) 
-            self.generate_enemy_intents()
+            # Assign targets and enemy intents SLOT BY SLOT
+            self.assign_round_targets()
 
             # --- COMMAND PHASE ---
             self.handle_player_command_phase()
             if self.check_win_condition(): return
-            if self.is_battle_over: return # Catch retreat
+            if self.is_battle_over: return
             
             # --- RESOLUTION PHASE ---
             if not self.is_battle_over:
@@ -149,26 +153,22 @@ class BattleManager:
                 self.render_battle_screen() 
                 time.sleep(0.5) 
                 
-                enemies_acted = False
-                for enemy in self.enemies:
-                    if enemy.hp > 0:
-                        self.execute_enemy_turn(enemy)
-                        enemies_acted = True
-                        if self.check_loss_condition(): return
+                # Use the new Pace-based staggered execution
+                self.execute_enemy_actions()
+                if self.check_loss_condition(): return
                 
-                if enemies_acted:
-                    self.render_battle_screen()
-                    if self.auto_battle:
-                        config.console.print("[bold yellow]Enemy turn finished.[/bold yellow]")
-                        config.console.print("Press [bold]Enter[/bold] to continue, or [bold]A[/bold] to Stop Auto.")
-                        choice = get_player_input("> ").upper()
-                        if choice == "A":
-                            self.auto_battle = False
-                            config.console.print("[dim]Auto Battle Disabled.[/dim]")
-                            time.sleep(0.6)
-                    else:
-                        get_player_input("Enemy turn finished. Press Enter...")
-                    self.battle_log = [] 
+                self.render_battle_screen()
+                if self.auto_battle:
+                    config.console.print("[bold yellow]Enemy turn finished.[/bold yellow]")
+                    config.console.print("Press [bold]Enter[/bold] to continue, or [bold]A[/bold] to Stop Auto.")
+                    choice = get_player_input("> ").upper()
+                    if choice == "A":
+                        self.auto_battle = False
+                        config.console.print("[dim]Auto Battle Disabled.[/dim]")
+                        time.sleep(0.6)
+                else:
+                    get_player_input("Enemy turn finished. Press Enter...")
+                self.battle_log = [] 
             
             # --- END OF TURN PHASE (Status Effects) ---
             if not self.is_battle_over:
@@ -185,66 +185,43 @@ class BattleManager:
                 
             if self.stage_id == 20 and self.turn_count == 6:
                 self.won = True
-                # Return True immediately to signal Player Victory
                 return True
             # ---------------------------------------------------------
             
     def apply_status_modifiers(self, unit):
-        """
-        Calculates stat penalties derived from status effects.
-        """
-        # --- NEW: SAFETY CLAMP LOGIC ---
-        # Ensures that no matter how an effect was added, it never exceeds game limits.
         for effect in unit.status_effects:
             if effect.name in ["Poise", "Bleed"]:
-                # Cap Potency and Count at 99
                 if effect.potency > 99: effect.potency = 99
                 if effect.duration > 99: effect.duration = 99
             elif effect.name == "Bind":
-                # Cap Count at 5 (Bind has no potency)
                 if effect.duration > 5: effect.duration = 5
-        # 1. Reset Modifiers handled elsewhere (reset_turn_modifiers)
         
-        # 2. Apply Visible Status Effects
         for effect in unit.status_effects:
             if effect.name == "Bind":
-                # Logic: Reduce Damage by 10% per duration, capped (min 10% dmg remaining)
                 penalty = 1.0 - (0.1 * effect.duration)
                 unit.temp_modifiers["outgoing_dmg_mult"] *= max(0.1, penalty)
             elif effect.name == "Haste":
-                # Logic: Deal +10% base damage per count
                 bonus = 1.0 + (0.1 * effect.duration)
                 unit.temp_modifiers["outgoing_dmg_mult"] *= bonus
         
-        # 1. Apply Hidden Flags (Invisible to Player UI, but affects logic)
-        # Check for Nerve Disruption (Dynamic attribute)
         if getattr(unit, "nerve_disruption_turns", 0) > 0:
-            # Effect: Target deals -80% damage (so they deal 20%)
             unit.temp_modifiers["outgoing_dmg_mult"] *= 0.2
 
-        # 2. Apply Visible Status Effects
-        pass
-
     def resolve_combat_start_effects(self):
-        """
-        Scans queued actions (Ally Queue & Enemy Intents).
-        If a skill has [Combat Start], activate its effect immediately.
-        """
         activated_any = False
         
-        # 1. Check Allies
         for ally, skill, target in self.ally_action_queue:
             if ally.hp > 0 and "[Combat Start]" in skill.description:
                 self.apply_combat_start_logic(ally, skill)
                 activated_any = True
 
-        # 2. Check Enemies
         for enemy in self.enemies:
-            if enemy.hp > 0 and enemy.intent:
-                skill, target, _ = enemy.intent
-                if "[Combat Start]" in skill.description:
-                    self.apply_combat_start_logic(enemy, skill)
-                    activated_any = True
+            if enemy.hp > 0 and enemy.intents:
+                # We check all intents of the enemy for [Combat Start]
+                for skill, _, _ in enemy.intents:
+                    if "[Combat Start]" in skill.description:
+                        self.apply_combat_start_logic(enemy, skill)
+                        activated_any = True
         
         if activated_any:
             self.render_battle_screen()
@@ -255,12 +232,10 @@ class BattleManager:
         if skill.effect_type == "BUFF_DEF_FLAT":
              unit.temp_modifiers["final_dmg_reduction"] += skill.effect_val
 
-        # --- HISAYUKI ---
         elif skill.effect_type == "HISAYUKI_SPECIAL_2":
             if any(s.name == "Bind" for s in unit.status_effects):
                 unit.temp_modifiers["incoming_dmg_mult"] *= 1.50
         
-        # --- RIPOSTE GANG / ADAM ---
         elif skill.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_1":
             team = self.allies if unit in self.allies else self.enemies
             for a in team:
@@ -278,12 +253,10 @@ class BattleManager:
             unit.temp_modifiers["incoming_dmg_flat"] = unit.temp_modifiers.get("incoming_dmg_flat", 0) + 3
             unit.temp_modifiers["outgoing_base_dmg_flat"] = unit.temp_modifiers.get("outgoing_base_dmg_flat", 0) - 20
         
-        # --- MASCOT JOKE SKILL ---
         elif skill.effect_type == "JOKE_SKILL":
             if hasattr(unit, "kata"):
                 unit.kata.rift_aptitude = 0
         
-        # --- COUNTER SKILL FLAGS (Hidden Tracking) ---
         elif skill.effect_type == "COUNTER_SKILL_TYPE1":
             unit.counter_active = True
             unit.counter_potency = 0.20  # +20% damage
@@ -294,135 +267,98 @@ class BattleManager:
             unit.counter_active = True
             unit.counter_potency = 0.30  # +30% damage
         
-        # --- BENIKAWA NINJA CLAN ---
         elif skill.effect_type in ["BENIKAWA_CLAN_SPECIAL_1", "BENIKAWA_CLAN_SPECIAL_3"]:
             unit.temp_modifiers["incoming_dmg_mult"] *= 1.30
-            #self.log(f"[dim]{unit.name} assumes a reckless stance, taking +30% damage this turn![/dim]")
             
         elif skill.effect_type == "BENIKAWA_CLAN_SPECIAL_2":
             unit.temp_modifiers["incoming_dmg_mult"] *= 0.70
-            # Set the next turn's incoming damage multiplier safely
             unit.next_turn_modifiers["incoming_dmg_mult"] = unit.next_turn_modifiers.get("incoming_dmg_mult", 1.0) * 0.50
-            #self.log(f"[dim]{unit.name} nullifies their pain receptors, reducing incoming damage significantly![/dim]")
 
         elif skill.effect_type == "LIGHTWEIGHT_SPECIAL":
-            # 1. Takes -<effect_val> Final Damage this turn
             unit.temp_modifiers["final_dmg_reduction"] += skill.effect_val
-            # 2. Gain <effect_val>x Haste next turn (using standard haste duration rules)
             haste_eff = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=skill.effect_val)
             self.apply_status_logic(unit, haste_eff)
 
     def process_turn_end_effects(self):
-        """
-        Handles Status Effect ticks.
-        Logic supports Potency/Count system.
-        'duration' attribute in code is treated as 'Count'.
-        """
         effects_triggered = False
         all_units = self.allies + self.enemies
         
         for unit in all_units:
             if unit.hp <= 0: continue
             
-            # --- HIDDEN FLAGS CLEANUP ---
             if getattr(unit, "counter_active", False):
                 unit.counter_active = False
                 unit.counter_potency = 0
             if getattr(unit, "nerve_disruption_turns", 0) > 0:
                 unit.nerve_disruption_turns -= 1
-                if unit.nerve_disruption_turns == 0:
-                    pass
 
-            # --- VISIBLE STATUS EFFECTS ---
-            # Iterate backwards to allow safe removal
             for i in range(len(unit.status_effects) - 1, -1, -1):
                 effect = unit.status_effects[i]
                 triggered_this_loop = False
 
-                # 1. Bleed Logic: handled in execute_skill (Upon dealing damage)
-                # Bleed DOES NOT decay at end of turn. It persists until triggered.
                 if effect.name == "Bleed":
                     pass 
-
-                # 2. Decay Logic (Decay Count by a certain value every turn)
                 elif effect.name in ["Bind", "Poise", "Haste"]:
                     effect.duration -= 1
                 elif effect.name == "Fairylight":
                     old_duration = effect.duration
-                    # Halve the duration rounding down
                     effect.duration = effect.duration // 2 
-                    # Calculate how much was lost
                     reduced_amount = old_duration - effect.duration
-                    # If duration was reduced and they have Rupture, boost the Rupture Potency
                     if reduced_amount > 0:
                         rupture_eff = next((s for s in unit.status_effects if s.name == "Rupture"), None)
                         if rupture_eff:
                             rupture_eff.potency = min(99, rupture_eff.potency + reduced_amount)
-                            # Optional: A log to show the conversion happened!
                             self.log(f"[spring_green1]Fairylight decay granted {unit.name} +{reduced_amount} Rupture Potency![/spring_green1]")
                 elif effect.name == "Riposte":
-                    # Reduce by 25% at end of turn
                     reduction = int(effect.duration * 0.25)
                     effect.duration = max(0, effect.duration - max(1, reduction))
                 
-                # 3. Standard DOT / Regen (Legacy support)
                 elif effect.type == "DOT":
                     dmg = effect.potency
                     unit.hp -= dmg
                     self.log(f"[bold magenta]{effect.name}[/bold magenta] deals {dmg} dmg to {unit.name}!")
                     effect.duration -= 1
                     effects_triggered = True
-                    triggered_this_loop = True
                 elif effect.type == "REGEN":
                     heal = effect.potency
                     unit.hp = min(unit.max_hp, unit.hp + heal)
                     self.log(f"[bold green]{effect.name}[/bold green] heals {unit.name} for {heal}!")
                     effect.duration -= 1
                     effects_triggered = True
-                    triggered_this_loop = True
                 
-                # Check Death
                 if unit.hp <= 0:
                     unit.hp = 0
                     self.log(f"[bold red]{unit.name} succumbed to {effect.name}![/bold red]")
                     effects_triggered = True
                     break 
                 
-                # Remove if Count/Duration is 0
                 if effect.duration <= 0:
                     self.log(f"{unit.name}'s [dim]{effect.name}[/dim] expired.")
                     unit.status_effects.pop(i)
                     effects_triggered = True
 
-            # --- PROCESS PENDING BIND (Hidden -> Visible) ---
             if getattr(unit, "pending_bind", 0) > 0:
                 actual_duration = min(5, unit.pending_bind)
                 existing_bind = next((s for s in unit.status_effects if s.name == "Bind"), None)
-                
                 if existing_bind:
                     existing_bind.duration = min(5, existing_bind.duration + actual_duration)
                 else:
                     bind_effect = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=actual_duration)
                     unit.status_effects.append(bind_effect)
-                
                 unit.pending_bind = 0
                 effects_triggered = True
 
-            # --- PROCESS PENDING HASTE (Hidden -> Visible) ---
             if getattr(unit, "pending_haste", 0) > 0:
                 actual_duration = min(5, unit.pending_haste)
                 existing_haste = next((s for s in unit.status_effects if s.name == "Haste"), None)
-                
                 if existing_haste:
                     existing_haste.duration = min(5, existing_haste.duration + actual_duration)
                 else:
                     haste_effect = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=actual_duration, type="BUFF")
                     unit.status_effects.append(haste_effect)
-                
                 unit.pending_haste = 0
                 effects_triggered = True
 
-            # --- UNIVERSAL DUAL-STACK CLEANUP (POP ON 0) ---
             for effect in list(unit.status_effects):
                 if effect.name in DUAL_STACK_EFFECTS:
                     if effect.potency <= 0 or effect.duration <= 0:
@@ -434,49 +370,78 @@ class BattleManager:
             time.sleep(1.0)
             self.battle_log = [] 
 
-    def assign_auto_targets(self, sources, targets):
-        living_sources = [s for s in sources if s.hp > 0]
-        living_targets = [t for t in targets if t.hp > 0]
-        if not living_sources or not living_targets: return
-        
-        # Simple random assignment logic
-        temp_sources = list(living_sources) 
-        random.shuffle(temp_sources)
-        
-        temp_targets = list(living_targets)
-        random.shuffle(temp_targets)
-        
-        assigned_count = 0
-        for source in temp_sources:
-            if assigned_count < len(temp_targets):
-                source.auto_target = temp_targets[assigned_count]
-                assigned_count += 1
-            else:
-                source.auto_target = random.choice(living_targets)
+    def assign_round_targets(self):
+        # Reset tracking
+        for u in self.allies + self.enemies:
+            u.slot_targets = []
+            u.intents = []
+            u.turn_committed_skills = [] # Clear committed skills for the new round
 
-    def generate_enemy_intents(self):
-        for enemy in self.enemies:
-            enemy.draw_skills(1)
-            enemy.intent = None
-            if enemy.hand and enemy.auto_target and enemy.auto_target.hp > 0:
-                skill_idx = random.randint(0, len(enemy.hand)-1)
-                skill = enemy.hand[skill_idx]
-                enemy.intent = (skill, enemy.auto_target, skill_idx) 
+        target_counts_allies = {a: 0 for a in self.allies if a.hp > 0}
+        target_counts_enemies = {e: 0 for e in self.enemies if e.hp > 0}
+
+        max_ally_pace = max([a.pace for a in self.allies if a.hp > 0], default=0)
+        max_enemy_pace = max([e.pace for e in self.enemies if e.hp > 0], default=0)
+        max_pace = max(max_ally_pace, max_enemy_pace)
+
+        for slot_idx in range(max_pace):
+            # ALLIES PICK TARGETS
+            for ally in self.allies:
+                if ally.hp > 0 and slot_idx < ally.pace:
+                    living_enemies = [e for e in self.enemies if e.hp > 0]
+                    if living_enemies:
+                        min_c = min(target_counts_enemies[e] for e in living_enemies)
+                        least = [e for e in living_enemies if target_counts_enemies[e] == min_c]
+                        t = random.choice(least)
+                        ally.slot_targets.append(t)
+                        target_counts_enemies[t] += 1
+                    else:
+                        ally.slot_targets.append(None)
+            
+            # ENEMIES PICK TARGETS & GENERATE INTENTS
+            for enemy in self.enemies:
+                if enemy.hp > 0 and slot_idx < enemy.pace:
+                    living_allies = [a for a in self.allies if a.hp > 0]
+                    if living_allies:
+                        min_c = min(target_counts_allies[a] for a in living_allies)
+                        least = [a for a in living_allies if target_counts_allies[a] == min_c]
+                        t = random.choice(least)
+                        enemy.slot_targets.append(t)
+                        target_counts_allies[t] += 1
+                        
+                        # Generate intent for this specific slot (Picks from the 2 cards meant for this slot)
+                        opt1 = slot_idx * 2
+                        opt2 = slot_idx * 2 + 1
+                        valid_opts = []
+                        if opt1 < len(enemy.hand): valid_opts.append(opt1)
+                        if opt2 < len(enemy.hand): valid_opts.append(opt2)
+                        
+                        if valid_opts:
+                            chosen_idx = random.choice(valid_opts)
+                            enemy.intents.append((enemy.hand[chosen_idx], t, chosen_idx))
+                    else:
+                        enemy.slot_targets.append(None)
 
     def handle_player_command_phase(self):
         self.ally_action_queue = []
-        pending_allies = [a for a in self.allies if a.hp > 0]
+        # Track how many unassigned slots each ally has remaining
+        self.ally_slots_pending = {a: a.pace for a in self.allies if a.hp > 0}
         
         if self.auto_battle:
-            self.run_auto_battler(pending_allies)
+            self.run_auto_battler()
             return
 
-        while pending_allies:
+        while any(slots > 0 for slots in self.ally_slots_pending.values()):
             self.render_battle_screen(active_unit=None)
             config.console.print("[bold yellow]COMMAND PHASE[/bold yellow]")
             config.console.print("Select an ally to command:")
-            for idx, ally in enumerate(pending_allies):
-                config.console.print(f"[{idx+1}] {ally.name}")
+            valid_choices = []
+            idx = 1
+            for ally, slots in self.ally_slots_pending.items():
+                if slots > 0 and ally.hp > 0:
+                    config.console.print(f"[{idx}] {ally.name}")
+                    valid_choices.append(ally)
+                    idx += 1
             config.console.print("[V] View Unit Details")
             auto_status = "[bold green]ON[/bold green]" if self.auto_battle else "[dim]OFF[/dim]"
             config.console.print(f"[A] Toggle Auto Battle ({auto_status})")
@@ -484,7 +449,6 @@ class BattleManager:
             
             choice = get_player_input("Select Unit > ").upper()
 
-            # --- SECRET DEV COMMAND: BLOWUNIVERSE ---
             if choice == "BLOWUNIVERSE":
                 self.log("[bold magenta]*** AUTHOR CHEAT: THE UNIVERSE IMPLODES ***[/bold magenta]")
                 self.log("[dim]All enemy HP set to 1.[/dim]")
@@ -493,7 +457,7 @@ class BattleManager:
                         enemy.hp = 1
                 self.render_battle_screen()
                 time.sleep(0.5)
-                continue # Loop back so you can select a unit to finish them off
+                continue 
             
             if choice == "R":
                 config.console.print("[bold red]Are you sure you want to retreat? (y/n)[/bold red]")
@@ -512,24 +476,22 @@ class BattleManager:
                 self.auto_battle = not self.auto_battle
                 if self.auto_battle:
                     self.log("[bold yellow]Auto Battle Enabled![/bold yellow]")
-                    self.run_auto_battler(pending_allies)
+                    self.run_auto_battler()
                     return
                 else:
                     self.log("[dim]Auto Battle Disabled.[/dim]")
                     continue
             if choice.isdigit():
-                idx = int(choice) - 1
-                if 0 <= idx < len(pending_allies):
-                    selected_ally = pending_allies[idx]
+                c_idx = int(choice) - 1
+                if 0 <= c_idx < len(valid_choices):
+                    selected_ally = valid_choices[c_idx]
                     if self.select_skill_for_ally(selected_ally):
-                        pending_allies.pop(idx)
-                else:
-                    self.log("[red]Invalid Selection![/red]")
+                        self.ally_slots_pending[selected_ally] -= 1
+                else: self.log("[red]Invalid Selection![/red]")
             else:
                 pass
 
-    def run_auto_battler(self, pending_allies):
-        # Priority: Akasuke > Yuri > Benikawa > Shigemura > Others
+    def run_auto_battler(self):
         def get_priority(unit):
             if "Akasuke" in unit.name: return 0
             if "Yuri" in unit.name: return 1
@@ -537,40 +499,38 @@ class BattleManager:
             if "Shigemura" in unit.name: return 3
             return 10 + self.allies.index(unit) 
             
-        while pending_allies:
-            global_max_tier = -1
-            # Find highest available tier across all allies
-            for ally in pending_allies:
-                for skill in ally.hand:
-                    if skill.tier > global_max_tier: global_max_tier = skill.tier
+        while any(slots > 0 for slots in self.ally_slots_pending.values()):
+            available_options = []
+            for ally, slots_left in self.ally_slots_pending.items():
+                if slots_left > 0 and ally.hp > 0:
+                    slot_idx = ally.pace - slots_left
+                    opt1_idx = slot_idx * 2
+                    opt2_idx = slot_idx * 2 + 1
+                    
+                    if opt1_idx < len(ally.hand) and ally.hand[opt1_idx] is not None:
+                        available_options.append((ally, ally.hand[opt1_idx], opt1_idx, slot_idx))
+                    if opt2_idx < len(ally.hand) and ally.hand[opt2_idx] is not None:
+                        available_options.append((ally, ally.hand[opt2_idx], opt2_idx, slot_idx))
             
-            if global_max_tier == -1: break
-            
-            # Filter allies who have that tier
-            candidates = []
-            for ally in pending_allies:
-                has_tier = any(s.tier == global_max_tier for s in ally.hand)
-                if has_tier: candidates.append(ally)
-            
-            candidates.sort(key=get_priority)
-            winner = candidates[0]
-            
-            skill_to_use = None; skill_idx = -1
-            for i, s in enumerate(winner.hand):
-                if s.tier == global_max_tier:
-                    skill_to_use = s; skill_idx = i; break
-            
-            if skill_to_use:
-                winner.hand.pop(skill_idx)
-                target = winner.auto_target
-                if not target or target.hp <= 0:
-                    living = [e for e in self.enemies if e.hp > 0]
-                    if living: target = random.choice(living)
+            if not available_options:
+                break
                 
-                if target:
-                    self.ally_action_queue.append((winner, skill_to_use, target))
+            global_max_tier = max(opt[1].tier for opt in available_options)
+            best_options = [opt for opt in available_options if opt[1].tier == global_max_tier]
+            best_options.sort(key=lambda x: get_priority(x[0]))
             
-            pending_allies.remove(winner)
+            winner, skill_to_use, h_idx, slot_idx = best_options[0]
+            winner.hand[h_idx] = None
+            self.ally_slots_pending[winner] -= 1
+            
+            target = winner.slot_targets[slot_idx] if slot_idx < len(winner.slot_targets) else None
+            if not target or target.hp <= 0:
+                living = [e for e in self.enemies if e.hp > 0]
+                if living: target = random.choice(living)
+                
+            if target:
+                self.ally_action_queue.append((winner, skill_to_use, target))
+            
             self.render_battle_screen(active_unit=winner)
             config.console.print(f"[bold yellow]AUTO:[/bold yellow] {winner.name} selects {skill_to_use.name} (Tier {get_tier_roman(skill_to_use.tier)})")
             time.sleep(0.3)
@@ -578,24 +538,48 @@ class BattleManager:
     def select_skill_for_ally(self, ally):
         while True:
             self.render_battle_screen(active_unit=ally)
-            config.console.print(f"[bold cyan]Commanding {ally.name}[/bold cyan]")
+            
+            slot_idx = ally.pace - self.ally_slots_pending[ally]
+            slot_sym = "".join(["⬢" if i == slot_idx else "⬡" for i in range(ally.pace)]) if ally.pace > 1 else ""
+            target = ally.slot_targets[slot_idx] if slot_idx < len(ally.slot_targets) else None
+            t_name = target.name if target else "None"
+            
+            if ally.pace == 1: config.console.print(f"[bold cyan]Commanding {ally.name} -> {t_name}[/bold cyan]")
+            else: config.console.print(f"[bold cyan]Commanding {ally.name} {slot_sym} -> {t_name}[/bold cyan]")
+            
             config.console.print("Select a skill to use:")
-            for i, skill in enumerate(ally.hand):
+            
+            opt1_idx = slot_idx * 2
+            opt2_idx = slot_idx * 2 + 1
+            available_options = []
+            
+            display_idx = 1
+            if opt1_idx < len(ally.hand) and ally.hand[opt1_idx]:
+                available_options.append((display_idx, opt1_idx, ally.hand[opt1_idx]))
+                display_idx += 1
+            if opt2_idx < len(ally.hand) and ally.hand[opt2_idx]:
+                available_options.append((display_idx, opt2_idx, ally.hand[opt2_idx]))
+
+            for d_idx, h_idx, skill in available_options:
                  c = get_element_color(skill.element)
                  t = get_tier_roman(skill.tier)
-                 config.console.print(f"[{i+1}] [{c}]{skill.name}[/{c}] ({t})")
+                 config.console.print(f"[{d_idx}] [{c}]{skill.name}[/{c}] ({t})")
                  if skill.description: config.console.print(f"      [light_green]{skill.description}[/light_green]")
+                 
             config.console.print("[0] Cancel")
             choice = get_player_input("Skill > ")
             if choice == "0": return False
             if choice.isdigit():
-                idx = int(choice) - 1
-                if 0 <= idx < len(ally.hand):
-                    selected_skill = ally.hand.pop(idx)
-                    target = ally.auto_target
+                c_idx = int(choice)
+                matched_option = next((opt for opt in available_options if opt[0] == c_idx), None)
+                if matched_option:
+                    h_idx = matched_option[1]
+                    selected_skill = ally.hand[h_idx]
+                    ally.hand[h_idx] = None 
+                    
                     if not target or target.hp <= 0:
-                        living_enemies = [e for e in self.enemies if e.hp > 0]
-                        if living_enemies: target = random.choice(living_enemies)
+                        living = [e for e in self.enemies if e.hp > 0]
+                        if living: target = min(living, key=lambda e: e.target_count if hasattr(e, 'target_count') else 0)
                     if target:
                         self.ally_action_queue.append((ally, selected_skill, target))
                         return True
@@ -603,32 +587,38 @@ class BattleManager:
                 else: self.log("[red]Invalid Skill Selection![/red]")
             else: self.log("[red]Invalid Input![/red]")
             
-    def execute_player_actions(self):
+    def execute_player_actions(self):   
         for ally, skill, target in self.ally_action_queue:
             if ally.hp > 0:
                 if target.hp <= 0:
-                        living = [e for e in self.enemies if e.hp > 0]
-                        if living: target = random.choice(living)
-                        else: break 
+                    living = [e for e in self.enemies if e.hp > 0]
+                    if living: target = random.choice(living)
+                    else: break 
+                
+                ally.turn_committed_skills.append(skill)
                 self.execute_skill(ally, skill, target)
-                if ally.hp > 0: ally.draw_skills(1)
                 if self.check_win_condition(): return
 
-    def execute_enemy_turn(self, enemy):
-        if not enemy.intent: return
-        skill, target, skill_idx = enemy.intent
-        if target.hp <= 0:
-            living_allies = [a for a in self.allies if a.hp > 0]
-            if living_allies: target = random.choice(living_allies)
-            else: return 
-        if skill_idx < len(enemy.hand): enemy.hand.pop(skill_idx)
-        else:
-            if enemy.hand: enemy.hand.pop(0)
-        self.execute_skill(enemy, skill, target)
+    def execute_enemy_actions(self):
+        max_enemy_pace = max([e.pace for e in self.enemies if e.hp > 0], default=0)
+        for slot_idx in range(max_enemy_pace):
+            for enemy in self.enemies:
+                if enemy.hp > 0 and slot_idx < len(enemy.intents):
+                    skill, target, _ = enemy.intents[slot_idx]
+                    
+                    if target.hp <= 0:
+                        living = [a for a in self.allies if a.hp > 0]
+                        if living: target = random.choice(living)
+                        else: break
+                        
+                    enemy.turn_committed_skills.append(skill)
+                    self.execute_skill(enemy, skill, target)
 
-    def get_max_skill_tier(self, unit):
-        if not unit.hand: return 0
-        return max(s.tier for s in unit.hand)
+    def get_avg_defense_tier(self, unit):
+        if not unit.turn_committed_skills: return 0
+        import math
+        total = sum(s.tier for s in unit.turn_committed_skills)
+        return math.ceil(total / len(unit.turn_committed_skills))
 
     def execute_skill(self, attacker, skill, target):
         attacker.discard_pile.append(skill)
@@ -824,7 +814,7 @@ class BattleManager:
                     if target_has_bleed: final_dmg += chip.effect_val
 
                 # DEFENSE TIER REDUCTION (Uses Parent skill tier)
-                def_max_tier = self.get_max_skill_tier(target)
+                def_max_tier = self.get_avg_defense_tier(target)
                 if skill.tier > def_max_tier:
                     final_dmg -= (final_dmg * min(0.60, 0.15 * (skill.tier - def_max_tier)))
 
@@ -1275,6 +1265,19 @@ class BattleManager:
                     self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=2))
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=2))
 
+            # --- LUOXIA MARTIAL ARTS STUDENT ---
+            elif chip.effect_type == "RUPTURE_BUFF_DEF_SPECIAL_1":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
+                if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) + 1
+            elif chip.effect_type == "RUPTURE_BUFF_DEF_SPECIAL_2":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3))
+                if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) + 1
+            elif chip.effect_type == "POISE_RUPTURE_SPECIAL_TYPE1":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", chip.effect_val, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=chip.effect_val))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", chip.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
+
             if target.hp <= 0:
                 target.hp = 0
                 self.log(f"[bold red]{target.name} was defeated![/bold red]")
@@ -1500,12 +1503,22 @@ Modifiers: {status_str}
         for e in self.enemies:
             intent_str = ""
             intended_skill = None
-            if e.hp > 0 and e.intent:
+            if e.hp > 0 and getattr(e, "intents", []):
+                intent_lines = []
+                for idx, (skill, target, _) in enumerate(e.intents):
+                    c = get_element_color(skill.element)
+                    t_r = get_tier_roman(skill.tier)
+                    slot_sym = "".join(["⬢" if i == idx else "⬡" for i in range(e.pace)]) if e.pace > 1 else "⬢"
+                    intent_lines.append(f"{slot_sym} -> [{c}]{skill.name}[/{c}] ({t_r}) -> {target.name}")
+                intent_str = "\n   " + "\n   ".join(intent_lines)
+                intended_skill = e.intents[0][0] # Just show desc for slot 1 for brevity
+            elif e.hp > 0 and getattr(e, "intent", None): # Fallback for old system if missed
                 skill, target, _ = e.intent
                 intended_skill = skill
                 c = get_element_color(skill.element)
-                tier_r = get_tier_roman(skill.tier)
-                intent_str = f"-> [{c}]{skill.name}[/{c}] ({tier_r}) -> {target.name}"
+                t_r = get_tier_roman(skill.tier)
+                intent_str = f"-> [{c}]{skill.name}[/{c}] ({t_r}) -> {target.name}"
+
             hp_style = "green" if e.hp > e.max_hp/2 else "red"
             status = "Defeated" if e.hp <= 0 else f"[{hp_style}]{e.hp}/{e.max_hp}[/{hp_style}]"
             se_display = ""
@@ -1530,9 +1543,13 @@ Modifiers: {status_str}
         for a in self.allies:
             active_marker = ">>" if a == active_unit else "  "
             hp_style = "green" if a.hp > a.max_hp/2 else "red"
+            
             target_str = ""
-            if a.hp > 0 and a.auto_target and a.auto_target.hp > 0:
-                target_str = f"-> {a.auto_target.name}"
+            if a.hp > 0 and getattr(a, "slot_targets", []):
+                # Only show target string if it's Pace 1, otherwise command phase handles showing targets
+                if a.pace == 1 and len(a.slot_targets) > 0 and a.slot_targets[0]:
+                    target_str = f"-> {a.slot_targets[0].name}"
+            
             auto_badge = "[bold yellow][AUTO][/bold yellow] " if self.auto_battle else ""
             se_display = ""
             for se in a.status_effects:
@@ -1547,13 +1564,19 @@ Modifiers: {status_str}
             if se_display.strip():
                 ally_lines.append(f"   {se_display}")
             if a.hand:
+                # Need to check for None because the new command phase replaces played skills with None
                 for i, s in enumerate(a.hand):
-                    c = get_element_color(s.element)
-                    t1 = get_tier_roman(s.tier)
-                    skill_line = f"   [{i+1}] [{c}]{s.name}[/{c}] ({t1})"
-                    ally_lines.append(skill_line)
-                    if s.description:
-                        ally_lines.append(f"       [light_green]{s.description}[/light_green]")
+                    if s is not None:
+                        c = get_element_color(s.element)
+                        t1 = get_tier_roman(s.tier)
+                        
+                        # Only visually print indices 1, 2, 3, etc. for what is ACTUALLY selectable
+                        # To keep UI clean we won't strictly enforce physical numbers here if some are None,
+                        # but for the visual overview, we just print the contents.
+                        skill_line = f"   [{i+1}] [{c}]{s.name}[/{c}] ({t1})"
+                        ally_lines.append(skill_line)
+                        if s.description:
+                            ally_lines.append(f"       [light_green]{s.description}[/light_green]")
             ally_lines.append("")  # Empty line separator between allies
             ally_displays.append(ally_lines)
 

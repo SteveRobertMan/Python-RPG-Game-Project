@@ -215,16 +215,16 @@ def run_game():
             loadout = get_equipped_data("Yuri")
             party.append(stages.create_yuri(loadout))
             
-            if (latest_cleared >= 4 or stage_id == 4) and stage_id != 7:
+            if stage_id == 4:
                 has_beni = any(u.name == "Benikawa" for u in party)
                 if not has_beni:
                     loadout = get_equipped_data("Benikawa")
                     party.append(stages.create_benikawa(loadout))
             
             if stage_id == 7:
-                party = [p for p in party if p.name != "Benikawa"]
+                party = [member for member in party if member.name in ["Akasuke","Yuri"]]
 
-            if (latest_cleared >= 15 or stage_id in [15001,15002,15003]):
+            if (stage_id in [15001,15002,15003]):
                 has_shige = any(u.name == "Shigemura" for u in party)
                 if not has_shige:
                     loadout = get_equipped_data("Shigemura")
