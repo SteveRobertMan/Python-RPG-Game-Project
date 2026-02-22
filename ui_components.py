@@ -182,15 +182,33 @@ def draw_stage_select_menu(unlocked_stage):
 
             # Act 4 Stages (Indices 45 to 72)
             act4_stages = [
-                ("4-1", "Swapped Nightmare 🕮", 45), ("4-2", "Vanguard Assembly 🕮", 46), ("4-3", "The Westward Megastructure 🕮", 47),
-                ("4-4", "Grasslands Border ♖", 48), ("4-5", "Wall Of Reality ♖", 49), ("4-6", "Bastard Child ♖", 50),
-                ("4-7", "Luoxia Gardening School ♖", 51), ("4-8", "The Upper Echelon ♕", 52), ("4-9", "The Ritual 🕮", 53),
-                ("4-10", "War Of The Nine Armies 🕮", 54), ("4-11", "Endless Wave I ♗", 55), ("4-12", "Endless Wave II ♗", 56),
-                ("4-13", "Endless Wave III ♗", 57), ("4-14", "Leak 🕮", 58), ("4-15", "Classical Performance ♗", 59),
-                ("4-16", "The Pagoda 🕮", 60), ("4-17", "The Secretary ♕", 61), ("4-18", "Ingrained Command ♕", 62),
-                ("4-19", "The Nine Armies Awake ♖", 63), ("4-20", "Command Suppressed ♖", 64), ("4-21", "The Outcast ♖", 65),
-                ("4-22", "Xiangyun’s Farewell 🕮", 66), ("4-23", "A Senior’s Morale ♗", 67), ("4-24", "The Thousand Blossom Brotherhood ♗", 68),
-                ("4-25", "Vanguard Of The Past ♕", 69), ("4-26", "The Last Obstacle ♕", 70), ("4-27", "Send-offs 🕮", 71),
+                ("4-1", "Swapped Nightmare 🕮", 45),
+                ("4-2", "Vanguard Assembly 🕮", 46),
+                ("4-3", "The Westward Megastructure 🕮", 47),
+                ("4-4", "Grasslands Border ♖", 48),
+                ("4-5", "Wall Of Reality ♖", 49),
+                ("4-6", "Bastard Child ♖", 50),
+                ("4-7", "Luoxia Gardening School ♖", 51),
+                ("4-8", "The Upper Echelon ♕", 52),
+                ("4-9", "The Ritual 🕮", 53),
+                ("4-10", "War Of The Nine Armies 🕮", 54),
+                ("4-11", "Endless Wave I ♗", 55),
+                ("4-12", "Endless Wave II ♗", 56),
+                ("4-13", "Endless Wave III ♗", 57),
+                ("4-14", "Leak 🕮", 58),
+                ("4-15", "Classical Performance ♗", 59),
+                ("4-16", "The Pagoda 🕮", 60),
+                ("4-17", "The Secretary ♕", 61),
+                ("4-18", "Ingrained Command ♕", 62),
+                ("4-19", "The Nine Armies Awake ♖", 63),
+                ("4-20", "Command Suppressed ♖", 64),
+                ("4-21", "The Outcast ♖", 65),
+                ("4-22", "Xiangyun’s Farewell 🕮", 66),
+                ("4-23", "A Senior’s Morale ♗", 67),
+                ("4-24", "The Thousand Blossom Brotherhood ♗", 68),
+                ("4-25", "Vanguard Of The Past ♕", 69),
+                ("4-26", "The Last Obstacle ♕", 70),
+                ("4-27", "Send-offs 🕮", 71),
                 ("4-28", "The Medium of Desire 🕮", 72)
             ]
 
@@ -528,7 +546,7 @@ def manage_unit_loadout(unit, player_obj):
                 
                 # Condition: Only add description line if description exists
                 if skill.description:
-                    deck_text += f"{header}\n    [light_green]{skill.description}[/light_green]\n"
+                    deck_text += f"{header}\n       [light_green]{skill.description}[/light_green]\n"
                 else:
                     # No description: Just the header, then move to next line
                     deck_text += f"{header}\n"

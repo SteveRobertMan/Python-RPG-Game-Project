@@ -1403,7 +1403,7 @@ class BattleManager:
                     dmg_str = f"[bold]Dmg: {skill.base_damage}[/bold]"
                     
                     # Format newlines so multi-line inspect descriptions indent perfectly
-                    formatted_desc = desc.replace("\n", "\n ")
+                    formatted_desc = desc.replace("\n", "\n")
                     
                     pool_text += f"x{count} [{c}]{skill.name}[/{c}] ({t_r}) {dmg_str}\n       [light_green]{formatted_desc}[/light_green]\n"
             else:
@@ -1521,7 +1521,7 @@ Modifiers: {status_str}
             
             # SHOW ENEMY SKILL DESCRIPTION
             if intended_skill and intended_skill.description:
-                config.console.print(f"      [light_green]{intended_skill.description}[/light_green]")
+                config.console.print(f"       [light_green]{intended_skill.description}[/light_green]")
 
         config.console.print("\n" + "-"*30 + "\n")
         
@@ -1553,7 +1553,7 @@ Modifiers: {status_str}
                     skill_line = f"   [{i+1}] [{c}]{s.name}[/{c}] ({t1})"
                     ally_lines.append(skill_line)
                     if s.description:
-                        ally_lines.append(f"      [light_green]{s.description}[/light_green]")
+                        ally_lines.append(f"       [light_green]{s.description}[/light_green]")
             ally_lines.append("")  # Empty line separator between allies
             ally_displays.append(ally_lines)
 

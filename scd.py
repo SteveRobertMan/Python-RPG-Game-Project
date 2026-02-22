@@ -108,7 +108,7 @@ def get_kata_data_by_name(name):
         s2 = Skill("Cheap Nose Shot", 2, EL_PRAGMA, 9, desc_s2, effect_type="BLEED_POTENCY_STACKER", effect_val=3)
         s2.status_effect = bleed_3
         # Base damage is 0 because this is a buff/utility skill
-        desc_s3 = "[On Use] All allies deal +2 Final Damage this turn\n      [On Use] All allies from 'Heiwa Seiritsu' take -2 Final Damage this turn"
+        desc_s3 = "[On Use] All allies deal +2 Final Damage this turn\n       [On Use] All allies from 'Heiwa Seiritsu' take -2 Final Damage this turn"
         s3 = Skill("Rally", 3, EL_EROS, 0, desc_s3, effect_type="HEIWA_RALLY_EFFECT", effect_val=2)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -189,7 +189,7 @@ def get_kata_data_by_name(name):
         s1.status_effect = poise_3
         s2 = Skill("Suriage", 2, EL_LUDUS, 7, "[On Use] Gain 3 Poise Count", effect_type="GAIN_STATUS")
         s2.status_effect = poisecount_3
-        desc_s3 = "[On Use] Gain 2 Poise Potency\n      [On Hit] Gain 4 Poise Potency"
+        desc_s3 = "[On Use] Gain 2 Poise Potency\n       [On Hit] Gain 4 Poise Potency"
         s3 = Skill("Cascading Twin Cut", 3, EL_STORGE, 11, desc_s3, effect_type="GAIN_POISE_SPECIAL_1")
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -310,14 +310,12 @@ def get_kata_data_by_name(name):
         s1.status_effect = bleed_4
         # Logic: COND_REAPER_BLEED_SPECIAL (+40% Base at 2 Count, +40% at 5 Count)
         desc_s2 = (
-            "[On Hit] Deal +40% Base Damage against targets with 2+ Bleed Count\n"
-            "[On Hit] Deal Another +40% Base Damage against targets with 5+ Bleed Count"
+            "[On Hit] Deal +40% Base Damage against targets with 2+ Bleed Count\n       [On Hit] Deal Another +40% Base Damage against targets with 5+ Bleed Count"
         )
         s2 = Skill("Dual Lashing", 2, EL_LUDUS, 7, desc_s2, effect_type="COND_REAPER_BLEED_SPECIAL")
         # Logic: COND_REAPER_BIND_CONVERT_SPECIAL (Reduce dmg based on bleed total -> Apply Bind)
         desc_s3 = (
-            "[On Hit] Deal -3 Base Damage for every 3 Bleed (Potency + Count) on target. (Max -9 Base Damage)\n"
-            "For every 3 Base Damage reduced this way, inflict 1 Bind to target next turn."
+            "[On Hit] Deal -3 Base Damage for every 3 Bleed (Potency + Count) on target (Max -9 Base Damage); For every 3 Base Damage reduced this way, inflict 1 Bind to target next turn."
         )
         s3 = Skill("Sadism", 3, EL_EROS, 13, desc_s3, effect_type="COND_REAPER_BIND_CONVERT_SPECIAL")
         s3.status_effect = bind_1 # Attached for the logic to grab
@@ -380,7 +378,7 @@ def get_kata_data_by_name(name):
         s1 = Skill("Slugger Punch", 1, EL_STORGE, 7, "[On Hit] Inflict 1 Bleed Potency", effect_type="APPLY_STATUS")
         s1.status_effect = bleed_1
         s2 = Skill("Simmer Down", 2, EL_AGAPE, 8, "[On Hit] Deal +2 Final Damage against targets with Bleed", effect_type="COND_TARGET_HAS_BLEED_DMG", effect_val=2)
-        desc_s3 = "[On Hit] Deal +4 Final Damage against targets with Bleed\n      [On Hit] Inflict 2 Bleed Count"
+        desc_s3 = "[On Hit] Deal +4 Final Damage against targets with Bleed\n       [On Hit] Inflict 2 Bleed Count"
         s3 = Skill("One-Handed Throw Down", 3, EL_PHILIA, 8, desc_s3, effect_type="COND_BLEED_DMG_AND_APPLY", effect_val=4)
         s3.status_effect = bleedcount_2
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
@@ -403,7 +401,7 @@ def get_kata_data_by_name(name):
         s1.status_effect = bind_2
         s2 = Skill("Drone Thrash", 2, EL_PHILIA, 4, "[On Hit] Inflict 1 Bind next turn", effect_type="APPLY_STATUS")
         s2.status_effect = bind_1
-        desc_s3 = "[On Use] 2 Other random allies gain 1 Haste next turn\n      [On Use] 2 Random enemies gain 1 Bind next turn"
+        desc_s3 = "[On Use] 2 Other random allies gain 1 Haste next turn\n       [On Use] 2 Random enemies gain 1 Bind next turn"
         s3 = Skill("Comms Support", 3, EL_PRAGMA, 0, desc_s3, effect_type="HASTE_BIND_SPECIAL_TYPE1", effect_val=2)
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -420,7 +418,7 @@ def get_kata_data_by_name(name):
         s1 = Skill("Swift Backhand", 1, EL_STORGE, 3, "[On Use] Gain 1 Haste next turn", effect_type="GAIN_STATUS")
         s1.status_effect = haste_1
         s2 = Skill("Clean Throw", 2, EL_STORGE, 7, "")
-        desc_s3 = "[On Use] This unit deals -40% damage next turn.\n      [On Hit] Target deals -15% damage this turn."
+        desc_s3 = "[On Use] This unit deals -40% damage next turn.\n       [On Hit] Target deals -15% damage this turn."
         s3 = Skill("Rage", 3, EL_EROS, 12, desc_s3, effect_type="HANA_SPECIAL_RAGE")
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -434,7 +432,7 @@ def get_kata_data_by_name(name):
         )
         k = Kata("Kasakura High School Student Kagaku", "Kagaku", 1, "I", res, desc)
         k.source_key = name
-        desc_s1 = "[On Hit] Inflict 1 Bleed Potency\n      [On Hit] Inflict 1 Rupture Potency"
+        desc_s1 = "[On Hit] Inflict 1 Bleed Potency\n       [On Hit] Inflict 1 Rupture Potency"
         s1 = Skill("Acid Flask Throw", 1, EL_AGAPE, 3, desc_s1, effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=1)
         s2 = Skill("Wrench Smack", 2, EL_EROS, 5, "")
         s3 = Skill("Hanefuji Healing Serum", 3, EL_AGAPE, 8, "[On Use] Deal 0 damage, then heal lowest HP ally by supposed final damage", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST", effect_val=0)
@@ -455,7 +453,7 @@ def get_kata_data_by_name(name):
         s1 = Skill("Crosspunch", 1, EL_PHILIA, 4, "[On Hit] Inflict 2 Rupture Potency", effect_type="APPLY_STATUS")
         s1.status_effect = rupture_2
         s2 = Skill("Motivation!", 2, EL_LUDUS, 5, "[On Use] Deal 0 damage, then heal self and 2 other random allies by supposed final damage", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_RANDOM", effect_val=2)
-        desc_s3 = "[On Use] 2 Other random allies gain 1 Haste next turn\n      [On Hit] If target has Rupture, inflict 2 Rupture Count. Otherwise, inflict 3 Rupture Potency."
+        desc_s3 = "[On Use] 2 Other random allies gain 1 Haste next turn\n       [On Hit] If target has Rupture, inflict 2 Rupture Count. Otherwise, inflict 3 Rupture Potency."
         s3 = Skill("Feverish Strikes", 3, EL_AGAPE, 8, desc_s3, effect_type="NAGANOHARA_KIRYOKU_SPECIAL")
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -491,7 +489,7 @@ def get_kata_data_by_name(name):
         s1 = Skill("Warning Draw", 1, EL_EROS, 3, "[On Hit] Inflict 3 Rupture Count", effect_type="APPLY_STATUS")
         s1.status_effect = rupturecount_3
         s2 = Skill("Close Distance", 2, EL_LUDUS, 8, "[On Hit] If target has Rupture, inflict 2 Fairylight Potency", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
-        desc_s3 = "[On Hit] If target has Rupture, inflict 3 Fairylight Potency\n      [On Use] This unit takes +50% damage this turn"
+        desc_s3 = "[On Hit] If target has Rupture, inflict 3 Fairylight Potency\n       [On Use] This unit takes +50% damage this turn"
         s3 = Skill("Shukuchi (Incomplete) – Dash", 3, EL_PRAGMA, 16, desc_s3, effect_type="BENIKAWA_KIRYOKU_SPECIAL")
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -525,9 +523,9 @@ def get_kata_data_by_name(name):
         )
         k = Kata("Heiwa Seiritsu Student – Goodwill Infiltrator", "Shigemura", 3, "I", res, desc)
         k.source_key = name
-        desc_s1 = "[On Use] If this unit has Haste, gain 1 Haste next turn\n      [On Hit] Gain 1 Haste next turn"
+        desc_s1 = "[On Use] If this unit has Haste, gain 1 Haste next turn\n       [On Hit] Gain 1 Haste next turn"
         s1 = Skill("Tough Knuckles", 1, EL_LUDUS, 6, desc_s1, effect_type="HASTE_GAIN_SPECIAL_TYPE1", effect_val=1)
-        desc_s2 = "[On Use] Gain 1 Haste next turn\n      [On Hit] If this unit has Haste, deal +20% base damage, then this unit takes damage based on the amount increased"
+        desc_s2 = "[On Use] Gain 1 Haste next turn\n       [On Hit] If this unit has Haste, deal +20% base damage, then this unit takes damage based on the amount increased"
         s2 = Skill("Low Tackle", 2, EL_PHILIA, 8, desc_s2, effect_type="SHIGEMURA_INFILTRATOR_SPECIAL_1")
         desc_s3 = "[On Hit] If this unit has Haste, deal +15% damage for every stack of Haste on self (Max +75%), then remove all Haste on self"
         s3 = Skill("Maximized Ram", 3, EL_EROS, 9, desc_s3, effect_type="SHIGEMURA_INFILTRATOR_SPECIAL_2")
@@ -545,11 +543,11 @@ def get_kata_data_by_name(name):
         )
         k = Kata("Riposte Gang Squad Leader", "Naganohara", 4, "I", res, desc)
         k.source_key = name
-        desc_s1 = "[On Use] Gain 5 Riposte\n      [On Hit] Inflict 1 Pierce Affinity"
+        desc_s1 = "[On Use] Gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Affinity"
         s1 = Skill("Appel", 1, EL_STORGE, 5, desc_s1, effect_type="NAGANOHARA_RIPOSTE_APPEL")
-        desc_s2 = "[On Use] Gain 10 Riposte\n      [On Hit] If this unit has 20+ Riposte, deal +40% damage, then take +50% more damage this turn.\n      [On Hit] Inflict 2 Pierce Affinity"
+        desc_s2 = "[On Use] Gain 10 Riposte\n       [On Hit] If this unit has 20+ Riposte, deal +40% damage, then take +50% more damage this turn.\n       [On Hit] Inflict 2 Pierce Affinity"
         s2 = Skill("Cede", 2, EL_LUDUS, 9, desc_s2, effect_type="NAGANOHARA_RIPOSTE_CEDE")
-        desc_s3 = "[On Use] If this unit has 25+ Riposte, fix Riposte stack count to 50. Otherwise, gain 20 Riposte\n      [On Hit] Inflict 3 Pierce Affinity"
+        desc_s3 = "[On Use] If this unit has 25+ Riposte, fix Riposte stack count to 50. Otherwise, gain 20 Riposte\n       [On Hit] Inflict 3 Pierce Affinity"
         s3 = Skill("Counter-Parry", 3, EL_PHILIA, 13, desc_s3, effect_type="NAGANOHARA_RIPOSTE_COUNTERPARRY")
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -565,11 +563,11 @@ def get_kata_data_by_name(name):
         )
         k = Kata("Riposte Gang Executive", "Akasuke", 4, "I", res, desc)
         k.source_key = name
-        desc_s1 = "[On Use] If this unit does not have Riposte, gain 10 Riposte. Otherwise, gain 5 Riposte\n      [On Hit] Inflict 1 Pierce Affinity"
+        desc_s1 = "[On Use] If this unit does not have Riposte, gain 10 Riposte. Otherwise, gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Affinity"
         s1 = Skill("En Garde", 1, EL_LUDUS, 7, desc_s1, effect_type="AKASUKE_RIPOSTE_ENGARDE")
-        desc_s2 = "[On Use] Gain 1 Haste next turn\n      [On Use] If this unit has 10+ Riposte, Gain 1 Haste next turn\n      [On Hit] If target has Pierce Affinity, gain 10 Riposte\n      [On Hit] Inflict 2 Pierce Affinity"
+        desc_s2 = "[On Use] Gain 1 Haste next turn\n       [On Use] If this unit has 10+ Riposte, Gain 1 Haste next turn\n       [On Hit] If target has Pierce Affinity, gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Affinity"
         s2 = Skill("Feint", 2, EL_STORGE, 6, desc_s2, effect_type="AKASUKE_RIPOSTE_FEINT")
-        desc_s3 = "This skill deals +2% base damage for each stack of Riposte owned (Max +100%)\n      [On Use] Gain 10 Riposte\n      [On Hit] Inflict 3 Pierce Affinity"
+        desc_s3 = "This skill deals +2% base damage for each stack of Riposte owned (Max +100%)\n       [On Use] Gain 10 Riposte\n       [On Hit] Inflict 3 Pierce Affinity"
         s3 = Skill("Prise De Fer", 3, EL_LUDUS, 15, desc_s3, effect_type="AKASUKE_RIPOSTE_PRISEDEFER")
         # Custom Skill Pool setup based on prompt!
         k.skill_pool_def = [(s1, 4), (s2, 3), (s3, 2)]

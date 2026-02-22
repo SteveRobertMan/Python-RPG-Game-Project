@@ -486,6 +486,28 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Infiltrating Yunhai Border Guard", "B"))
         enemies.append(spawn("Infiltrating Yunhai Border Guard Leader"))
 
+    elif stage_id == 51:
+        inf_yunhai_civ_a = spawn("Infiltrating Kiryoku Gakuen Student Council Combatant")
+        inf_yunhai_civ_a.max_hp = 51
+        inf_yunhai_civ_a.hp = 51
+        inf_yunhai_civ_a.name = "Infiltrating Westward Megastructure Civilian A"
+        enemies.append(inf_yunhai_civ_a)
+        inf_yunhai_civ_b = spawn("Infiltrating Yunhai Border Guard Leader")
+        inf_yunhai_civ_b.max_hp = 33
+        inf_yunhai_civ_b.hp = 33
+        inf_yunhai_civ_b.name = "Infiltrating Westward Megastructure Civilian B"
+        enemies.append(inf_yunhai_civ_b)
+        inf_yunhai_civ_c = spawn("Infiltrating Kasakura High School Disciplinary Committee Combatant")
+        inf_yunhai_civ_c.max_hp = 54
+        inf_yunhai_civ_c.hp = 54
+        inf_yunhai_civ_c.name = "Infiltrating Westward Megastructure Civilian C"
+        enemies.append(inf_yunhai_civ_c)
+        inf_yunhai_civ_d = spawn("Infiltrating Yunhai Border Guard Leader")
+        inf_yunhai_civ_d.max_hp = 30
+        inf_yunhai_civ_d.hp = 30
+        inf_yunhai_civ_d.name = "Infiltrating Westward Megastructure Civilian D"
+        enemies.append(inf_yunhai_civ_d)
+
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
 
@@ -670,9 +692,9 @@ def get_enemy_database():
     res_ku = [1.3, 1.3, 1.1, 1.6, 1.6, 1.1, 1.6]
     k_ku = Kata("Reaper Style", "Kurogane", 1, "0", res_ku)
     # FIXED: Mapped straight to the existing hardcoded unique flags in battle_system.py
-    ku1 = Skill("Chained Limb Flurry", 1, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency\n      [On Hit] Inflict 2 Bleed Count", effect_type="APPLY_BLEED_HEAVY_STACKS")
-    ku2 = Skill("Heavy Chain Whip", 2, EL_AGAPE, 6, "[On Hit] Inflict 3 Bleed Potency\n      [On Hit] Inflict 1 Bind next turn", effect_type="APPLY_BLEED_AND_BIND")
-    ku3 = Skill("Pull In For A Beatdown", 3, EL_AGAPE, 8, "[On Hit] Inflict 3 Bleed Potency\n        [On Hit] Inflict 2 Bind next turn", effect_type="APPLY_BLEED_AND_BIND_HEAVY")
+    ku1 = Skill("Chained Limb Flurry", 1, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count", effect_type="APPLY_BLEED_HEAVY_STACKS")
+    ku2 = Skill("Heavy Chain Whip", 2, EL_AGAPE, 6, "[On Hit] Inflict 3 Bleed Potency\n       [On Hit] Inflict 1 Bind next turn", effect_type="APPLY_BLEED_AND_BIND")
+    ku3 = Skill("Pull In For A Beatdown", 3, EL_AGAPE, 8, "[On Hit] Inflict 3 Bleed Potency\n       [On Hit] Inflict 2 Bind next turn", effect_type="APPLY_BLEED_AND_BIND_HEAVY")
     k_ku.skill_pool_def = [(ku1, 3), (ku2, 4), (ku3, 2)]
     k_ku.rift_aptitude = 6
     kuro.equip_kata(k_ku)
@@ -697,7 +719,7 @@ def get_enemy_database():
     ck1 = Skill("Suppression", 1, EL_AGAPE, 7, "[On Hit] Inflict 3 Rupture Potency", effect_type="APPLY_STATUS")
     ck1.status_effect = rupture_3
     ck2 = Skill("Focusing On Protection", 2, EL_PHILAUTIA, 5, "[On Use] All ally units deal -2 Base Damage this turn", effect_type="BASE_DAMAGE_DEBUFF_ALL", effect_val=2)
-    ck3 = Skill("Rush In", 3, EL_PHILIA, 9, "[On Hit] Inflict 2 Rupture Count\n      [On Hit] Inflict 2 Fairylight Potency", effect_type="KIRYOKU_COUNCIL_SPECIAL")
+    ck3 = Skill("Rush In", 3, EL_PHILIA, 9, "[On Hit] Inflict 2 Rupture Count\n       [On Hit] Inflict 2 Fairylight Potency", effect_type="KIRYOKU_COUNCIL_SPECIAL")
     k_c_kiryoku.skill_pool_def = [(ck1, 4), (ck2, 2), (ck3, 3)]
     c_kiryoku.equip_kata(k_c_kiryoku)
     c_kiryoku.description = "These trusted enforcers serve directly beneath the Fairies of Kiryoku Gakuen’s student council, utilizing the precise, highly disciplined martial arts cultivated within the school’s top athletic clubs. They fight with unshakeable focus and coordinated teamwork, partially abandoning the usual friendly Kiryoku demeanor to efficiently suppress their targets. Those who work under the Fairies are often called “Lesser Fairies” for easier distinction, although they are all considered a part of the student council’s theme."
@@ -709,7 +731,7 @@ def get_enemy_database():
     ay1 = Skill("Cross Distance", 1, EL_AGAPE, 5, "[On Hit] Inflict 3 Rupture Potency", effect_type="APPLY_STATUS")
     ay1.status_effect = rupture_3
     ay2 = Skill("Quickdraw Bokken", 2, EL_LUDUS, 7, "[On Hit] If target has Rupture, Inflict 2 Fairylight Potency", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
-    ay3 = Skill("Shukuchi (Incomplete)", 3, EL_PRAGMA, 10, "[On Hit] Inflict 3 Rupture Count\n      [On Hit] Inflict 4 Fairylight Potency", effect_type="AYAKO_SPECIAL")
+    ay3 = Skill("Shukuchi (Incomplete)", 3, EL_PRAGMA, 10, "[On Hit] Inflict 3 Rupture Count\n       [On Hit] Inflict 4 Fairylight Potency", effect_type="AYAKO_SPECIAL")
     k_ayako.skill_pool_def = [(ay1, 3), (ay2, 3), (ay3, 3)]
     ayako.equip_kata(k_ayako)
     ayako.description = "Serving as the Security Head of the Kiryoku Student Council, Ayako is a feral, battle-hungry warrior who wields a solid oak bokken with devastating power. She fights using chaotic, bouncing trajectories and explosive acceleration that makes meeting her head-on incredibly dangerous. Fiercely protective of her empathic 'Queen', she relies on her overwhelming speed and predatory instincts to effortlessly overwhelm seasoned fighters."
@@ -719,8 +741,8 @@ def get_enemy_database():
     sumiko.max_hp = 143
     k_sumiko = Kata("Lake Strider", "Sumiko", 1, 6, [1.0, 1.2, 1.3, 0.7, 0.7, 1.1, 1.0])
     su1 = Skill("Distancing", 1, EL_PRAGMA, 5, "[On Hit] If target has Fairylight, inflict 5 Rupture Potency.", effect_type="FAIRYLIGHT_SPECIAL1", effect_val=5)
-    su2 = Skill("Protection By The Fairies", 2, EL_LUDUS, 5, "[On Use] All ally units deal -8 Final Damage this turn\n      [On Hit] Gain 2 Haste next turn", effect_type="SUMIKO_SPECIAL_1")
-    su3 = Skill("Shukuchi (Incomplete)", 3, EL_PRAGMA, 9, "[On Hit] Inflict 4 Rupture Count\n      [On Hit] Inflict 5 Rupture Potency\n      [On Hit] Gain 2 Haste next turn", effect_type="SUMIKO_SPECIAL_2")
+    su2 = Skill("Protection By The Fairies", 2, EL_LUDUS, 5, "[On Use] All ally units deal -8 Final Damage this turn\n       [On Hit] Gain 2 Haste next turn", effect_type="SUMIKO_SPECIAL_1")
+    su3 = Skill("Shukuchi (Incomplete)", 3, EL_PRAGMA, 9, "[On Hit] Inflict 4 Rupture Count\n       [On Hit] Inflict 5 Rupture Potency\n       [On Hit] Gain 2 Haste next turn", effect_type="SUMIKO_SPECIAL_2")
     k_sumiko.skill_pool_def = [(su1, 3), (su2, 3), (su3, 3)]
     sumiko.equip_kata(k_sumiko)
     sumiko.description = "The calculating Treasurer of the Kiryoku Student Council, Sumiko controls the battlefield with an eerie, sisterly calmness. She utilizes a terrifying footwork technique called Shukuchi to seamlessly glide across the floor, instantly closing the distance between herself and her target without any visible inertia. Despite her ferocity in close-quarters combat, she prioritizes defense and spatial control, meticulously keeping threats pushed far away from her President, who is currently sleeping."
@@ -731,7 +753,7 @@ def get_enemy_database():
     k_inf_heiwa = Kata("Fake Delinquent", "Heiwa Infiltrator", 1, 0, [1.4, 1.3, 1.4, 1.7, 1.4, 1.4, 1.3])
     ih1 = Skill("Panicked Kick", 1, EL_PRAGMA, 7, "[On Hit] Inflict 2 Bleed Count", effect_type="APPLY_STATUS")
     ih1.status_effect = bleedcount_2
-    ih2 = Skill("Metal Bat Swing", 2, EL_EROS, 8, "[On Hit] Inflict 2 Bleed Potency\n      [On Hit] Inflict 2 Rupture Potency", effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=2)
+    ih2 = Skill("Metal Bat Swing", 2, EL_EROS, 8, "[On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Rupture Potency", effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=2)
     k_inf_heiwa.skill_pool_def = [(ih1, 4), (ih2, 4)]
     inf_heiwa.equip_kata(k_inf_heiwa)
     inf_heiwa.description = "Hired thugs who disguised themselves as Heiwa Seiritsu's rowdy delinquents to quietly infiltrate the cruise ship's lower decks. They rely on crude street brawling and concealed weapons to overwhelm their targets with sheer numbers while securing the stolen cargo. However, they completely lack the genuine, unbreakable spirit of true Heiwa students, making their sloppy attacks easy to counter for seasoned martial artists."
@@ -763,8 +785,8 @@ def get_enemy_database():
     hisayuki = Entity("Hisayuki Tadamasa", is_player=False)
     hisayuki.max_hp = 255
     k_hisayuki = Kata("Battering Ram", "Hisayuki", 1, 5, [1.2, 0.5, 0.5, 1.5, 1.0, 1.0, 1.0])
-    hi1 = Skill("Following Orders", 1, EL_STORGE, 7, "[On Use] This unit takes -40% damage next turn\n      [On Hit] If this unit has Haste, gain 1 Bind next turn. Otherwise, gain 1 Haste next turn", effect_type="HISAYUKI_SPECIAL_1")
-    hi2 = Skill("Pick Up Speed", 2, EL_LUDUS, 11, "[Combat Start] If this unit has Bind, take +50% damage for the turn\n      [On Hit] If this unit has no Haste, gain 3 Haste next turn, otherwise, gain 1 Haste next turn", effect_type="HISAYUKI_SPECIAL_2")
+    hi1 = Skill("Following Orders", 1, EL_STORGE, 7, "[On Use] This unit takes -40% damage next turn\n       [On Hit] If this unit has Haste, gain 1 Bind next turn. Otherwise, gain 1 Haste next turn", effect_type="HISAYUKI_SPECIAL_1")
+    hi2 = Skill("Pick Up Speed", 2, EL_LUDUS, 11, "[Combat Start] If this unit has Bind, take +50% damage for the turn\n       [On Hit] If this unit has no Haste, gain 3 Haste next turn, otherwise, gain 1 Haste next turn", effect_type="HISAYUKI_SPECIAL_2")
     hi3 = Skill("Human Battering Ram", 3, EL_EROS, 14, "[On Hit] If this unit has Haste, deal +10% damage for every stack of Haste on self (Max +50%), then remove all Haste on self", effect_type="HISAYUKI_SPECIAL_3")
     k_hisayuki.skill_pool_def = [(hi1, 4), (hi2, 2), (hi3, 2)]
     hisayuki.equip_kata(k_hisayuki)
@@ -774,8 +796,8 @@ def get_enemy_database():
     inf_lead = Entity("Infiltrating Heiwa Seiritsu Delinquent Leader", is_player=False)
     inf_lead.max_hp = 55
     k_inf_lead = Kata("Fake Leader", "Infiltrator Leader", 1, 1, [1.2, 1.2, 1.3, 1.6, 1.4, 1.3, 1.0])
-    il1 = Skill("Wrapping Chains", 1, EL_EROS, 6, "[On Hit] Inflict 2 Bleed Potency\n      [On Hit] Inflict 2 Bleed Count", effect_type="APPLY_BLEED_HEAVY_STACKS")
-    il2 = Skill("Metal Bat Desperation", 2, EL_PHILAUTIA, 9, "[On Hit] Inflict 3 Bleed Potency\n      [On Hit] Inflict 3 Rupture Potency", effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=3)
+    il1 = Skill("Wrapping Chains", 1, EL_EROS, 6, "[On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count", effect_type="APPLY_BLEED_HEAVY_STACKS")
+    il2 = Skill("Metal Bat Desperation", 2, EL_PHILAUTIA, 9, "[On Hit] Inflict 3 Bleed Potency\n       [On Hit] Inflict 3 Rupture Potency", effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=3)
     il3 = Skill("Rally", 3, EL_EROS, 0, "[On Use] All allied units of this unit take -3 Final Damage this turn", effect_type="AOE_BUFF_DEF_FLAT", effect_val=3)
     k_inf_lead.skill_pool_def = [(il1, 3), (il2, 3), (il3, 3)]
     inf_lead.equip_kata(k_inf_lead)
@@ -785,7 +807,7 @@ def get_enemy_database():
     inf_council = Entity("Infiltrating Kiryoku Gakuen Student Council Combatant", is_player=False)
     inf_council.max_hp = 53
     k_inf_council = Kata("Fake Council", "Fake Council", 1, 1, [1.1, 1.5, 1.5, 1.0, 1.2, 1.5, 1.3])
-    ic1 = Skill("Baton Smack", 1, EL_AGAPE, 7, "[On Hit] Inflict 2 Rupture Potency\n      [On Hit] Inflict 2 Rupture Count", effect_type="APPLY_RUPTURE_HEAVY_STACKS")
+    ic1 = Skill("Baton Smack", 1, EL_AGAPE, 7, "[On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count", effect_type="APPLY_RUPTURE_HEAVY_STACKS")
     ic2 = Skill("Fairy Blessing (Fake)", 2, EL_PRAGMA, 7, "[On Hit] If target has Rupture, Inflict 2 Fairylight Potency", effect_type="FAIRYLIGHT_APPLY", effect_val=2)
     ic3 = Skill("Shukuchi (Fake)", 3, EL_EROS, 14, "[On Use] Gain 4 Bind next turn", effect_type="GAIN_STATUS")
     ic3.status_effect = bind_4
@@ -797,9 +819,9 @@ def get_enemy_database():
     inf_disc = Entity("Infiltrating Kasakura High School Disciplinary Committee Combatant", is_player=False)
     inf_disc.max_hp = 56
     k_inf_disc = Kata("Fake Discipline", "Fake Disciplinary", 1, 1, [1.5, 1.2, 1.0, 1.3, 1.0, 1.4, 1.6])
-    id1 = Skill("Bokken Violence", 1, EL_LUDUS, 6, "[On Use] Gain 2 Poise Potency\n      [On Use] Gain 2 Poise Count", effect_type="GAIN_POISE_SPECIAL", effect_val=2)
-    id2 = Skill("Stun Baton", 2, EL_PHILAUTIA, 8, "[On Hit] Inflict 2 Bind\n      [On Hit] Inflict 2 Rupture Potency", effect_type="BIND_RUPTURE_SPECIAL_TYPE1", effect_val=2)
-    id3 = Skill("Discipline", 3, EL_EROS, 10, "[On Use] Gain 4 Poise Potency\n      [On Use] Gain 4 Poise Count", effect_type="GAIN_POISE_SPECIAL", effect_val=4)
+    id1 = Skill("Bokken Violence", 1, EL_LUDUS, 6, "[On Use] Gain 2 Poise Potency\n       [On Use] Gain 2 Poise Count", effect_type="GAIN_POISE_SPECIAL", effect_val=2)
+    id2 = Skill("Stun Baton", 2, EL_PHILAUTIA, 8, "[On Hit] Inflict 2 Bind\n       [On Hit] Inflict 2 Rupture Potency", effect_type="BIND_RUPTURE_SPECIAL_TYPE1", effect_val=2)
+    id3 = Skill("Discipline", 3, EL_EROS, 10, "[On Use] Gain 4 Poise Potency\n       [On Use] Gain 4 Poise Count", effect_type="GAIN_POISE_SPECIAL", effect_val=4)
     k_inf_disc.skill_pool_def = [(id1, 3), (id2, 3), (id3, 3)]
     inf_disc.equip_kata(k_inf_disc)
     inf_disc.description = "Wearing the iconic white kimono uniforms of Kasakura’s Disciplinary Committee, these impostors use the guise of authority to restrict access to the ship's lower levels. They wield standard-issue bokkens and stun batons with practiced cruelty, completely lacking the honorable resolve of Yuri's true subordinates. Their mimicry shatters the moment they clash with genuine fighters, easily falling to Benikawa and Shigemura's superior battle IQ and speed."
@@ -809,8 +831,8 @@ def get_enemy_database():
     raven.max_hp = 115
     k_raven = Kata("Shadow Assassin", "Raven", 1, 6, [1.0, 1.1, 1.1, 1.0, 1.2, 1.2, 1.5])
     rv1 = Skill("Silent Step", 1, EL_PHILAUTIA, 3, "[Combat Start] This unit takes -6 Final Damage this turn", effect_type="BUFF_DEF_FLAT", effect_val=6)
-    rv2 = Skill("Blind Spot Strike", 2, EL_PRAGMA, 7, "[On Hit] Target will take +6 Final Damage from the next attack\n      [On Hit] Gain 4 Poise Potency\n      [On Hit] Gain 4 Poise Count", effect_type="RAVEN_SPECIAL_1")
-    rv3 = Skill("Disorient", 3, EL_PHILAUTIA, 10, "[On Hit] Target deals -70% damage next turn\n      [On Hit] Gain 6 Poise Potency", effect_type="RAVEN_SPECIAL_2")
+    rv2 = Skill("Blind Spot Strike", 2, EL_PRAGMA, 7, "[On Hit] Target will take +6 Final Damage from the next attack\n       [On Hit] Gain 4 Poise Potency\n       [On Hit] Gain 4 Poise Count", effect_type="RAVEN_SPECIAL_1")
+    rv3 = Skill("Disorient", 3, EL_PHILAUTIA, 10, "[On Hit] Target deals -70% damage next turn\n       [On Hit] Gain 6 Poise Potency", effect_type="RAVEN_SPECIAL_2")
     k_raven.skill_pool_def = [(rv1, 4), (rv2, 2), (rv3, 3)]
     raven.equip_kata(k_raven)
     raven.description = "One of the three rogue ninja mercenaries hired to secure the cruise ship's massive weapons supply in the lower decks. Operating outside many iron rules of the honorable ninja code, Raven utilizes blistering speed, stealth, and lethal trickery to disorient the Kasakura team. His fluid, shadow-like movements make him a highly dangerous adversary in the narrow, dimly lit corridors of the ship."
@@ -820,8 +842,8 @@ def get_enemy_database():
     falcon.max_hp = 113
     k_falcon = Kata("Aerial Assassin", "Falcon", 1, 6, [1.3, 1.0, 1.0, 1.0, 1.4, 1.0, 1.5])
     fa1 = Skill("Assault Flow", 1, EL_EROS, 5, "[On Hit] Target will take +4 Final Damage from the next attack", effect_type="ON_HIT_NEXT_TAKEN_FLAT", effect_val=4)
-    fa2 = Skill("Aerial Strike", 2, EL_LUDUS, 9, "[On Use] If this unit does not have Haste, gain 3 Haste next turn\n      [On Hit] Inflict 4 Rupture Potency", effect_type="FALCON_SPECIAL_1")
-    fa3 = Skill("Incapacitate", 3, EL_PHILAUTIA, 10, "[On Hit] Target deals -70% damage next turn\n      [On Hit] Gain 2 Haste next turn\n      [On Hit] Inflict 2 Bind next turn", effect_type="FALCON_SPECIAL_2")
+    fa2 = Skill("Aerial Strike", 2, EL_LUDUS, 9, "[On Use] If this unit does not have Haste, gain 3 Haste next turn\n       [On Hit] Inflict 4 Rupture Potency", effect_type="FALCON_SPECIAL_1")
+    fa3 = Skill("Incapacitate", 3, EL_PHILAUTIA, 10, "[On Hit] Target deals -70% damage next turn\n       [On Hit] Gain 2 Haste next turn\n       [On Hit] Inflict 2 Bind next turn", effect_type="FALCON_SPECIAL_2")
     k_falcon.skill_pool_def = [(fa1, 3), (fa2, 3), (fa3, 3)]
     falcon.equip_kata(k_falcon)
     falcon.description = "Operating alongside Raven, Falcon is a highly skilled mercenary ninja who infiltrated the Goodwill Trip to oversee the underground weapon heist. He specializes in relentless, coordinated aerial assaults and precision strikes, attempting to overwhelm the Kasakura students before they can react. Unbound by traditional clan loyalties, he fights with a ruthless pragmatism that forces Benikawa and Shigemura to rely on their own deeply ingrained ninja training."
@@ -830,9 +852,9 @@ def get_enemy_database():
     eagle = Entity("Eagle", is_player=False)
     eagle.max_hp = 60
     k_eagle = Kata("Veteran Assassin", "Eagle", 1, 6, [0.9, 1.1, 1.1, 0.9, 1.0, 1.8, 1.8])
-    ea1 = Skill("Pressuring", 1, EL_PHILAUTIA, 7, "[On Hit] Target will take +5 Final Damage from the next attack\n      [On Hit] Target deals -50% damage next turn", effect_type="EAGLE_SPECIAL_1")
-    ea2 = Skill("Under Control", 2, EL_PHILAUTIA, 6, "[On Use] Gain 3 Poise Potency\n      [On Use] Gain 3 Poise Count\n      [On Hit] Inflict 2 Rupture Potency\n      [On Hit] Inflict 5 Rupture Count", effect_type="EAGLE_SPECIAL_2")
-    ea3 = Skill("Tactical Retreat", 3, EL_STORGE, 10, "[On Use] Deal 0 damage, heal this unit’s ally with the lowest HP by supposed final damage amount, then heal the rest of this unit’s allies by half the healed amount (can include self)\n      [On Use] All of this unit’s allies gain 3 Haste next turn", effect_type="EAGLE_SPECIAL_3")
+    ea1 = Skill("Pressuring", 1, EL_PHILAUTIA, 7, "[On Hit] Target will take +5 Final Damage from the next attack\n       [On Hit] Target deals -50% damage next turn", effect_type="EAGLE_SPECIAL_1")
+    ea2 = Skill("Under Control", 2, EL_PHILAUTIA, 6, "[On Use] Gain 3 Poise Potency\n       [On Use] Gain 3 Poise Count\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 5 Rupture Count", effect_type="EAGLE_SPECIAL_2")
+    ea3 = Skill("Tactical Retreat", 3, EL_STORGE, 10, "[On Use] Deal 0 damage, heal this unit’s ally with the lowest HP by supposed final damage amount, then heal the rest of this unit’s allies by half the healed amount (can include self)\n       [On Use] All of this unit’s allies gain 3 Haste next turn", effect_type="EAGLE_SPECIAL_3")
     k_eagle.skill_pool_def = [(ea1, 2), (ea2, 4), (ea3, 3)]
     eagle.equip_kata(k_eagle)
     eagle.description = "The third and arguably most elusive member of the rogue ninja trio guarding the ship's Hazard Vault. Despite being leader and the most experienced of all three ninjas, neither Raven or Falcon respect him, and they often find themselves arguing constantly on the smallest of things. After participating in the desperate final clash against the Kasakura vanguard, he attempts a frantic escape through the ship's lower levels."
@@ -865,7 +887,7 @@ def get_enemy_database():
     he1 = Skill("Pierce", 1, EL_LUDUS, 5, "[On Hit] Inflict 1 Pierce Affinity", effect_type="APPLY_STATUS")
     he1.status_effect = pierce_affinity_1
     he2 = Skill("Counter", 2, EL_EROS, 7, "[Combat Start] If this unit takes damage this turn, deal +20% damage next turn", effect_type="COUNTER_SKILL_TYPE1", effect_val=20)
-    he3 = Skill("Brutal Counter", 3, EL_EROS, 8, "[Combat Start] If this unit takes damage this turn, deal +40% damage next turn\n      [On Hit] Inflict 2 Pierce Affinity", effect_type="COUNTER_SKILL_SPECIAL_TYPE1")
+    he3 = Skill("Brutal Counter", 3, EL_EROS, 8, "[Combat Start] If this unit takes damage this turn, deal +40% damage next turn\n       [On Hit] Inflict 2 Pierce Affinity", effect_type="COUNTER_SKILL_SPECIAL_TYPE1")
     k_hench.skill_pool_def = [(he1, 4), (he2, 3), (he3, 2)]
     hench.equip_kata(k_hench)
     hench.description = "These well-dressed captors guard Kagaku Shamiko’s hotel room, armed with thin rapiers and clad in identical sandy-colored long coats. Operating under strict orders not to harm their VIP prisoner, they become complacent and easily panicked when she fakes a choking emergency. This fatal hesitation allows a Kata-empowered Kagaku to swiftly dismantle them using nothing but a heavy silver breakfast tray and a broken broomstick."
@@ -874,9 +896,9 @@ def get_enemy_database():
     mascot = Entity("Deadly Laser Beam World-Threatening Monster", is_player=False)
     mascot.max_hp = 30
     k_mascot = Kata("Mascot Suit", "Monster", 1, 600, [1.0]*7)
-    ma1 = Skill("“Thermal Laser Of Destruction”", 1, EL_AGAPE, 15520, "[Combat Start] Reduce this unit’s Kata Rift Aptitude to 0\n      [On Hit] Reduce Damage to 0", effect_type="JOKE_SKILL")
-    ma2 = Skill("“Imprenetrable Armor Of The Abyssal Scale”", 2, EL_PRAGMA, 0, "[Combat Start] Reduce this unit’s Kata Rift Aptitude to 0\n      [Combat Start] This unit takes -12000 Final Damage from “Divine” element attacks\n      [Combat Start] This unit deals back %300 damage when taking “Darkness” element damage attacks")
-    ma3 = Skill("“Roar Which Tears The Heavens”", 3, EL_EROS, 51000, "[Combat Start] Reduce this unit’s Kata Rift Aptitude to 0\n      [On Use] Targets all “Disbehaving Junior” units", effect_type="JOKE_SKILL")
+    ma1 = Skill("“Thermal Laser Of Destruction”", 1, EL_AGAPE, 15520, "[Combat Start] Reduce this unit’s Kata Rift Aptitude to 0\n       [On Hit] Reduce Damage to 0", effect_type="JOKE_SKILL")
+    ma2 = Skill("“Imprenetrable Armor Of The Abyssal Scale”", 2, EL_PRAGMA, 0, "[Combat Start] Reduce this unit’s Kata Rift Aptitude to 0\n       [Combat Start] This unit takes -12000 Final Damage from “Divine” element attacks\n       [Combat Start] This unit deals back %300 damage when taking “Darkness” element damage attacks")
+    ma3 = Skill("“Roar Which Tears The Heavens”", 3, EL_EROS, 51000, "[Combat Start] Reduce this unit’s Kata Rift Aptitude to 0\n       [On Use] Targets all “Disbehaving Junior” units", effect_type="JOKE_SKILL")
     k_mascot.skill_pool_def = [(ma1, 3), (ma2, 3), (ma3, 3)]
     mascot.equip_kata(k_mascot)
     mascot.description = "Despite the terrifying title, this 'beast' is actually just an embarrassingly highly motivated Kasakura High senior sweating inside a cheap, goofy Godzilla mascot costume. Stationed in the tropical jungle during the island's Scavenger Hunt, he acts as the highly dramatic guardian of a marked coconut to test the students' teamwork. He possesses zero actual combat prowess, enthusiastically throwing himself to the ground in defeat after taking a single, slow-motion mock punch from Akasuke."
@@ -887,8 +909,8 @@ def get_enemy_database():
     k_rip_hench = Kata("Gang Henchman Rapier", "Riposte Henchman", 1, 4, [1.2, 1.1, 1.1, 1.1, 0.9, 0.9, 1.1])
     rh1 = Skill("Graceful Pierce", 1, EL_LUDUS, 7, "[On Hit] Inflict 1 Pierce Affinity", effect_type="APPLY_STATUS")
     rh1.status_effect = pierce_affinity_1
-    rh2 = Skill("Elegant Counter", 2, EL_AGAPE, 6, "[Combat Start] If this unit takes damage this turn, deal +30% damage next turn\n      [On Hit] Inflict 3 Pierce Affinity", effect_type="COUNTER_SKILL_SPECIAL_TYPE3")
-    rh3 = Skill("Riposte", 3, EL_STORGE, 10, "[On Use] Gain 10 Riposte\n      [On Hit] If target has Pierce Affinity, gain 10 Riposte", effect_type="RIPOSTE_GAIN_SPECIAL_1")
+    rh2 = Skill("Elegant Counter", 2, EL_AGAPE, 6, "[Combat Start] If this unit takes damage this turn, deal +30% damage next turn\n       [On Hit] Inflict 3 Pierce Affinity", effect_type="COUNTER_SKILL_SPECIAL_TYPE3")
+    rh3 = Skill("Riposte", 3, EL_STORGE, 10, "[On Use] Gain 10 Riposte\n       [On Hit] If target has Pierce Affinity, gain 10 Riposte", effect_type="RIPOSTE_GAIN_SPECIAL_1")
     k_rip_hench.skill_pool_def = [(rh1, 4), (rh2, 3), (rh3, 2)]
     rip_hench.equip_kata(k_rip_hench)
     rip_hench.description = "The standard foot soldiers of the notorious Absconder syndicate, these ruthless thugs flood the hotel corridors in their signature sandy coats. They fight using a highly dangerous, sacrificial counter-attacking style, willingly absorbing heavy blunt force trauma just to create a split-second opening for a lethal rapier thrust. Their unnatural toughness and sheer numbers make them incredibly dangerous to fight recklessly, forcing the Kasakura vanguard to rely on flawless, one-hit knockouts."
@@ -898,8 +920,8 @@ def get_enemy_database():
     rip_lead.max_hp = 75
     k_rip_lead = Kata("Veteran Henchman Rapier", "Riposte Leader", 1, 6, [1.1, 1.0, 1.0, 1.2, 0.9, 0.9, 1.0])
     rl1 = Skill("Stylish Vital Pierce", 1, EL_EROS, 9, "[On Hit] If target has Pierce Affinity, inflict 2 Pierce Affinity. Otherwise, inflict 1 Pierce Affinity", effect_type="PIERCE_AFFINITY_INFLICT_SPECIAL_1")
-    rl2 = Skill("Breakthrough", 2, EL_AGAPE, 9, "[Combat Start] All of this unit’s allies deal +4 Final Damage this turn\n      [On Use] Gain 10 Riposte\n      [On Hit] Inflict 2 Pierce Affinity", effect_type="RIPOSTE_SQUAD_LEADER_SPECIAL_1")
-    rl3 = Skill("Balestra Riposte", 3, EL_LUDUS, 12, "[On Use] Fix this unit’s Riposte stack to 30\n      [On Hit] Inflict 3 Pierce Affinity", effect_type="RIPOSTE_SQUAD_LEADER_SPECIAL_2")
+    rl2 = Skill("Breakthrough", 2, EL_AGAPE, 9, "[Combat Start] All of this unit’s allies deal +4 Final Damage this turn\n       [On Use] Gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Affinity", effect_type="RIPOSTE_SQUAD_LEADER_SPECIAL_1")
+    rl3 = Skill("Balestra Riposte", 3, EL_LUDUS, 12, "[On Use] Fix this unit’s Riposte stack to 30\n       [On Hit] Inflict 3 Pierce Affinity", effect_type="RIPOSTE_SQUAD_LEADER_SPECIAL_2")
     k_rip_lead.skill_pool_def = [(rl1, 3), (rl2, 3), (rl3, 3)]
     rip_lead.equip_kata(k_rip_lead)
     rip_lead.description = "Seasoned veteran criminals of the underworld, these dark-coated enforcers lead the syndicate's defensive lines during the grueling hotel siege. Their rapier stances are significantly lower and more refined than the standard henchmen, allowing them to effortlessly parry and deliver devastating counter-strikes to vital points. Their overwhelming proficiency stalled the Kasakura strike team completely, forcing Akasuke to temporarily borrow their exact Kata just to beat them at their own ruthless game."
@@ -908,9 +930,9 @@ def get_enemy_database():
     adam = Entity("Adam", is_player=False)
     adam.max_hp = 295
     k_adam = Kata("Executive Rapier", "Adam", 1, 9, [1.0, 1.0, 1.0, 1.15, 1.15, 1.0, 1.15])
-    ad1 = Skill("En Garde", 1, EL_PRAGMA, 6, "[On Use] If this unit does not have Haste, gain 2 Haste next turn\n      [On Hit] Inflict 2 Pierce Affinity\n      [On Hit] Gain 10 Riposte", effect_type="ADAM_SPECIAL_1")
-    ad2 = Skill("Advance-Lunge", 2, EL_LUDUS, 10, "[Combat Start] All of this unit’s allies deal +3 Final Damage this turn\n      [Combat Start] All of this unit’s allies take -2 Final Damage this turn\n      [On Hit] Gain 5 Riposte for every stack of Pierce Affinity the target has\n      [On Hit] Inflict 3 Pierce Affinity", effect_type="ADAM_SPECIAL_2")
-    ad3 = Skill("Fleche Riposte (Incomplete)", 3, EL_LUDUS, 35, "[Combat Start] This unit takes +3 Final Damage this turn\n      [Combat Start] This unit deals -20 Base Damage this turn\n      [On Hit] Inflict 5 Pierce Affinity\n      [On Hit] Fix this unit’s Riposte stack to 50", effect_type="ADAM_SPECIAL_3")
+    ad1 = Skill("En Garde", 1, EL_PRAGMA, 6, "[On Use] If this unit does not have Haste, gain 2 Haste next turn\n       [On Hit] Inflict 2 Pierce Affinity\n       [On Hit] Gain 10 Riposte", effect_type="ADAM_SPECIAL_1")
+    ad2 = Skill("Advance-Lunge", 2, EL_LUDUS, 10, "[Combat Start] All of this unit’s allies deal +3 Final Damage this turn\n       [Combat Start] All of this unit’s allies take -2 Final Damage this turn\n       [On Hit] Gain 5 Riposte for every stack of Pierce Affinity the target has\n       [On Hit] Inflict 3 Pierce Affinity", effect_type="ADAM_SPECIAL_2")
+    ad3 = Skill("Fleche Riposte (Incomplete)", 3, EL_LUDUS, 35, "[Combat Start] This unit takes +3 Final Damage this turn\n       [Combat Start] This unit deals -20 Base Damage this turn\n       [On Hit] Inflict 5 Pierce Affinity\n       [On Hit] Fix this unit’s Riposte stack to 50", effect_type="ADAM_SPECIAL_3")
     k_adam.skill_pool_def = [(ad1, 4), (ad2, 3), (ad3, 2)]
     adam.equip_kata(k_adam)
     adam.description = "A remarkably young and immensely talented Executive of the Riposte Gang, Adam flawlessly blends the grace of a high-class chef with the lethal precision of a master swordsman. He wields his rapier with terrifying perfection, capable of holding off six Kata-enhanced fighters simultaneously through sheer battle IQ and unnatural physical toughness before finally reaching his limit. Despite his criminal allegiance and composed demeanor, he possesses a surprisingly naive loyalty to his terrifying Boss and showed genuine, polite hospitality toward his captive."
@@ -926,8 +948,8 @@ def get_enemy_database():
     s1_c2 = Chip(base_damage=3, effect_type="APPLY_STATUS")
     s1_c2.status_effect = scd.rupture_1
     
-    s1_desc_brief = "[On Hit] Inflict Rupture Count\n      [On Hit] Inflict Rupture Potency"
-    s1_desc_inspect = "◈ Base Damage: 2\n      [On Hit] Inflict 2 Rupture Count\n      ◈ Base Damage: 3\n      [On Hit] Inflict 1 Rupture Potency"
+    s1_desc_brief = "[On Hit] Inflict Rupture Count\n       [On Hit] Inflict Rupture Potency"
+    s1_desc_inspect = "◈ Base Damage: 2\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 3\n       [On Hit] Inflict 1 Rupture Potency"
     
     g_s1 = ChipSkill("Metal Baton ◈◈", 1, EL_AGAPE, [s1_c1, s1_c2], description=s1_desc_brief, inspect_description=s1_desc_inspect)
 
@@ -936,8 +958,8 @@ def get_enemy_database():
     s2_c2 = Chip(base_damage=1, effect_type="APPLY_STATUS")
     s2_c2.status_effect = scd.rupture_2
     
-    s2_desc_brief = "[On Hit] Inflict Rupture Potency\n      [On Hit] If target has Rupture, deal +Final Damage"
-    s2_desc_inspect = "◈ Base Damage: 5\n      [On Hit] If target has Rupture, deal +2 Final Damage\n      ◈ Base Damage: 1\n      [On Hit] Inflict 2 Rupture Potency"
+    s2_desc_brief = "[On Hit] Inflict Rupture Potency\n       [On Hit] If target has Rupture, deal +Final Damage"
+    s2_desc_inspect = "◈ Base Damage: 5\n       [On Hit] If target has Rupture, deal +2 Final Damage\n       ◈ Base Damage: 1\n       [On Hit] Inflict 2 Rupture Potency"
     
     g_s2 = ChipSkill("Pinning ◈◈", 2, EL_STORGE, [s2_c1, s2_c2], description=s2_desc_brief, inspect_description=s2_desc_inspect)
 
@@ -957,7 +979,7 @@ def get_enemy_database():
     s1_c2.status_effect = scd.rupturecount_2
     
     s1_desc_brief = "[On Hit] Inflict Rupture Count"
-    s1_desc_inspect = "◈ Base Damage: 4\n      [On Hit] Inflict 2 Rupture Count\n      ◈ Base Damage: 5\n      [On Hit] Inflict 2 Rupture Count"
+    s1_desc_inspect = "◈ Base Damage: 4\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 5\n       [On Hit] Inflict 2 Rupture Count"
     gl_s1 = ChipSkill("Heavy Metal Baton ◈◈", 1, EL_AGAPE, [s1_c1, s1_c2], description=s1_desc_brief, inspect_description=s1_desc_inspect)
 
     # Skill II: Takedown ◈◈◈
@@ -965,12 +987,12 @@ def get_enemy_database():
     s2_c2 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=1)
     s2_c3 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=1)
     
-    s2_desc_brief = "[On Hit] Inflict Rupture Potency\n      [On Hit] Inflict Bleed Potency\n      [On Hit] If target has Rupture, deal +Final Damage"
-    s2_desc_inspect = "◈ Base Damage: 7\n      [On Hit] If target has Rupture, deal +3 Final Damage\n      ◈ Base Damage: 2\n      [On Hit] Inflict 1 Bleed Potency\n      [On Hit] Inflict 1 Rupture Potency\n      ◈ Base Damage: 2\n      [On Hit] Inflict 1 Bleed Potency\n      [On Hit] Inflict 1 Rupture Potency"
+    s2_desc_brief = "[On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Bleed Potency\n       [On Hit] If target has Rupture, deal +Final Damage"
+    s2_desc_inspect = "◈ Base Damage: 7\n       [On Hit] If target has Rupture, deal +3 Final Damage\n       ◈ Base Damage: 2\n       [On Hit] Inflict 1 Bleed Potency\n       [On Hit] Inflict 1 Rupture Potency\n       ◈ Base Damage: 2\n       [On Hit] Inflict 1 Bleed Potency\n       [On Hit] Inflict 1 Rupture Potency"
     gl_s2 = ChipSkill("Takedown ◈◈◈", 2, EL_EROS, [s2_c1, s2_c2, s2_c3], description=s2_desc_brief, inspect_description=s2_desc_inspect)
 
     # Skill III: Lightweight Armor (Normal Skill)
-    gl_s3 = Skill("Lightweight Armor", 3, EL_LUDUS, 0, "[Combat Start] This unit takes -3 Final Damage this turn\n      [Combat Start] Gain 3 Haste next turn", effect_type="LIGHTWEIGHT_SPECIAL", effect_val=3)
+    gl_s3 = Skill("Lightweight Armor", 3, EL_LUDUS, 0, "[Combat Start] This unit takes -3 Final Damage this turn\n       [Combat Start] Gain 3 Haste next turn", effect_type="LIGHTWEIGHT_SPECIAL", effect_val=3)
 
     k_guard_leader.skill_pool_def = [(gl_s1, 3), (gl_s2, 3), (gl_s3, 2)]
     guard_leader.equip_kata(k_guard_leader)
