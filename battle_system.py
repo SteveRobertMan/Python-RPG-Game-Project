@@ -633,17 +633,12 @@ class BattleManager:
 
         # Initialize specific variable for Shigemura's Sadism to avoid scope errors
         sadism_bind_to_apply = 0
-        is_crit = False
         
-        # FIX 4: UnboundLocalError Risk - Default initialize damage to 0 at the start of the function
-        damage = 0
-
-        # --- [STEP 1] [On Use] EFFECTS ---
+        # --- [STEP 1] [On Use] EFFECTS (Uses Parent Skill) ---
         if "[On Use]" in skill.description:
             if skill.effect_type == "BUFF_DEF_FLAT":
                  attacker.temp_modifiers["final_dmg_reduction"] = attacker.temp_modifiers.get("final_dmg_reduction", 0) + skill.effect_val
             
-            # FIX 2 & FIX 5: Moved DEF_BUFF_BASE_PER to Step 1 and handled Enemy phase vulnerability
             elif skill.effect_type == "DEF_BUFF_BASE_PER":
                 reduction_pct = skill.effect_val / 10.0
                 if attacker in self.enemies:
@@ -652,11 +647,9 @@ class BattleManager:
                 else:
                     attacker.temp_modifiers["incoming_dmg_mult"] *= (1.0 - reduction_pct)
                     
-            # FIX 2: Moved BLEED_POTENCY_DEF_BUFF's [On Use] defense buff to Step 1
             elif skill.effect_type == "BLEED_POTENCY_DEF_BUFF":
                 attacker.temp_modifiers["final_dmg_reduction"] += skill.effect_val
                 
-            # FIX 2: Moved BENIKAWA_KIRYOKU_SPECIAL's [On Use] self-debuff to Step 1
             elif skill.effect_type == "BENIKAWA_KIRYOKU_SPECIAL":
                 attacker.temp_modifiers["incoming_dmg_mult"] *= 1.50
 
@@ -700,168 +693,155 @@ class BattleManager:
                 if not any(s.name == "Haste" for s in attacker.status_effects):
                     self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
 
-        # --- [STEP 2] DAMAGE CALCULATION ---
-        if skill.base_damage > 0:
-            # 1. Base Damage & Variance
-            base_dmg_val = float(skill.base_damage)
-            # Apply new Base Damage Debuffs from Step 1
-            base_dmg_val += attacker.temp_modifiers.get("outgoing_base_dmg_flat", 0)
+        # --- PREPARE MULTI-HIT LOGIC ---
+        chips_to_execute = getattr(skill, "chips", [skill])
+
+        for chip_idx, chip in enumerate(chips_to_execute):
             
-            # Hisayuki Special 3 Damage calculation
-            if skill.effect_type == "HISAYUKI_SPECIAL_3":
-                haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
-                if haste:
-                    bonus_pct = min(0.50, haste.duration * 0.10)
-                    base_dmg_val *= (1.0 + bonus_pct)
-                    attacker.status_effects.remove(haste)
+            # FIZZLE MECHANIC: If target died on previous hit, abort remaining hits
+            if target.hp <= 0:
+                if len(chips_to_execute) > 1 and chip_idx > 0:
+                    self.log(f"[dim]Remaining hits fizzled out...[/dim]")
+                break 
 
-            # --- PIERCE AFFINITY BASE DAMAGE MANIPULATION ---
-            pierce_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
-            if pierce_eff:
-                p_count = min(5, pierce_eff.duration)
-                if "Pierce Affinity" in skill.description:
-                    base_dmg_val += p_count
+            damage = 0
+            is_crit = False
 
-            # --- RIPOSTE UNIQUE DAMAGE BUFFS FOR STEP 2 ---
-            if skill.effect_type == "NAGANOHARA_RIPOSTE_CEDE":
-                riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
-                if riposte_eff and riposte_eff.duration >= 20:
-                    # [On Hit] deal +40% damage
-                    base_dmg_val *= 1.40
-                    # ...then take +50% more damage this turn
-                    attacker.temp_modifiers["incoming_dmg_mult"] *= 1.50
-                    self.log(f"[bold red]{attacker.name} cedes their defense for a heavy strike![/bold red]")
-            if skill.effect_type == "AKASUKE_RIPOSTE_PRISEDEFER":
-                riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
-                if riposte_eff:
-                    # Deals +2% base damage for each stack of Riposte owned (Max +100%)
-                    bonus_pct = min(1.0, riposte_eff.duration * 0.02)
-                    base_dmg_val *= (1.0 + bonus_pct)
-
-            # --- SHIGEMURA INFILTRATOR SKILL II ---
-            infiltrator_recoil = 0
-            if skill.effect_type == "SHIGEMURA_INFILTRATOR_SPECIAL_1":
-                haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
-                if haste:
-                    bonus_base = base_dmg_val * 0.20
-                    base_dmg_val += bonus_base
-                    infiltrator_recoil = int(bonus_base) # Store the exact numeric increase
-
-            # Shigemura Sadism Pre-Calc
-            if skill.effect_type == "COND_REAPER_BIND_CONVERT_SPECIAL":
-                total_bleed = sum(s.potency + s.duration for s in target.status_effects if s.name == "Bleed")
-                steps = min(3, total_bleed // 3)
-                if steps > 0:
-                    base_dmg_val = max(0, base_dmg_val - (steps * 3))
-                    sadism_bind_to_apply = steps
-
-            # 2. Bind Penalty
-            bind_effect = next((s for s in attacker.status_effects if s.name == "Bind"), None)
-            if bind_effect:
-                b_count = min(5, bind_effect.duration) 
-                base_dmg_val *= max(0.0, 1.0 - (0.10 * b_count))
-
-            # 3. Random Variance
-            dmg = base_dmg_val * random.uniform(1.0, 1.5)
-
-            # 4. Handle [On Use] Status (Skill I, II, III Poise Gains)
-            if skill.effect_type == "GAIN_STATUS":
-                self.apply_status_logic(attacker, copy.deepcopy(skill.status_effect))
-            # GAIN_POISE_SPECIAL_1 On Use
-            elif skill.effect_type == "GAIN_POISE_SPECIAL_1":
-                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0))
-
-            # 5. Critical Hit Roll (POISE CHECK)
-            poise = next((se for se in attacker.status_effects if se.name == "Poise"), None)
-            if poise and poise.potency > 0 and poise.duration > 0:
-                crit_chance = min(100, poise.potency * 5)
-                if random.randint(1, 100) <= crit_chance:
-                    is_crit = True
-                    dmg *= 1.2  # 20% Crit Multiplier
-
-            # 6. Elemental & Global Multipliers
-            res_mult = target.resistances[skill.element]
-            nbd = dmg * res_mult
-            nbd *= attacker.temp_modifiers.get("outgoing_dmg_mult", 1.0)
-            nbd *= target.temp_modifiers.get("incoming_dmg_mult", 1.0)
-            
-            # 7. Flat Modifiers
-            final_dmg = nbd + target.temp_modifiers.get("incoming_dmg_flat", 0)
-            final_dmg += attacker.temp_modifiers.get("outgoing_dmg_flat", 0)
-
-            # Consume Hit Bonuses
-            if target.next_hit_taken_flat_bonus > 0:
-                final_dmg += target.next_hit_taken_flat_bonus
-                target.next_hit_taken_flat_bonus = 0 
-            if attacker.next_hit_deal_flat_bonus > 0:
-                final_dmg += attacker.next_hit_deal_flat_bonus
-                attacker.next_hit_deal_flat_bonus = 0
-
-            # --- NAGANOHARA CONDITIONAL FLATS ---
-            target_has_bleed = any(s.name == "Bleed" and s.duration > 0 for s in target.status_effects)
-            
-            # Skill II: Simmer Down (+2 Dmg if Bleed)
-            if skill.effect_type == "COND_TARGET_HAS_BLEED_DMG":
-                if target_has_bleed:
-                    final_dmg += skill.effect_val
-
-            # Skill III: One-Handed Throw Down (+4 Dmg if Bleed)
-            if skill.effect_type == "COND_BLEED_DMG_AND_APPLY":
-                if target_has_bleed:
-                    final_dmg += skill.effect_val
-
-            # --- DEFENSE TIER REDUCTION ---
-            def_max_tier = self.get_max_skill_tier(target)
-            if skill.tier > def_max_tier:
-                final_dmg -= (final_dmg * min(0.80, 0.20 * (skill.tier - def_max_tier)))
-
-            damage = int(final_dmg)
-
-            # --- FINAL CHECKS ---
-            if skill.effect_type == "COND_HP_ABOVE_50_FLAT":
-                if target.hp >= (target.max_hp * 0.5): 
-                    damage += int(skill.effect_val)
-
-            if skill.effect_type == "COND_LOW_HP_MERCY":
-                if target.hp <= (target.max_hp * 0.7): 
-                    damage -= int(skill.effect_val)
-
-            if skill.effect_type == "COND_HP_BELOW_80_FLAT":
-                if target.hp <= (target.max_hp * 0.8): 
-                    damage += int(skill.effect_val)
-
-            # ... Final Defense Reduction (Armor)
-            flat_def = target.temp_modifiers["final_dmg_reduction"]
-            damage = damage - flat_def
-            
-            # --- RIPOSTE DAMAGE MITIGATION ---
-            riposte_eff = next((s for s in target.status_effects if s.name == "Riposte"), None)
-            if riposte_eff:
-                reduction_pct = min(0.25, (riposte_eff.duration // 10) * 0.05)
-                damage = damage * (1.0 - reduction_pct)
-
-            damage = max(1, int(damage)) # Minimum 1 damage if hit connects
-
-            # [MECHANIC] CONVERT DAMAGE TO HEAL
-            if skill.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
-                team = self.allies if attacker in self.allies else self.enemies
-                living_teammates = [u for u in team if u.hp > 0]
-                if living_teammates:
-                    lowest_unit = min(living_teammates, key=lambda u: u.hp / u.max_hp)
-                    heal_amt = damage
-                    lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
-                    self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
-                damage = 0
-
-            # --- CUSTOM NON-DAMAGE & HEALING SKILLS ---
-            if skill.effect_type in ["SELF_HEAL_TYPE1", "EAGLE_SPECIAL_3", "JOKE_SKILL"]:
-                if skill.effect_type == "SELF_HEAL_TYPE1":
-                    heal_amt = damage
-                    attacker.hp = min(attacker.max_hp, attacker.hp + heal_amt)
-                    self.log(f"[light_green]-> {attacker.name} Heals self for {heal_amt}.[/light_green]")
-                    damage = 0
+            # --- [STEP 2] DAMAGE CALCULATION (Per Chip) ---
+            if chip.base_damage > 0:
+                # 1. Base Damage & Variance
+                base_dmg_val = float(chip.base_damage)
+                base_dmg_val += attacker.temp_modifiers.get("outgoing_base_dmg_flat", 0)
                 
-                elif skill.effect_type == "EAGLE_SPECIAL_3":
+                if chip.effect_type == "HISAYUKI_SPECIAL_3":
+                    haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
+                    if haste:
+                        bonus_pct = min(0.50, haste.duration * 0.10)
+                        base_dmg_val *= (1.0 + bonus_pct)
+                        attacker.status_effects.remove(haste)
+
+                # PIERCE AFFINITY BASE DAMAGE MANIPULATION
+                pierce_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                if pierce_eff:
+                    p_count = min(5, pierce_eff.duration)
+                    # Support checking description of either the parent skill or the chip
+                    desc_to_check = getattr(chip, "description", "") or skill.description
+                    if "Pierce Affinity" in desc_to_check:
+                        base_dmg_val += p_count
+
+                # RIPOSTE UNIQUE DAMAGE BUFFS
+                if chip.effect_type == "NAGANOHARA_RIPOSTE_CEDE":
+                    riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
+                    if riposte_eff and riposte_eff.duration >= 20:
+                        base_dmg_val *= 1.40
+                        attacker.temp_modifiers["incoming_dmg_mult"] *= 1.50
+                        self.log(f"[bold red]{attacker.name} cedes their defense for a heavy strike![/bold red]")
+                if chip.effect_type == "AKASUKE_RIPOSTE_PRISEDEFER":
+                    riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
+                    if riposte_eff:
+                        bonus_pct = min(1.0, riposte_eff.duration * 0.02)
+                        base_dmg_val *= (1.0 + bonus_pct)
+
+                # SHIGEMURA INFILTRATOR
+                infiltrator_recoil = 0
+                if chip.effect_type == "SHIGEMURA_INFILTRATOR_SPECIAL_1":
+                    haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
+                    if haste:
+                        bonus_base = base_dmg_val * 0.20
+                        base_dmg_val += bonus_base
+                        infiltrator_recoil = int(bonus_base) 
+
+                if chip.effect_type == "COND_REAPER_BIND_CONVERT_SPECIAL":
+                    total_bleed = sum(s.potency + s.duration for s in target.status_effects if s.name == "Bleed")
+                    steps = min(3, total_bleed // 3)
+                    if steps > 0:
+                        base_dmg_val = max(0, base_dmg_val - (steps * 3))
+                        sadism_bind_to_apply = steps
+
+                # NEW RUPTURE FLAT BONUS
+                if chip.effect_type == "RUPTURE_DAMAGE_BUFF_TYPE2":
+                    if any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects):
+                        base_dmg_val += chip.effect_val
+
+                # 2. Bind Penalty
+                bind_effect = next((s for s in attacker.status_effects if s.name == "Bind"), None)
+                if bind_effect:
+                    b_count = min(5, bind_effect.duration) 
+                    base_dmg_val *= max(0.0, 1.0 - (0.10 * b_count))
+
+                # 3. Random Variance
+                dmg = base_dmg_val * random.uniform(1.0, 1.5)
+
+                # 4. Handle [On Use] Status (Pre-Hit Application)
+                if chip.effect_type == "GAIN_STATUS":
+                    self.apply_status_logic(attacker, copy.deepcopy(chip.status_effect))
+                elif chip.effect_type == "GAIN_POISE_SPECIAL_1":
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0))
+
+                # 5. Critical Hit Roll (POISE CHECK - DECREMENTS PER CHIP)
+                poise = next((se for se in attacker.status_effects if se.name == "Poise"), None)
+                if poise and poise.potency > 0 and poise.duration > 0:
+                    crit_chance = min(100, poise.potency * 5)
+                    if random.randint(1, 100) <= crit_chance:
+                        is_crit = True
+                        dmg *= 1.2  # 20% Crit Multiplier
+                        # Consume Poise Count immediately on this chip
+                        poise.duration -= 1
+                        if poise.duration <= 0:
+                            attacker.status_effects.remove(poise)
+                            poise = None # Clear reference
+
+                # 6. Elemental & Global Multipliers (Uses PARENT skill element)
+                res_mult = target.resistances[skill.element]
+                nbd = dmg * res_mult
+                nbd *= attacker.temp_modifiers.get("outgoing_dmg_mult", 1.0)
+                nbd *= target.temp_modifiers.get("incoming_dmg_mult", 1.0)
+                
+                # 7. Flat Modifiers
+                final_dmg = nbd + target.temp_modifiers.get("incoming_dmg_flat", 0)
+                final_dmg += attacker.temp_modifiers.get("outgoing_dmg_flat", 0)
+
+                # Consume Hit Bonuses
+                if target.next_hit_taken_flat_bonus > 0:
+                    final_dmg += target.next_hit_taken_flat_bonus
+                    target.next_hit_taken_flat_bonus = 0 
+                if attacker.next_hit_deal_flat_bonus > 0:
+                    final_dmg += attacker.next_hit_deal_flat_bonus
+                    attacker.next_hit_deal_flat_bonus = 0
+
+                # NAGANOHARA CONDITIONAL FLATS
+                target_has_bleed = any(s.name == "Bleed" and s.duration > 0 for s in target.status_effects)
+                if chip.effect_type == "COND_TARGET_HAS_BLEED_DMG":
+                    if target_has_bleed: final_dmg += chip.effect_val
+                if chip.effect_type == "COND_BLEED_DMG_AND_APPLY":
+                    if target_has_bleed: final_dmg += chip.effect_val
+
+                # DEFENSE TIER REDUCTION (Uses Parent skill tier)
+                def_max_tier = self.get_max_skill_tier(target)
+                if skill.tier > def_max_tier:
+                    final_dmg -= (final_dmg * min(0.80, 0.20 * (skill.tier - def_max_tier)))
+
+                damage = int(final_dmg)
+
+                # FINAL CHECKS
+                if chip.effect_type == "COND_HP_ABOVE_50_FLAT" and target.hp >= (target.max_hp * 0.5): damage += int(chip.effect_val)
+                if chip.effect_type == "COND_LOW_HP_MERCY" and target.hp <= (target.max_hp * 0.7): damage -= int(chip.effect_val)
+                if chip.effect_type == "COND_HP_BELOW_80_FLAT" and target.hp <= (target.max_hp * 0.8): damage += int(chip.effect_val)
+
+                # Final Defense Reduction (Armor)
+                flat_def = target.temp_modifiers["final_dmg_reduction"]
+                damage = damage - flat_def
+                
+                # RIPOSTE DAMAGE MITIGATION
+                riposte_eff = next((s for s in target.status_effects if s.name == "Riposte"), None)
+                if riposte_eff:
+                    reduction_pct = min(0.25, (riposte_eff.duration // 10) * 0.05)
+                    damage = damage * (1.0 - reduction_pct)
+
+                damage = max(1, int(damage)) # Minimum 1 damage if hit connects
+
+                # CONVERT DAMAGE TO HEAL
+                if chip.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
                     team = self.allies if attacker in self.allies else self.enemies
                     living_teammates = [u for u in team if u.hp > 0]
                     if living_teammates:
@@ -869,572 +849,434 @@ class BattleManager:
                         heal_amt = damage
                         lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
                         self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
-                        for a in living_teammates:
-                            if a != lowest_unit:
-                                a.hp = min(a.max_hp, a.hp + (heal_amt // 2))
-                            # Haste Gain Next Turn
-                            self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=3))
-                    damage = 0
-                
-                elif skill.effect_type == "JOKE_SKILL":
                     damage = 0
 
-            # --- APPLY DAMAGE ---
-            if damage > 0:
-                target.hp -= damage
-                el_color = get_element_color(skill.element)
-                eff_text = " [bold yellow](WEAK!)[/]" if res_mult > 1.0 else (" [dim](Resist)[/]" if res_mult < 1.0 else "")
-                crit_text = "[khaki1]Critical![/] " if is_crit else ""
-                
-                self.log(f"-> {crit_text}Hit {target.name} for [bold {el_color}]{damage}[/bold {el_color}]!{eff_text}")
-                
-                # --- [HIDDEN MECHANIC] COUNTER TRIGGER ---
-                if getattr(target, "counter_active", False):
-                    # Ensure the next_turn_modifiers dictionary exists
-                    if not hasattr(target, "next_turn_modifiers"): 
-                        target.next_turn_modifiers = {}
+                # CUSTOM NON-DAMAGE & HEALING SKILLS
+                if chip.effect_type in ["SELF_HEAL_TYPE1", "EAGLE_SPECIAL_3", "JOKE_SKILL"]:
+                    if chip.effect_type == "SELF_HEAL_TYPE1":
+                        heal_amt = damage
+                        attacker.hp = min(attacker.max_hp, attacker.hp + heal_amt)
+                        self.log(f"[light_green]-> {attacker.name} Heals self for {heal_amt}.[/light_green]")
+                        damage = 0
+                    elif chip.effect_type == "EAGLE_SPECIAL_3":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        living_teammates = [u for u in team if u.hp > 0]
+                        if living_teammates:
+                            lowest_unit = min(living_teammates, key=lambda u: u.hp / u.max_hp)
+                            heal_amt = damage
+                            lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
+                            self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
+                            for a in living_teammates:
+                                if a != lowest_unit: a.hp = min(a.max_hp, a.hp + (heal_amt // 2))
+                                self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=3))
+                        damage = 0
+                    elif chip.effect_type == "JOKE_SKILL":
+                        damage = 0
+
+                # --- APPLY DAMAGE ---
+                if damage > 0:
+                    target.hp -= damage
+                    el_color = get_element_color(skill.element)
+                    eff_text = " [bold yellow](WEAK!)[/]" if res_mult > 1.0 else (" [dim](Resist)[/]" if res_mult < 1.0 else "")
+                    crit_text = "[khaki1]Critical![/] " if is_crit else ""
+                    
+                    self.log(f"-> {crit_text}Hit {target.name} for [bold {el_color}]{damage}[/bold {el_color}]!{eff_text}")
+                    
+                    # COUNTER TRIGGER
+                    if getattr(target, "counter_active", False):
+                        if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
+                        current_mult = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0)
+                        target.next_turn_modifiers["outgoing_dmg_mult"] = current_mult + target.counter_potency
+                        target.counter_active = False 
+                    
+                    # ON HIT POISE
+                    if chip.effect_type == "GAIN_POISE_SPECIAL_1":
+                        self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0))
+                    
+                    # BLEED RECOIL ON ATTACKER
+                    bleed_idx = -1
+                    for i, se in enumerate(attacker.status_effects):
+                        if se.name == "Bleed":
+                            bleed_idx = i
+                            break
+                    if bleed_idx != -1:
+                        bleed_eff = next((se for se in attacker.status_effects if se.name == "Bleed"), None)
+                        if bleed_eff:
+                            recoil = bleed_eff.potency
+                            attacker.hp -= recoil
+                            bleed_eff.duration -= 1
+                            self.log(f"[bold dim red]{attacker.name} took {recoil} Bleed damage.[/bold dim red]")
+                            if bleed_eff.duration <= 0: attacker.status_effects.remove(bleed_eff)
+                        if attacker.hp <= 0: attacker.hp = 0
+                        if bleed_eff and bleed_eff.duration <= 0 and bleed_idx < len(attacker.status_effects):
+                            try:
+                                attacker.status_effects.remove(bleed_eff)
+                            except ValueError: pass
+
+                    # ON HIT HEAL
+                    if chip.effect_type == "ON_HIT_HEAL_LOWEST_BY_DMG":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        living_teammates = [u for u in team if u.hp > 0]
+                        if living_teammates:
+                            lowest_unit = min(living_teammates, key=lambda u: u.hp / u.max_hp)
+                            heal_amt = damage 
+                            lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
+                            self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
+
+                    # RIPOSTE REDUCTION & HASTE GAIN
+                    if riposte_eff:
+                        stacks_lost = min(random.randint(1, 4), riposte_eff.duration)
+                        riposte_eff.duration -= stacks_lost
+                        target.riposte_loss_tracker += stacks_lost
+                        while target.riposte_loss_tracker >= 10:
+                            target.riposte_loss_tracker -= 10
+                            haste_eff = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="BUFF")
+                            self.apply_status_logic(target, haste_eff)
+                            self.log(f"[yellow1]{target.name} gained Haste from Riposte![/yellow1]")
+                        if riposte_eff.duration <= 0: target.status_effects.remove(riposte_eff)
+
+                    # RUPTURE & FAIRYLIGHT TRIGGERS
+                    rupture_eff = next((s for s in target.status_effects if s.name == "Rupture"), None)
+                    if rupture_eff:
+                        target.hp -= rupture_eff.potency
+                        rupture_eff.duration -= 1
+                        self.log(f"[medium_spring_green]Rupture dealt {rupture_eff.potency} damage to {target.name}![/medium_spring_green]")
+                        if rupture_eff.duration <= 0: target.status_effects.remove(rupture_eff)
                         
-                    # Add the potency to next turn's outgoing damage multiplier
-                    current_mult = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0)
-                    target.next_turn_modifiers["outgoing_dmg_mult"] = current_mult + target.counter_potency
-                    
-                    # Deactivate so multi-hit skills don't stack the counter infinitely
-                    target.counter_active = False 
-                
-                # GAIN_POISE_SPECIAL_1 On Hit
-                if skill.effect_type == "GAIN_POISE_SPECIAL_1":
-                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0))
-                
-                # Consume Poise Count on Crit
-                if is_crit and poise:
-                    poise.duration -= 1
-                    if poise.duration <= 0:
-                        attacker.status_effects.remove(poise)
-                
-                # --- [MECHANIC] BLEED TRIGGER (Recoil on Attacker) ---
-                bleed_idx = -1
-                for i, se in enumerate(attacker.status_effects):
-                    if se.name == "Bleed":
-                        bleed_idx = i
-                        break
-                
-                if bleed_idx != -1:
-                    bleed_eff = next((se for se in attacker.status_effects if se.name == "Bleed"), None)
-                    if bleed_eff:
-                        recoil = bleed_eff.potency
-                        attacker.hp -= recoil
-                        bleed_eff.duration -= 1
-                        self.log(f"[bold dim red]{attacker.name} took {recoil} Bleed damage.[/bold dim red]")
-                        if bleed_eff.duration <= 0: attacker.status_effects.remove(bleed_eff)
+                    fairylight_eff = next((s for s in target.status_effects if s.name == "Fairylight"), None)
+                    if fairylight_eff:
+                        target.hp -= fairylight_eff.potency
+                        fairylight_eff.duration -= 1
+                        self.log(f"[spring_green1]Fairylight dealt {fairylight_eff.potency} damage to {target.name}![/spring_green1]")
+                        if fairylight_eff.duration <= 0: target.status_effects.remove(fairylight_eff)
 
-                    if attacker.hp <= 0:
-                        attacker.hp = 0
-                    
-                    if bleed_eff.duration <= 0 and bleed_idx in attacker.status_effects:
-                        attacker.status_effects.pop(bleed_idx)
+                    # PIERCE AFFINITY TRIGGER
+                    pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                    if pierce_target_eff:
+                        pierce_target_eff.duration -= 1
+                        if pierce_target_eff.duration <= 0: target.status_effects.remove(pierce_target_eff)
+                        
+                    # INFILTRATOR RECOIL
+                    if infiltrator_recoil > 0:
+                        attacker.hp -= infiltrator_recoil
+                        self.log(f"[bold red]{attacker.name} takes {infiltrator_recoil} Recoil Damage from momentum![/bold red]")
 
-                # --- [MECHANIC] ON HIT HEAL LOWEST ---
-                if skill.effect_type == "ON_HIT_HEAL_LOWEST_BY_DMG":
-                    team = self.allies if attacker in self.allies else self.enemies
-                    living_teammates = [u for u in team if u.hp > 0]
-                    if living_teammates:
-                        lowest_unit = min(living_teammates, key=lambda u: u.hp / u.max_hp)
-                        heal_amt = damage 
-                        lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
-                        self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
+                    # POISE SUPPORT LOGIC
+                    if chip.effect_type == "ON_HIT_PROVIDE_POISE_TYPE1":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        for member in team:
+                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            if poise_effect: poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
+                    elif chip.effect_type == "ON_HIT_PROVIDE_POISE_TYPE2":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        for member in team:
+                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            if poise_effect:
+                                poise_effect.potency = min(99, poise_effect.potency + chip.effect_val)
+                                poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
+                    elif chip.effect_type == "ON_HIT_PROVIDE_POISE_TYPE3":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        for member in team:
+                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            if poise_effect: poise_effect.potency = min(99, poise_effect.potency + chip.effect_val)
+                    elif chip.effect_type == "ON_HIT_PROVIDE_POISE_TYPE4":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        for member in team:
+                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            if poise_effect: poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
+                            else: self.apply_status_logic(member, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", chip.effect_val, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0))
+                    elif chip.effect_type == "ON_HIT_CONVERT_POISE_TYPE1":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        for member in team:
+                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            if poise_effect and poise_effect.potency >= 2:
+                                poise_effect.potency -= 1
+                                poise_effect.duration = min(99, poise_effect.duration + 1)
+                                if poise_effect.potency <= 0 or poise_effect.duration <= 0: member.status_effects.remove(poise_effect)
+                    elif chip.effect_type == "ON_HIT_CONVERT_POISE_TYPE2":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        for member in team:
+                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            if poise_effect and poise_effect.potency >= 4:
+                                poise_effect.potency -= chip.effect_val
+                                poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
+                                if poise_effect.potency <= 0 or poise_effect.duration <= 0: member.status_effects.remove(poise_effect)
 
-                # --- RIPOSTE STACK REDUCTION & HASTE GAIN ---
-                if riposte_eff:
-                    stacks_lost = random.randint(1, 4)
-                    stacks_lost = min(stacks_lost, riposte_eff.duration)
-                    riposte_eff.duration -= stacks_lost
-                    target.riposte_loss_tracker += stacks_lost
-                    
-                    while target.riposte_loss_tracker >= 10:
-                        target.riposte_loss_tracker -= 10
-                        haste_eff = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="BUFF")
-                        self.apply_status_logic(target, haste_eff)
-                        self.log(f"[yellow1]{target.name} gained Haste from Riposte![/yellow1]")
-                    
-                    if riposte_eff.duration <= 0: target.status_effects.remove(riposte_eff)
-
-                # --- RUPTURE & FAIRYLIGHT TRIGGERS ---
-                rupture_eff = next((s for s in target.status_effects if s.name == "Rupture"), None)
-                if rupture_eff:
-                    target.hp -= rupture_eff.potency
-                    rupture_eff.duration -= 1
-                    self.log(f"[medium_spring_green]Rupture dealt {rupture_eff.potency} damage to {target.name}![/medium_spring_green]")
-                    if rupture_eff.duration <= 0: target.status_effects.remove(rupture_eff)
-                    
-                fairylight_eff = next((s for s in target.status_effects if s.name == "Fairylight"), None)
-                if fairylight_eff:
-                    target.hp -= fairylight_eff.potency
-                    fairylight_eff.duration -= 1
-                    self.log(f"[spring_green1]Fairylight dealt {fairylight_eff.potency} damage to {target.name}![/spring_green1]")
-                    if fairylight_eff.duration <= 0: target.status_effects.remove(fairylight_eff)
-
-                # --- PIERCE AFFINITY TRIGGER (STACK REDUCTION) ---
-                pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
-                if pierce_target_eff:
-                    pierce_target_eff.duration -= 1
-                    if pierce_target_eff.duration <= 0: target.status_effects.remove(pierce_target_eff)
-                    
-                # --- APPLY INFILTRATOR RECOIL ---
-                if infiltrator_recoil > 0:
-                    attacker.hp -= infiltrator_recoil
-                    self.log(f"[bold red]{attacker.name} takes {infiltrator_recoil} Recoil Damage from momentum![/bold red]")
-
-                # FIX 1: Optimization - Chained the [On Hit] conditional checks with elif
-                # --- LOGIC: POISE SUPPORT ---
-                if skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE1":
-                    # Logic: Grant +1 Poise Count to all allies who already have Poise
-                    team = self.allies if attacker in self.allies else self.enemies
-                    for member in team:
-                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
-                        if poise_effect:
-                            poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
-                elif skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE2":
-                    # Logic: Grant +2 Potency AND +2 Count to allies with Poise
-                    team = self.allies if attacker in self.allies else self.enemies
-                    for member in team:
-                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
-                        if poise_effect:
-                            poise_effect.potency = min(99, poise_effect.potency + skill.effect_val)
-                            poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
-                elif skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE3":
-                    # Logic: Grant +2 Poise Potency to all allies who already have Poise
-                    team = self.allies if attacker in self.allies else self.enemies
-                    for member in team:
-                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
-                        if poise_effect:
-                            poise_effect.potency = min(99, poise_effect.potency + skill.effect_val)
-                elif skill.effect_type == "ON_HIT_PROVIDE_POISE_TYPE4":
-                    # Logic: If they have Poise, grant x Count. Else, grant x Potency.
-                    team = self.allies if attacker in self.allies else self.enemies
-                    for member in team:
-                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
-                        if poise_effect:
-                            poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
-                        else:
-                            new_poise = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", skill.effect_val, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0)
-                            self.apply_status_logic(member, new_poise)
-                elif skill.effect_type == "ON_HIT_CONVERT_POISE_TYPE1":
-                    # Logic: Convert 1 Potency -> 1 Count if Potency >= 2
-                    team = self.allies if attacker in self.allies else self.enemies
-                    for member in team:
-                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
-                        if poise_effect and poise_effect.potency >= 2:
-                            poise_effect.potency -= 1
-                            poise_effect.duration = min(99, poise_effect.duration + 1)
-                            if poise_effect.potency <= 0 or poise_effect.duration <= 0:
-                                member.status_effects.remove(poise_effect)
-                # --- KAGAKU DISCIPLINARY COMMITTEE POISE FLAGS ---
-                elif skill.effect_type == "ON_HIT_CONVERT_POISE_TYPE2":
-                    # Logic: Convert x Potency -> x Count if Potency >= 4
-                    team = self.allies if attacker in self.allies else self.enemies
-                    for member in team:
-                        poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
-                        if poise_effect and poise_effect.potency >= 4:
-                            poise_effect.potency -= skill.effect_val
-                            poise_effect.duration = min(99, poise_effect.duration + skill.effect_val)
-                            if poise_effect.potency <= 0 or poise_effect.duration <= 0:
-                                member.status_effects.remove(poise_effect)
-
-                # --- NEXT HIT BONUSES ---
-                elif skill.effect_type == "ON_HIT_NEXT_TAKEN_FLAT":
-                    target.next_hit_taken_flat_bonus += skill.effect_val
-                elif skill.effect_type == "ON_HIT_NEXT_DEAL_FLAT":
-                    attacker.next_hit_deal_flat_bonus += skill.effect_val
-                elif skill.effect_type == "SELF_NEXT_TAKEN_FLAT":
-                    attacker.next_hit_taken_flat_bonus += skill.effect_val
-                elif skill.effect_type == "DEBUFF_INCOMING_DMG_FLAT":
-                    target.temp_modifiers["incoming_dmg_flat"] += skill.effect_val
+                    # NEXT HIT BONUSES
+                    elif chip.effect_type == "ON_HIT_NEXT_TAKEN_FLAT": target.next_hit_taken_flat_bonus += chip.effect_val
+                    elif chip.effect_type == "ON_HIT_NEXT_DEAL_FLAT": attacker.next_hit_deal_flat_bonus += chip.effect_val
+                    elif chip.effect_type == "SELF_NEXT_TAKEN_FLAT": attacker.next_hit_taken_flat_bonus += chip.effect_val
+                    elif chip.effect_type == "DEBUFF_INCOMING_DMG_FLAT": target.temp_modifiers["incoming_dmg_flat"] += chip.effect_val
 
             else:
-                if skill.effect_type != "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
+                if chip.effect_type != "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
                     self.log(f"-> The move dealt no damage.")
 
-        # --- [STEP 3] STATUS EFFECT / SPECIAL APPLICATION ---
-        
-        # AOE BUFF
-        if skill.effect_type == "AOE_BUFF_DEF_FLAT":
-            team = self.allies if attacker in self.allies else self.enemies
-            for member in team:
-                if member.hp > 0:
-                    member.temp_modifiers["final_dmg_reduction"] = member.temp_modifiers.get("final_dmg_reduction", 0) + skill.effect_val
+            # --- [STEP 3] STATUS EFFECT / SPECIAL APPLICATION (Per Chip) ---
+            
+            # AOE BUFF
+            if chip.effect_type == "AOE_BUFF_DEF_FLAT":
+                team = self.allies if attacker in self.allies else self.enemies
+                for member in team:
+                    if member.hp > 0: member.temp_modifiers["final_dmg_reduction"] = member.temp_modifiers.get("final_dmg_reduction", 0) + chip.effect_val
                     
-        # --- AKASUKE SKILLS ---
-
-        # Skill I: Jab Flurry (Bleed Count Opener)
-        elif skill.effect_type == "BLEED_COUNT_OPENER":
-            has_bleed = any(s.name == "Bleed" for s in target.status_effects)
+            # AKASUKE SKILLS
+            elif chip.effect_type == "BLEED_COUNT_OPENER":
+                has_bleed = any(s.name == "Bleed" for s in target.status_effects)
+                if not has_bleed and hasattr(chip, "status_effect") and chip.status_effect:
+                    self.apply_status_logic(target, copy.deepcopy(chip.status_effect))
+                elif has_bleed and hasattr(chip, "alt_status_effect") and chip.alt_status_effect:
+                    self.apply_status_logic(target, copy.deepcopy(chip.alt_status_effect))
+            elif chip.effect_type == "BLEED_POTENCY_STACKER":
+                has_bleed = any(s.name == "Bleed" for s in target.status_effects)
+                if has_bleed and hasattr(chip, "status_effect") and chip.status_effect:
+                    self.apply_status_logic(target, copy.deepcopy(chip.status_effect))
+            elif chip.effect_type == "HEIWA_RALLY_EFFECT":
+                team = self.allies if attacker in self.allies else self.enemies
+                for member in team:
+                    if member.hp > 0:
+                        member.temp_modifiers["outgoing_dmg_flat"] = member.temp_modifiers.get("outgoing_dmg_flat", 0) + chip.effect_val
+                        if hasattr(member, "kata") and "Heiwa" in member.kata.name:
+                            member.temp_modifiers["final_dmg_reduction"] += chip.effect_val
+            elif chip.effect_type == "BLEED_POTENCY_DEF_BUFF":
+                if hasattr(chip, "status_effect") and chip.status_effect:
+                    self.apply_status_logic(target, copy.deepcopy(chip.status_effect))
             
-            if not has_bleed:
-                # Target has NO Bleed -> Apply Primary Effect (Count 3, Pot 1)
-                if hasattr(skill, "status_effect"):
-                      self.apply_status_logic(target, copy.deepcopy(skill.status_effect))
-            else:
-                # Target HAS Bleed -> Apply Alternative Effect (Pot 1, Count 1)
-                if hasattr(skill, "alt_status_effect"):
-                      self.apply_status_logic(target, copy.deepcopy(skill.alt_status_effect))
+            # BENIKAWA
+            elif chip.effect_type == "COND_TARGET_HAS_BLEED_DMG_PER":
+                has_bleed = any(s.name == "Bleed" for s in target.status_effects)
+                if has_bleed:
+                    bonus_dmg = int(chip.base_damage * (chip.effect_val / 10.0))
+                    target.hp -= bonus_dmg
+                    if 'sadism_bind_to_apply' in locals() and sadism_bind_to_apply > 0:
+                        self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=sadism_bind_to_apply))
 
-        # Skill II: Cheap Nose Shot (Bleed Potency Stacker)
-        elif skill.effect_type == "BLEED_POTENCY_STACKER":
-            has_bleed = any(s.name == "Bleed" for s in target.status_effects)
-            if has_bleed:
-                 # Only apply if target already bleeds
-                 if hasattr(skill, "status_effect"):
-                     self.apply_status_logic(target, copy.deepcopy(skill.status_effect))
+            # KUROGANE & GENERIC EFFECTS
+            elif chip.effect_type == "APPLY_BLEED_HEAVY_STACKS":
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=2, type="DEBUFF"))
+            elif chip.effect_type == "APPLY_BLEED_AND_BIND":
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF"))
+                self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF"))
+            elif chip.effect_type == "APPLY_BLEED_AND_BIND_HEAVY":
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF"))
+                self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2, type="DEBUFF"))
+            elif (chip.effect_type == "APPLY_STATUS" or chip.effect_type == "COND_BLEED_DMG_AND_APPLY") and hasattr(chip, "status_effect") and chip.status_effect:
+                if chip.status_effect.name == "Nerve Disruption": target.nerve_disruption_turns = chip.status_effect.duration
+                else: self.apply_status_logic(target, copy.deepcopy(chip.status_effect))
 
-        # Skill III: Rally (Heiwa Rally Effect)
-        elif skill.effect_type == "HEIWA_RALLY_EFFECT":
-            team = self.allies if attacker in self.allies else self.enemies
-            for member in team:
-                if member.hp > 0:
-                    # 1. Universal Buff: All allies deal +2 Final Dmg (Outgoing Flat)
-                    current_bonus = member.temp_modifiers.get("outgoing_dmg_flat", 0)
-                    member.temp_modifiers["outgoing_dmg_flat"] = current_bonus + skill.effect_val
+            elif chip.effect_type == "HASTE_BIND_SPECIAL_TYPE1":
+                team = self.allies if attacker in self.allies else self.enemies
+                enemy_team = self.enemies if attacker in self.allies else self.allies
+                valid_allies = [u for u in team if u.hp > 0 and u != attacker]
+                valid_enemies = [u for u in enemy_team if u.hp > 0]
+                chosen_allies = random.sample(valid_allies, min(2, len(valid_allies)))
+                chosen_enemies = random.sample(valid_enemies, min(2, len(valid_enemies)))
+                for a in chosen_allies: self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=chip.effect_val))
+                for e in chosen_enemies: self.apply_status_logic(e, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=chip.effect_val))
+                
+            elif chip.effect_type == "HANA_SPECIAL_RAGE":
+                if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                attacker.next_turn_modifiers["outgoing_dmg_mult"] = 0.6
+                target.temp_modifiers["outgoing_dmg_mult"] *= 0.85
+                
+            elif chip.effect_type == "BLEED_RUPTURE_SPECIAL_TYPE1":
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", chip.effect_val, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", chip.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+                
+            elif chip.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_RANDOM":
+                team = self.allies if attacker in self.allies else self.enemies
+                valid_allies = [u for u in team if u.hp > 0 and u != attacker]
+                chosen_allies = random.sample(valid_allies, min(chip.effect_val, len(valid_allies)))
+                targets_to_heal = [attacker] + chosen_allies
+                for a in targets_to_heal:
+                    a.hp = min(a.max_hp, a.hp + damage)
+                    self.log(f"[light_green]-> {attacker.name} Heals {a.name} for {damage}.[/light_green]")
+                damage = 0
+
+            elif chip.effect_type == "NAGANOHARA_KIRYOKU_SPECIAL":
+                team = self.allies if attacker in self.allies else self.enemies
+                valid_allies = [u for u in team if u.hp > 0 and u != attacker]
+                for a in random.sample(valid_allies, min(2, len(valid_allies))):
+                    self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
+                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                if has_rupture: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+                else: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))   
                     
-                    # 2. Conditional Buff: "Heiwa" allies take -2 Final Dmg (Incoming Reduction)
-                    if hasattr(member, "kata") and "Heiwa" in member.kata.name:
-                        member.temp_modifiers["final_dmg_reduction"] += skill.effect_val
+            elif chip.effect_type == "RUPTURE_DAMAGE_BUFF_TYPE1":
+                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                if has_rupture and damage > 0:
+                    bonus = int(damage * 0.25)
+                    target.hp -= bonus
+                    self.log(f"[medium_spring_green]Bonus Rupture Execute: {bonus} damage![/medium_spring_green]")
 
-        # BLEED_POTENCY_DEF_BUFF (Yuri Heiwa S3)
-        # FIX 2: Removed the self-buff segment of this block as it was properly placed in Step 1
-        elif skill.effect_type == "BLEED_POTENCY_DEF_BUFF":
-            if skill.status_effect:
-                # Apply deepcopy of status to prevent template corruption
-                effect_instance = copy.deepcopy(skill.status_effect)
-                self.apply_status_logic(target, effect_instance)
-        
-        # --- BENIKAWA SKILL LOGIC ---
-        # FIX 2: DEF_BUFF_BASE_PER (Benikawa S2) removed entirely from Step 3 and shifted to Step 1
+            elif chip.effect_type == "SHIGEMURA_INFILTRATOR_SPECIAL_2":
+                haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
+                if haste and damage > 0:
+                    bonus_pct = min(0.75, haste.duration * 0.15)
+                    bonus_dmg = int(damage * bonus_pct)
+                    target.hp -= bonus_dmg
+                    self.log(f"[bold yellow]Maximized Ram! +{bonus_dmg} Bonus Damage![/bold yellow]")
+                    attacker.status_effects.remove(haste)
 
-        # COND_TARGET_HAS_BLEED_DMG_PER (Benikawa S3)
-        elif skill.effect_type == "COND_TARGET_HAS_BLEED_DMG_PER":
-            has_bleed = any(s.name == "Bleed" for s in target.status_effects)
-            if has_bleed:
-                bonus_dmg = int(skill.base_damage * (skill.effect_val / 10.0))
-                target.hp -= bonus_dmg
-                
-                # --- SADISM BIND APPLY ---
-                if 'sadism_bind_to_apply' in locals() and sadism_bind_to_apply > 0:
-                    bind_eff = StatusEffect(
-                        "Bind", "[dim gold1]⛓[/dim gold1]", 1, 
-                        "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", 
-                        duration=sadism_bind_to_apply
-                    )
-                    self.apply_status_logic(target, bind_eff)
-
-        # --- EXISTING KUROGANE & GENERIC EFFECTS ---
-        elif skill.effect_type == "APPLY_BLEED_HEAVY_STACKS":
-            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=2, type="DEBUFF")
-            self.apply_status_logic(target, bleed)
-        elif skill.effect_type == "APPLY_BLEED_AND_BIND":
-            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF")
-            self.apply_status_logic(target, bleed)
-            bind = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF")
-            self.apply_status_logic(target, bind)
-        elif skill.effect_type == "APPLY_BLEED_AND_BIND_HEAVY":
-            bleed = StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF")
-            self.apply_status_logic(target, bleed)
-            bind = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2, type="DEBUFF")
-            self.apply_status_logic(target, bind)
-
-        # Generic Status + Naganohara Skill III Dual Type
-        elif (skill.effect_type == "APPLY_STATUS" or skill.effect_type == "COND_BLEED_DMG_AND_APPLY") and hasattr(skill, "status_effect"):
-                if skill.status_effect.name == "Nerve Disruption":
-                    target.nerve_disruption_turns = skill.status_effect.duration
-                else:
-                    new_status = copy.deepcopy(skill.status_effect)
-                    self.apply_status_logic(target, new_status)
-
-        elif skill.effect_type == "HASTE_BIND_SPECIAL_TYPE1":
-            team = self.allies if attacker in self.allies else self.enemies
-            enemy_team = self.enemies if attacker in self.allies else self.allies
+            elif chip.effect_type == "KIRYOKU_COUNCIL_SPECIAL":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "AYAKO_SPECIAL":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3))
+                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 4, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "SUMIKO_SPECIAL_1":
+                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
+            elif chip.effect_type == "SUMIKO_SPECIAL_2":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 5, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=4))
+                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
+            elif chip.effect_type == "APPLY_RUPTURE_HEAVY_STACKS":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
             
-            valid_allies = [u for u in team if u.hp > 0 and u != attacker]
-            valid_enemies = [u for u in enemy_team if u.hp > 0]
+            elif chip.effect_type == "HISAYUKI_SPECIAL_1":
+                if any(s.name == "Haste" for s in attacker.status_effects): self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
+                else: self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
+            elif chip.effect_type == "BIND_RUPTURE_SPECIAL_TYPE1":
+                self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
             
-            chosen_allies = random.sample(valid_allies, min(2, len(valid_allies)))
-            chosen_enemies = random.sample(valid_enemies, min(2, len(valid_enemies)))
-            
-            for a in chosen_allies: self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=skill.effect_val))
-            for e in chosen_enemies: self.apply_status_logic(e, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=skill.effect_val))
-            
-        elif skill.effect_type == "HANA_SPECIAL_RAGE":
-            # FIX 3: Safety logic check injected
-            if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
-            attacker.next_turn_modifiers["outgoing_dmg_mult"] = 0.6
-            target.temp_modifiers["outgoing_dmg_mult"] *= 0.85
-            
-        elif skill.effect_type == "BLEED_RUPTURE_SPECIAL_TYPE1":
-            self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", skill.effect_val, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
-            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", skill.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
-            
-        elif skill.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_RANDOM":
-            team = self.allies if attacker in self.allies else self.enemies
-            valid_allies = [u for u in team if u.hp > 0 and u != attacker]
-            chosen_allies = random.sample(valid_allies, min(skill.effect_val, len(valid_allies)))
-            
-            targets_to_heal = [attacker] + chosen_allies
-            for a in targets_to_heal:
-                a.hp = min(a.max_hp, a.hp + damage)
-                self.log(f"[light_green]-> {attacker.name} Heals {a.name} for {damage}.[/light_green]")
-            damage = 0
+            elif chip.effect_type == "RAVEN_SPECIAL_1":
+                target.next_hit_taken_flat_bonus += 6
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=4))
+            elif chip.effect_type == "RAVEN_SPECIAL_2":
+                if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
+                target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.30
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 6, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=1))
+            elif chip.effect_type == "FALCON_SPECIAL_1":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "FALCON_SPECIAL_2":
+                if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
+                target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.30
+                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2))
+            elif chip.effect_type == "EAGLE_SPECIAL_1":
+                target.next_hit_taken_flat_bonus += 5
+                if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
+                target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.50
+            elif chip.effect_type == "EAGLE_SPECIAL_2":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=5))
 
-        elif skill.effect_type == "NAGANOHARA_KIRYOKU_SPECIAL":
-            team = self.allies if attacker in self.allies else self.enemies
-            valid_allies = [u for u in team if u.hp > 0 and u != attacker]
-            for a in random.sample(valid_allies, min(2, len(valid_allies))):
-                self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
-                
-            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
-            if has_rupture:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
-            else:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))   
-                
-        elif skill.effect_type == "RUPTURE_DAMAGE_BUFF_TYPE1":
-            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
-            if has_rupture and damage > 0:
-                bonus = int(damage * 0.25)
-                target.hp -= bonus
-                self.log(f"[medium_spring_green]Bonus Rupture Execute: {bonus} damage![/medium_spring_green]")
-
-        elif skill.effect_type == "SHIGEMURA_INFILTRATOR_SPECIAL_2":
-            haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
-            if haste and damage > 0:
-                bonus_pct = min(0.75, haste.duration * 0.15)
-                bonus_dmg = int(damage * bonus_pct)
-                target.hp -= bonus_dmg
-                self.log(f"[bold yellow]Maximized Ram! +{bonus_dmg} Bonus Damage![/bold yellow]")
-                attacker.status_effects.remove(haste)
-
-        # Kiryoku / Fairylight / Rupture
-        elif skill.effect_type == "KIRYOKU_COUNCIL_SPECIAL":
-            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
-            self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
-        elif skill.effect_type == "AYAKO_SPECIAL":
-            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3))
-            self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 4, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
-        elif skill.effect_type == "SUMIKO_SPECIAL_1":
-            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
-        elif skill.effect_type == "SUMIKO_SPECIAL_2":
-            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 5, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=4))
-            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
-        elif skill.effect_type == "APPLY_RUPTURE_HEAVY_STACKS":
-            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
-        
-        # Hisayuki / Infiltrators / Disciplinary
-        elif skill.effect_type == "HISAYUKI_SPECIAL_1":
-            if any(s.name == "Haste" for s in attacker.status_effects):
-                self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
-            else:
-                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
-        elif skill.effect_type == "BIND_RUPTURE_SPECIAL_TYPE1":
-            self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2))
-            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
-        
-        # Ninjas (Raven, Falcon, Eagle)
-        elif skill.effect_type == "RAVEN_SPECIAL_1":
-            target.next_hit_taken_flat_bonus += 6
-            self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=4))
-        elif skill.effect_type == "RAVEN_SPECIAL_2":
-            if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
-            target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.30
-            self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 6, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=1))
-        elif skill.effect_type == "FALCON_SPECIAL_1":
-            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
-        elif skill.effect_type == "FALCON_SPECIAL_2":
-            if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
-            target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.30
-            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
-            self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2))
-        elif skill.effect_type == "EAGLE_SPECIAL_1":
-            target.next_hit_taken_flat_bonus += 5
-            if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
-            target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.50
-        elif skill.effect_type == "EAGLE_SPECIAL_2":
-            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=5))
-
-        # Riposte Gang / Adam
-        elif skill.effect_type == "RIPOSTE_GAIN_SPECIAL_1":
-            if any(s.name == "Pierce Affinity" for s in target.status_effects):
-                self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-        elif skill.effect_type == "PIERCE_AFFINITY_INFLICT_SPECIAL_1":
-            if any(s.name == "Pierce Affinity" for s in target.status_effects):
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
-            else:
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
-        elif skill.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_1":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
-        elif skill.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_2":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
-        elif skill.effect_type == "ADAM_SPECIAL_1":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
-            self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-        elif skill.effect_type == "ADAM_SPECIAL_2":
-            pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
-            if pierce_target_eff:
-                self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5 * pierce_target_eff.duration))
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
-        elif skill.effect_type == "ADAM_SPECIAL_3":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=5))
-            riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
-            if riposte_eff: riposte_eff.duration = 50
-            else: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=50))
-        
-        # --- COUNTER SKILLS [ON HIT] EFFECTS ---
-        elif skill.effect_type == "COUNTER_SKILL_SPECIAL_TYPE1":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
-            
-        elif skill.effect_type == "COUNTER_SKILL_SPECIAL_TYPE3":
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
-
-        # --- RIPOSTE GANG KATAS SKILL EFFECTS ---
-        elif skill.effect_type in [
-            "NAGANOHARA_RIPOSTE_APPEL", "NAGANOHARA_RIPOSTE_CEDE", "NAGANOHARA_RIPOSTE_COUNTERPARRY", 
-            "AKASUKE_RIPOSTE_ENGARDE", "AKASUKE_RIPOSTE_FEINT", "AKASUKE_RIPOSTE_PRISEDEFER"
-        ]:
-            riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
-            
-            # --- NAGANOHARA SKILLS ---
-            if skill.effect_type == "NAGANOHARA_RIPOSTE_APPEL":
-                self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
-                
-            elif skill.effect_type == "NAGANOHARA_RIPOSTE_CEDE":
-                self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
-                # Damage and debuff logic is handled in Step 2!
-                
-            elif skill.effect_type == "NAGANOHARA_RIPOSTE_COUNTERPARRY":
-                if riposte_eff and riposte_eff.duration >= 25:
-                    riposte_eff.duration = 50
-                    self.log(f"[cyan1]{attacker.name} maxes out their Riposte Stance![/cyan1]")
-                else:
-                    self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=20))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
-                
-            # --- AKASUKE SKILLS ---
-            elif skill.effect_type == "AKASUKE_RIPOSTE_ENGARDE":
-                if not riposte_eff or riposte_eff.duration <= 0:
+            # Riposte Gang
+            elif chip.effect_type == "RIPOSTE_GAIN_SPECIAL_1":
+                if any(s.name == "Pierce Affinity" for s in target.status_effects):
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                else:
+            elif chip.effect_type == "PIERCE_AFFINITY_INFLICT_SPECIAL_1":
+                if any(s.name == "Pierce Affinity" for s in target.status_effects): self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                else: self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+            elif chip.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_1":
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+            elif chip.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_2":
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+            elif chip.effect_type == "ADAM_SPECIAL_1":
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
+            elif chip.effect_type == "ADAM_SPECIAL_2":
+                pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                if pierce_target_eff: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5 * pierce_target_eff.duration))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+            elif chip.effect_type == "ADAM_SPECIAL_3":
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=5))
+                riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
+                if riposte_eff: riposte_eff.duration = 50
+                else: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=50))
+            
+            # COUNTER SKILLS
+            elif chip.effect_type == "COUNTER_SKILL_SPECIAL_TYPE1":
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+            elif chip.effect_type == "COUNTER_SKILL_SPECIAL_TYPE3":
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+
+            # RIPOSTE KATAS EFFECTS
+            elif chip.effect_type in ["NAGANOHARA_RIPOSTE_APPEL", "NAGANOHARA_RIPOSTE_CEDE", "NAGANOHARA_RIPOSTE_COUNTERPARRY", "AKASUKE_RIPOSTE_ENGARDE", "AKASUKE_RIPOSTE_FEINT", "AKASUKE_RIPOSTE_PRISEDEFER"]:
+                riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
+                if chip.effect_type == "NAGANOHARA_RIPOSTE_APPEL":
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
-                
-            elif skill.effect_type == "AKASUKE_RIPOSTE_FEINT":
-                # [On Use] Gain 1 Haste
-                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
-                # [On Use] If this unit has 10+ Riposte, Gain 1 Haste
-                if riposte_eff and riposte_eff.duration >= 10:
-                    self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
-                    
-                # [On Hit] If target has Pierce Affinity, gain 10 Riposte
-                target_pierce = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
-                if target_pierce and target_pierce.duration > 0:
+                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+                elif chip.effect_type == "NAGANOHARA_RIPOSTE_CEDE":
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                    
-                # [On Hit] Inflict 2 Pierce Affinity
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
-                
-            elif skill.effect_type == "AKASUKE_RIPOSTE_PRISEDEFER":
-                self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
-                # Base damage increase handled in Step 2!
-            
-        # --- KIRYOKU FAIRY & INFILTRATOR ---
-        elif skill.effect_type == "RUPTURE_SPECIAL1":
-            # Yuri Kiryoku S1: If target has Rupture (or Fairylight), +Count. Else, +Potency.
-            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
-            if has_rupture:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=skill.effect_val))
-            else:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", skill.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                elif chip.effect_type == "NAGANOHARA_RIPOSTE_COUNTERPARRY":
+                    if riposte_eff and riposte_eff.duration >= 25:
+                        riposte_eff.duration = 50
+                        self.log(f"[cyan1]{attacker.name} maxes out their Riposte Stance![/cyan1]")
+                    else: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=20))
+                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+                elif chip.effect_type == "AKASUKE_RIPOSTE_ENGARDE":
+                    if not riposte_eff or riposte_eff.duration <= 0: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
+                    else: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5))
+                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+                elif chip.effect_type == "AKASUKE_RIPOSTE_FEINT":
+                    self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
+                    if riposte_eff and riposte_eff.duration >= 10: self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
+                    target_pierce = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                    if target_pierce and target_pierce.duration > 0: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
+                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                elif chip.effect_type == "AKASUKE_RIPOSTE_PRISEDEFER":
+                    self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
+                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
 
-        elif skill.effect_type == "FAIRYLIGHT_APPLY":
-            # Benikawa Kiryoku S2 / Hana Kiryoku S1: If target has Rupture (or Fairylight), apply Fairylight
-            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
-            if has_rupture:
-                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", skill.effect_val, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
+            # KIRYOKU FAIRY & INFILTRATOR
+            elif chip.effect_type == "RUPTURE_SPECIAL1":
+                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                if has_rupture: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=chip.effect_val))
+                else: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", chip.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "FAIRYLIGHT_APPLY":
+                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                if has_rupture: self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", chip.effect_val, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "BENIKAWA_KIRYOKU_SPECIAL":
+                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                if has_rupture: self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "FAIRYLIGHT_SPECIAL1":
+                has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
+                if has_fairylight: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", chip.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "HANA_KIRYOKU_SPECIAL":
+                has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
+                if has_fairylight:
+                    self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+                    attacker.temp_modifiers["incoming_dmg_mult"] *= 0.70
+            elif chip.effect_type == "HASTE_GAIN_SPECIAL_TYPE1":
+                has_haste = any(s.name == "Haste" for s in attacker.status_effects)
+                if has_haste: self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
+                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=chip.effect_val))
+            elif chip.effect_type == "DEBUFF_ATK_MULT":
+                target.temp_modifiers["outgoing_dmg_mult"] *= chip.effect_val
 
-        # FIX 2: Removed [On Use] self modifier portion from BENIKAWA_KIRYOKU_SPECIAL entirely since it is in Step 1
-        elif skill.effect_type == "BENIKAWA_KIRYOKU_SPECIAL":
-            has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
-            if has_rupture:
-                self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
-
-        elif skill.effect_type == "FAIRYLIGHT_SPECIAL1":
-            # Hana Kiryoku S2: If target has Fairylight (specifically), inflict Rupture Potency
-            has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
-            if has_fairylight:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", skill.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
-
-        elif skill.effect_type == "HANA_KIRYOKU_SPECIAL":
-            # Hana Kiryoku S3: If target has Fairylight (specifically), inflict 2 Rupture Count, then take -30% dmg this turn
-            has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
-            if has_fairylight:
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
-                attacker.temp_modifiers["incoming_dmg_mult"] *= 0.70
-
-        elif skill.effect_type == "HASTE_GAIN_SPECIAL_TYPE1":
-            # Shigemura Infiltrator S1: [On Use] If has Haste, gain 1 Haste. [On Hit] Gain 1 Haste.
-            has_haste = any(s.name == "Haste" for s in attacker.status_effects)
-            if has_haste:
-                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
-            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=skill.effect_val))
-
-        elif skill.effect_type == "DEBUFF_ATK_MULT":
-            # Target deals reduced damage for the rest of the turn
-            target.temp_modifiers["outgoing_dmg_mult"] *= skill.effect_val
-
-        # --- BENIKAWA NINJA CLAN ---
-        elif skill.effect_type == "BENIKAWA_CLAN_SPECIAL_1":
-            # Target takes +4 Final Damage from other attacks this turn (by reducing their flat defense by 4)
-            target.temp_modifiers["final_dmg_reduction"] -= 4
-            
-            # If target has Bleed, Inflict 3 Bleed Potency
-            has_bleed = any(s.name == "Bleed" for s in target.status_effects)
-            if has_bleed:
-                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=1))
-                
-            # Inflict 1 Pierce Affinity
-            self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=1))
-
-        elif skill.effect_type == "BENIKAWA_CLAN_SPECIAL_2":
-            # If this unit does not have Poise, gain 4 Poise Count (we assign 1 Potency to obey the minimum rule)
-            has_poise = any(s.name == "Poise" for s in attacker.status_effects)
-            if not has_poise:
-                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "", duration=4))
-                
-            # Gain 3 Poise Potency
-            self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=1))
-            
-            # Gain 2 Haste next turn (Auto-intercepted by our delayed application queue!)
-            self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=2))
-
-        elif skill.effect_type == "BENIKAWA_CLAN_SPECIAL_3":
-            # Target deals -15% damage this turn, then deals -25% damage next turn
-            target.temp_modifiers["outgoing_dmg_mult"] *= 0.85
-            target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.75
-            
-            # If target has Bleed, inflict 3 Bleed Count and 3 Bleed Potency, then this unit gains 2 Haste next turn
-            has_bleed = any(s.name == "Bleed" for s in target.status_effects)
-            if has_bleed:
-                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=3))
+            # BENIKAWA NINJA CLAN
+            elif chip.effect_type == "BENIKAWA_CLAN_SPECIAL_1":
+                target.temp_modifiers["final_dmg_reduction"] -= 4
+                has_bleed = any(s.name == "Bleed" for s in target.status_effects)
+                if has_bleed: self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=1))
+                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=1))
+            elif chip.effect_type == "BENIKAWA_CLAN_SPECIAL_2":
+                has_poise = any(s.name == "Poise" for s in attacker.status_effects)
+                if not has_poise: self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "", duration=4))
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=1))
                 self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=2))
-                
-            # If target has Pierce Affinity, inflict 2 Pierce Affinity, then this unit gains 3 Poise Potency and 2 Poise Count
-            has_pierce = any(s.name == "Pierce Affinity" for s in target.status_effects)
-            if has_pierce:
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=2))
-                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=2))
+            elif chip.effect_type == "BENIKAWA_CLAN_SPECIAL_3":
+                target.temp_modifiers["outgoing_dmg_mult"] *= 0.85
+                target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.75
+                has_bleed = any(s.name == "Bleed" for s in target.status_effects)
+                if has_bleed:
+                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=3))
+                    self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=2))
+                has_pierce = any(s.name == "Pierce Affinity" for s in target.status_effects)
+                if has_pierce:
+                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=2))
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=2))
 
-        if target.hp <= 0:
-            target.hp = 0
-            self.log(f"[bold red]{target.name} was defeated![/bold red]")
+            if target.hp <= 0:
+                target.hp = 0
+                self.log(f"[bold red]{target.name} was defeated![/bold red]")
+
+            # --- DELAY BETWEEN CHIP HITS ---
+            # If this is a multi-hit skill and not the last chip, render the current state and pause
+            if len(chips_to_execute) > 1 and chip_idx < len(chips_to_execute) - 1:
+                self.render_battle_screen()
+                time.sleep(0.75)
 
         self.render_battle_screen()
         time.sleep(0.5)
@@ -1533,7 +1375,7 @@ class BattleManager:
             # --- KATA / RIFT APTITUDE DISPLAY ---
             if unit in self.enemies:
                 kata_label = "Rift Aptitude"
-                kata_info_str = unit.kata.rift_aptitude
+                kata_info_str = str(unit.kata.rift_aptitude) if unit.kata else "None"
             else:
                 kata_label = "Kata"
                 kata_info_str = unit.kata.name if unit.kata else "None"
@@ -1544,9 +1386,19 @@ class BattleManager:
                 for skill, count in sorted_pool:
                     c = get_element_color(skill.element)
                     t_r = get_tier_roman(skill.tier)
-                    desc = skill.description if skill.description else ""
+                    
+                    # --- CHIP SKILL / DETAILED DESCRIPTION LOGIC ---
+                    if hasattr(skill, "inspect_description") and skill.inspect_description:
+                        desc = skill.inspect_description
+                    else:
+                        desc = skill.description if skill.description else ""
+                        
                     dmg_str = f"[bold]Dmg: {skill.base_damage}[/bold]"
-                    pool_text += f"x{count} [{c}]{skill.name}[/{c}] ({t_r}) {dmg_str}\n       [light_green]{desc}[/light_green]\n"
+                    
+                    # Format newlines so multi-line inspect descriptions indent perfectly
+                    formatted_desc = desc.replace("\n", "\n       ")
+                    
+                    pool_text += f"x{count} [{c}]{skill.name}[/{c}] ({t_r}) {dmg_str}\n       [light_green]{formatted_desc}[/light_green]\n"
             else:
                 pool_text = "No Kata / Skill info available."
 

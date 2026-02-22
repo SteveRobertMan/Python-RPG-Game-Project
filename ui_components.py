@@ -45,10 +45,9 @@ def get_player_input(prompt_text=">> "):
 def draw_stage_select_menu(unlocked_stage):
     # Initialize page: Default to 1, but if Act 1 is cleared (stage > 10), start on Page 2
     current_page = 1
-    if unlocked_stage >= 11:
-        current_page = 2
-    if unlocked_stage >= 22:
-        current_page = 3
+    if unlocked_stage >= 11: current_page = 2
+    if unlocked_stage >= 22: current_page = 3
+    if unlocked_stage >= 45: current_page = 4
 
     while True:
         clear_screen()
@@ -170,7 +169,40 @@ def draw_stage_select_menu(unlocked_stage):
                     table.add_row(s_id, "???", "[dim]LOCKED[/dim]")
 
             config.console.print(table)
-            config.console.print("\n[P] Previous Page (Act 2) | [0] Return")
+            config.console.print("\n[P] Previous Page (Act 2) | [N] Next Page (Act 4) | [0] Return")
+
+        elif current_page == 4:
+            # --- ACT 4: STEADFASTNESS [勇往直前] || 『NeverTurnBack』 ---
+            table = Table(title="Act 4: Steadfastness [勇往直前] || 『NeverTurnBack』", expand=True, style="bold green3", border_style="green3")
+            table.add_column("Stage", justify="center", style="cyan")
+            table.add_column("Title", justify="left", style="white")
+            table.add_column("Status", justify="center")
+
+            get_status = lambda req, current: "[green]CLEAR[/green]" if current > req else "[yellow]OPEN[/yellow]"
+
+            # Act 4 Stages (Indices 45 to 72)
+            act4_stages = [
+                ("4-1", "Swapped Nightmare 🕮", 45), ("4-2", "Vanguard Assembly 🕮", 46), ("4-3", "The Westward Megastructure 🕮", 47),
+                ("4-4", "Grasslands Border ♖", 48), ("4-5", "Wall Of Reality ♖", 49), ("4-6", "Bastard Child ♖", 50),
+                ("4-7", "Luoxia Gardening School ♖", 51), ("4-8", "The Upper Echelon ♕", 52), ("4-9", "The Ritual 🕮", 53),
+                ("4-10", "War Of The Nine Armies 🕮", 54), ("4-11", "Endless Wave I ♗", 55), ("4-12", "Endless Wave II ♗", 56),
+                ("4-13", "Endless Wave III ♗", 57), ("4-14", "Leak 🕮", 58), ("4-15", "Classical Performance ♗", 59),
+                ("4-16", "The Pagoda 🕮", 60), ("4-17", "The Secretary ♕", 61), ("4-18", "Ingrained Command ♕", 62),
+                ("4-19", "The Nine Armies Awake ♖", 63), ("4-20", "Command Suppressed ♖", 64), ("4-21", "The Outcast ♖", 65),
+                ("4-22", "Xiangyun’s Farewell 🕮", 66), ("4-23", "A Senior’s Morale ♗", 67), ("4-24", "The Thousand Blossom Brotherhood ♗", 68),
+                ("4-25", "Vanguard Of The Past ♕", 69), ("4-26", "The Last Obstacle ♕", 70), ("4-27", "Send-offs 🕮", 71),
+                ("4-28", "The Medium of Desire 🕮", 72)
+            ]
+
+            for s_id, s_title, req_idx in act4_stages:
+                if unlocked_stage >= req_idx: # Unlocks when previous stage is cleared
+                    status = get_status(req_idx, unlocked_stage)
+                    table.add_row(s_id, s_title, status)
+                else:
+                    table.add_row(s_id, "???", "[dim]LOCKED[/dim]")
+
+            config.console.print(table)
+            config.console.print("\n[P] Previous Page (Act 3) | [0] Return")
 
         # --- INPUT HANDLING ---
         choice = get_player_input("Enter Stage ID (e.g. \"1-1\") or Option > ").lower()
@@ -178,7 +210,7 @@ def draw_stage_select_menu(unlocked_stage):
         if choice == "0":
             return "0"
         
-        elif choice == "n" and not current_page == 3:
+        elif choice == "n" and not current_page == 4:
             current_page += 1
             continue
         
@@ -201,6 +233,8 @@ def draw_stage_select_menu(unlocked_stage):
                     required_idx = 10 + sub
                 elif act == 3:
                     required_idx = 21 + sub
+                elif act == 4:
+                    required_idx = 44 + sub
                 
                 if required_idx != -1:
                     if unlocked_stage >= required_idx:

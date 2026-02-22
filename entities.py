@@ -78,6 +78,22 @@ class Skill:
         self.status_effect = None 
         self.alt_status_effect = None
 
+class Chip:
+    def __init__(self, base_damage, effect_type=None, effect_val=0):
+        self.base_damage = base_damage
+        self.effect_type = effect_type
+        self.effect_val = effect_val
+        self.status_effect = None
+        self.alt_status_effect = None
+
+class ChipSkill(Skill):
+    def __init__(self, name, tier, element_idx, chips, description="", inspect_description="", effect_type=None, effect_val=0):
+        # We sum the base damage for UI / generic checks, but true damage is calculated per chip
+        total_dmg = sum(c.base_damage for c in chips)
+        super().__init__(name, tier, element_idx, total_dmg, description, effect_type, effect_val)
+        self.chips = chips
+        self.inspect_description = inspect_description
+
 class Kata:
     def __init__(self, name, owner_name, rarity, rift_aptitude, resistances, description=""):
         self.name = name

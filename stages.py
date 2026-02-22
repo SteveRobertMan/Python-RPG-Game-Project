@@ -5,6 +5,7 @@ import config
 import scd
 from player_state import player
 from scd import bleed_1, bleed_2, bleed_3, bind_1, rupture_1, rupture_2, rupture_3, rupturecount_2, bleedcount_2, bind_4, pierce_affinity_1
+from entities import Chip, ChipSkill
 
 # --- PARTY MEMBER CREATION ---
 
@@ -475,6 +476,11 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Riposte Gang Henchman"))
         enemies.append(spawn("Riposte Gang Squad Leader"))
 
+    elif stage_id == 49:
+        enemies.append(spawn("Infiltrating Yunhai Border Guard", "A"))
+        enemies.append(spawn("Infiltrating Yunhai Border Guard", "B"))
+        enemies.append(spawn("Infiltrating Yunhai Border Guard", "C"))
+
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
 
@@ -905,7 +911,37 @@ def get_enemy_database():
     adam.description = "A remarkably young and immensely talented Executive of the Riposte Gang, Adam flawlessly blends the grace of a high-class chef with the lethal precision of a master swordsman. He wields his rapier with terrifying perfection, capable of holding off six Kata-enhanced fighters simultaneously through sheer battle IQ and unnatural physical toughness before finally reaching his limit. Despite his criminal allegiance and composed demeanor, he possesses a surprisingly naive loyalty to his terrifying Boss and showed genuine, polite hospitality toward his captive."
     adam.unlock_stage_id = 42
 
+    guard = Entity("Infiltrating Yunhai Border Guard", is_player=False)
+    guard.max_hp = 62
+    k_guard = Kata("Yunhai Guard", "Yunhai", 1, 1, [1.1, 0.8, 0.9, 1.2, 1.0, 1.0, 1.3])
+    
+    # Skill I: Metal Baton ◈ ◈
+    s1_c1 = Chip(base_damage=2, effect_type="APPLY_STATUS")
+    s1_c1.status_effect = scd.rupturecount_2
+    s1_c2 = Chip(base_damage=3, effect_type="APPLY_STATUS")
+    s1_c2.status_effect = scd.rupture_1
+    
+    s1_desc_brief = "[On Hit] Inflict Rupture Count and Rupture Potency"
+    s1_desc_inspect = "◈ Base Damage: 2\n[On Hit] Inflict 2 Rupture Count\n◈ Base Damage: 3\n[On Hit] Inflict 1 Rupture Potency"
+    
+    g_s1 = ChipSkill("Metal Baton ◈ ◈", 1, EL_AGAPE, [s1_c1, s1_c2], description=s1_desc_brief, inspect_description=s1_desc_inspect)
+
+    # Skill II: Pinning ◈ ◈
+    s2_c1 = Chip(base_damage=5, effect_type="RUPTURE_DAMAGE_BUFF_TYPE2", effect_val=2)
+    s2_c2 = Chip(base_damage=1, effect_type="APPLY_STATUS")
+    s2_c2.status_effect = scd.rupture_2
+    
+    s2_desc_brief = "[On Hit] Inflict Rupture Potency, deals +Final Damage if target has Rupture"
+    s2_desc_inspect = "◈ Base Damage: 5\n[On Hit] If target has Rupture, deal +2 Final Damage\n◈ Base Damage: 1\n[On Hit] Inflict 2 Rupture Potency"
+    
+    g_s2 = ChipSkill("Pinning ◈ ◈", 2, EL_STORGE, [s2_c1, s2_c2], description=s2_desc_brief, inspect_description=s2_desc_inspect)
+
+    k_guard.skill_pool_def = [(g_s1, 4), (g_s2, 4)]
+    guard.equip_kata(k_guard)
+    guard.description = "infiltratingyunhaiborderguarddesc"
+    guard.unlock_stage_id = 49
+
     # Append to existing return list in stages.py:
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro, 
             sp_kiryoku, c_kiryoku, ayako, sumiko, inf_heiwa, inf_kiryoku, inf_kasa, inf_lead, hisayuki, inf_council, inf_disc, 
-            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam]
+            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard]

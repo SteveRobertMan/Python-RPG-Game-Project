@@ -140,7 +140,7 @@ def confirm_quit():
             strip = save_manager.generate_save_strip(player)
             
             console.print(f"\n[bold]Here is your Save Strip, copy it:[/bold]\n")
-            console.print(Panel(f"{strip}", style="yellow"))
+            console.print(f"[yellow]{strip}[/yellow]")
             console.print("\n[dim]Select text and Ctrl+C to copy.[/dim]")
             
         get_player_input("Press Enter to exit...")
@@ -161,7 +161,10 @@ def sync_player_roster():
         ("Yuri", 0, stages.create_yuri),
         ("Benikawa", 4, stages.create_benikawa),
         ("Shigemura", 15, stages.create_shigemura),
-        ("Naganohara", 24, stages.create_naganohara)
+        ("Naganohara", 41, stages.create_naganohara),
+        ("Hana", 56, stages.create_hana),
+        ("Kagaku", 56, stages.create_kagaku),
+        ("Natsume", 56, stages.create_natsume)
     ]
     
     for name, req_stage, factory_func in unlock_milestones:
@@ -292,6 +295,22 @@ def run_game():
                 guest_kagaku = stages.create_kagaku(guest_loadout)
                 party.insert(5, guest_kagaku)
 
+            if stage_id in [49, 50, 51, 52, 53]:
+                required_members = ["Akasuke", "Yuri", "Benikawa", "Shigemura", "Naganohara", "Hana", "Kagaku"]
+                for req_name in required_members:
+                    if not any(u.name == req_name for u in party):
+                        loadout = get_equipped_data(req_name)
+                        factory_func = getattr(stages, f"create_{req_name.lower()}")
+                        party.append(factory_func(loadout))
+                party = [p for p in party if p.name != "Hana"]
+                guest_loadout = scd.get_kata_data_by_name("Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana")
+                guest_hana = stages.create_hana(guest_loadout)
+                party.insert(5, guest_hana)
+                party = [p for p in party if p.name != "Kagaku"]
+                guest_loadout = scd.get_kata_data_by_name("Kasakura High School Disciplinary Committee Member Kagaku")
+                guest_kagaku = stages.create_kagaku(guest_loadout)
+                party.insert(6, guest_kagaku)
+
             enemies = stages.load_stage_enemies(stage_id)
             if not enemies:
                 console.print("[red]Error: Enemies not found for this stage![/red]")
@@ -324,6 +343,7 @@ def run_game():
                 elif stage_id == 38: story_manager.play_stage_3_16_start()
                 elif stage_id == 39: story_manager.play_stage_3_17_start()
                 elif stage_id == 42: story_manager.play_stage_3_20_start()
+                elif stage_id == 49: pass # story_manager.play_stage_4_4_start()
 
             battle_manager.start_battle(party, enemies, stage_id)
             
@@ -708,6 +728,23 @@ def run_game():
                             if checklatest not in cl: cl.append(checklatest); config.player_data["cleared_stages"] = cl
                         else:
                             if random.random() < 0.8: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
+
+                    elif stage_id == 49: # Stage 4-4
+                        checklatest = stage_id
+                        if should_play_story:
+                            # story_manager.play_stage_4_4_end()
+                            rewards_text.extend([
+                                "2x Microchip", 
+                                "2x Microprocessor",
+                            ])
+                            mats["Microchip"] = mats.get("Microchip", 0) + 2
+                            mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                            if config.player_data["latest_stage"] < checklatest: config.player_data["latest_stage"] = checklatest
+                            cl = config.player_data.get("cleared_stages", [])
+                            if checklatest not in cl: cl.append(checklatest); config.player_data["cleared_stages"] = cl
+                        else:
+                            if random.random() < 0.7: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
+                            if random.random() < 0.7: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
 
                     config.current_state = config.STATE_MAIN_MENU
 
@@ -1385,6 +1422,70 @@ def run_game():
                         if config.player_data["latest_stage"] < 45: config.player_data["latest_stage"] = 45
                         sync_currencies()
                         get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-1":
+                if unlocked >= 45:
+                    if unlocked >= 46:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        # story_manager.play_stage_4_1_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("2x Microchip")
+                        console.print("2x Microprocessor")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 2
+                        mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        if config.player_data["latest_stage"] < 46: config.player_data["latest_stage"] = 46
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-2":
+                if unlocked >= 46:
+                    if unlocked >= 47:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        # story_manager.play_stage_4_2_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("3x Sports Water Bottle")
+                        mats = config.player_data["materials"]
+                        mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 3
+                        if config.player_data["latest_stage"] < 47: config.player_data["latest_stage"] = 47
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-3":
+                if unlocked >= 47:
+                    if unlocked >= 48:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        # story_manager.play_stage_4_3_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("3x Microchip")
+                        mats = config.player_data["materials"]
+                        mats["Microchip"] = mats.get("Microchip", 0) + 3
+                        if config.player_data["latest_stage"] < 48: config.player_data["latest_stage"] = 48
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-4":
+                if unlocked >= 48:
+                    config.player_data["selected_stage"] = 49
+                    config.current_state = config.STATE_BATTLE
                 else:
                     console.print("[red]Locked![/red]")
                     time.sleep(1)
