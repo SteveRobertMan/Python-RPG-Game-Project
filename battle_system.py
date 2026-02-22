@@ -826,7 +826,7 @@ class BattleManager:
                 # DEFENSE TIER REDUCTION (Uses Parent skill tier)
                 def_max_tier = self.get_max_skill_tier(target)
                 if skill.tier > def_max_tier:
-                    final_dmg -= (final_dmg * min(0.80, 0.20 * (skill.tier - def_max_tier)))
+                    final_dmg -= (final_dmg * min(0.60, 0.15 * (skill.tier - def_max_tier)))
 
                 damage = int(final_dmg)
 
