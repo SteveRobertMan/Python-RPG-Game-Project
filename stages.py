@@ -481,6 +481,11 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Infiltrating Yunhai Border Guard", "B"))
         enemies.append(spawn("Infiltrating Yunhai Border Guard", "C"))
 
+    elif stage_id == 50:
+        enemies.append(spawn("Infiltrating Yunhai Border Guard", "A"))
+        enemies.append(spawn("Infiltrating Yunhai Border Guard", "B"))
+        enemies.append(spawn("Infiltrating Yunhai Border Guard Leader"))
+
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
 
@@ -915,33 +920,64 @@ def get_enemy_database():
     guard.max_hp = 62
     k_guard = Kata("Yunhai Guard", "Yunhai", 1, 1, [1.1, 0.8, 0.9, 1.2, 1.0, 1.0, 1.3])
     
-    # Skill I: Metal Baton ◈ ◈
+    # Skill I: Metal Baton ◈◈
     s1_c1 = Chip(base_damage=2, effect_type="APPLY_STATUS")
     s1_c1.status_effect = scd.rupturecount_2
     s1_c2 = Chip(base_damage=3, effect_type="APPLY_STATUS")
     s1_c2.status_effect = scd.rupture_1
     
-    s1_desc_brief = "[On Hit] Inflict Rupture Count and Rupture Potency"
-    s1_desc_inspect = "◈ Base Damage: 2\n[On Hit] Inflict 2 Rupture Count\n◈ Base Damage: 3\n[On Hit] Inflict 1 Rupture Potency"
+    s1_desc_brief = "[On Hit] Inflict Rupture Count\n      [On Hit] Inflict Rupture Potency"
+    s1_desc_inspect = "◈ Base Damage: 2\n      [On Hit] Inflict 2 Rupture Count\n      ◈ Base Damage: 3\n      [On Hit] Inflict 1 Rupture Potency"
     
-    g_s1 = ChipSkill("Metal Baton ◈ ◈", 1, EL_AGAPE, [s1_c1, s1_c2], description=s1_desc_brief, inspect_description=s1_desc_inspect)
+    g_s1 = ChipSkill("Metal Baton ◈◈", 1, EL_AGAPE, [s1_c1, s1_c2], description=s1_desc_brief, inspect_description=s1_desc_inspect)
 
-    # Skill II: Pinning ◈ ◈
+    # Skill II: Pinning ◈◈
     s2_c1 = Chip(base_damage=5, effect_type="RUPTURE_DAMAGE_BUFF_TYPE2", effect_val=2)
     s2_c2 = Chip(base_damage=1, effect_type="APPLY_STATUS")
     s2_c2.status_effect = scd.rupture_2
     
-    s2_desc_brief = "[On Hit] Inflict Rupture Potency, deals +Final Damage if target has Rupture"
-    s2_desc_inspect = "◈ Base Damage: 5\n[On Hit] If target has Rupture, deal +2 Final Damage\n◈ Base Damage: 1\n[On Hit] Inflict 2 Rupture Potency"
+    s2_desc_brief = "[On Hit] Inflict Rupture Potency\n      [On Hit] If target has Rupture, deal +Final Damage"
+    s2_desc_inspect = "◈ Base Damage: 5\n      [On Hit] If target has Rupture, deal +2 Final Damage\n      ◈ Base Damage: 1\n      [On Hit] Inflict 2 Rupture Potency"
     
-    g_s2 = ChipSkill("Pinning ◈ ◈", 2, EL_STORGE, [s2_c1, s2_c2], description=s2_desc_brief, inspect_description=s2_desc_inspect)
+    g_s2 = ChipSkill("Pinning ◈◈", 2, EL_STORGE, [s2_c1, s2_c2], description=s2_desc_brief, inspect_description=s2_desc_inspect)
 
     k_guard.skill_pool_def = [(g_s1, 4), (g_s2, 4)]
     guard.equip_kata(k_guard)
     guard.description = "infiltratingyunhaiborderguarddesc"
     guard.unlock_stage_id = 49
 
+    guard_leader = Entity("Infiltrating Yunhai Border Guard Leader", is_player=False)
+    guard_leader.max_hp = 90
+    k_guard_leader = Kata("Yunhai Guard Leader", "Yunhai", 2, 2, [1.2, 0.6, 0.6, 1.3, 1.3, 1.3, 1.2])
+
+    # Skill I: Heavy Metal Baton ◈◈
+    s1_c1 = Chip(base_damage=4, effect_type="APPLY_STATUS")
+    s1_c1.status_effect = scd.rupturecount_2
+    s1_c2 = Chip(base_damage=5, effect_type="APPLY_STATUS")
+    s1_c2.status_effect = scd.rupturecount_2
+    
+    s1_desc_brief = "[On Hit] Inflict Rupture Count"
+    s1_desc_inspect = "◈ Base Damage: 4\n      [On Hit] Inflict 2 Rupture Count\n      ◈ Base Damage: 5\n      [On Hit] Inflict 2 Rupture Count"
+    gl_s1 = ChipSkill("Heavy Metal Baton ◈◈", 1, EL_AGAPE, [s1_c1, s1_c2], description=s1_desc_brief, inspect_description=s1_desc_inspect)
+
+    # Skill II: Takedown ◈◈◈
+    s2_c1 = Chip(base_damage=7, effect_type="RUPTURE_DAMAGE_BUFF_TYPE2", effect_val=3)
+    s2_c2 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=1)
+    s2_c3 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=1)
+    
+    s2_desc_brief = "[On Hit] Inflict Rupture Potency\n      [On Hit] Inflict Bleed Potency\n      [On Hit] If target has Rupture, deal +Final Damage"
+    s2_desc_inspect = "◈ Base Damage: 7\n      [On Hit] If target has Rupture, deal +3 Final Damage\n      ◈ Base Damage: 2\n      [On Hit] Inflict 1 Bleed Potency\n      [On Hit] Inflict 1 Rupture Potency\n      ◈ Base Damage: 2\n      [On Hit] Inflict 1 Bleed Potency\n      [On Hit] Inflict 1 Rupture Potency"
+    gl_s2 = ChipSkill("Takedown ◈◈◈", 2, EL_EROS, [s2_c1, s2_c2, s2_c3], description=s2_desc_brief, inspect_description=s2_desc_inspect)
+
+    # Skill III: Lightweight Armor (Normal Skill)
+    gl_s3 = Skill("Lightweight Armor", 3, EL_LUDUS, 0, "[Combat Start] This unit takes -3 Final Damage this turn\n      [Combat Start] Gain 3 Haste next turn", effect_type="LIGHTWEIGHT_SPECIAL", effect_val=3)
+
+    k_guard_leader.skill_pool_def = [(gl_s1, 3), (gl_s2, 3), (gl_s3, 2)]
+    guard_leader.equip_kata(k_guard_leader)
+    guard_leader.description = "infiltratingyunhaiborderguardleaderdesc"
+    guard_leader.unlock_stage_id = 50
+
     # Append to existing return list in stages.py:
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro, 
             sp_kiryoku, c_kiryoku, ayako, sumiko, inf_heiwa, inf_kiryoku, inf_kasa, inf_lead, hisayuki, inf_council, inf_disc, 
-            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard]
+            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader]

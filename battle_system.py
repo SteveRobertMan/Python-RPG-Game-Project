@@ -305,6 +305,13 @@ class BattleManager:
             unit.next_turn_modifiers["incoming_dmg_mult"] = unit.next_turn_modifiers.get("incoming_dmg_mult", 1.0) * 0.50
             #self.log(f"[dim]{unit.name} nullifies their pain receptors, reducing incoming damage significantly![/dim]")
 
+        elif skill.effect_type == "LIGHTWEIGHT_SPECIAL":
+            # 1. Takes -<effect_val> Final Damage this turn
+            unit.temp_modifiers["final_dmg_reduction"] += skill.effect_val
+            # 2. Gain <effect_val>x Haste next turn (using standard haste duration rules)
+            haste_eff = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=skill.effect_val)
+            self.apply_status_logic(unit, haste_eff)
+
     def process_turn_end_effects(self):
         """
         Handles Status Effect ticks.
@@ -758,7 +765,7 @@ class BattleManager:
                         base_dmg_val = max(0, base_dmg_val - (steps * 3))
                         sadism_bind_to_apply = steps
 
-                # NEW RUPTURE FLAT BONUS
+                # RUPTURE FLAT BONUS
                 if chip.effect_type == "RUPTURE_DAMAGE_BUFF_TYPE2":
                     if any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects):
                         base_dmg_val += chip.effect_val
@@ -1396,7 +1403,7 @@ class BattleManager:
                     dmg_str = f"[bold]Dmg: {skill.base_damage}[/bold]"
                     
                     # Format newlines so multi-line inspect descriptions indent perfectly
-                    formatted_desc = desc.replace("\n", "\n       ")
+                    formatted_desc = desc.replace("\n", "\n ")
                     
                     pool_text += f"x{count} [{c}]{skill.name}[/{c}] ({t_r}) {dmg_str}\n       [light_green]{formatted_desc}[/light_green]\n"
             else:

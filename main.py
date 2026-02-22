@@ -344,6 +344,10 @@ def run_game():
                 elif stage_id == 39: story_manager.play_stage_3_17_start()
                 elif stage_id == 42: story_manager.play_stage_3_20_start()
                 elif stage_id == 49: pass # story_manager.play_stage_4_4_start()
+                elif stage_id == 50: pass # story_manager.play_stage_4_5_start()
+                elif stage_id == 51: pass # story_manager.play_stage_4_6_start()
+                elif stage_id == 52: pass # story_manager.play_stage_4_7_start()
+                elif stage_id == 53: pass # story_manager.play_stage_4_8_start()
 
             battle_manager.start_battle(party, enemies, stage_id)
             
@@ -729,10 +733,19 @@ def run_game():
                         else:
                             if random.random() < 0.8: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
 
-                    elif stage_id == 49: # Stage 4-4
+                    elif stage_id in [49, 50, 51, 52, 53]: # Stage 4-4 to 4-8
                         checklatest = stage_id
                         if should_play_story:
-                            # story_manager.play_stage_4_4_end()
+                            # if stage_id == 49:
+                            #     story_manager.play_stage_4_4_end()
+                            # if stage_id == 50:
+                            #     story_manager.play_stage_4_5_end()
+                            # if stage_id == 51:
+                            #     story_manager.play_stage_4_6_end()
+                            # if stage_id == 52:
+                            #     story_manager.play_stage_4_7_end()
+                            # if stage_id == 53:
+                            #     story_manager.play_stage_4_8_end()
                             rewards_text.extend([
                                 "2x Microchip", 
                                 "2x Microprocessor",
@@ -1485,6 +1498,38 @@ def run_game():
             elif choice == "4-4":
                 if unlocked >= 48:
                     config.player_data["selected_stage"] = 49
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-5":
+                if unlocked >= 49:
+                    config.player_data["selected_stage"] = 50
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-6":
+                if unlocked >= 50:
+                    config.player_data["selected_stage"] = 51
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-7":
+                if unlocked >= 51:
+                    config.player_data["selected_stage"] = 52
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-8":
+                if unlocked >= 52:
+                    config.player_data["selected_stage"] = 53
                     config.current_state = config.STATE_BATTLE
                 else:
                     console.print("[red]Locked![/red]")
