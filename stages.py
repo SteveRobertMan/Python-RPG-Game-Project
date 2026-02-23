@@ -508,11 +508,19 @@ def load_stage_enemies(stage_id):
         inf_yunhai_civ_d.name = "Infiltrating Westward Megastructure Civilian D"
         enemies.append(inf_yunhai_civ_d)
 
+    elif stage_id == 52:
+        enemies.append(spawn("Luoxia Martial Arts Practitioner Student", "A"))
+        enemies.append(spawn("Luoxia Martial Arts Practitioner Student", "B"))
+        enemies.append(spawn("Luoxia Martial Arts Practitioner Student", "C"))
+
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
 
 def get_enemy_database():
-    # Existing enemies
+    ########################################
+    # --- EARLY KASAKURA / DELINQUENTS --- #
+    ########################################
+    
     thief = Entity("Underwear Thief", is_player=False)
     thief.max_hp = 30
     k_thief = Kata("Thief Intent", "Thief", 1, "0", [0.5, 1.2, 1.2, 1.2, 1.2, 0.5, 1.2])
@@ -535,6 +543,10 @@ def get_enemy_database():
     fresh.description = "A freshman reported to be skipping class and loitering behind campus, messing around and intimidating those that pass them."
     fresh.unlock_stage_id = 2 
 
+    ###############################
+    # --- KIDNAPPER HOOLIGANS --- #
+    ###############################
+
     hool = Entity("Kidnapper Hooligan", is_player=False)
     hool.max_hp = 5
     k_hool = Kata("Hooligan", "Hooligan", 1, "0", [1.5]*7)
@@ -556,6 +568,10 @@ def get_enemy_database():
     lead.description = "The leader of the hooligan workers. Stronger than their minions, spends most of their time barking orders."
     lead.unlock_stage_id = 4
     
+    ###########################################
+    # --- AYAME BENIKAWA (BOSS ENCOUNTER) --- #
+    ###########################################
+
     benikawa = Entity("Ayame Benikawa (Sparring)", is_player=False)
     benikawa.max_hp = 29 
     res_b = [1.3, 1.3, 0.7, 0.7, 0.9, 0.9, 1.0]
@@ -601,6 +617,10 @@ def get_enemy_database():
     )
     double.unlock_stage_id = 7
 
+    ############################################
+    # --- HEIWA SEIRITSU DELINQUENT GRUNTS --- #
+    ############################################
+
     slender = Entity("Slender Heiwa Seiritsu Delinquent", is_player=False)
     slender.max_hp = 40
     res_s = [1.6, 1.6, 1.6, 1.4, 1.4, 1.4, 1.2]
@@ -630,7 +650,6 @@ def get_enemy_database():
     res_sp = [1.1, 1.6, 1.1, 1.2, 1.6, 1.6, 1.1]
     k_spike = Kata("Spike Bat Style", "Delinquent", 1, "0", res_sp)
     spi1 = Skill("Knock", 1, EL_STORGE, 5, "")
-    # FIXED: Added APPLY_STATUS flag and mapped bleed_1
     spi2 = Skill("Sharp Swing", 2, EL_EROS, 5, "[On Hit] Inflict 1 Bleed Potency", effect_type="APPLY_STATUS")
     spi2.status_effect = bleed_1
     k_spike.skill_pool_def = [(spi1, 5), (spi2, 4)]
@@ -644,7 +663,6 @@ def get_enemy_database():
     res_ch = [1.6, 1.1, 1.6, 1.2, 1.2, 1.1, 1.6]
     k_chain = Kata("Chain Fist Style", "Delinquent", 1, "0", res_ch)
     ch1 = Skill("Shove", 1, EL_PHILIA, 6, "")
-    # FIXED: Added APPLY_STATUS flag and mapped bleed_2
     ch2 = Skill("Cutting Fist", 2, EL_PRAGMA, 3, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
     ch2.status_effect = bleed_2
     k_chain.skill_pool_def = [(ch1, 5), (ch2, 4)]
@@ -657,12 +675,10 @@ def get_enemy_database():
     h_lead.max_hp = 40
     res_hl = [1.7, 1.7, 1.3, 1.3, 1.3, 1.3, 1.3]
     k_hlead = Kata("Leader Style", "Leader", 1, "0", res_hl)
-    # FIXED: Added APPLY_STATUS flags and mapped bleed_1 / bleed_2
     hl1 = Skill("Headbutting", 1, EL_PHILIA, 5, "[On Hit] Inflict 1 Bleed Potency", effect_type="APPLY_STATUS")
     hl1.status_effect = bleed_1
     hl2 = Skill("Chained Bat Combo", 2, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
     hl2.status_effect = bleed_2
-    # FIXED: Corrected text typo from 'take +1' to 'take -1' and used AOE_BUFF_DEF_FLAT
     hl3 = Skill("Rally", 3, EL_PRAGMA, 0, "[On Use] All allied units of this unit take -1 Final Damage this turn", effect_type="AOE_BUFF_DEF_FLAT", effect_val=1)
     k_hlead.skill_pool_def = [(hl1, 4), (hl2, 3), (hl3, 2)]
     k_hlead.rift_aptitude = 1
@@ -670,11 +686,14 @@ def get_enemy_database():
     h_lead.description = "A more experienced Heiwa Seiritsu thug student who has enough respect and proficiency with makeshift weapons to lead a small unit of thugs."
     h_lead.unlock_stage_id = 18
 
+    ########################################
+    # --- HEIWA SEIRITSU ELITES & BOSS --- #
+    ########################################
+
     upper = Entity("Heiwa Seiritsu Upperclassman Fighter", is_player=False)
     upper.max_hp = 1523
     res_up = [1.0, 1.2, 1.0, 1.1, 1.1, 1.2, 0.7]
     k_up = Kata("Upperclassman Style", "Upperclassman", 1, "0", res_up)
-    # FIXED: Added APPLY_STATUS flags and mapped the corresponding generic statuses
     u1 = Skill("Chained Limb Combo", 1, EL_LUDUS, 14, "[On Hit] Inflict 2 Bleed Potency", effect_type="APPLY_STATUS")
     u1.status_effect = bleed_2
     u2 = Skill("Chain Whip", 2, EL_AGAPE, 15, "[On Hit] Inflict 3 Bleed Potency", effect_type="APPLY_STATUS")
@@ -691,7 +710,6 @@ def get_enemy_database():
     kuro.max_hp = 150
     res_ku = [1.3, 1.3, 1.1, 1.6, 1.6, 1.1, 1.6]
     k_ku = Kata("Reaper Style", "Kurogane", 1, "0", res_ku)
-    # FIXED: Mapped straight to the existing hardcoded unique flags in battle_system.py
     ku1 = Skill("Chained Limb Flurry", 1, EL_PRAGMA, 5, "[On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count", effect_type="APPLY_BLEED_HEAVY_STACKS")
     ku2 = Skill("Heavy Chain Whip", 2, EL_AGAPE, 6, "[On Hit] Inflict 3 Bleed Potency\n       [On Hit] Inflict 1 Bind next turn", effect_type="APPLY_BLEED_AND_BIND")
     ku3 = Skill("Pull In For A Beatdown", 3, EL_AGAPE, 8, "[On Hit] Inflict 3 Bleed Potency\n       [On Hit] Inflict 2 Bind next turn", effect_type="APPLY_BLEED_AND_BIND_HEAVY")
@@ -700,6 +718,10 @@ def get_enemy_database():
     kuro.equip_kata(k_ku)
     kuro.description = "The true identity of the Heiwa Seiritsu Upperclassman: 'Chain Reaper Of Heiwa' Kurogane, has been revealed. A veteran hotblooded gangster on the run who tortures his opponents with masterful chain movements paired with his reckless fighting style. His motives are taking down Kasakura’s key figures and extracting information about the existence of “Katas”."
     kuro.unlock_stage_id = 21
+
+    #############################################
+    # --- KIRYOKU GAKUEN STUDENTS & FAIRIES --- #
+    #############################################
 
     sp_kiryoku = Entity("Sparring Kiryoku Gakuen Student", is_player=False)
     sp_kiryoku.max_hp = 40
@@ -748,6 +770,10 @@ def get_enemy_database():
     sumiko.description = "The calculating Treasurer of the Kiryoku Student Council, Sumiko controls the battlefield with an eerie, sisterly calmness. She utilizes a terrifying footwork technique called Shukuchi to seamlessly glide across the floor, instantly closing the distance between herself and her target without any visible inertia. Despite her ferocity in close-quarters combat, she prioritizes defense and spatial control, meticulously keeping threats pushed far away from her President, who is currently sleeping."
     sumiko.unlock_stage_id = 29
 
+    ####################################
+    # --- CRUISE SHIP INFILTRATORS --- #
+    ####################################
+
     inf_heiwa = Entity("Infiltrating Heiwa Seiritsu High School Student", is_player=False)
     inf_heiwa.max_hp = 37
     k_inf_heiwa = Kata("Fake Delinquent", "Heiwa Infiltrator", 1, 0, [1.4, 1.3, 1.4, 1.7, 1.4, 1.4, 1.3])
@@ -782,17 +808,6 @@ def get_enemy_database():
     inf_kasa.description = "These disguised criminals attempt to pass off as disciplined Kasakura students, utilizing standard karate or judo stances to maintain their cover in the ship's corridors. Beneath the pristine uniforms, they are nothing more than greedy mercenaries hired by a shadow mastermind to secure the massive weapons supply. Their rigid, unpolished forms are easily dismantled by prodigies like Akasuke and Yuri, instantly exposing their lack of true martial dedication."
     inf_kasa.unlock_stage_id = 32
 
-    hisayuki = Entity("Hisayuki Tadamasa", is_player=False)
-    hisayuki.max_hp = 255
-    k_hisayuki = Kata("Battering Ram", "Hisayuki", 1, 5, [1.2, 0.5, 0.5, 1.5, 1.0, 1.0, 1.0])
-    hi1 = Skill("Following Orders", 1, EL_STORGE, 7, "[On Use] This unit takes -40% damage next turn\n       [On Hit] If this unit has Haste, gain 1 Bind next turn. Otherwise, gain 1 Haste next turn", effect_type="HISAYUKI_SPECIAL_1")
-    hi2 = Skill("Pick Up Speed", 2, EL_LUDUS, 11, "[Combat Start] If this unit has Bind, take +50% damage for the turn\n       [On Hit] If this unit has no Haste, gain 3 Haste next turn, otherwise, gain 1 Haste next turn", effect_type="HISAYUKI_SPECIAL_2")
-    hi3 = Skill("Human Battering Ram", 3, EL_EROS, 14, "[On Hit] If this unit has Haste, deal +10% damage for every stack of Haste on self (Max +50%), then remove all Haste on self", effect_type="HISAYUKI_SPECIAL_3")
-    k_hisayuki.skill_pool_def = [(hi1, 4), (hi2, 2), (hi3, 2)]
-    hisayuki.equip_kata(k_hisayuki)
-    hisayuki.description = "Encountered in the bowels of the cruise ship, this terrifying combatant acts as an unstoppable, linear human battering ram to protect the weapon thieves. Despite possessing monstrous durability and the ability to accelerate into bone-crushing tackles, he speaks in robotic, military-style commands while humbly claiming to be just an 'ordinary student'. It took Shigemura absorbing his full-speed tackle to create a brief, desperate opening for the rest of the team to finally take him down."
-    hisayuki.unlock_stage_id = 33
-
     inf_lead = Entity("Infiltrating Heiwa Seiritsu Delinquent Leader", is_player=False)
     inf_lead.max_hp = 55
     k_inf_lead = Kata("Fake Leader", "Infiltrator Leader", 1, 1, [1.2, 1.2, 1.3, 1.6, 1.4, 1.3, 1.0])
@@ -826,6 +841,25 @@ def get_enemy_database():
     inf_disc.equip_kata(k_inf_disc)
     inf_disc.description = "Wearing the iconic white kimono uniforms of Kasakura’s Disciplinary Committee, these impostors use the guise of authority to restrict access to the ship's lower levels. They wield standard-issue bokkens and stun batons with practiced cruelty, completely lacking the honorable resolve of Yuri's true subordinates. Their mimicry shatters the moment they clash with genuine fighters, easily falling to Benikawa and Shigemura's superior battle IQ and speed."
     inf_disc.unlock_stage_id = 34
+
+    ####################################
+    # --- HISAYUKI TADAMASA (BOSS) --- #
+    ####################################
+
+    hisayuki = Entity("Hisayuki Tadamasa", is_player=False)
+    hisayuki.max_hp = 255
+    k_hisayuki = Kata("Battering Ram", "Hisayuki", 1, 5, [1.2, 0.5, 0.5, 1.5, 1.0, 1.0, 1.0])
+    hi1 = Skill("Following Orders", 1, EL_STORGE, 7, "[On Use] This unit takes -40% damage next turn\n       [On Hit] If this unit has Haste, gain 1 Bind next turn. Otherwise, gain 1 Haste next turn", effect_type="HISAYUKI_SPECIAL_1")
+    hi2 = Skill("Pick Up Speed", 2, EL_LUDUS, 11, "[Combat Start] If this unit has Bind, take +50% damage for the turn\n       [On Hit] If this unit has no Haste, gain 3 Haste next turn, otherwise, gain 1 Haste next turn", effect_type="HISAYUKI_SPECIAL_2")
+    hi3 = Skill("Human Battering Ram", 3, EL_EROS, 14, "[On Hit] If this unit has Haste, deal +10% damage for every stack of Haste on self (Max +50%), then remove all Haste on self", effect_type="HISAYUKI_SPECIAL_3")
+    k_hisayuki.skill_pool_def = [(hi1, 4), (hi2, 2), (hi3, 2)]
+    hisayuki.equip_kata(k_hisayuki)
+    hisayuki.description = "Encountered in the bowels of the cruise ship, this terrifying combatant acts as an unstoppable, linear human battering ram to protect the weapon thieves. Despite possessing monstrous durability and the ability to accelerate into bone-crushing tackles, he speaks in robotic, military-style commands while humbly claiming to be just an 'ordinary student'. It took Shigemura absorbing his full-speed tackle to create a brief, desperate opening for the rest of the team to finally take him down."
+    hisayuki.unlock_stage_id = 33
+
+    ############################
+    # --- MERCENARY NINJAS --- #
+    ############################
 
     raven = Entity("Raven", is_player=False)
     raven.max_hp = 115
@@ -880,7 +914,10 @@ def get_enemy_database():
     falcon_inj.description = "Forced back into the Hazard Vault, this heavily wounded ninja refuses to surrender despite being systematically dismantled by Kasakura's fighters. Bleeding and relying on fractured weapons, his once-flawless aerial maneuvers are reduced to desperate, erratic lunges aimed at taking down at least one opponent with him. His ragged final stand ultimately serves as a grim testament to the lethal tenacity of the underworld's rogue mercenaries."
     falcon_inj.unlock_stage_id = 37
 
-    # --- Riposte Gang & Misc ---
+    #########################################
+    # --- MISCELLANEOUS / EARLY RIPOSTE --- #
+    #########################################
+
     hench = Entity("Unknown Faction Henchman", is_player=False)
     hench.max_hp = 75
     k_hench = Kata("Rapier Guard", "Henchman", 1, 3, [1.3, 1.1, 1.1, 1.1, 0.8, 0.8, 1.0])
@@ -903,6 +940,10 @@ def get_enemy_database():
     mascot.equip_kata(k_mascot)
     mascot.description = "Despite the terrifying title, this 'beast' is actually just an embarrassingly highly motivated Kasakura High senior sweating inside a cheap, goofy Godzilla mascot costume. Stationed in the tropical jungle during the island's Scavenger Hunt, he acts as the highly dramatic guardian of a marked coconut to test the students' teamwork. He possesses zero actual combat prowess, enthusiastically throwing himself to the ground in defeat after taking a single, slow-motion mock punch from Akasuke."
     mascot.unlock_stage_id = 39
+
+    ####################################
+    # --- THE RIPOSTE GANG (ACT 3) --- #
+    ####################################
 
     rip_hench = Entity("Riposte Gang Henchman", is_player=False)
     rip_hench.max_hp = 55
@@ -938,31 +979,28 @@ def get_enemy_database():
     adam.description = "A remarkably young and immensely talented Executive of the Riposte Gang, Adam flawlessly blends the grace of a high-class chef with the lethal precision of a master swordsman. He wields his rapier with terrifying perfection, capable of holding off six Kata-enhanced fighters simultaneously through sheer battle IQ and unnatural physical toughness before finally reaching his limit. Despite his criminal allegiance and composed demeanor, he possesses a surprisingly naive loyalty to his terrifying Boss and showed genuine, polite hospitality toward his captive."
     adam.unlock_stage_id = 42
 
+    ########################################
+    # --- YUNHAI BORDER GUARDS (ACT 4) --- #
+    ########################################
+
     guard = Entity("Infiltrating Yunhai Border Guard", is_player=False)
     guard.max_hp = 62
     k_guard = Kata("Yunhai Guard", "Yunhai", 1, 1, [1.1, 0.8, 0.9, 1.2, 1.0, 1.0, 1.3])
-    
     # Skill I: Metal Baton ◈◈
     s1_c1 = Chip(base_damage=2, effect_type="APPLY_STATUS")
     s1_c1.status_effect = scd.rupturecount_2
     s1_c2 = Chip(base_damage=3, effect_type="APPLY_STATUS")
     s1_c2.status_effect = scd.rupture_1
-    
     s1_desc_brief = "[On Hit] Inflict Rupture Count\n       [On Hit] Inflict Rupture Potency"
     s1_desc_inspect = "◈ Base Damage: 2\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 3\n       [On Hit] Inflict 1 Rupture Potency"
-    
     g_s1 = ChipSkill("Metal Baton ◈◈", 1, EL_AGAPE, [s1_c1, s1_c2], description=s1_desc_brief, inspect_description=s1_desc_inspect)
-
     # Skill II: Pinning ◈◈
     s2_c1 = Chip(base_damage=5, effect_type="RUPTURE_DAMAGE_BUFF_TYPE2", effect_val=2)
     s2_c2 = Chip(base_damage=1, effect_type="APPLY_STATUS")
     s2_c2.status_effect = scd.rupture_2
-    
     s2_desc_brief = "[On Hit] Inflict Rupture Potency\n       [On Hit] If target has Rupture, deal +Final Damage"
     s2_desc_inspect = "◈ Base Damage: 5\n       [On Hit] If target has Rupture, deal +2 Final Damage\n       ◈ Base Damage: 1\n       [On Hit] Inflict 2 Rupture Potency"
-    
     g_s2 = ChipSkill("Pinning ◈◈", 2, EL_STORGE, [s2_c1, s2_c2], description=s2_desc_brief, inspect_description=s2_desc_inspect)
-
     k_guard.skill_pool_def = [(g_s1, 4), (g_s2, 4)]
     guard.equip_kata(k_guard)
     guard.description = "infiltratingyunhaiborderguarddesc"
@@ -971,64 +1009,58 @@ def get_enemy_database():
     guard_leader = Entity("Infiltrating Yunhai Border Guard Leader", is_player=False)
     guard_leader.max_hp = 90
     k_guard_leader = Kata("Yunhai Guard Leader", "Yunhai", 2, 2, [1.2, 0.6, 0.6, 1.3, 1.3, 1.3, 1.2])
-
     # Skill I: Heavy Metal Baton ◈◈
     s1_c1 = Chip(base_damage=4, effect_type="APPLY_STATUS")
     s1_c1.status_effect = scd.rupturecount_2
     s1_c2 = Chip(base_damage=5, effect_type="APPLY_STATUS")
     s1_c2.status_effect = scd.rupturecount_2
-    
     s1_desc_brief = "[On Hit] Inflict Rupture Count"
     s1_desc_inspect = "◈ Base Damage: 4\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 5\n       [On Hit] Inflict 2 Rupture Count"
     gl_s1 = ChipSkill("Heavy Metal Baton ◈◈", 1, EL_AGAPE, [s1_c1, s1_c2], description=s1_desc_brief, inspect_description=s1_desc_inspect)
-
     # Skill II: Takedown ◈◈◈
     s2_c1 = Chip(base_damage=7, effect_type="RUPTURE_DAMAGE_BUFF_TYPE2", effect_val=3)
     s2_c2 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=1)
     s2_c3 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE1", effect_val=1)
-    
     s2_desc_brief = "[On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Bleed Potency\n       [On Hit] If target has Rupture, deal +Final Damage"
     s2_desc_inspect = "◈ Base Damage: 7\n       [On Hit] If target has Rupture, deal +3 Final Damage\n       ◈ Base Damage: 2\n       [On Hit] Inflict 1 Bleed Potency\n       [On Hit] Inflict 1 Rupture Potency\n       ◈ Base Damage: 2\n       [On Hit] Inflict 1 Bleed Potency\n       [On Hit] Inflict 1 Rupture Potency"
     gl_s2 = ChipSkill("Takedown ◈◈◈", 2, EL_EROS, [s2_c1, s2_c2, s2_c3], description=s2_desc_brief, inspect_description=s2_desc_inspect)
-
-    # Skill III: Lightweight Armor (Normal Skill)
+    # Skill III: Lightweight Armor
     gl_s3 = Skill("Lightweight Armor", 3, EL_LUDUS, 0, "[Combat Start] This unit takes -3 Final Damage this turn\n       [Combat Start] Gain 3 Haste next turn", effect_type="LIGHTWEIGHT_SPECIAL", effect_val=3)
-
     k_guard_leader.skill_pool_def = [(gl_s1, 3), (gl_s2, 3), (gl_s3, 2)]
     guard_leader.equip_kata(k_guard_leader)
     guard_leader.description = "infiltratingyunhaiborderguardleaderdesc"
     guard_leader.unlock_stage_id = 50
 
-    # --- ACT 4 ENEMY: LUOXIA MARTIAL ARTS STUDENT ---
+    #######################################
+    # --- LUOXIA MARTIAL ARTS (ACT 4) --- #
+    #######################################
+
     luoxia_student = Entity("Luoxia Martial Arts Practitioner Student", is_player=False)
-    luoxia_student.max_hp = 76
+    luoxia_student.max_hp = 51
     luoxia_student.pace = 2
-    k_luoxia = Kata("Luoxia Arts", "Luoxia", 1, 1, [1.1, 1.2, 1.3, 0.9, 1.1, 1.0, 1.3])
-
+    k_luoxia = Kata("Luoxia Arts", "Luoxia", 1, 1, [1.3, 1.4, 1.5, 0.9, 1.3, 1.4, 1.4])
     # Skill I ◈◈
-    ls_s1_c1 = Chip(base_damage=3, effect_type="APPLY_RUPTURE_HEAVY_STACKS")
-    ls_s1_c2 = Chip(base_damage=3, effect_type="APPLY_RUPTURE_HEAVY_STACKS")
-    ls_s1_desc_brief = "[On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
-    ls_s1_desc_inspect = "◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count"
-    ls_s1 = ChipSkill("Palm Heel Strike ◈◈", 1, EL_PHILIA, [ls_s1_c1, ls_s1_c2], description=ls_s1_desc_brief, inspect_description=ls_s1_desc_inspect)
-
+    ls_s1_c1 = Chip(base_damage=3)
+    ls_s1_c2 = Chip(base_damage=3)
+    ls_s1_desc_inspect = "◈ Base Damage: 3\n       ◈ Base Damage: 3"
+    ls_s1 = ChipSkill("Palm Heel Strike ◈◈", 1, EL_PHILIA, [ls_s1_c1, ls_s1_c2], inspect_description=ls_s1_desc_inspect)
     # Skill II ◈◈
     ls_s2_c1 = Chip(base_damage=3, effect_type="RUPTURE_BUFF_DEF_SPECIAL_1")
     ls_s2_c2 = Chip(base_damage=3, effect_type="RUPTURE_BUFF_DEF_SPECIAL_2")
     ls_s2_desc_brief = "[Combat Start] Take -2 Final Damage this turn\n       [On Hit] Take -Final Damage next turn\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
-    ls_s2_desc_inspect = "[Combat Start] Take -2 Final Damage this turn\n       ◈ Base Damage: 3\n       [On Hit] Take -1 Final Damage next turn\n       [On Hit] Inflict 3 Rupture Potency\n       ◈ Base Damage: 3\n       [On Hit] Take -1 Final Damage next turn\n       [On Hit] Inflict 3 Rupture Count"
+    ls_s2_desc_inspect = "[Combat Start] Take -2 Final Damage this turn\n       ◈ Base Damage: 3\n       [On Hit] Take -1 Final Damage next turn\n       [On Hit] Inflict 2 Rupture Potency\n       ◈ Base Damage: 3\n       [On Hit] Take -1 Final Damage next turn\n       [On Hit] Inflict 2 Rupture Count"
     ls_s2 = ChipSkill("Outward Block ◈◈", 2, EL_STORGE, [ls_s2_c1, ls_s2_c2], description=ls_s2_desc_brief, inspect_description=ls_s2_desc_inspect, effect_type="BUFF_DEF_FLAT", effect_val=2)
-
     # Skill III
     ls_s3_desc = "[On Use] Gain 3 Poise Count\n       [On Hit] Gain 3 Poise Potency\n       [On Hit] Inflict 3 Rupture Potency"
     ls_s3 = Skill("Centerline Punch", 3, EL_STORGE, 10, ls_s3_desc, effect_type="POISE_RUPTURE_SPECIAL_TYPE1", effect_val=3)
-
-    k_luoxia.skill_pool_def = [(ls_s1, 4), (ls_s2, 2), (ls_s3, 2)]
+    k_luoxia.skill_pool_def = [(ls_s1, 5), (ls_s2, 2), (ls_s3, 2)]
     luoxia_student.equip_kata(k_luoxia)
     luoxia_student.description = "luoxiamartialartspractitionerstudent"
     luoxia_student.unlock_stage_id = 52
 
-    # Append to existing return list in stages.py:
+    ################################################
+    # Append to existing return list in stages.py: #
+    ################################################
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro, 
             sp_kiryoku, c_kiryoku, ayako, sumiko, inf_heiwa, inf_kiryoku, inf_kasa, inf_lead, hisayuki, inf_council, inf_disc, 
             raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student]

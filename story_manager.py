@@ -46,7 +46,7 @@ def show_story_box(speaker, text, affiliation="", is_thought=False, is_narrator=
             elif speaker == "Kageyama":
                 box_color = "cyan"
             elif speaker in ["Natsume", "Boss"]:
-                box_color = "dark_blue"
+                box_color = "blue3"
             elif speaker == "Hana":
                 box_color = "gold1"
             elif speaker == "Masayoshi":
@@ -76,7 +76,7 @@ def show_story_box(speaker, text, affiliation="", is_thought=False, is_narrator=
             elif speaker == "Hazuki":
                 box_color = "sea_green2"
             elif speaker in ["Stern Enforcer", "Mei", "Okusora Mei"]:
-                box_color = "grey84"
+                box_color = "light_salmon1"
             elif speaker == "Liwei":
                 box_color = "light_yellow3"
             elif speaker == "Miyu":

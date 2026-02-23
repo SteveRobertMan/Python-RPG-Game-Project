@@ -797,6 +797,7 @@ class BattleManager:
                 # 7. Flat Modifiers
                 final_dmg = nbd + target.temp_modifiers.get("incoming_dmg_flat", 0)
                 final_dmg += attacker.temp_modifiers.get("outgoing_dmg_flat", 0)
+                final_dmg -= target.temp_modifiers["final_dmg_reduction"]
 
                 # Consume Hit Bonuses
                 if target.next_hit_taken_flat_bonus > 0:
@@ -824,10 +825,6 @@ class BattleManager:
                 if chip.effect_type == "COND_HP_ABOVE_50_FLAT" and target.hp >= (target.max_hp * 0.5): damage += int(chip.effect_val)
                 if chip.effect_type == "COND_LOW_HP_MERCY" and target.hp <= (target.max_hp * 0.7): damage -= int(chip.effect_val)
                 if chip.effect_type == "COND_HP_BELOW_80_FLAT" and target.hp <= (target.max_hp * 0.8): damage += int(chip.effect_val)
-
-                # Final Defense Reduction (Armor)
-                flat_def = target.temp_modifiers["final_dmg_reduction"]
-                damage = damage - flat_def
                 
                 # RIPOSTE DAMAGE MITIGATION
                 riposte_eff = next((s for s in target.status_effects if s.name == "Riposte"), None)
@@ -1267,11 +1264,11 @@ class BattleManager:
 
             # --- LUOXIA MARTIAL ARTS STUDENT ---
             elif chip.effect_type == "RUPTURE_BUFF_DEF_SPECIAL_1":
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
                 if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
                 attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) + 1
             elif chip.effect_type == "RUPTURE_BUFF_DEF_SPECIAL_2":
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
                 if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
                 attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) + 1
             elif chip.effect_type == "POISE_RUPTURE_SPECIAL_TYPE1":
@@ -1501,26 +1498,31 @@ Modifiers: {status_str}
         config.console.print(Panel(f"TURN {self.turn_count}", style="white on blue", width=20))
         
         for e in self.enemies:
-            intent_str = ""
-            intended_skill = None
+            # Prepare intended skills first
+            intent_lines = []
             if e.hp > 0 and getattr(e, "intents", []):
-                intent_lines = []
                 for idx, (skill, target, _) in enumerate(e.intents):
                     c = get_element_color(skill.element)
                     t_r = get_tier_roman(skill.tier)
                     slot_sym = "".join(["⬢" if i == idx else "⬡" for i in range(e.pace)]) if e.pace > 1 else "⬢"
-                    intent_lines.append(f"{slot_sym} -> [{c}]{skill.name}[/{c}] ({t_r}) -> {target.name}")
-                intent_str = "\n   " + "\n   ".join(intent_lines)
-                intended_skill = e.intents[0][0] # Just show desc for slot 1 for brevity
+                    
+                    intent_lines.append(f"   {slot_sym} -> [{c}]{skill.name}[/{c}] ({t_r}) -> {target.name}")
+                    if skill.description:
+                        intent_lines.append(f"       [light_green]{skill.description}[/light_green]")
+                        
             elif e.hp > 0 and getattr(e, "intent", None): # Fallback for old system if missed
                 skill, target, _ = e.intent
-                intended_skill = skill
                 c = get_element_color(skill.element)
                 t_r = get_tier_roman(skill.tier)
-                intent_str = f"-> [{c}]{skill.name}[/{c}] ({t_r}) -> {target.name}"
+                
+                intent_lines.append(f"   -> [{c}]{skill.name}[/{c}] ({t_r}) -> {target.name}")
+                if skill.description:
+                    intent_lines.append(f"       [light_green]{skill.description}[/light_green]")
 
+            # Prepare HP and Status Effects
             hp_style = "green" if e.hp > e.max_hp/2 else "red"
             status = "Defeated" if e.hp <= 0 else f"[{hp_style}]{e.hp}/{e.max_hp}[/{hp_style}]"
+            
             se_display = ""
             for se in e.status_effects:
                 # Visual distinction: Bind and many more status effects don't show potency
@@ -1529,12 +1531,19 @@ Modifiers: {status_str}
                 else:
                     sub = to_subscript(se.potency)
                     se_display += f"{se.symbol}{sub}/{se.duration} "
-            config.console.print(f"[bold red]{e.name}[/bold red] {status} {intent_str}")
-            if se_display: config.console.print(f"   {se_display}")
+                    
+            # --- STRICT PRINTING ORDER ---
             
-            # SHOW ENEMY SKILL DESCRIPTION
-            if intended_skill and intended_skill.description:
-                config.console.print(f"       [light_green]{intended_skill.description}[/light_green]")
+            # 1. Print Name and HP
+            config.console.print(f"[bold red]{e.name}[/bold red] {status}")
+            
+            # 2. Print Status Effects right underneath the name
+            if se_display.strip(): 
+                config.console.print(f"   {se_display}")
+                
+            # 3. Print the intended skill(s) and description(s) last
+            for line in intent_lines:
+                config.console.print(line)
 
         config.console.print("\n" + "-"*30 + "\n")
         

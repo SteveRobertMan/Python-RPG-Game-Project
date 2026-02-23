@@ -618,4 +618,4 @@ def get_kata_data_by_name(name):
         
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
-        return {"kata_obj": k, "max_hp": 68, "description": desc}
+        return {"kata_obj": k, "max_hp": 58, "description": desc}
