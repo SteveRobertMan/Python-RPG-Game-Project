@@ -343,11 +343,24 @@ def run_game():
                 elif stage_id == 38: story_manager.play_stage_3_16_start()
                 elif stage_id == 39: story_manager.play_stage_3_17_start()
                 elif stage_id == 42: story_manager.play_stage_3_20_start()
-                elif stage_id == 49: pass # story_manager.play_stage_4_4_start()
-                elif stage_id == 50: pass # story_manager.play_stage_4_5_start()
-                elif stage_id == 51: pass # story_manager.play_stage_4_6_start()
-                elif stage_id == 52: pass # story_manager.play_stage_4_7_start()
-                elif stage_id == 53: pass # story_manager.play_stage_4_8_start()
+                elif stage_id == 49: story_manager.play_stage_4_4_start()
+                elif stage_id == 50: story_manager.play_stage_4_5_start()
+                elif stage_id == 51: story_manager.play_stage_4_6_start()
+                elif stage_id == 52: story_manager.play_stage_4_7_start()
+                elif stage_id == 53: story_manager.play_stage_4_8_start()
+                elif stage_id == 56: story_manager.play_stage_4_11_start()
+                elif stage_id == 57: story_manager.play_stage_4_12_start()
+                elif stage_id == 58: story_manager.play_stage_4_13_start()
+                elif stage_id == 60: story_manager.play_stage_4_15_start()
+                elif stage_id == 62: story_manager.play_stage_4_17_start()
+                elif stage_id == 63: story_manager.play_stage_4_18_start()
+                elif stage_id == 64: story_manager.play_stage_4_19_start()
+                elif stage_id == 65: story_manager.play_stage_4_20_start()
+                elif stage_id == 66: story_manager.play_stage_4_21_start()
+                elif stage_id == 68: story_manager.play_stage_4_23_start()
+                elif stage_id == 69: story_manager.play_stage_4_24_start()
+                elif stage_id == 70: story_manager.play_stage_4_25_start()
+                elif stage_id == 71: story_manager.play_stage_4_26_start()
 
             battle_manager.start_battle(party, enemies, stage_id)
             
@@ -733,19 +746,19 @@ def run_game():
                         else:
                             if random.random() < 0.8: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
 
-                    elif stage_id in [49, 50, 51, 52, 53]: # Stage 4-4 to 4-8
+                    elif stage_id in [49, 50, 51, 52, 53]:
                         checklatest = stage_id
                         if should_play_story:
-                            # if stage_id == 49:
-                            #     story_manager.play_stage_4_4_end()
-                            # if stage_id == 50:
-                            #     story_manager.play_stage_4_5_end()
-                            # if stage_id == 51:
-                            #     story_manager.play_stage_4_6_end()
-                            # if stage_id == 52:
-                            #     story_manager.play_stage_4_7_end()
-                            # if stage_id == 53:
-                            #     story_manager.play_stage_4_8_end()
+                            if stage_id == 49:
+                                story_manager.play_stage_4_4_end()
+                            if stage_id == 50:
+                                story_manager.play_stage_4_5_end()
+                            if stage_id == 51:
+                                story_manager.play_stage_4_6_end()
+                            if stage_id == 52:
+                                story_manager.play_stage_4_7_end()
+                            if stage_id == 53:
+                                story_manager.play_stage_4_8_end()
                             rewards_text.extend([
                                 "2x Microchip", 
                                 "2x Microprocessor",
@@ -758,6 +771,61 @@ def run_game():
                         else:
                             if random.random() < 0.7: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
                             if random.random() < 0.7: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
+
+                    elif stage_id in [56, 57, 58, 60]:
+                        checklatest = stage_id
+                        if should_play_story:
+                            if stage_id == 56:
+                                story_manager.play_stage_4_11_end()
+                            if stage_id == 57:
+                                story_manager.play_stage_4_12_end()
+                            if stage_id == 58:
+                                story_manager.play_stage_4_13_end()
+                            if stage_id == 60:
+                                story_manager.play_stage_4_15_end()
+                            rewards_text.extend([
+                                "1x Yunhai Herbal Powder",
+                                "1x Microprocessor",
+                            ])
+                            mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
+                            mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
+                            if config.player_data["latest_stage"] < checklatest: config.player_data["latest_stage"] = checklatest
+                            cl = config.player_data.get("cleared_stages", [])
+                            if checklatest not in cl: cl.append(checklatest); config.player_data["cleared_stages"] = cl
+                        else:
+                            if random.random() < 0.45: rewards_text.append("1x Yunhai Herbal Powder"); mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
+
+                    elif stage_id in [62, 63, 70]:
+                        checklatest = stage_id
+                        if should_play_story:
+                            if stage_id == 62:
+                                story_manager.play_stage_4_17_end()
+                            if stage_id == 63:
+                                story_manager.play_stage_4_18_end()
+                            rewards_text.extend([
+                                "5x Jade Microchip",
+                            ])
+                            mats["Jade Microchip"] = mats.get("Jade Microchip", 0) + 5
+                            if config.player_data["latest_stage"] < checklatest: config.player_data["latest_stage"] = checklatest
+                            cl = config.player_data.get("cleared_stages", [])
+                            if checklatest not in cl: cl.append(checklatest); config.player_data["cleared_stages"] = cl
+                        else:
+                            if random.random() < 0.3: rewards_text.append("1x Jade Microchip"); mats["Jade Microchip"] = mats.get("Jade Microchip", 0) + 1
+
+                    elif stage_id in [64, 65, 66, 68, 69, 71]:
+                        checklatest = stage_id
+                        if should_play_story:
+                            if stage_id == 66:
+                                story_manager.play_stage_4_21_end()
+                            rewards_text.extend([
+                                "1x Jade Microchip",
+                            ])
+                            mats["Jade Microchip"] = mats.get("Jade Microchip", 0) + 1
+                            if config.player_data["latest_stage"] < checklatest: config.player_data["latest_stage"] = checklatest
+                            cl = config.player_data.get("cleared_stages", [])
+                            if checklatest not in cl: cl.append(checklatest); config.player_data["cleared_stages"] = cl
+                        else:
+                            if random.random() < 0.3: rewards_text.append("1x Jade Microchip"); mats["Jade Microchip"] = mats.get("Jade Microchip", 0) + 1
 
                     config.current_state = config.STATE_MAIN_MENU
 
@@ -1445,7 +1513,7 @@ def run_game():
                         console.print("[dim]Stage Cleared.[/dim]")
                         time.sleep(0.5)
                     else:
-                        # story_manager.play_stage_4_1_story()
+                        story_manager.play_stage_4_1_story()
                         console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
                         console.print("2x Microchip")
                         console.print("2x Microprocessor")
@@ -1465,7 +1533,7 @@ def run_game():
                         console.print("[dim]Stage Cleared.[/dim]")
                         time.sleep(0.5)
                     else:
-                        # story_manager.play_stage_4_2_story()
+                        story_manager.play_stage_4_2_story()
                         console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
                         console.print("3x Sports Water Bottle")
                         mats = config.player_data["materials"]
@@ -1483,7 +1551,7 @@ def run_game():
                         console.print("[dim]Stage Cleared.[/dim]")
                         time.sleep(0.5)
                     else:
-                        # story_manager.play_stage_4_3_story()
+                        story_manager.play_stage_4_3_story()
                         console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
                         console.print("3x Microchip")
                         mats = config.player_data["materials"]
@@ -1530,6 +1598,80 @@ def run_game():
             elif choice == "4-8":
                 if unlocked >= 52:
                     config.player_data["selected_stage"] = 53
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+    
+            elif choice == "4-9":
+                if unlocked >= 52:
+                    if unlocked >= 53:
+                        console.print("[dim]Stage Cleared.[/dim]")
+                        time.sleep(0.5)
+                    else:
+                        story_manager.play_stage_4_9_story()
+                        console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                        console.print("1x Yunhai Herbal Powder")
+                        mats = config.player_data["materials"]
+                        mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
+                        if config.player_data["latest_stage"] < 53: config.player_data["latest_stage"] = 53
+                        sync_currencies()
+                        get_player_input("Press Enter...")
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-17":
+                if unlocked >= 61:
+                    config.player_data["selected_stage"] = 62
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-18":
+                if unlocked >= 62:
+                    config.player_data["selected_stage"] = 63
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-19":
+                if unlocked >= 63:
+                    config.player_data["selected_stage"] = 64
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-20":
+                if unlocked >= 64:
+                    config.player_data["selected_stage"] = 65
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-21":
+                if unlocked >= 65:
+                    config.player_data["selected_stage"] = 66
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-25":
+                if unlocked >= 69:
+                    config.player_data["selected_stage"] = 70
+                    config.current_state = config.STATE_BATTLE
+                else:
+                    console.print("[red]Locked![/red]")
+                    time.sleep(1)
+
+            elif choice == "4-26":
+                if unlocked >= 70:
+                    config.player_data["selected_stage"] = 71
                     config.current_state = config.STATE_BATTLE
                 else:
                     console.print("[red]Locked![/red]")

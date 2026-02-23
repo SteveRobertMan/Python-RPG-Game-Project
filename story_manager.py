@@ -37,7 +37,7 @@ def show_story_box(speaker, text, affiliation="", is_thought=False, is_narrator=
                 box_color = "purple"
             elif speaker == "Naganohara":
                 box_color = "magenta"
-            elif speaker == "Benikawa" or speaker == "Ayame Benikawa":
+            elif speaker == "Benikawa":
                 box_color = "orange1"
             elif speaker == "Nishida":
                 box_color = "tan"
@@ -45,8 +45,8 @@ def show_story_box(speaker, text, affiliation="", is_thought=False, is_narrator=
                 box_color = "dodger_blue2"
             elif speaker == "Kageyama":
                 box_color = "cyan"
-            elif speaker == "Natsume" or speaker == "Yokubukai Natsume":
-                box_color = "navy_blue"
+            elif speaker in ["Natsume", "Boss"]:
+                box_color = "dark_blue"
             elif speaker == "Hana":
                 box_color = "gold1"
             elif speaker == "Masayoshi":
@@ -75,15 +75,41 @@ def show_story_box(speaker, text, affiliation="", is_thought=False, is_narrator=
                 box_color = "blue_violet"
             elif speaker == "Hazuki":
                 box_color = "sea_green2"
+            elif speaker in ["Stern Enforcer", "Mei", "Okusora Mei"]:
+                box_color = "grey84"
+            elif speaker == "Liwei":
+                box_color = "light_yellow3"
+            elif speaker == "Miyu":
+                box_color = "red1"
+            elif speaker in ["Relaxed Man", "Koharu"]:
+                box_color = "sandy_brown"
+            elif speaker == "Xiao":
+                box_color = "dark_orange"
+            elif speaker in ["Xiangyun", "Yu"]:
+                box_color = "sea_green1"
+            elif speaker in ["Mannerly Starguard", "Elysium"]:
+                box_color = "dark_slate_gray1"
+            elif speaker in ["Propagator", "Nue"]:
+                box_color = "medium_orchid"
+            elif speaker in ["General", "Zhao Feng"]:
+                box_color = "hot_pink"
             
             # --- COMMON ENEMY CHARACTERS ---
-            elif speaker in ["Underwear Thief", "Freshman 1", "Freshman 2", "Freshman 3", "Goons", "Gang Member 1", "Gang Member 2", "Gang Member 3", "Gang Member 4", "Clueless Heiwa Thug", "Henchman A", "Henchman B", "Deadly Laser Beam World-Threatening Monster"]:
+            elif speaker in ["Underwear Thief", "Freshman 1", "Freshman 2", "Freshman 3", "Goons", "Gang Member 1", "Gang Member 2", "Gang Member 3", "Gang Member 4", "Clueless Heiwa Thug", "Henchman A", "Henchman B", "Deadly Laser Beam World-Threatening Monster", "Gang Leader"]:
+                box_color = "bright_red"
+            elif speaker == "Guard" and affiliation == "Fake Border Patrol":
                 box_color = "bright_red"
             elif speaker in ["Raven", "Falcon", "Eagle"]:
                 box_color = "dark_violet"
+            elif speaker in ["Operative A", "Operative B", "Operative C"]:
+                box_color = "deep_sky_blue4"
+            elif speaker in ["Ibara", "Kagerou"]:
+                box_color = "purple4"
 
             # --- DEFAULTS / MINOR CHARACTERS ---
-            elif speaker in ["Hanefuji Kurona", "Kiryoku Girl 1", "Kiryoku Girl 2", "Kiryoku Girl 3", "Council Aide", "Committee Member A", "Committee Member B", "Staff Teacher"]:
+            elif speaker in ["Hanefuji Kurona", "Kiryoku Girl 1", "Kiryoku Girl 2", "Kiryoku Girl 3", "Council Aide", "Committee Member A", "Committee Member B", "Staff Teacher", "Driver", "Male Student A", "Male Student B", "Female Student A", "Female Student B", "Enforcer Unit Captain", "Enforcer A", "Enforcer B", "Enforcer C"]:
+                box_color = "green"
+            elif speaker == "Guard" and affiliation == "Border Patrol?":
                 box_color = "green"
             else:
                 box_color = "white"
@@ -1133,8 +1159,8 @@ def play_stage_1_8_story():
     show_story_box("", "I mean, I had my suspicions that he had been using it unconsciously all this time, but to think he could pull it off to that extent.", is_narrator=True)
     show_story_box("", "Now I see why the employer wanted him gone. He probably posed a threat to whatever their plan was.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Ah~, I failed my mission for the first time in my life. Father is going to scold me to no end, and my rank is going to drop after I tried so hard to climb up this far…", affiliation="Benikawa Ninja Clan", is_thought=True)
-    show_story_box("Ayame Benikawa", "Well! No matter! I will just climb right back up in no time!", affiliation="Benikawa Ninja Clan", is_thought=True)
+    show_story_box("Benikawa", "Ah~, I failed my mission for the first time in my life. Father is going to scold me to no end, and my rank is going to drop after I tried so hard to climb up this far…", affiliation="Benikawa Ninja Clan", is_thought=True)
+    show_story_box("Benikawa", "Well! No matter! I will just climb right back up in no time!", affiliation="Benikawa Ninja Clan", is_thought=True)
     
     show_story_box("", "For now… let me think about getting out of this situation.", is_narrator=True)
     show_story_box("", "I woke up about an hour ago but didn’t open my eyes right away. Good thing they still haven’t noticed anything.", is_narrator=True)
@@ -1160,12 +1186,12 @@ def play_stage_1_8_story():
     show_story_box("", "Hm? What are they talking about? What’s he going to—", is_narrator=True)
     show_story_box("", "WHAM!", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "OUCH!", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "OUCH!", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Finally awake, huh?", affiliation="Kasakura High School Student / Seven Wonders")
     show_story_box("", "His fist still high in the air.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Ah… You little—! You do know I can just untie myself right now, right!?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Ah… You little—! You do know I can just untie myself right now, right!?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "But you won’t. You know damn well that you wouldn’t be able to catch me off guard again and therefore can’t defeat me.", affiliation="Kasakura High School Student / Seven Wonders")
     show_story_box("", "He smirked.", is_narrator=True)
@@ -1181,67 +1207,67 @@ def play_stage_1_8_story():
     # --- Part 3: Natsume and the Plot ---
     show_story_box("Natsume", "Still, what a great catch, Hanefuji. I’ve been investigating these little macaques but didn’t find anything useful. So be sure to get lots of data out of her.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Macaques… Well, I suppose that wasn’t an inaccurate description of us.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Macaques… Well, I suppose that wasn’t an inaccurate description of us.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Natsume", "Firstly, who hired you? What’s their purpose?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Dunno, they didn’t give a name, and I didn’t care to ask. They just gave me the mission and the cash. I took it and gave my word. That was that.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Dunno, they didn’t give a name, and I didn’t care to ask. They just gave me the mission and the cash. I took it and gave my word. That was that.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Yuri", "Are you serious? Ya just accept a job like that without checkin’ who it was from?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Of course. A job’s a job. That’s what us ninjas do. We don’t question anything, just move according to the orders.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Of course. A job’s a job. That’s what us ninjas do. We don’t question anything, just move according to the orders.", affiliation="Benikawa Ninja Clan")
     
-    show_story_box("Ayame Benikawa", "Look here. I won’t try anything, yeah? I already failed my mission and that’s that. I have no obligation to do anything to you all anymore.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Look here. I won’t try anything, yeah? I already failed my mission and that’s that. I have no obligation to do anything to you all anymore.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Natsume", "Tch, how convenient. If so, at least leave us with something we can work with—like why are they targeting us?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Don’t know—", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Don’t know—", affiliation="Benikawa Ninja Clan")
     show_story_box("Akasuke", "—at least let me finish, you savage!", affiliation="Kasakura High School Student / Seven Wonders")
     show_story_box("", "His fist stopped inches from my face.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Sigh. If I have to guess, you all are obstacles in their plans.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Sigh. If I have to guess, you all are obstacles in their plans.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "The room fell into silence for a little while before it was interrupted by Yokubukai.", is_narrator=True)
     
     show_story_box("Natsume", "Plan?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Yeah. I mean, come on. Don’t pretend like you all aren’t a bunch of absolute powerhouses. If they are planning to do anything, of course they are going to have to get rid of you all. And it probably wouldn’t be just me, either.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Yeah. I mean, come on. Don’t pretend like you all aren’t a bunch of absolute powerhouses. If they are planning to do anything, of course they are going to have to get rid of you all. And it probably wouldn’t be just me, either.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Yuri", "So…what yer sayin’ is that…there will be more to come.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("Natsume", "If that is so, at least tell us how to distinguish ninjas from normal people.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Nope. That, I can’t say.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Nope. That, I can’t say.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "CRACK!!", is_narrator=True)
-    show_story_box("Ayame Benikawa", "GUH—!?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "GUH—!?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "One of my fingers was broken by Hanefuji-kun. He really wasn’t kidding when he said he was going to break every bone in my body.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "…Do that all you want but I won’t say i–AGH!", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "…Do that all you want but I won’t say i–AGH!", affiliation="Benikawa Ninja Clan")
     show_story_box("Akasuke", "Oh really? How about I just break three of them at the same time?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "No mercy for the wicked… was his motto, wasn’t it? And I was the wicked in his eye, so him being this rough wasn’t that unnatural… But what could I have done? I literally couldn’t say it!", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Hah…fine. I will tell you this… us ninjas can’t interfere with each others’ mission, unless the mission requires us to…", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Hah…fine. I will tell you this… us ninjas can’t interfere with each others’ mission, unless the mission requires us to…", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "That silence again. Akasuke loosened his grip on my hand, though the sting from my fingers still throbbed like a heartbeat in my skull.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "That’s all I’ll say. And you can twist my whole arm off if you want, I’m not breaking that law. We’re not allowed to out each other. You should feel lucky I even said this much…", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "That’s all I’ll say. And you can twist my whole arm off if you want, I’m not breaking that law. We’re not allowed to out each other. You should feel lucky I even said this much…", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Yuri", "Why? What’s so sacred about yer rules? Yer just assassins, right?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "It’s for my own survival. If we break even one of the sacred rules, no matter how minor it is, we get hunted down by the entirety of the ninja society labeled as ‘Ibara’.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "It’s for my own survival. If we break even one of the sacred rules, no matter how minor it is, we get hunted down by the entirety of the ninja society labeled as ‘Ibara’.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "And how many of you are already in this school?", affiliation="Kasakura High School Student / Seven Wonders")
-    show_story_box("Ayame Benikawa", "I’m not saying. But it’s more than you think.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "I’m not saying. But it’s more than you think.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Natsume", "We’ll need to go back through data archives. I’ll try to figure out how to distinguish ninjas from normal people by myself.", affiliation="Kasakura High School Student / Seven Wonders")
     
     # --- Part 4: Ayame's Reaction ---
-    show_story_box("Ayame Benikawa", "So…what now? You’re gonna kill me?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "So…what now? You’re gonna kill me?", affiliation="Benikawa Ninja Clan")
     show_story_box("Akasuke", "No, we are not like you.", affiliation="Kasakura High School Student / Seven Wonders")
-    show_story_box("Ayame Benikawa", "Aw. I was kinda hoping for something dramatic.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Aw. I was kinda hoping for something dramatic.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "Being told that by the person I liked should hurt. But somehow that kind of… turned me on? What the hell?", is_narrator=True)
     
@@ -1251,7 +1277,7 @@ def play_stage_1_8_story():
     show_story_box("", "Yokubukai really was terrifying. Probably the only person in this room scarier than Hanefuji-kun.", is_narrator=True)
     
     show_story_box("Akasuke", "I meant what I said earlier. If I see you hurting anyone again, even once, it won’t matter if you’re under contract or not.", affiliation="Kasakura High School Student / Seven Wonders")
-    show_story_box("Ayame Benikawa", "Noted~.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Noted~.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "He didn’t reply. Just walked out of the room, Inami followed right after. Ah…I think he awakened something inside me. Felt kinda sticky down there.", is_narrator=True)
     
@@ -1262,14 +1288,14 @@ def play_stage_1_8_story():
     
     show_story_box("", "She said it. She actually said it.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "E-Excuse me!? What kind of opening line is that!?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "E-Excuse me!? What kind of opening line is that!?", affiliation="Benikawa Ninja Clan")
     show_story_box("Natsume", "I’m right, aren’t I?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "I wanted to deny it. Really, I did. But I was pretty sure my face betrayed me. It was heating up fast.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "I-I mean, what, so you monitor body temperature now!?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "I-I mean, what, so you monitor body temperature now!?", affiliation="Benikawa Ninja Clan")
     show_story_box("Natsume", "Nah, I just heard it. Your breathing got more erratic, your pupils dilated more than they should when Hanefuji threatened you. And I definitely heard a squelching sound down ther—", affiliation="Kasakura High School Student / Seven Wonders")
-    show_story_box("Ayame Benikawa", "Don’t say it!", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Don’t say it!", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Natsume", "Well, anyway.", affiliation="Kasakura High School Student / Seven Wonders")
     show_story_box("", "She clapped her hands.", is_narrator=True)
@@ -1378,11 +1404,11 @@ def play_stage_1_9_story():
     show_story_box("", "Everyone’s reaction varies: Akasuke kicked the chair behind, ready to strike at any moment, Yuri was the same. Hana remained seated but her guard was obviously up, her smile was nowhere to be seen. Kouhei’s right hand was already gripped on his bokken.", is_narrator=True)
     show_story_box("", "Kageyama was the one with the least tense expression out of five of them.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Yahoo~, everyone! Hah~, it’s been a while since I’ve seen sunlight, sure feels refreshing, huh?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Yahoo~, everyone! Hah~, it’s been a while since I’ve seen sunlight, sure feels refreshing, huh?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "What’s the meaning of this, Yokubukai?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Yokubukai Natsume", "Relax, Hanefuji. I’ll explain everything right now. You two go and sit.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "Relax, Hanefuji. I’ll explain everything right now. You two go and sit.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Natsume explained that during the two days they’ve confined Ayame, they tried to investigate her further but she wouldn’t say anything more than she already had.", is_narrator=True)
     show_story_box("", "So she had a bright idea to just hire Ayame to be their bodyguard, that way she will be their ally and could give more information to them since she’s now technically a business partner.", is_narrator=True)
@@ -1390,12 +1416,12 @@ def play_stage_1_9_story():
     show_story_box("Masayoshi", "And how can we be certain that this woman will not turn her blade against us?", affiliation="Kasakura High School Disciplinary Committee / Seven Wonders")
     show_story_box("", "He asked with a stern voice, his right eye opening.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Ninja Rule Article 2 line 39: ‘A good ninja must not betray one’s client. Ones who dare to break the rule shall be branded as Ibara.’ There we have it~", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Ninja Rule Article 2 line 39: ‘A good ninja must not betray one’s client. Ones who dare to break the rule shall be branded as Ibara.’ There we have it~", affiliation="Benikawa Ninja Clan")
     show_story_box("", "She said with a smile.", is_narrator=True)
     
     show_story_box("Masayoshi", "If what she says is true, then the code itself binds her. However…", affiliation="Kasakura High School Disciplinary Committee / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Trust is not easily earned, is that right, Masayoshi-se-n-pai~", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Trust is not easily earned, is that right, Masayoshi-se-n-pai~", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Masayoshi", "Tch… Ah. Pardon my impoliteness, president.", affiliation="Kasakura High School Disciplinary Committee / Seven Wonders")
     
@@ -1403,31 +1429,31 @@ def play_stage_1_9_story():
     
     show_story_box("", "Akasuke glared at Ayame, he was still angry about her betrayal. To think he was having genuine fun with her all morning, to think he once thought of this woman as his friend, it didn’t sit right with him to suddenly have her as an ally again.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Come on, what’s with that scary look, Hanefuji-kun? Don’t tell me you don’t trust lil’ ol’ me~?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Come on, what’s with that scary look, Hanefuji-kun? Don’t tell me you don’t trust lil’ ol’ me~?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Not even a little.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("Yuri", "I second that.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "That glare of yours though, Hanefuji-kun… mm, I can feel it all over. Makes me wanna squirm in my seat.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "That glare of yours though, Hanefuji-kun… mm, I can feel it all over. Makes me wanna squirm in my seat.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Hah?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Akasuke was obviously creeped out by that so he immediately stopped every interaction with her.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "Are you all done? If so, let me continue.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "Are you all done? If so, let me continue.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Natsume further explained how the ninja world works. After officially hiring her, she instantly became open about the information.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "Now that she’s our bodyguard, meaning we are all her employers, we can ask her anything and she would answer. I’ve already asked what I wanted to know, I wrote a list of all the important things for you all to read.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "Now that she’s our bodyguard, meaning we are all her employers, we can ask her anything and she would answer. I’ve already asked what I wanted to know, I wrote a list of all the important things for you all to read.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Natsume then tossed six stacks of paper at each and every member other than her.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "One thing that she wouldn’t tell me, though…is how to differentiate ninjas from normal people.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "One thing that she wouldn’t tell me, though…is how to differentiate ninjas from normal people.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "That one is against the rules, you know~ We ninjas aren’t allowed to rat each other out! Not unless the other party reveals themselves anyway!", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "That one is against the rules, you know~ We ninjas aren’t allowed to rat each other out! Not unless the other party reveals themselves anyway!", affiliation="Benikawa Ninja Clan")
     
-    show_story_box("Yokubukai Natsume", "What she said.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "What she said.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "After some deep thoughtful minutes passed, Kageyama finally made the decision.", is_narrator=True)
     
@@ -1441,7 +1467,7 @@ def play_stage_1_9_story():
     
     show_story_box("Hana", "If she steps out of line…I’ll bury her in my garden.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Ooh~ I like that threat!", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Ooh~ I like that threat!", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Kageyama", "Then it’s decided. From today onward, Benikawa Ayame is under our employment as a bodyguard for the Seven Wonders.", affiliation="Kasakura High School Student Council / Seven Wonders")
     
@@ -1457,7 +1483,7 @@ def play_stage_1_9_story():
     show_story_box("", "It was after school. Benikawa and I were in our club dojo like we used to do back then. No one knew what happened between us so we tried to act as normal as we possibly could.", is_narrator=True)
     show_story_box("", "That being said. Her fingers, the ones I broke, were completely healed. It should’ve taken her six weeks at least but it’s only been two days.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Oh that… Yikes! I don’t wanna think about it…", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Oh that… Yikes! I don’t wanna think about it…", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Let me guess…something to do with Kagaku?", affiliation="Kasakura High School Student / Seven Wonders")
     
@@ -1466,30 +1492,30 @@ def play_stage_1_9_story():
     show_story_box("", "Not exactly the kind of first impression I want.", is_narrator=True)
     show_story_box("", "So when I say she’s interesting, I mean she’s absolutely terrifying.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "…So right after you guys left, Natsume-chan called her and had her inject something into me. And what do you know, my fingers started healing. She said it was from your cells or something.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "…So right after you guys left, Natsume-chan called her and had her inject something into me. And what do you know, my fingers started healing. She said it was from your cells or something.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Ah…yeah.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "So that was what it was for. I remembered her approaching me saying something like ‘Hanefuji-kun! Please, please, please, please, let me have a little bit of your blood sample! I wanna test something with it!’", is_narrator=True)
     show_story_box("", "I denied her several times but eventually gave in because it started to get annoying. So she was developing a healing serum with it. Great, I guess?", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "And then…she made me do all sorts of things like test her newest potion which turned me into a guy for an hour… Do a full body examination, inside and out because she was curious about how I could scramble your brain by just smacking you.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "And then…she made me do all sorts of things like test her newest potion which turned me into a guy for an hour… Do a full body examination, inside and out because she was curious about how I could scramble your brain by just smacking you.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Yeah, not just her, me too. How did you do that?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Hm…I’m not too sure myself~. I only discovered this ability recently.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Hm…I’m not too sure myself~. I only discovered this ability recently.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "She raised her index finger up in the air.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "But basically, I just released some kind of electrical signal from my hand into your nervous system and then bam it just works.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "But basically, I just released some kind of electrical signal from my hand into your nervous system and then bam it just works.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "So even you don’t know the principle behind it.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Yep! And I can’t even stack up another effect on the same person. For example, if I’ve already scrambled your motor function, then I can’t disable the flipping function in your brain.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Yep! And I can’t even stack up another effect on the same person. For example, if I’ve already scrambled your motor function, then I can’t disable the flipping function in your brain.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "That’s more limiting than I thought.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Enough to mess you up back then.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Enough to mess you up back then.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "True…", affiliation="Kasakura High School Student / Seven Wonders")
     
@@ -1501,13 +1527,13 @@ def play_stage_1_9_story():
     show_story_box("", "If that was true…then I feel kinda bad for her.", is_narrator=True)
     
     show_story_box("Akasuke", "Hey.", affiliation="Kasakura High School Student / Seven Wonders")
-    show_story_box("Ayame Benikawa", "Hm?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Hm?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Back then. When you said you would regret killing us the most, how true was that?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Benikawa’s smile faded. She looked down on the ground.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Why does that matter?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Why does that matter?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "It matters because I need to know. If you were just saying that to get under my skin then fine. But…", affiliation="Kasakura High School Student / Seven Wonders")
     show_story_box("", "I looked her in the eye.", is_narrator=True)
@@ -1516,52 +1542,52 @@ def play_stage_1_9_story():
     
     show_story_box("", "She blinked, then gave me a strange look.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Differently, huh? What, you gonna start being nice to me? Let me sit on your lap during breaks?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Differently, huh? What, you gonna start being nice to me? Let me sit on your lap during breaks?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "I’m serious, Benikawa.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "After a long silence, Benikawa let out a long sigh.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "It’s true. I would’ve regretted it. Not because I’m some saint or anything. Don’t get me wrong, killing is just part of the job sometimes. But you…you made me drop my guard. No one’s ever done that before.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "It’s true. I would’ve regretted it. Not because I’m some saint or anything. Don’t get me wrong, killing is just part of the job sometimes. But you…you made me drop my guard. No one’s ever done that before.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Drop your guard?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Yeah. The whole time I was with you, I kept forgetting I was supposed to kill you. You were just so fun to be with…like I could live my life as a normal high school girl, y’know?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Yeah. The whole time I was with you, I kept forgetting I was supposed to kill you. You were just so fun to be with…like I could live my life as a normal high school girl, y’know?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "Benikawa smiled faintly, though it wasn’t her usual cheeky grin.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Pathetic, huh? A ninja who forgets her mission because she was having too much fun.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Pathetic, huh? A ninja who forgets her mission because she was having too much fun.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "I stayed quiet. She sounded so genuine it caught me off-guard.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "You…don’t trust me, do you?", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "You…don’t trust me, do you?", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Of course not.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Brutal.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Brutal.", affiliation="Benikawa Ninja Clan")
     show_story_box("", "She let out a little chuckle.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "And here I thought we were bonding.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "And here I thought we were bonding.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "I’m not saying I never will. But trust isn’t something you’d earn after a few conversations. Especially not after you tried to kill me.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Fair, hehe…", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Fair, hehe…", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "She shrugged, then leaned forward with a mischievous glint in her eyes.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "So I’ll just have to make you trust me. Bit by bit. Until one day you’ll let me sit on your lap during breaks.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "So I’ll just have to make you trust me. Bit by bit. Until one day you’ll let me sit on your lap during breaks.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "Why are you obsessed with that idea?", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Cuz that would annoy you.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Cuz that would annoy you.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "I shot her a glare, and just like before, she shivered slightly, her cheeks turning faintly pink.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Mmh…there it is again. That glare. Don’t stop.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Mmh…there it is again. That glare. Don’t stop.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("Akasuke", "You’re seriously creeping me out with that.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "That’s what makes it better~!", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "That’s what makes it better~!", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "I sighed, deciding not to dignify that with a response.", is_narrator=True)
 
@@ -1711,7 +1737,7 @@ def play_stage_1_11_story():
     
     show_story_box("Yuri", "Figures. No shortcuts in a school full of meatheads.", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("Ayame Benikawa", "Up we go then~.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Up we go then~.", affiliation="Benikawa Ninja Clan")
     
     show_story_box("", "The higher-ups’ office was on the top floor. We didn’t have time to admire the architecture.\n\nThe moment our feet hit the lobby tiles, the remaining crowd of Heiwa Seiritsu delinquents turned as one.", is_narrator=True)
     
@@ -1725,7 +1751,7 @@ def play_stage_1_11_story():
     
     show_story_box("", "Benikawa’s smile turned sharp.", is_narrator=True)
     
-    show_story_box("Ayame Benikawa", "Finally~.", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "Finally~.", affiliation="Benikawa Ninja Clan")
     
     # --- Part 2: The Brawl ---
     show_story_box("", "They charged.", is_narrator=True)
@@ -2097,7 +2123,7 @@ def play_stage_2_4_start():
     
     show_story_box("", "Natsume’s pink eyes fluttered open. She winced as she tried to sit up.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "…Hana.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "…Hana.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("Hana", "Don’t move too fast. Eat something first.", affiliation="Kasakura High School Student / Seven Wonders")
     
@@ -2107,33 +2133,33 @@ def play_stage_2_4_start():
     
     show_story_box("", "Natsume stared at the spoon, then at Hana.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "I’m… fine for now.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "I’m… fine for now.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "She took the spoon with trembling fingers, and ate slowly.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "The situation?", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "The situation?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("Hana", "It’s a stalemate. Heiwa’s forces are still outside the perimeter—spread thin but not retreating. They’re waiting. Watching.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Natsume exhaled.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "And inside?", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "And inside?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("Hana", "Kouhei pulled everyone back to the main buildings. Concentrated defense. No one’s broken through yet.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Natsume closed her eyes briefly.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "There was…a ‘knight’..?", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "There was…a ‘knight’..?", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("Hana", "Gone. No trace since it took out eight of us. We’re all by some miracle back like you, though.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Natsume nodded once. Then:", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "Give me the earbud.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "Give me the earbud.", affiliation="Kasakura High School Student / Seven Wonders")
     
     show_story_box("", "Hana handed her a tiny red-star-decorated device—Natsume’s own invention. Long-range, encrypted, crystal-clear.\nNatsume pressed it to her ear.", is_narrator=True)
     
-    show_story_box("Yokubukai Natsume", "Kagaku. Status.", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "Kagaku. Status.", affiliation="Kasakura High School Student / Seven Wonders")
     
     # --- Scene 2: The Strategy ---
     show_story_box("", "On the Road to Kasakura\nKagaku’s earbud chimed. She tapped it once.", is_narrator=True)
@@ -2632,7 +2658,7 @@ def play_stage_2_7_end():
     
     show_story_box("", "She adjusted her glasses.", is_narrator=True)
     
-    show_story_box("Secretary Miyu", "You’re late with your report on the latest incident.", affiliation="Kasakura High School Student Council")
+    show_story_box("Miyu", "You’re late with your report on the latest incident.", affiliation="Kasakura High School Student Council")
     
     show_story_box("", "I smiled wider.", is_narrator=True)
     
@@ -2640,7 +2666,7 @@ def play_stage_2_7_end():
     
     show_story_box("", "She didn’t smile back.", is_narrator=True)
     
-    show_story_box("Secretary Miyu", "The ‘Boss’ is very interested in recent events. Hurry on the report.", affiliation="Kasakura High School Student Council")
+    show_story_box("Miyu", "The ‘Boss’ is very interested in recent events. Hurry on the report.", affiliation="Kasakura High School Student Council")
     
     show_story_box("", "She stepped to the window.\nJumped.\nGone—without a trace.", is_narrator=True)
     
@@ -6530,3 +6556,5901 @@ def play_stage_3_23_story():
     
     show_story_box("Midori", "Another figure—smarter, and much calmer—pulled the idiot listener away just in time.", affiliation="Kiryoku Gakuen Student?")
     show_story_box("Midori", "...How fortunate for them.", affiliation="Kiryoku Gakuen Student?")
+
+def play_stage_4_1_story():
+    # --- YURI'S POV / THE SWAPPED NIGHTMARE ---
+    show_story_box("", "********* ◆ *********\nYuri’s POV", is_narrator=True)
+    show_story_box("", "The massive cruise ship finally blew its horn, signalin’ our return to the mainland.", is_narrator=True)
+    show_story_box("", "The Goodwill Island field trip was officially over. Our Kasakura gang—Akasuke, Benikawa, Shigemura, Naganohara, Kagaku, and me—trudged down the ramp onto the bustling docks.", is_narrator=True)
+    show_story_box("", "We were exhausted, carryin’ bags full of souvenirs and heads full of heavy secrets.", is_narrator=True)
+    show_story_box("", "Staff members were directin’ the four schools to their respective transport zones. We were supposed to hop on a designated Kasakura bus, which would take us straight back to campus.", is_narrator=True)
+    show_story_box("", "From there, we could all just walk home and finally sleep in our own beds.", is_narrator=True)
+    show_story_box("", "Akasuke was just about to step onto our bus when he stopped, his hand hoverin’ over the handrail.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Hold on a sec. Look at Kojima-sensei.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I followed his gaze. A little ways down the road, Kojima-sensei and a few other staff members were gathered around a walkie-talkie, lookin’ intensely frustrated.", is_narrator=True)
+    show_story_box("", "We exchanged a look, dropped our bags by the bus doors, and jogged over.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Sensei? Is there a problem?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kojima-sensei sighed, rubbin’ the bridge of his nose.", is_narrator=True)
+    
+    show_story_box("Kojima-sensei", "“Not a massive one, Hanefuji. But it’s a headache. The main road ahead is blocked by a squad of some ‘ninja hostiles’.”", affiliation="Kasakura High School Teacher")
+    show_story_box("Kojima-sensei", "“They aren’t deliberately blocking us—looks like they’re on standby for a completely different mission—but they’re ruthless underground mercenaries.”", affiliation="Kasakura High School Teacher")
+    show_story_box("Kojima-sensei", "“If the buses get too close, they’ll definitely attack first and ask questions later.”", affiliation="Kasakura High School Teacher")
+    
+    show_story_box("", "I squinted, focusin’ my eyesight down the long stretch of the coastal highway.", is_narrator=True)
+    show_story_box("", "Sure enough, I could see ‘em.", is_narrator=True)
+    
+    show_story_box("Yuri", "“I see ‘em…black clothin’, full-body hoods, and simple face masks.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Benikawa peeked over my shoulder, her eyes narrowin’.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“That’s standard formal ninja attire. They aren’t hidin’ their profession.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Akasuke cracked his knuckles.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“We’ll handle it, Sensei. We can try to negotiate, or just clear the road so the buses can pass.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kojima-sensei hesitated, then nodded.", is_narrator=True)
+    
+    show_story_box("Kojima-sensei", "“Fine. But be careful. Don’t underestimate them.”", affiliation="Kasakura High School Teacher")
+    
+    show_story_box("", "[ 5 Minutes Later ]", is_narrator=True)
+    
+    show_story_box("", "I… I don’t remember how it went so wrong.", is_narrator=True)
+    show_story_box("", "It was a massacre. We were decimated.", is_narrator=True)
+    show_story_box("", "My memories of the actual clash are just blurry flashes of black fabric and cold steel.", is_narrator=True)
+    show_story_box("", "The only thing that echoes clearly in my head is Benikawa shoutin’ a desperate warnin’: “...These ninjas aren’t ordinary ones!”", is_narrator=True)
+    show_story_box("", "And then, the sky broke open. It started rainin’. Hard.", is_narrator=True)
+    show_story_box("", "I was crawlin’ on the asphalt, my body achin’, my vision blurred by the downpour. Where is he? Where is Akasuke-kun?", is_narrator=True)
+    show_story_box("", "Then, I saw him.", is_narrator=True)
+    show_story_box("", "“Akasuke-kun! Wake up!” Please…wake up.", is_narrator=True)
+    show_story_box("", "The downpour showed no mercy, each droplet hammerin’ into the pavement and bouncin’ off his body.", is_narrator=True)
+    show_story_box("", "His red hair stuck flat against his forehead, the eyepatch over his left eye soaked through, the black tie around his neck limp like it had given up too.", is_narrator=True)
+    show_story_box("", "I dropped to my knees beside him, water splashin’ up around us.", is_narrator=True)
+    show_story_box("", "My hands grabbed his collar, clenchin’ so hard that all ten of my fingers turned bone-white.", is_narrator=True)
+    show_story_box("", "They trembled uncontrollably, but I couldn’t let go.", is_narrator=True)
+    show_story_box("", "Not like this.", is_narrator=True)
+    show_story_box("", "His skin felt cold under my touch. My breath hitched as I shook him again and again, droplets of rain mixin’ with the tears already fallin’ down my face.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Please, Akasuke-kun…ya can’t leave me like this…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Lightning tore across the sky, the thunder that followed rattlin’ my bones. For a moment, the whole world lit up — his face pale, lips slightly parted.", is_narrator=True)
+    show_story_box("", "My heart screamed. I called out to him, my voice breakin’, raw from shoutin’ his name over and over.", is_narrator=True)
+    
+    show_story_box("Yuri", "I can’t let him die like this… Not when I…not when we—", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "GASPPP!", is_narrator=True)
+    show_story_box("", "I shot up, clutchin’ my chest, my lungs heavin’ for air.", is_narrator=True)
+    show_story_box("", "Soft blankets. A warm breeze comin’ from the half-open window. Sunlight streamin’ through the curtains.", is_narrator=True)
+    show_story_box("", "I was in my pajamas. In my own bed. In my own home.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Haah… haah… a dream?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "My hand was still pressed flat against my chest. No heartbeat. The grim reminder of the hotel. But… I was alive.", is_narrator=True)
+    show_story_box("", "I grabbed my phone off the nightstand. Saturday, 8:30 AM. There were two unread messages on my screen.", is_narrator=True)
+    show_story_box("", "| Natsume: Don't forget the post-mission meeting today at the clubroom. Bring snacks. |\n| Akasuke: Morning, Yuri. See you at the school gates at 9. |", is_narrator=True)
+    show_story_box("", "I stared at the screen, my brain strugglin’ to catch up. I closed my eyes and forced myself to trace my memories back.", is_narrator=True)
+    show_story_box("", "We got off the ship…we got on the bus.", is_narrator=True)
+    show_story_box("", "…The bus drove us back to Kasakura High without a single hitch. No ninjas. No roadblock…", is_narrator=True)
+    show_story_box("", "…Akasuke and I separated near my neighborhood, and I walked home safely.", is_narrator=True)
+    show_story_box("", "Everything leadin’ up to this mornin’ was perfectly normal. But that \"nightmare\"… it didn’t feel like a dream. It felt heavy. Visceral.", is_narrator=True)
+    show_story_box("", "It felt exactly like an event that had actually happened, but had been swapped out for a different reality…or something.", is_narrator=True)
+    show_story_box("", "I shuddered, rubbin’ the goosebumps off my arms.", is_narrator=True)
+    show_story_box("", "Kata swapping. Destroyin’ one timeline’s self to save another. Akasuke-kun did something like that, didn’t he? Was that…one of the timelines’...", is_narrator=True)
+    
+    show_story_box("Yuri", "“Ugh. Stop it, Yuri. Yer givin’ yerself a migraine.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I lightly slapped both my cheeks with my hands.\n\nSmack!", is_narrator=True)
+    
+    show_story_box("Yuri", "“Leave the complicated, multiverse sci-fi crap to Kagaku and Natsume! Ya got a meetin’ to get to!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I threw off the covers and blitzed through my mornin’ routine. Brushed my teeth, tied my hair into its usual high ponytail, and threw on a fresh tracksuit.", is_narrator=True)
+    show_story_box("", "I grabbed my bag and bolted for the front door, slippin’ my sneakers on without untyin’ the laces.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Bye, Ma! I’m headin’ out! Gotta meet the guys!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I slammed the door behind me and sprinted down the street, pushin’ the phantom feeling of the cold rain to the very back of my mind.", is_narrator=True)
+    
+    # --- AKASUKE'S POV / THE MEETING ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "The morning air was crisp as I leaned against Kasakura High School’s imposing front gate.", is_narrator=True)
+    show_story_box("", "I checked my watch. 9:05 AM.", is_narrator=True)
+    show_story_box("", "A familiar figure in a tracksuit came jogging up the path, her silver ponytail bouncing with every step.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“You’re late.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri slowed to a halt, resting her hands on her knees as she caught her breath. She looked a little paler than usual, shadows lingering beneath her sapphire eyes.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Sorry, sorry. Just… slept through my alarm. I’m exhausted from yesterday.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I pushed off the brick pillar, offering her a sympathetic smile.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Don't sweat it. I think we’re all running on fumes today. Let’s get inside; Kagaku and the others are waiting.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "[ Kagaku’s Lab ]", is_narrator=True)
+    show_story_box("", "The moment we stepped through the reinforced doors of the lab, a brilliant flash of blue light blinded us.\n\nWHIRRR-CLUNK.", is_narrator=True)
+    show_story_box("", "The doors of the Parallaxis Scorer hissed open. Stepping out of the machine was Naganohara. But it wasn't the bubbly, twin-tailed cheerleader we knew. She was clad in a dark sandy yellow long coat, wielding a thin rapier with lethal grace. Her eyes were sharp, calculating—the Riposte Gang Squad Leader.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Woah! She actually pulled it off again!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara opened her mouth to speak, but instead, a heavy gasp escaped her lips. The blue aura around her shattered like glass. The Kata disengaged instantly, and her eyes closed as a massive wave of exhaustion hit her. She slumped backward.", is_narrator=True)
+    show_story_box("", "Before she could hit the floor, Shigemura was there, catching her gently by the shoulders.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“I’ve got you. Don’t push yourself.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Kagaku stood by the control console, resting a hand on her chin, deep in thought.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Kagaku? What went wrong? She held that form for much longer back at the hotel.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Kagaku", "“Mmmm…It’s the hardware. Upgrading the Parallaxis Scorer to reach out to stronger, more distant Katas puts an immense strain on the system. It overloads the microchips and microprocessors used to initiate the swap.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She pointed a pen at the main server rack.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Look at slot three.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "BZZZT—POP!\n\nA terrifying shower of sparks erupted from the server. A small plume of black smoke curled into the air, leaving nothing behind but a pile of expensive, charred ash.", is_narrator=True)
+    show_story_box("", "Kagaku sighed, rubbing her temples.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Well. Looks like I’m going to have to leech a lot more out of the school’s extracurricular budget to procure military-grade processors now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked around the room. It was packed.", is_narrator=True)
+    show_story_box("", "Myself, Yuri, Benikawa, Shigemura, Naganohara, Kaoru-senpai, Natsume, Kagaku, Masayoshi-senpai, President Kageyama, and Kojima-sensei. The absolute peak of Kasakura’s Vanguard.", is_narrator=True)
+    show_story_box("", "But as I looked toward the lab entrance, two more faces stepped out of the shadows.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Nishida? Yamashita? What are you guys doing here?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kojima-sensei crossed his arms.", is_narrator=True)
+    
+    show_story_box("Kojima-sensei", "“I called them in. They provided crucial support during the cruise ship operation. We need their input as our primary Weapon Makers.”", affiliation="Kasakura High School Teacher")
+    
+    show_story_box("", "Nishida offered me a wry smile.", is_narrator=True)
+    
+    show_story_box("Nishida", "“Don’t worry about it, Akasuke. I’ve long gotten used to whatever insane, world-ending trouble my ‘hero’ friend gets himself into by now.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I chuckled. It was good to have them here.", is_narrator=True)
+    show_story_box("", "Shigemura guided an exhausted Naganohara to a rolling desk chair, cracking open a can of vending machine iced tea and placing it in her hands.", is_narrator=True)
+    show_story_box("", "With everyone settled, Kageyama stepped up to the whiteboard. The meeting officially began.", is_narrator=True)
+    
+    # --- ITEM 1: THE NINJA SITUATION ---
+    show_story_box("", "<< Item 1: The Ninja Situation >>", is_narrator=True)
+    show_story_box("", "The first topic involved addressing the elephant in the room: Shigemura and Benikawa.", is_narrator=True)
+    show_story_box("", "Most of us in the Vanguard already knew the core ‘tell’ to distinguish ninjas from normal people—Purple Eyes.", is_narrator=True)
+    show_story_box("", "However, Kageyama deliberately kept that detail vague, referring to it only as a \"coincidental loophole to identify ninjas\" discovered during the cruise, explicitly to keep Nishida and Yamashita from painting targets on their own backs.", is_narrator=True)
+    show_story_box("", "The focus shifted to Shigemura. He stepped forward, standing shoulder-to-shoulder with Benikawa.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Benikawa and I had a long discussion last night. We’ve compiled a detailed report on the rules of the underworld that dictate our actions.”", affiliation="Kasakura High School Student")
+    
+    ninja_code_text = (
+        "The Ninja Code: Core Directives\n"
+        "- The Dual Mission Rule: A ninja is permitted to undertake up to two missions simultaneously. There is no time limit; they are obligated to see these missions through to the bitter end, even if it takes a lifetime.\n"
+        "- Mission Acquisition: Missions can be chosen personally (e.g., Shigemura’s vow to protect Naganohara) or assigned by superiors (e.g., the mercenary trio hired to oversee the weapon smuggling).\n"
+        "- The Ibara Exemption: If a ninja breaks the code or commits a grave crime that brings shame to the underworld, they are branded as an Ibara (Outcast).\n\n"
+        "If an active ninja encounters an Ibara, all their current missions are temporarily suspended. They are obligated by the Code to focus entirely on exterminating the Ibara, utilizing any means or alliances necessary."
+    )
+    show_story_box("", ninja_code_text, is_narrator=True)
+    
+    show_story_box("", "Benikawa leaned against the table, twirling a kunai.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Don’t panic about the Ibara thing. They’re incredibly scarce. Most of them dwell deep in the criminal underworld and hide their presence meticulously.”", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "“The chances of us running into one during our school operations are incredibly low.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Kojima-sensei nodded.", is_narrator=True)
+    
+    show_story_box("Kojima-sensei", "“Good. What about combat capabilities? You mentioned something on the ship. An ‘Awakening’. Be sure that you tell them about it.”", affiliation="Kasakura High School Teacher")
+    
+    show_story_box("", "Benikawa looked a little hesitant, clearly feeling she hadn't needed to mention this long before, but given the sheer volume of enemies we were facing, transparency was key.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Right. By blood, all ninjas experience a moment in their lives where they ‘awaken’ a specialized, lifelong physical ability.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "She pointed to herself.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“You can probably guess mine~. Nerve Rerouting and Disruption.”", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "“I can precisely target an opponent's nervous system to scramble their coordination or shut limbs down completely. I also have an innate ability to turn off my own pain receptors.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Yuri", "“Wait, really? That’s insanely useful in a fight!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“It is, but nullifying pain requires immense, constant focus. Right now, I can’t use both my nerve strikes and my pain-nullification abilities at the same time, but I just need to train harder!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "I turned my gaze to my stoic friend.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“What about you, Shigemura? What’s your awakened ability?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura thought for a moment, his violet eyes scanning the room.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“It’s difficult to explain…demonstration would be easier.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“Kagaku, do you still need that old metallic hull from the Parallaxis Scorer prototype?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Kagaku waved a dismissive hand. “It’s junk. Knock yourself out.”", is_narrator=True)
+    show_story_box("", "Shigemura walked over to the thick, solid steel hull resting on a workbench. He raised his hand in a standard karate chop position and placed the edge of his palm gently against the metal.", is_narrator=True)
+    show_story_box("", "He didn’t swing. He didn’t apply pressure. He just stood there.", is_narrator=True)
+    show_story_box("", "For a few seconds, nothing happened.", is_narrator=True)
+    show_story_box("", "Then, a low hum filled the air. The metallic hull began to shake. The trembling grew increasingly violent, the metal groaning as if under immense pressure.", is_narrator=True)
+    show_story_box("", "Shigemura grunted quietly.\n\nCRACK-SHATTER!", is_narrator=True)
+    show_story_box("", "The solid steel hull violently split into two rough, jagged halves, clattering onto the floor.", is_narrator=True)
+    show_story_box("", "The room fell dead silent.", is_narrator=True)
+    show_story_box("", "Kageyama pushed his glasses up his nose, his eyes wide.", is_narrator=True)
+    
+    show_story_box("Kageyama", "“Fascinating... Vibration.”", affiliation="Kasakura High School Student Council President")
+    
+    show_story_box("", "Shigemura nodded.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Yeah. My specialized ability allows me to generate intense vibrations from my body.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“I can send them into objects to shatter them from the inside, or internalize them to exponentially reinforce my own muscle density and physical strength.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "A memory clicked into place. The lower decks of the cruise ship.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Wait. Is that how you stopped Hisayuki? The human battering ram? You used your vibration reinforcement to absorb his momentum?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura shook his head, looking mildly annoyed.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“No. Using my ability would have exposed my identity as a ninja too early.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“I stopped him using nothing but raw physical strength and bone density. I, of course, had to hold back all my ninja-related techniques.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "He sighed, adjusting his collar.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“That’s why I told you it was ‘a pain’.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Benikawa stared at him, her jaw slightly slack.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“You… you stopped a full-speed human cannonball without even using your Awakening? Sh-Shigemura, you must have awakened your ability years ago and trained your base body to a monstrous degree…”", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "“You’re a literal genius.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Shigemura looked away, slightly embarrassed by the praise, and glanced at Naganohara, who was watching him with wide, sparkling eyes over her vending machine-issued iced tea.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“It doesn't matter. Now that my secret is out, I can fight freely. I will use my full power to protect the Vanguard.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“And to protect Naganohara.”", affiliation="Kasakura High School Student")
+
+def play_stage_4_2_story():
+    # --- ITEM 2 / KAGAKU'S POV ---
+    show_story_box("", "<< Item 2: Miyabi Hazuki >>", is_narrator=True)
+    show_story_box("", "********* ◆ *********\nKagaku’s POV", is_narrator=True)
+    
+    show_story_box("", "I cleared my throat, stepping up to the center of the lab. It was my turn to brief the Vanguard on the anomaly that was Miyabi Hazuki.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Let’s talk about our unexpected savior. Hazuki is the rightful owner of the ‘Black Box’—my lost weapon project.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Kagaku", "“From what I’ve gathered, she’s been one of her targets, Kesler, for a while. When she saw I was also being held hostage, she just decided to lend a hand…but her main goal was always luring Kesler out.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke leaned back in his chair, crossing his arms.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“And in the end, she let him escape. Sounds like it’s a habit of hers. Still… we’d be dead on that carpet if she hadn't shown up.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Kagaku", "“Exactly. But here is the critical point: we cannot rely on her.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Kagaku", "“She made it clear her duty is ‘hunting down’ the absolute strongest monsters of the underworld. We should leave her to it.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Kagaku", "“Furthermore, she is an alumna of Kiryoku Gakuen. Pushing around a powerful, independent Kiryoku figure to fight our battles would be a political disaster if their Student Council ever found out.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I reached into my lab coat pocket and pulled out a small, clear plastic ziplock bag. Inside was the crumpled, sandy, incredibly crappy business card she had flicked at Akasuke. I had sealed it to keep it from literally turning to dust.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“She said she owed us one favor because her timing was late.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Kagaku", "“Consider this our absolute Trump Card. We only use this as a last resort.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    # --- ITEM 3 / AKASUKE'S POV ---
+    show_story_box("", "<< Item 3: The Enemy Kasakura is Facing >>", is_narrator=True)
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    
+    show_story_box("", "I stood up next, moving to the whiteboard. I picked up a marker and drew a line down the middle.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Alright. Based on everything we’ve seen, the enemy threatening Kasakura can be divided into two main groups.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I tapped the left side of the board.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Group 1: The Aggressors. These are the independent underworld syndicates coming after the power of the Katas.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“Riposte Gang is the prime example. They are external forces that travel here specifically to attack us and extract our power.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I paused, looking around the room.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...But think about the timeline. The massive Heiwa raid happened before the Knight attacked us on the roof. Before we even knew what Katas were.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“I’ve been thinking, and it means these masterminds have been targeting Kasakura and sending enemies at us since before the Katas even existed.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri frowned, twirling a lock of silver hair.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Wait. Does that mean the ‘Knight’ is part of these enemy organizations?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Akasuke", "“I don’t think so. The Knight stealing our Kokoros is what allowed us to use the Katas in the first place. That in turn gave us a fighting chance against these syndicates.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“It’s safer to assume the Knight acted alone, strictly to steal our Kokoros. He likely didn’t anticipate us reviving as Kata users, but he also hasn’t made a move since. Maybe he never cared, but only for now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I moved to the right side of the board.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Group 2: The Infiltrators. These are the secretly operating factions. They use clueless thugs as pawns—like the fake students who infiltrated the cruise ship to rob the mobile weapons facility.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“Their method is espionage. Spies, traitors, and observers who stay on the sidelines.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "My grip on the marker tightened.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“During the end of the trip, I discovered that my groupmates…Midori, from Kiryoku…and Fuyuki from Miyabi, are traitors…they were writing reports on us.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Shigemura", "“Observing the Katas, I assume?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Akasuke", "“Well, yeah, but not as experts. From their conversation I eavesdropped on, Midori didn’t expect the Katas to be ‘this influential’, while Fuyuki was ‘pleasantly surprised’.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“They are learning about this power at the exact same time we are. And taking them out isn’t an option. They were from two different schools.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“It proves these spies are planted everywhere. Even in Miyabi Academy.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked at the faces around the room. A cold, paranoid knot tightened in my stomach.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“For…for all we know… there could be a traitor right here. In this room.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "An uncomfortable, heavy silence fell over the lab. People shifted in their seats.", is_narrator=True)
+    show_story_box("", "Kojima-sensei stepped forward, his voice cutting through the tension like a knife.", is_narrator=True)
+    
+    show_story_box("Kojima-sensei", "“Calm down, Hanefuji. That paranoia is exactly the tactic the enemy wants to use to sow distrust among you.”", affiliation="Kasakura High School Teacher")
+    show_story_box("Kojima-sensei", "“For now, we keep moving forward. If a traitor reveals themselves, we’ll cross that bridge when it’s in front of us.”", affiliation="Kasakura High School Teacher")
+    
+    show_story_box("", "I took a deep breath and nodded.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Right. Sorry.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“The point is, we have to get much, much stronger. Faster than the enemy can scale up. Six of us using Katas barely managed to take down Riposte’s Adam, one executive. If Kesler hadn't left… well. We just need to be better.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    # --- ITEM 4 / KAGEYAMA'S POV ---
+    show_story_box("", "<< Item 4: The Masterminds >>", is_narrator=True)
+    show_story_box("", "********* ◆ *********\nKageyama’s POV", is_narrator=True)
+    
+    show_story_box("", "Listening to them analyze the battlefield so maturely, I felt a swell of pride—and a sharp reminder that I needed to step up my own game as the Student Council President. I adjusted my glasses and took the floor.", is_narrator=True)
+    
+    show_story_box("Kageyama", "“Excellent breakdown, Akasuke. I will handle Item 4: The Masterminds. To win this war, we must identify who is pulling the strings.”", affiliation="Kasakura High School Student Council President")
+    
+    show_story_box("", "I pointed to the 'Group 1' side of the board.", is_narrator=True)
+    
+    show_story_box("Kageyama", "“For the organized syndicates like Riposte, the hierarchy is clear. Adam is the Executive, Kesler is the Boss.”", affiliation="Kasakura High School Student Council President")
+    show_story_box("Kageyama", "“When dealing with open Absconder groups, our objective is simple: locate their leaders and decapitate the chain of command.”", affiliation="Kasakura High School Student Council President")
+    
+    show_story_box("", "I shifted to 'Group 2'.", is_narrator=True)
+    
+    show_story_box("Kageyama", "“The infiltrators are far more complex. Their motives don't align.”", affiliation="Kasakura High School Student Council President")
+    
+    show_story_box("", "Masayoshi, leaning against the wall with his arms crossed, chimed in.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“He’s right. The faction that smuggled the ship’s weapons is preparing for a large-scale war. But the faction using observers like Midori and Fuyuki?”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“They want quiet, surgical strikes. They’re studying us to take us out with a handful of elites in one swift motion.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Kageyama", "“Precisely. Based on Akasuke’s intel, we have two mastermind codenames for this second group. First is Midori’s ‘Boss’. This individual seems to assign elite subordinates purely to observe and report.”", affiliation="Kasakura High School Student Council President")
+    show_story_box("Kageyama", "“That means this ‘Boss’ possesses comprehensive intelligence on every major faction. In an information war, they are extremely dangerous.”", affiliation="Kasakura High School Student Council President")
+    
+    show_story_box("", "I wrote the next name on the board.", is_narrator=True)
+    
+    show_story_box("Kageyama", "“Second is Fuyuki’s superior who Akasuke mentioned, the ‘Pacesetter’. The student council did some research on the word, and while it functions as a synonym for 'Leader', it is highly likely a specific syndicate codename.”", affiliation="Kasakura High School Student Council President")
+    show_story_box("Kageyama", "“If we can possibly find a criminal record or trace the alias 'Pacesetter' in any underworld database, we may expose them.”", affiliation="Kasakura High School Student Council President")
+    
+    show_story_box("", "At the word database, every head in the room swiveled toward Natsume.", is_narrator=True)
+    show_story_box("", "She was buried in a beanbag chair in the corner, a blanket pulled up to her chin. She lazily waved us away with her hand.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Don’t look at me like that. I already ran the algorithms while you guys were talking. I did my best, but the databases gave me absolutely nothing on a ‘Pacesetter’.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She paused, her fingers hovering over her keyboard. She chewed on her bottom lip, looking uncharacteristically hesitant.", is_narrator=True)
+    
+    show_story_box("Natsume", "“But… I might have a clue on who the mysterious ‘Boss’ is.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke leaned forward.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Really? What did you find? Share it.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Natsume sighed, pulling the blanket a little tighter around her shoulders. Her eyes darted away from the group.", is_narrator=True)
+    
+    show_story_box("Natsume", "“It’s not concrete data. It’s strictly a personal hunch. And…it involves some…sensitive information. About my own past.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“I guess I’ll tell a few of you later. Just… not right now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    # --- ITEM 5 / MASAYOSHI'S POV ---
+    show_story_box("", "<< Item 5: Next Course of Action >>", is_narrator=True)
+    show_story_box("", "********* ◆ *********\nMasayoshi’s POV", is_narrator=True)
+    
+    show_story_box("", "Kageyama finished outlining the mastermind hierarchy, adjusting his glasses before stepping back from the whiteboard.", is_narrator=True)
+    show_story_box("", "I pushed myself off the wall and took his place at the front of the lab.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Good work, President.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“Now, moving on to Item 5. The Disciplinary Committee and the Student Council have mapped out Kasakura’s immediate course of action to survive this.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked over the group. They were battered and exhausted, but their eyes were sharp.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“First, the Student Council. President, your priority is diplomacy. You will continue rebuilding relations with the other three schools, including Heiwa Seiritsu.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“You’ll use these diplomatic channels to subtly inform them of the traitor situation. If we coordinate, there is a chance the schools can help each other weed out the infiltrators from the inside.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kojima-sensei uncrossed his arms, his expression stern.", is_narrator=True)
+    
+    show_story_box("Kojima-sensei", "“Tread carefully with that, Kageyama. School politics is a minefield right now.”", affiliation="Kasakura High School Teacher")
+    show_story_box("Kojima-sensei", "“Choose very carefully who you share that intel with. If you tip off a traitor who holds a high seat of power, you’ll paint a target on your own back.”", affiliation="Kasakura High School Teacher")
+    
+    show_story_box("Kageyama", "“I understand, Sensei. I will filter the information strictly to trusted individuals.”", affiliation="Kasakura High School Student Council President")
+    
+    show_story_box("", "I nodded, moving on to my own jurisdiction.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Next is the Disciplinary Committee. Unfortunately, the members and I cannot act freely on the front lines right now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“We are completely swamped with the logistical nightmare of the cruise ship aftermath. We have a massive group of captured infiltrators sitting in holding.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“—Yes, we know they are mostly ignorant, low-level grunts, but protocol dictates we interrogate every single one of them and pass judgment before school officially reopens after the weekend.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I rubbed the back of my neck, feeling a headache coming on.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Furthermore, I’ve had to deploy forty percent of all Committee forces to maintain localized patrols during these dangerous times.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“We’ve also had to build temporary security partnerships with Kiryoku Gakuen’s student council. Their ‘Lesser Fairies’ are helping us run down the runaway thugs.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked slightly downward, pinching the bridge of my nose.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Which means I am currently fighting a two-front war: one against a mountain of paperwork, and the other trying to entertain their Head of Security…Ayako-dono.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“The ‘Forest Guardian’ is way too excited about this joint operation and has been following me everywhere.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke grinned, patting my shoulder.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Best of luck, Senpai. Rather you than me.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Yuri", "“Try not to let her smash up the interrogation rooms, Masayoshi-senpai~.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Masayoshi", "“I can make no promises on that. Now, let’s get to the most important part of this meeting.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I picked up the marker and drew a large circle on the board.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“The Vanguard. Officially, this strike team will consist of the eight Kata users present in this room—”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“—Akasuke Hanefuji, Inami Yuri, Ayame Benikawa, Fuyuyama Shigemura, Tsukimiyama Naganohara, Yokubukai Natsume, Kaoru Hana, and Kagaku Shamiko. You have three main objectives moving forward.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I wrote a bold ‘1’ on the board.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Objective 1: Hardware Procurement. Kagaku needs better microchips and microprocessors for the upgraded Parallaxis Scorer.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“If you are going to call upon stronger Katas, funding and supplying this lab is our absolute top priority. We cannot have the machine melting down in the middle of a crisis.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I wrote a ‘2’.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Objective 2: Achieve total Kata Mastery. Aimless physical training in the dojo is no longer a sustainable option. To safely handle the Katas without collapsing, like Naganohara just did, you need more than a strong body.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“You need a deep, psychological understanding of the alternate identity you are ‘swapping’ with. Their story. Their mindset.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“Since we are currently relying on adapting the Katas of the enemies we face, understanding your enemies mid-battle is now a requirement.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I gestured to the two distinct halves of the room.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Look at our roster. Akasuke, Yuri, Benikawa, Shigemura, and Hana—you all possess the physical specifications, but you need to deepen your empathetic synchronization with the Katas.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“On the other hand, Naganohara’s passion, Natsume’s analytical IQ, and Kagaku’s creativity allow them to call upon incredibly unique, high-tier Katas effortlessly.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“...But they completely lack the physical stamina to sustain them. All eight of you need to balance these concepts. Train your bodies, train your minds, and bridge the gap.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Finally, I wrote a ‘3’.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Objective 3: The Mission. Taking the first two objectives into account, the Committee has dug up an older, highly classified mission file.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Masayoshi", "“It’s an operation for the Vanguard to undertake that will allow you to secure the hardware Kagaku needs while testing your Kata mastery in the field.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I put the marker down and turned to the corner of the room.", is_narrator=True)
+    show_story_box("", "Natsume was still buried in her bean bag, but she was watching me intently. I crossed my arms.", is_narrator=True)
+    
+    show_story_box("Masayoshi", "“Natsume. You’re up. You’re the ‘Queen of Information’. No one knows the factions involved in this operation better than you do.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Natsume let out a long, dramatic groan, letting her blanket slide off her shoulders.", is_narrator=True)
+    
+    show_story_box("Natsume", "“I know, I know. I was just hoping you’d forget I was here.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She finally pushed herself up from the bean bag, dragging her feet as she walked over to the main console, ready to deliver the mission briefing.", is_narrator=True)
+
+def play_stage_4_3_story():
+    
+    # --- NATSUME'S POV / THE BRIEFING ---
+    show_story_box("", "********* ◆ *********\nNatsume’s POV", is_narrator=True)
+    
+    show_story_box("", "I stood at the front of the room, aggressively scratching the back of my head.", is_narrator=True)
+    show_story_box("", "Translating massive raw data into a coherent briefing for a room full of meatheads and martial artists was entirely outside my comfort zone…", is_narrator=True)
+    show_story_box("", "I picked up a fresh black marker and wrote two large words across the top of the whiteboard.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Alright, listen up. The official designation for this operation is Mission Steadfastness. Does anyone want to tell the class what ‘steadfastness’ actually means?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kagaku blinked, clearly taken aback by the sudden teacher persona I was putting on.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Uh...staying ‘strong’? Unwavering?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Natsume", "“Correct. Ten points to the science department.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Steadfastness: \"The quality of being resolutely or dutifully firm and unwavering.\"\n\nI tapped the board with the marker.", is_narrator=True)
+    
+    show_story_box("Natsume", "“The place the Vanguard will be deploying to requires an absurd, almost inhuman amount of steadfastness just to survive.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“In a purely physical sense? You guys might find it easy. But mentally? I am genuinely worried some of you are going to mentally break while undertaking this.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "In the corner of my eye, I saw Naganohara suddenly sit bolt upright in her rolling chair, swallowing hard.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Up until now, our worldview has been incredibly small. Some of us think of our region as the center of the universe—Kasakura High School, Heiwa Seiritsu High School, Kiryoku Gakuen, and Miyabi Academy.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“And that was fine. That was all we needed to worry about, after all.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“But Kasakura High is a historic institution. We have established partnerships with entities far outside our local jurisdiction. Partnerships that predate us by decades.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I took a deep breath, preparing to drop the payload. ‘Hope at least some of them get this.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Has anyone here ever heard of the Yunhai [雲海] Association?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The room went dead silent. A wave of awestruck realization washed over the senior members of the Vanguard.", is_narrator=True)
+    show_story_box("", "Kageyama pushed his glasses up his nose, his voice dropping an octave.", is_narrator=True)
+    
+    show_story_box("Kageyama", "“The Westward Megastructure [西向巨型結構]... You’re talking about the sole manufacturers of the Parallaxis Scorer’s microchips.”", affiliation="Kasakura High School Student Council President")
+    
+    show_story_box("", "Masayoshi nodded slowly, his arms crossed tight.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Generally, yes. That’s what people who have clearance to know about them think of. But I need to go into more detail, and it’s… complicated.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I let out a long, exhausted sigh, rubbing my temples as I tried to figure out how to structure the geographical data. Then I sighed again. And then a third time.", is_narrator=True)
+    show_story_box("", "Naganohara leaned over to Yuri and whispered loudly.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“She’s starting to act exactly like Kojima-sensei with all the heavy sighing and cryptic speeches…”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "From the back of the room, Kojima-sensei’s deadpan voice cut through the air.", is_narrator=True)
+    
+    show_story_box("Kojima-sensei", "“What exactly is that supposed to mean, Tsukimiyama?”", affiliation="Kasakura High School Teacher")
+    
+    show_story_box("", "Naganohara flinched, waving her hands frantically.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“I-I meant how smart and knowledgeable you both are! Just radiating pure genius energy! Ha ha…”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I rolled my eyes. Enough stalling. I gotta quickly finish this and go back to lying down.", is_narrator=True)
+    show_story_box("", "SMACK!\n\nI slapped the whiteboard hard with the flat side of the marker, making half the room jump in their seats.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Focus..! First, let’s define the Yunhai Association. It is a massive conglomerate of educational and industrial organizations.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“If our four major schools represent the total power of this region, the Yunhai Association alone represents the entire power of their region. They are an absolute titan.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I began drawing a massive, thick-lined rectangle that took up the entire center of the whiteboard.", is_narrator=True)
+    
+    show_story_box("Natsume", "“But here is the catch. It’s better to think of it this way; the ‘Association’ refers to the people—the executives, the employees, the civilians. The physical place they live and operate in is THIS rectangle.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“This—is the Westward Megastructure.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I capped the marker and used my fingers to trace the edges of the box.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Imagine a sprawling urban area entirely enclosed by giant metal walls, with only a few highly regulated official entrances…okay, I’ll map out the topography.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I drew several small squares tightly packed against the far EAST (Right) border of the rectangle. Inside each square, I drew a little star.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Okay…the Association’s important administrative facilities, the elites, and the luxury sectors are all built against the inner Eastern wall.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“But as you travel Westward through the structure, the quality of life steadily, and severely, decreases.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I moved to the WEST (Left) side of the board, erasing a small chunk of the thick border line to create an opening.", is_narrator=True)
+    
+    show_story_box("Natsume", "“This is the main entrance and exit. The living conditions here are just ‘getting by’—neither rich nor completely destitute. The Association's control covers everything, but the real wealth stays East. Got it?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I drew a large arrow pointing from Right to Left.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Even the untouchable elites living in the Eastern luxury sectors have to travel normally to the West if they want to leave the Megastructure or conduct outside business.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“Everything in this city has a tendency to flow West. That is the only direction the residents have to look toward. Hence the name: The Westward Megastructure.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I stepped back from the board, resting my hands on my hips.", is_narrator=True)
+    show_story_box("", "I looked at the crowd. Yuri, Benikawa, Naganohara, Kagaku, and Hana all had completely glazed-over looks in their eyes. Nishida and Yamashita were already in the zone mending their weapons.", is_narrator=True)
+    show_story_box("", "Their brains had officially blue-screened from the geopolitical info-dump.", is_narrator=True)
+    show_story_box("", "Only Akasuke, Shigemura, Masayoshi, Kageyama, and Kojima-sensei were nodding along, tracking the logistics perfectly.", is_narrator=True)
+    show_story_box("", "I let out one final, world-weary sigh.", is_narrator=True)
+    
+    show_story_box("Natsume", "“For those of you still conscious, I expect you to dumb this down and re-explain it to the rest of them later.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Without waiting for a response, I turned back to the whiteboard and continued to draw out the intricate details of the Megastructure's layout, my marker squeaking against the plastic.", is_narrator=True)
+    show_story_box("", "I tapped the marker against the board, drawing the room's attention back from the geopolitical headache I had just induced.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Now that you know where we’re going, let’s talk about why. Over a month ago, the Yunhai Association sent a formal request straight to Kasakura High School.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“They asked for our help in exterminating hostile forces that originated from outside their region.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I drew a few crude stick figures sneaking through the West Gate.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Here is the Association’s fatal flaw: they are completely insular. They were founded and developed purely to handle affairs that start within the Megastructure itself.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“If a homegrown Absconder gang pops up, they crush it effortlessly. But recently, delinquents from outside regions have infiltrated their ranks.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“These outsiders are using the simplest blending and espionage tactics—stuff our Disciplinary Committee deals with by breakfast—and it has left the Yunhai administration completely dumbfounded, running around in circles.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Suddenly, the sound of a chair scraping against the floor echoed through the lab.", is_narrator=True)
+    show_story_box("", "Benikawa, who had been half-asleep with her head on the desk, suddenly shot up. Her purple eyes were wide and gleaming with feral excitement as she wiped a thin line of saliva from her chin.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Wait. A massive organization like that? We can’t be the only school they asked for help. Did anyone else go in before us?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "I gave her a flat, unimpressed look.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Yes, Benikawa. Two other, slightly less prestigious schools from outside regions accepted the request before us.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“And..? What happened to them~?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Natsume", "“They were decimated.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I said it nonchalantly, capping the marker.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Completely wiped out. They were sent packing out the West Gate with severe injuries, shattered pride, and absolute shame.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“It’s exactly as you’d expect. The larger the flame, the more moths fly toward it. And the Megastructure is a massive flame that attracts some very nasty, monstrous predators.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I turned back to the Vanguard, leaning against the whiteboard.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Our mission is simple. We head to the Westward Megastructure. We meet up with the Yunhai delegates. We do a little sightseeing to broaden our horizons, and then we get to work.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“We are assigned to clear out all the enemies in one specific central sector, where the living conditions are about the same quality as what we’re used to here at Kasakura.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Masayoshi nodded from the sidelines.", is_narrator=True)
+    
+    show_story_box("Natsume", "“So, how does this tie into the Committee’s goals? Let’s start with Objective Two: Kata Mastery. The Committee assessed the enemy threat level and determined that under strict conditions, this is the perfect crucible to temper your bodies and minds.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“Furthermore, Yunhai’s schools heavily prioritize aggressive martial arts and self-defense programs. Their combat theory completely differs from Kasakura’s discipline. You’ll be able to learn a lot just by observing their facilities.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I pointed to Kagaku, who was currently taking a few notes on her clipboard.", is_narrator=True)
+    
+    show_story_box("Natsume", "“As for Objective One: Hardware Procurement. I mentioned that Yunhai is a massive industrial powerhouse. Almost half of their non-residential area consists of ancient, high-tech factories and workshops.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“Their crowning achievement in material science is their ‘Jade’.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kagaku’s eyes practically turned into stars.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Yes…lightweight, incredibly durable, and possessing absurd heat tolerance.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“Currently, Kagaku is forced to order normal microchips from second-hand sources outside the Association. If she wants the Parallaxis Scorer to stop exploding, she needs specialized Jade Microprocessors.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“The Megastructure usually only exports to partnered sellers, but our goal is to leverage this mission to gain a direct favor from the Association.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“We save their sector, they build and export custom Jade electronics to the other regions, and some straight to our lab.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I stepped completely away from the whiteboard, revealing the finished product.", is_narrator=True)
+    show_story_box("", "The board was completely covered. It looked less like a geographic map and more like a crazed sci-fi fanart blueprint, detailing entrance gates, schools, and administrative buildings, complete with little doodles of glowing jade, bowls of noodles, and local landmarks.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Lastly, I want to circle back to the mission title: Steadfastness.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "My tone dropped, losing all its usual sarcastic laziness. I looked directly at Yuri, Akasuke, and Naganohara.", is_narrator=True)
+    
+    show_story_box("Natsume", "“You need to keep your mental state in check. If you don’t, you will end up exactly like the other schools—bruised, battered, and crying on the bus ride home.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“The flow of battle inside the Megastructure is terrifyingly simple: the enemies will keep coming.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I tapped the board for emphasis.", is_narrator=True)
+    
+    show_story_box("Natsume", "“We are only assigned to one area, but that area will be flooded with hundreds of hostiles.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“They will attack you at daybreak. You will fight them until noon. You will stuff yourselves with delicious local food for lunch, and you should fully expect to throw it all back up while fighting through the afternoon and into the evening.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“The previous schools reported returning to their lodgings just to bandage their wounds, only for the entire building to rumble as bloodthirsty assailants mindlessly tried to break down the doors.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“You will fight until midnight. That is your only window to sleep before daybreak hits and it starts all over again.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I let the weight of the schedule sink in.", is_narrator=True)
+    
+    show_story_box("Natsume", "“The enemies aren’t individually strong. But any predator, no matter how apex, can be dragged down and killed if it is exhausted enough, right?”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“The Yunhai Association had to physically cover the retreat of the last two schools because the enemies kept attacking even after the students couldn't throw another punch.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The lab was quiet.", is_narrator=True)
+    show_story_box("", "Looking around, the reactions were a wild mixed bag. Naganohara looked visibly terrified, clutching her iced tea like a lifeline.", is_narrator=True)
+    show_story_box("", "Yuri looked pale but determined. Benikawa and Shigemura looked entirely unfazed. And Akasuke? He just looked ready.", is_narrator=True)
+    show_story_box("", "As for me?", is_narrator=True)
+    show_story_box("", "My social battery didn't just hit zero; it completely disintegrated. I had spoken more words in the last twenty minutes than I usually did in an entire month.", is_narrator=True)
+    show_story_box("", "Without another word, I let my knees give out. I tipped forward, falling directly toward Kagaku, wrapping my arms around her waist, and burying my face squarely into her chest, completely checking out of reality.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“W-Wha?! Natsume, hey, I’m trying to take notes here! You’re heavy!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke laughed, walking over and patting my head while I refused to move.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Let her rest. She earned it. You did great explaining everything, Natsume.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I gave a weak, muffled thumbs-up from my comfortable new resting place.", is_narrator=True)
+    show_story_box("", "Mission Steadfastness. We were going to war in the Westward Megastructure.", is_narrator=True)
+
+def play_stage_4_4_start():
+    
+    # --- BENIKAWA'S POV ---
+    show_story_box("", "********* ◆ *********\nBenikawa’s POV", is_narrator=True)
+    show_story_box("", "Right before everyone started dispersing to pack up, Nishida and Yamashita—who had been completely zoned out in the corner, polishing their gear for the last hour—finally stepped up to the whiteboard.", is_narrator=True)
+    show_story_box("", "Honestly, I was wondering why the two Weapon Makers had even been invited in the first place.", is_narrator=True)
+    show_story_box("", "Nishida was holding a stack of colorful papers.", is_narrator=True)
+    
+    show_story_box("Nishida", "“Before we adjourn, the Weapon-Making Club—which is currently still just the two of us—has an announcement. We did a voluntary, thorough tear-down of the weaponry confiscated from the infiltrators on the cruise ship.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "He handed a paper to Masayoshi.", is_narrator=True)
+    
+    show_story_box("Nishida", "“Those weapons and the ship's materials originally belonged to the Yunhai Association. They were exported to our region and jointly owned by the four major schools as a shared defense measure.”", affiliation="Kasakura High School Student")
+    show_story_box("Nishida", "“For example, the standard stun batons used by the Kasakura Disciplinary Committee? Mass-produced by Yunhai.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Yamashita chimed in, practically vibrating with excitement.", is_narrator=True)
+    
+    show_story_box("Yamashita", "“But each school also has their own 'homemade' gear to show off! Did you know?: The Committee’s quality bokkens are carved and refined from Kasakura’s native wood projects!”", affiliation="Kasakura High School Student")
+    show_story_box("Yamashita", "“And Kiryoku Gakuen’s melee weapons are imbued with something called ‘Fairylight’ to quickly subdue opponents—the result of their own self-funded scientific and battle theory research!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Nishida started passing the stack of papers around the room.", is_narrator=True)
+    
+    show_story_box("Nishida", "“We are here today to provide the Vanguard with these brochures. They detail Yunhai Association’s local weaponry products and what to expect from the local gang enemies when you finally encounter them. I compiled the data.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Yamashita", "“And I decorated them! Look at the little chibi Akasuke I drew holding a rapier!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I stared at the overly elaborate, hand-drawn pamphlet in my hands.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Huh…was it really necessary to make full-on arts-and-crafts brochures? Couldn’t you just give Natsume a text file to upload to our phones or something?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Yamashita gasped, clutching her chest like I had just stabbed her.", is_narrator=True)
+    
+    show_story_box("Yamashita", "“Benikawa! Weapons are art! They’re fascinating! You can’t underestimate the craftsmanship of the battlefield!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "She suddenly spun around, pointing dramatically at Kagaku.", is_narrator=True)
+    
+    show_story_box("Yamashita", "“Which reminds me! Kagaku-san! Your ‘Black Box’ design that Miyabi Hazuki uses? Pure, unadulterated genius! The folding mechanism alone is a masterclass!”", affiliation="Kasakura High School Student")
+    show_story_box("Yamashita", "“Please, join the Weapon-Making Club! We NEED your mind!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Kagaku took a step back, holding her clipboard like a shield.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Uh... I’m going to have to nervously decline that. I have enough explosions in my own lab.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "[ A Few Days Later ]", is_narrator=True)
+    show_story_box("", "The Vanguard gathered at the school gates early in the morning. Kageyama had officially cleared our absences—we wouldn't face any academic setbacks for the duration of the mission.", is_narrator=True)
+    show_story_box("", "As I threw my duffel bag into the trunk of our dedicated school van, I couldn't help but grin.", is_narrator=True)
+    show_story_box("", "My mind was racing with all the different local delicacies I was going to try in the Megastructure. And by delicacies, I meant the food…and the enemies.", is_narrator=True)
+    show_story_box("", "For the first time, I didn't have to hold back. I could exert my full physical power and test my ninja specialties in an all-out brawl. My blood was practically singing~.", is_narrator=True)
+    show_story_box("", "We piled into the van. Our driver was a kind, wrinkled old man with a warm smile.", is_narrator=True)
+    show_story_box("", "As he put the van in drive, he glanced at us in the rearview mirror.", is_narrator=True)
+    
+    show_story_box("Driver", "“You know, I’ve only ever been inside the Megastructure once in my life. It was way back when I was still an energetic high school student like you lot.”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "Akasuke leaned forward from the passenger seat, always polite.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Really? What was it like back then? Any advice you can share?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The old man chuckled, a raspy, booming sound.", is_narrator=True)
+    
+    show_story_box("Driver", "“I don’t remember much of the scenery, to be honest. I was actually there as a delinquent from another region! Causing a massive ruckus, just like the troublemakers the Association is dealing with right now! Ahaha!”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "He laughed at his own wild youth, but then his eyes met mine in the mirror, and his tone dropped. It went dead serious, stripping the warmth right out of the air.", is_narrator=True)
+    
+    show_story_box("Driver", "“But I will tell you this: do not mess with the administration folks. Even if it seems like they don’t care about you, they are always watching. You cross them, you don't come back unscathed, heh.”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "A heavy chill swept through the back of the van. Naganohara visibly shivered.", is_narrator=True)
+    show_story_box("", "Then, the old man’s bright smile returned just as quickly.", is_narrator=True)
+    
+    show_story_box("Driver", "“But don't you worry! I know you’re all going as good, upstanding people. You’ll take fine care of yourselves in there.”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "I leaned back against my seat, cracking my knuckles. The warning terrified the others, but it only made me more excited.", is_narrator=True)
+    show_story_box("", "The moment our van left our region through a massive, imposing border checkpoint, the scenery completely shifted.", is_narrator=True)
+    show_story_box("", "The highly developed, suburban city blocks vanished. We were suddenly surrounded by completely flat grasslands.", is_narrator=True)
+    show_story_box("", "There were a few scattered farms, wooden livestock fences, and massive water puddles reflecting the cloudy sky as far as the eye could see. It was simple, sparse, but strangely beautiful and novel.", is_narrator=True)
+    show_story_box("", "Natsume, who had her face pressed against the glass, spoke up.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...This whole northern region allocated almost all of their people, resources, and finances strictly towards building and maintaining the Westward Megastructure.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“They completely abandoned urbanization out here.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“It shows just how much absolute faith everyone puts in the Association’s administration.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Almost half an hour later—", is_narrator=True)
+    show_story_box("", "—The van came to a sudden, abrupt halt.", is_narrator=True)
+    show_story_box("", "Yuri and Kagaku, who had both been dead asleep, jolted awake.", is_narrator=True)
+    
+    show_story_box("Driver", "“Calm down, kids. Our destination is really just up ahead this time. But it looks like border patrols have gotten much stricter. They’ve extended their checkpoints all the way down the road, eh...”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "I unbuckled my seatbelt and squeezed between the front seats to peer out the windshield.", is_narrator=True)
+    show_story_box("", "There was a makeshift roadblock ahead, manned by a group of rugged-looking men. I narrowed my eyes. The way they had set up their concrete posts was sloppy.", is_narrator=True)
+    show_story_box("", "Their uniforms were stained and ill-fitting. And the hand signals they were flashing to each other? Those were more underworld signs, not official codes between trainees.", is_narrator=True)
+    show_story_box("", "I leaned over and whispered into Akasuke’s ear.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Hey. Those ‘Border Guards’ are hella suspicious.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Akasuke frowned, his hand instinctively resting near his pockets.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“You think they’re the infiltrator type? More enemies from the West side?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“How would I know? But they definitely aren't legit.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Akasuke nodded. He, the old driver, and I popped the doors on our own sides open and stepped out onto the damp asphalt to greet them.", is_narrator=True)
+    
+    # --- YURI'S POV ---
+    show_story_box("", "********* ◆ *********\nYuri’s POV", is_narrator=True)
+    
+    show_story_box("", "I rubbed the sleep out of my eyes, peering through the windshield.", is_narrator=True)
+    show_story_box("", "Akasuke, Benikawa, and the old driver were standing in the middle of the road, confronting the roadblock.", is_narrator=True)
+    show_story_box("", "I cracked my window open just enough to hear the conversation.", is_narrator=True)
+    
+    show_story_box("Guard", "“Turn the vehicle around! Go home! The area is closed!”", affiliation="Border Patrol?")
+    
+    show_story_box("", "The old man waved his hands, pleading politely.", is_narrator=True)
+    
+    show_story_box("Driver", "“Please, officers. We are from Kasakura High School. We were formally requested here to help the Association folks with their local troubles.”", affiliation="Kasakura School Staff")
+    
+    show_story_box("Guard", "“I don't care who requested you. The Megastructure is currently not accepting any visitors. Leave!”", affiliation="Border Patrol?")
+    
+    show_story_box("", "I frowned. That didn't make any sense.", is_narrator=True)
+    show_story_box("", "Suddenly, Benikawa, who was standing right behind Akasuke, reached out and lightly tapped him on the back of the neck.", is_narrator=True)
+    show_story_box("", "Akasuke gasped, his knees buckling instantly, and he collapsed onto the asphalt, groaning in apparent agony.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Akasuke-kun?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Panic spiked in my chest. I grabbed the door handle, ready to vault out of the van and snap some necks, but a hand clamped down hard on my shoulder.", is_narrator=True)
+    show_story_box("", "I looked back. Natsume had taken out her long distance comms earbuds turned music listening devices; her eyes were sharp and focused.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Hold your horses, Yuri. Watch closely.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The entire Vanguard inside the van was now pressing against the windows, watching with bated breath.", is_narrator=True)
+    show_story_box("", "Outside, the ‘Border Guards’ looked completely confused. The poor old driver looked even more confused, hovering his hands over Akasuke without knowing what to do.", is_narrator=True)
+    
+    show_story_box("Natsume", "“I feel so bad for the driver getting roped into this.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Guard", "“Hey! What the hell are you doing to your own guy?!”", affiliation="Border Patrol?")
+    
+    show_story_box("", "Benikawa stretched her arms above her head, putting on a highly exaggerated, nervous act.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Oh, come on~. You guys already know! Isn’t it obvious who I am~?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Yuri", "“...What is she doing?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Natsume", "“She’s testing them. Benikawa is acting like an infiltrator who just betrayed us. If those guards are genuine Yunhai security, they would immediately assist Akasuke and arrest her.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“If they’re infiltrators too, they’ll either reveal themselves or hesitate, like now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Outside, an awkward, heavy silence fell over the road. The guards just stared at her, deeply skeptical.", is_narrator=True)
+    show_story_box("", "Benikawa clearly realized she needed to sell the act harder. She hesitated for a split second, then ruthlessly planted her foot square in the middle of Akasuke’s back, pressing his face right into the asphalt.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“I infiltrated Kasakura as part of a rival faction! I’m taking them out from the inside, obviously! Ahahaha!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Natsume smirked from the back seat.", is_narrator=True)
+    
+    show_story_box("Natsume", "“There it is. The guards haven't taken a single step to help Kasakura. They’ve completely exposed themselves as enemies. Get ready, everyone.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I grinned, my blood pumping as I slid the van door open just a crack.", is_narrator=True)
+    show_story_box("", "Outside, Benikawa was clearly struggling to recall the details from the lab meeting she had mostly slept through. She flashed the absolute cringiest, most forced evil smile I had ever seen.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Yeah! ‘The Boss’ sent me! I’m here to give ‘em the, uh... the ‘Yunhai Observation Report’!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "From the back of the guard group, a younger thug with a stained uniform scoffed loudly.", is_narrator=True)
+    
+    show_story_box("Thug", "“Huh? Why the hell would the Boss send another observer to Yunhai? We already deployed one inside weeks ago!”", affiliation="Fake Border Patrol")
+    
+    show_story_box("", "SMACK!\n\nThe lead guard violently slapped the back of the young thug’s head, his face going pale.", is_narrator=True)
+    
+    show_story_box("Guard", "“Shut up, you idiot!”", affiliation="Fake Border Patrol")
+    
+    show_story_box("", "Benikawa’s cringey smile instantly vanished, replaced by a terrifying, predatory grin. Her purple eyes practically glowed.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Bingo~.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "She casually took her foot off Akasuke’s back.", is_narrator=True)
+    show_story_box("", "Akasuke pushed himself up from the road, wiping muddy water off his face, looking incredibly annoyed.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Did you really have to step on me that hard to sell it?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The lead guard ripped a steel baton from his belt.", is_narrator=True)
+    
+    show_story_box("Guard", "“Damnit! We’ve been played! Get them!”", affiliation="Fake Border Patrol")
+    
+    show_story_box("", "Before they could even swing, the side doors of the Kasakura van slid open.", is_narrator=True)
+    show_story_box("", "I vaulted out onto the asphalt, cracking my knuckles, the rest of the Vanguard pouring out right behind me. The real welcoming committee had arrived.", is_narrator=True)
+
+def play_stage_4_4_end():
+    
+    # --- NATSUME'S POV ---
+    show_story_box("", "********* ◆ *********\nNatsume’s POV", is_narrator=True)
+    show_story_box("", "I knew the theory of combat. I had mapped out the statistics, the trajectories, the physiological limits of the human body.", is_narrator=True)
+    show_story_box("", "But knowing it on a screen and seeing it in reality were two completely different things.", is_narrator=True)
+    show_story_box("", "Outside the van, the fight was a chaotic blur of violence. Most of the fake infiltrator guards were already getting systematically dismantled by our frontline fighters.", is_narrator=True)
+    show_story_box("", "I stood paralyzed near the open van door, my eyes remaining unchanged, but I was sweating. These thugs weren't pulling their punches. They were swinging heavy, solid metal batons with the full intent to shatter skulls.", is_narrator=True)
+    show_story_box("", "CRACK!", is_narrator=True)
+    show_story_box("", "Akasuke and Shigemura didn't even flinch. They were taking heavy blunt-force blows directly on their forearms like the batons were made of rolled-up newspaper, immediately countering with bone-crushing strikes of their own.", is_narrator=True)
+    show_story_box("", "I swallowed the lump in my throat. As part of the Vanguard, as a Kata user, I knew I was supposed to be out there fighting.", is_narrator=True)
+    show_story_box("", "To my left and right, Naganohara and Kagaku stepped up. These two were previously non-combatants, just like me. But right now? They both took deep, synchronized breaths.", is_narrator=True)
+    show_story_box("", "Brilliant blue light erupted from their chests, rushing over their limbs as their Katas engaged. They charged into the fray without a second thought.", is_narrator=True)
+    show_story_box("", "And then there was me. I was left standing alone at the back, between the van and everyone, watching them fight.", is_narrator=True)
+    show_story_box("", "In the end, my legs just wouldn't move.", is_narrator=True)
+    show_story_box("", "Within minutes, Akasuke dropped the guard leader without breaking a single drop of sweat. He turned around, offering a hand to help up the poor old driver, who was still sitting on the asphalt looking completely bewildered.", is_narrator=True)
+    show_story_box("", "I let out a shaky breath and turned to retreat back into the safety of the van.", is_narrator=True)
+    show_story_box("", "Suddenly, a warm hand gently touched my shoulder. I jumped.", is_narrator=True)
+    show_story_box("", "It was Naganohara. Her Kata had already disengaged, but she was looking at me with a soft, understanding expression. She had noticed me freeze up.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Ah, well...I couldn't do it. You guys were so brave out there.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara offered a sympathetic smile, leaning against the van.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“I know how it feels~~.”", affiliation="Kasakura High School Student")
+    show_story_box("Naganohara", "“Honestly? I’m still scared every time I jump in…but technically, I was forced into my first fight back during the Heiwa Raid. I didn't have a choice when Kuroda attacked me, and that gave me the experience I needed to push through the fear...”", affiliation="Kasakura High School Student")
+    show_story_box("Naganohara", "“Kagaku was the same—she had no other option when she was held hostage alone at the hotel.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I rubbed my arm, looking down at my sneakers.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Uh…do you have any advice for getting used to it? Even if I do figure it out, I’m probably going to be way too lazy and reluctant to do this constantly.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Naganohara", "“You can stay by my side for now! I’ll keep fighting next to you until you feel ready to step up yourself!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I looked up, genuinely touched by her empathy.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Thanks, Tsukimiyama.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "As I said it, I noticed Shigemura standing just a few feet away, watching us. For once, his stoic, unreadable face was replaced by a soft, genuine smile.", is_narrator=True)
+    show_story_box("", "Seeing that instantly rebooted my brain. My composure—and my terrible sense of humor—came rushing right back.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Actually, I’ll be fine. You should probably go stay by your ‘boyfriend’s’ side for now instead.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara’s face instantly turned the color of a tomato.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Wh-Wha-Whaaat?! He’s not—we’re not—!!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Shigemura coughed loudly into his fist, suddenly finding the cloudy sky incredibly fascinating, his ears burning red.", is_narrator=True)
+    show_story_box("", "I smirked, slipping back into my seat.", is_narrator=True)
+
+def play_stage_4_5_start():
+    
+    # --- NATSUME'S POV ---
+    show_story_box("", "********* ◆ *********\nNatsume’s POV", is_narrator=True)
+    show_story_box("", "We piled back in after clearing the fake outpost’s roadblock, and the old driver hit the gas. To my absolute disbelief, he was already back to laughing casually, humming a tune as if he hadn’t just been held at baton-point.", is_narrator=True)
+    
+    show_story_box("Driver", "“Ahaha! Man, I’ll tell you what, I am thankful those thugs were waaay weaker and slower compared to the ones back in my delinquent days!”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "Akasuke leaned over the center console, intrigued.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Can you elaborate on that, sir?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The driver adjusted his rearview mirror.", is_narrator=True)
+    
+    show_story_box("Driver", "“Ah, those fake border guards? They wouldn't last five minutes actually deployed inside the Megastructure. In order to withstand the Association’s enforcement, each and every thug squad in there needs to be as tough as…let’s see…ehh…”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "He paused, glancing in the mirror, and pointed his thumb straight back at Shigemura.", is_narrator=True)
+    show_story_box("", "Even though Shigemura was allocating almost one hundred percent of his focus, physical strength, and ninja abilities toward assisting Naganohara during battle, he was still acting on his full capabilities.", is_narrator=True)
+    
+    show_story_box("Driver", "“...as tough as him.”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "My stomach dropped into my shoes. Hundreds of waves as tough as a tenth of Shigemura? I said ‘a tenth’, but that’s still a lot, given it’s Shigemura.", is_narrator=True)
+    show_story_box("", "I whipped my head around to Akasuke and Yuri, my eyes wide with sheer panic.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Please look out for me for the time being exactly like that too.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke blinked, tilting his head.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Natsume... have you actually ever used a Kata yet?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I slowly turned my head, staring blankly out the passenger window at the rolling grasslands.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...No?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Before Akasuke could question my absolute lack of combat readiness, the old driver cut through the awkward silence.", is_narrator=True)
+    
+    show_story_box("Driver", "“Well, kids! We’ve finally reached the Megastructure.”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "Everyone pressed against the glass on my side of the van.", is_narrator=True)
+    show_story_box("", "Looming over the horizon were the massive, monolithic metal walls of the Westward Megastructure's perimeter. They stretched endlessly into the sky, cold and imposing.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Whoa... it looks beautiful.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Hana", "“Seeing it up close, it looks highly unconventional.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Natsume", "“It looks absolutely terrifying.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Sure enough, as we approached the main West Gate, it was absolute chaos. There were makeshift border outposts set up everywhere, manned by more fake guards who were aggressively arguing with a massive crowd of visitors.", is_narrator=True)
+    show_story_box("", "There were confused rich tourists who had come on a whim, angry local residents just trying to return home, and visiting students from all sorts of schools stranded outside the walls.", is_narrator=True)
+    show_story_box("", "Inside the van, the Vanguard immediately started discussing logistics.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Alright, Vanguard. We need to plan how we control this situation without causing a massive civilian panic—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "SLIDE!\n\nBefore Akasuke could finish his sentence, Benikawa yanked the van door open, hopped out into the crowd, and immediately started sprinting toward the heaviest concentration of fake guards.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Hey!!! I’m here for the Yunhai Observation Report!! Everyone line up! The ‘Boss’ is here for your reports right now!!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Akasuke", "“...Or we could just do that.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The effect was instantaneous. Through the chaotic crowd, the targets made themselves incredibly obvious. Thugs started whispering frantically, their heads snapping toward Benikawa.", is_narrator=True)
+    show_story_box("", "—“How does she know about the Boss?!”\n—“Wait, that road border outpost stopped responding to comms five minutes ago! It’s a trap!”", is_narrator=True)
+    show_story_box("", "Inside the van, all seven of us let out a collective, exhausted sigh.", is_narrator=True)
+    show_story_box("", "But as I grabbed my bag and hopped out of the van behind Akasuke and Yuri, we had to admit we were secretly grateful to Benikawa.", is_narrator=True)
+    show_story_box("", "Planning was exhausting. Sometimes, it really was easier when the enemy just pointed themselves out.", is_narrator=True)
+
+def play_stage_4_5_end():
+    
+    # --- NATSUME'S POV ---
+    show_story_box("", "********* ◆ *********\nNatsume’s POV", is_narrator=True)
+    show_story_box("", "The battle raged on a few meters away, a chaotic symphony of cracking batons and heavy impacts.", is_narrator=True)
+    show_story_box("", "I was still standing near the van, my feet glued to the pavement.", is_narrator=True)
+    show_story_box("", "Between the safety of the vehicle and the absolute meat grinder of the frontline, I was caught in agonizing hesitation.", is_narrator=True)
+    show_story_box("", "I glanced back. The old driver was casually sitting in the front seat, sipping from a water bottle, watching the Vanguard dismantle the fake border guards like he was watching an action movie at a cinema.", is_narrator=True)
+    
+    show_story_box("Natsume", "‘Must be nice to have no combat responsibilities’, I thought bitterly.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "Suddenly, someone grabbed both of my hands.", is_narrator=True)
+    show_story_box("", "I jumped, my heart leaping into my throat. It was Naganohara.", is_narrator=True)
+    show_story_box("", "She had temporarily pulled back from the frontline, her Kata deactivated, her golden eyes shining with an overwhelming, infectious optimism.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“You’ve got this, Natsume-chan! It’s scary at first, but once you step in, the Kata does the heavy lifting! I believe in you!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "She squeezed my hands tightly, radiating pure cheerleader energy.", is_narrator=True)
+    show_story_box("", "I stared at her, then let out a long, shaky breath. My analytical brain screamed at me to stay back, but my pride as a member of the Vanguard finally kicked in.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...Right. Okay. I’m going in.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I took another deep breath, visualizing the blue glow of the Parallaxis Scorer, ready to summon my own Kata and finally step into the fray.", is_narrator=True)
+    show_story_box("", "WOOSH.\n\nBefore I could even take a step, the chaotic noise of the battlefield was abruptly interrupted by the sharp, unified sound of fabric snapping in the wind.", is_narrator=True)
+    show_story_box("", "From the direction of the massive West Gate, a new group entered the battlefield.", is_narrator=True)
+    show_story_box("", "There were only about ten of them. They wore immaculate white Tang Suits—traditional Eastern martial arts jackets—with flowing white cloaks draped over their backs, adorned with elegant cloud patterns. Simple white headbands held back their neatly tied hair, optimizing them for high-speed movement.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Reinforcements? But… only ten people? Against this mob?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Behind me, the old driver popped his head out of the van’s window, his eyes wide.", is_narrator=True)
+    
+    show_story_box("Driver", "“Aye…there they are... the administration folks!”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "A chill ran down my spine as a memory clicked into place. His warning from the drive over suddenly echoed in my head:", is_narrator=True)
+    show_story_box("", "‘But I will tell you this: do not mess with the administration folks. Even if it seems like they don’t care about you, they are always watching. You cross them, you don't come back unscathed, heh.’", is_narrator=True)
+    show_story_box("", "I was about to witness that warning come true.", is_narrator=True)
+    show_story_box("", "In perfect unison, the ten enforcers drew their weapons.", is_narrator=True)
+    show_story_box("", "It was the Jian [劍]—a traditional double-edged straight sword, a weapon symbolizing elegance, mastery, and supreme martial skill.", is_narrator=True)
+    show_story_box("", "They didn't just fight; they danced.", is_narrator=True)
+    show_story_box("", "The enforcers elegantly parried the heavy metal batons of the fake guards, redirecting the momentum before dashing past them with blinding speed, their swords slicing through the air.", is_narrator=True)
+    show_story_box("", "I braced myself, expecting to see a gruesome spray of blood.", is_narrator=True)
+    show_story_box("", "But there was none.", is_narrator=True)
+    show_story_box("", "Wherever the Jian made contact, the thugs’ eyes simply rolled back into their heads. They instantly lost consciousness, collapsing to the ground one by one like puppets with their strings cut.", is_narrator=True)
+    show_story_box("", "Whether it was the blunt flat of the blade, a precise nerve strike, or something else entirely, it was terrifyingly efficient.", is_narrator=True)
+    show_story_box("", "Among them, one enforcer was noticeably different.", is_narrator=True)
+    show_story_box("", "Her movements were hyper-aggressive. She zipped through the mob, dropping thug after thug without even sparing a glance at the bodies she left behind. Her white cloud cloak flared and snapped wildly behind her like a battle flag.", is_narrator=True)
+    show_story_box("", "In one final, singular rush, she dropped the last cluster of fake guards and slid to a halt right in the center of our Vanguard.", is_narrator=True)
+    show_story_box("", "Specifically, right in front of Akasuke.", is_narrator=True)
+    show_story_box("", "The enforcer’s Jian was leveled perfectly at Akasuke’s throat.", is_narrator=True)
+    show_story_box("", "But Akasuke wasn't caught off guard. He had already leaned a half-step back, maintaining perfect distance. His right fist was pulled back, coiled with kinetic energy.", is_narrator=True)
+    show_story_box("", "He would have undoubtedly shattered any normal person’s jaw with that punch had he not recognized her distinct uniform at the last millisecond and halted his counterattack.", is_narrator=True)
+    show_story_box("", "The two stood frozen in a deadly, millimeter-perfect standoff.", is_narrator=True)
+    
+    show_story_box("", "Benikawa, standing a few feet away, lowered her fists and whistled softly.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Woah... that’s so cool~.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "After a long, tense second, the enforcer stepped back and elegantly sheathed her sword with a sharp click.", is_narrator=True)
+    show_story_box("", "I finally got a good look at her.", is_narrator=True)
+    show_story_box("", "She was a tall girl with pristine silver hair cut into a tidy, sharp Graduated Bob. Her eyes were a piercing, golden yellow.", is_narrator=True)
+    show_story_box("", "Beneath the traditional Tang Suit, I could see the outline of a highly toned, muscular build—easily comparable to the top-tier athletes of Kiryoku Gakuen.", is_narrator=True)
+    show_story_box("", "Upon closer inspection, her uniform stood out from the others. Her cloud-patterned cloak was heavier, more intricately detailed, and the cloud shapes faintly glittered like embedded gems.", is_narrator=True)
+    show_story_box("", "She looked at Akasuke, her tone serious and carrying a heavy, undeniable authority.", is_narrator=True)
+    
+    show_story_box("Stern Enforcer", "“Are you the ones from Kasakura High School? The Association was expecting your arrival today.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Akasuke slowly lowered his fist, relaxing his stance.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Yes. I’m Akasuke Hanefuji. I guess you could say I’m the leader of this Vanguard. There are eight of us.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The silver-haired girl gave a small, approving nod.", is_narrator=True)
+    show_story_box("", "She gestured to the ten enforcers gathering behind her. It was exactly an eleven-person unit. It wasn't hard to deduce who she was.", is_narrator=True)
+    
+    show_story_box("Mei", "“I am Okusora Mei. Captain of the Second Unit of...”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She paused for a moment, glancing at our exhausted, bewildered faces, before deciding to keep it simple.", is_narrator=True)
+    
+    show_story_box("Mei", "“...my division. The political and authoritative structure of the Yunhai Association is just as complex as the Megastructure itself. I can explain the details to you once we enter and get you settled.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Before Akasuke could reply, a loud honk startled us.", is_narrator=True)
+    show_story_box("", "I turned around. The old driver was leaning out of the van, waving at me.", is_narrator=True)
+    
+    show_story_box("Driver", "“Hey, information girl! I’ll be driving back to Kasakura now that I’ve dropped you lots at the designated location! I’ll come back to pick you all up once the mission’s done, just as planned! Don't die!”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "I gave him a weak, tired thumbs-up.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Drive safe mister. See you later.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The van’s engine revved, and it slowly turned around, driving off down the endless grassy highway, leaving us completely isolated from the world we knew.", is_narrator=True)
+    show_story_box("", "Captain Mei turned toward the towering metal walls.", is_narrator=True)
+    
+    show_story_box("Mei", "“Follow me. Stay close.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "With the fake border guards neutralized, the previously blocked-off civilians, tourists, and stranded students finally began to filter inside.", is_narrator=True)
+    show_story_box("", "Swallowing our nerves, the Kasakura Vanguard fell into step behind Mei and her enforcement unit.", is_narrator=True)
+    show_story_box("", "We walked through the massive, shadow-casting gates, officially stepping foot inside the Westward Megastructure.", is_narrator=True)
+
+def play_stage_4_6_start():
+    
+    # --- MIYU'S POV ---
+    show_story_box("", "********* ◆ *********\nMiyu’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure - Residential Sector II\nAbandoned School Area – Old Dojo", is_narrator=True)
+    
+    show_story_box("", "The air in the dojo was stale, thick with dust motes dancing in the shafts of sunlight cutting through the boarded-up windows.", is_narrator=True)
+    show_story_box("", "I stood in the center of the room, my posture rigid, checking my watch.", is_narrator=True)
+    show_story_box("", "14:00. Punctual.", is_narrator=True)
+    show_story_box("", "On the other side of the room, a man sat on a wooden chair he had dragged out from a pile of debris.", is_narrator=True)
+    show_story_box("", "He looked to be a year or two older than me. His posture was the exact opposite of mine—slouched, legs spread, relaxing as if he were in a high-end cafe rather than a rotting building.", is_narrator=True)
+    show_story_box("", "He lifted a chipped ceramic pot, pouring tea into a small cup with practiced, fluid grace.", is_narrator=True)
+    
+    show_story_box("Miyu", "“So you really are still here. Explain yourself.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The man didn’t look up. He blew on his tea.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“Explain what? The tea blend? It’s local. A bit earthy for my taste, but nostalgic.”", affiliation="Mysterious Operative")
+    
+    show_story_box("Miyu", "“Please don't play dumb. Why did you insist on taking the observation assignment on Kasakura High School here in the end? The Boss already reassigned that sector to me.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "He finally looked up. His eyes were calm, almost sleepy, but there was a sharpness behind them that I didn't like.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“Aye…you’re stiff, Secretary Miyu. You’ll break if you don't relax. Why’d you go and tell the Boss you wanna have this one so bad yerself?”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "I narrowed my eyes behind my glasses.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I am efficient. Something you seem to lack.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "He chuckled, taking a sip.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“The Boss entrusted this place to me originally. He knows I’m the most familiar with the terrain. I was born and raised in this metallic cage, after all.”", affiliation="Mysterious Operative")
+    
+    show_story_box("Miyu", "“And that is exactly why I don't trust you.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I took a step forward, my voice cold.", is_narrator=True)
+    
+    show_story_box("Miyu", "“You have a conflict of interest. The Boss knows it. I know it.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The man paused. He slowly lowered his cup.", is_narrator=True)
+    show_story_box("", "With a smooth motion, he stood up, picked up his wooden chair, spun it around, and sat back down, straddling it with his arms resting on the backrest.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“...‘That so? And where does this distrust stem from? My rugged good looks?”", affiliation="Mysterious Operative")
+    
+    show_story_box("Miyu", "“It stems from you being a ‘Bastard Child’.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The smile didn't leave his face, but the air in the room grew heavy.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Half Yunhai blood. Half outsider. You seek revenge on the Association for this cage… and revenge on your other homeland for abandoning you.”", affiliation="Kasakura High School Student Council")
+    show_story_box("Miyu", "“The Boss’s intention was to force you to decide. To make you understand which ‘home’ you truly belong to, so you can be properly managed as a fighting resource.”", affiliation="Kasakura High School Student Council")
+    show_story_box("Miyu", "“I am here to ensure that asset management goes smoothly without you turning back on us first.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "For the first time, the man frowned.", is_narrator=True)
+    show_story_box("", "It wasn't a look of anger. It was annoyance. Disappointment.", is_narrator=True)
+    show_story_box("", "He stood up, kicking the chair aside. It clattered loudly across the floor.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“...Tell the Boss something for me.”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "He walked past me toward the exit, his hands in his pockets.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“My problems are my own. They aren’t for you to meddle in. And they certainly aren’t for him to ‘manage’.”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "He stopped at the doorway, glancing back over his shoulder.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“And I’ll handle the “scrap paper” on my turf myself.”", affiliation="Mysterious Operative")
+    show_story_box("Relaxed Man", "“Tell the Boss not to send anyone else to the underworld to help me.”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "His eyes went cold.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“If he does… I might not be able to distinguish friend from foe. I’ll strike first.”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "He disappeared into the sunlight.", is_narrator=True)
+    show_story_box("", "I adjusted my glasses, noting the time of his departure in my mental log.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Damned insubordinate.”", affiliation="Kasakura High School Student Council")
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure - Residential Sector I", is_narrator=True)
+    
+    show_story_box("", "The moment we stepped through the West Gate, the noise hit us.", is_narrator=True)
+    show_story_box("", "It wasn't the quiet, disciplined atmosphere I expected from a place run by the stern Yunhai Association.", is_narrator=True)
+    show_story_box("", "It was a festival.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“This… feels like a market.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Houses were stacked on top of each other—tall, compact, colorful structures that seemed to lean over the narrow streets. The density of people was insane.", is_narrator=True)
+    show_story_box("", "But they weren’t suffering.", is_narrator=True)
+    show_story_box("", "They were shouting, laughing, bartering. The energy was infectious.", is_narrator=True)
+    
+    show_story_box("Mei", "“This is Sector I. The westernmost point of the Megastructure. It is the ‘least prosperous area’ within the Association’s reach.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She guided us through the crowd, her silver hair bobbing as she walked.", is_narrator=True)
+    
+    show_story_box("Mei", "“Most people here are ‘getting by’. It isn't luxury, but as you can see, living conditions are stable. No one starves.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She stopped at a steaming food stall.", is_narrator=True)
+    
+    show_story_box("Mei", "“Try this. Local specialty. Fried Spiced Dough.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Benikawa and I were the first ones there.\n\nI took a bite.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Oh. Oh, wow. The exterior crunch is immediate, but the dough inside is airy! The spice blend… is that star anise? It provides a numbing heat that counters the grease perfectly!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“Right?! And the sauce! It’s savory but has a sweet kick! It reminds me of the street food back in the shopping district, but way more aggressive!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Mei watched us, a small, amused smile on her face as we devoured the snacks.", is_narrator=True)
+    
+    show_story_box("Mei", "“While you eat, listen closely. You need to understand the geography.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She pointed toward the far, distant wall where massive skyscrapers touched the clouds.", is_narrator=True)
+    
+    show_story_box("Mei", "“The Megastructure is divided into Sectors, and each Sector into their types as well. Residential for living, Industrial for work.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“The Easternmost landmark is the Administration. That is where the elites govern. It only expands out a kilometer or so.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“Next to it is Sector III. That is the wealthy district. Most of our ‘Jade’ production happens in Industrial Sector III.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She pointed to the middle distance.", is_narrator=True)
+    
+    show_story_box("Mei", "“Then, Sector II. That is the ‘average’ standard of living. The Association has been trying to move people from here in Sector I to Sector II to work in the factories there. It promotes economic growth.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“And we are in Sector I. The ‘poor’ sector.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei nodded, looking around at the smiling people.", is_narrator=True)
+    
+    show_story_box("Mei", "“Yes. But poverty does not mean misery. The Association reaches a hand out to everyone within our jurisdiction.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“...I am proud of that.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She straightened up, her tone becoming official again.", is_narrator=True)
+    
+    show_story_box("Mei", "“Now, the mission. On paper, you are assigned to assist Sector II. But ‘Sector II’ spans a quarter of the entire Megastructure. It is obviously too big for eight people.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She pulled out a map.", is_narrator=True)
+    
+    show_story_box("Mei", "“We are narrowing your scope to Sector II, Block V. You will be lodging at a local martial arts school there.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“They will provide food, shelter, and supplementary lessons to exchange fighting theory. Your objective is to work with that school to clear out the ‘infiltrator’ problem in that specific block.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Behind me, I heard a collective groan of confusion.", is_narrator=True)
+    show_story_box("", "I turned around.", is_narrator=True)
+    show_story_box("", "Yuri, Naganohara, Hana, and Benikawa all once again had glazed looks in their eyes.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“...So, we go to a school inside the giant city to fight bad guys?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Natsume pinched the bridge of her nose.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...Yes. That’s the gist of it.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Akasuke", "“Well, don't worry. Natsume and I will explain it again when we get there.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Benikawa shrugged, crumpling up her food wrapper.", is_narrator=True)
+    show_story_box("", "She turned to throw it in a nearby bin—then froze.", is_narrator=True)
+    show_story_box("", "Her eyes locked onto a street corner about twenty meters away.", is_narrator=True)
+    show_story_box("", "A group of five men in plain clothes stood there, talking quietly. They looked normal.", is_narrator=True)
+    show_story_box("", "But Benikawa stared.", is_narrator=True)
+    show_story_box("", "After five seconds, the men noticed her staring. They flinched. They started looking around nervously, then began to disperse, melting into the crowd too quickly.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Ehh..? What crappy work.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Mei frowned, looking between Benikawa and the retreating men.", is_narrator=True)
+    
+    show_story_box("Mei", "“Is…something wrong with those civilians?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Benikawa", "“Civilians? You didn’t feel that?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "She pointed her thumb at the corner.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Their bloodlust. It was unrefined, messy. It was pouring over toward us like someone turned on a giant heater right behind my neck.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Mei looked genuinely surprised.", is_narrator=True)
+    
+    show_story_box("Mei", "“...Bloodlust detection? The Association’s traditional training does not cover such sensory theories.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Benikawa sighed, shaking her head.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Man… that explains so much. No wonder you almost took Akasuke’s head off at the gate. You guys fight with just your eyes, not your gut.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Akasuke", "“They know we saw them. They’re running.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei’s expression hardened. She drew her Jian.", is_narrator=True)
+    
+    show_story_box("Mei", "“Alright. Second Unit! Vanguard! Pursuit formation!”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“Let’s go.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We surged forward, cutting through the market crowd, chasing the shadows already fleeing toward Sector II.", is_narrator=True)
+
+def play_stage_4_6_end():
+    
+    # --- MEI'S POV ---
+    show_story_box("", "********* ◆ *********\nMei’s POV", is_narrator=True)
+    show_story_box("", "The clash of steel and the shouts of combat finally began to fade.", is_narrator=True)
+    show_story_box("", "I stood in the center of the fray, my breathing controlled, my Jian held ready at my side.", is_narrator=True)
+    show_story_box("", "Around me, the Kasakura Vanguard was finishing their work.", is_narrator=True)
+    show_story_box("", "I watched Akasuke Hanefuji drive a heavy fist into a thug’s solar plexus, while Inami Yuri effortlessly tossed another over her shoulder with a judo throw that shook the pavement.", is_narrator=True)
+    
+    show_story_box("Mei", "“Their style… it is unrefined. Chaotic. Yet effective.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "It was completely different from the fluid, dance-like swordsmanship taught within the Association. We fought with flow and redirection. They fought with impact and raw adaptability.", is_narrator=True)
+    show_story_box("", "I thought back to the girl with the purple eyes—Benikawa.", is_narrator=True)
+    
+    show_story_box("Mei", "‘Their bloodlust. It was unrefined, messy. It was pouring over toward us like someone turned on a giant heater right behind my neck.’", affiliation="Yunhai Association Enforcer Captain", is_thought=True)
+    
+    show_story_box("Mei", "“...Can one truly train to sense intent? To see an opponent hidden from plain sight just by the ‘feeling’ of their aggression?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Scuff.\n\nA faint sound behind me.", is_narrator=True)
+    show_story_box("", "I reacted—pivoting on my heel, raising my sword. A thug had been hiding behind a supply crate, waiting for my focus to drift. He lunged with a jagged knife.", is_narrator=True)
+    show_story_box("", "WHAM.\n\nBefore the blade could reach me, a red blur interposed itself.", is_narrator=True)
+    show_story_box("", "Akasuke caught the thug’s wrist with one hand and delivered a sharp, decisive chop to the neck with the other. The attacker collapsed instantly.", is_narrator=True)
+    show_story_box("", "Akasuke dusted off his hands, looking back at me.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“You okay, Captain?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I lowered my sword, feeling a flush of heat rise to my cheeks.", is_narrator=True)
+    show_story_box("", "Not from exertion. From shame.", is_narrator=True)
+    
+    show_story_box("Mei", "“I am unharmed. Thank you, Hanefuji-dono.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“It seems…despite my rank, there is still much for me and my people to learn about the realities of combat.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I looked around. The rest of the Vanguard had already secured the area, helping up a few of my own surprised enforcers. The threat was neutralized.", is_narrator=True)
+    show_story_box("", "I sheathed my Jian with a sharp click.", is_narrator=True)
+    show_story_box("", "I turned to Akasuke and bowed deeply—a formal gesture of respect between martial artists.", is_narrator=True)
+    
+    show_story_box("Mei", "“Your reflexes are superior..! If time permits during your stay, I would be honored to exchange fighting theory with you. I wish to learn this ‘sensing’ ability.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Akasuke stiffened, waving his hands frantically.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Huh, Eh?! No need to bow! I just… reacted! But, uh, sure! I’d love to!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Behind him, I saw Benikawa lean over to whisper something to Inami Yuri.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“See that? The formal request? The blushing? I guess now I know what it feels like to see someone getting a little too close to the person you like~.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Yuri jumped, her face turning beet red.", is_narrator=True)
+    
+    show_story_box("Yuri", "“H-Huh?! Whatever are ya talkin’ about, Benikawa?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "? I tilted my head.", is_narrator=True)
+    show_story_box("", "I did not understand the context of their bickering, but Benikawa’s expression was complex—a mix of teasing amusement and something slightly wistful.", is_narrator=True)
+    
+    show_story_box("", "[ Westward Megastructure – Sector II ]", is_narrator=True)
+    
+    show_story_box("", "We marched the captured thugs to the local station, effectively ending the border crisis.", is_narrator=True)
+    show_story_box("", "Directly ahead of us stood a majestic gate carved from green stone.", is_narrator=True)
+    
+    show_story_box("Mei", "“This marks the boundary. Welcome to Sector II.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "We passed through the archway.", is_narrator=True)
+    show_story_box("", "The change was instantaneous. The chaotic, market-like density of Sector I vanished, replaced by wide, paved streets and orderly rows of traditional-meets-modern architecture.", is_narrator=True)
+    show_story_box("", "Lanterns hung from eaves, and the air smelled of high-quality tea and incense.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Woah. This feels way more… prosperous.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Yuri", "“It kinda reminds me of home. Just… greener.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The atmosphere here was balanced. Peaceful.", is_narrator=True)
+    show_story_box("", "The street stalls here were different, too. Instead of simple fried dough, they sold intricate iced teas, fusion foods from outside cultures, and elaborate jade trinkets clearly targeted at wealthy tourists.", is_narrator=True)
+    show_story_box("", "I guided them through the streets.", is_narrator=True)
+    show_story_box("", "They were like children in a candy store. Akasuke and Benikawa bought three different types of skewered meat, launching into a loud, passionate critique of the spices once more.", is_narrator=True)
+    show_story_box("", "At a cultural activity booth, Naganohara got tangled in a traditional paper kite.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Mei-san! Help! It’s attacking me!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Mei", "“Hold still. You have to feed the string gently against the wind, not yank it.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I untangled her, watching the kite soar. Naganohara cheered, her smile bright enough to rival the sun.", is_narrator=True)
+    show_story_box("", "I felt a strange warmth in my chest.", is_narrator=True)
+    show_story_box("", "They were warriors, yes, but they were also just… friends.", is_narrator=True)
+    show_story_box("", "We eventually stopped at a public park, resting on the stone benches surrounding a large, bubbling fountain.", is_narrator=True)
+    show_story_box("", "Beep-beep.\n\nA sharp chime cut through the air.", is_narrator=True)
+    show_story_box("", "I reached into my sash and pulled out my communication terminal—a sleek slab of polished green jade with a holographic interface.", is_narrator=True)
+    show_story_box("", "Kagaku practically reappeared over to my side, her eyes glued to the device.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Look at that! Crystalline display matrix embedded in mineral substrate! Guys, see? This is why I need their Jade! It’s beautiful!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I ignored her enthusiasm, reading the message on the screen.", is_narrator=True)
+    show_story_box("", "My expression hardened.", is_narrator=True)
+    show_story_box("", "| HQ: Unit I Captain en route to assist with escort. ETA: 2 minutes. |", is_narrator=True)
+    
+    show_story_box("Mei", "“...Not him again.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "The Vanguard quieted down, noticing my distress.", is_narrator=True)
+    show_story_box("", "Naganohara leaned in, concerned.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Mei-san? Is something wrong? You look like you just bit into a lemon.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I sighed, tucking the terminal away.", is_narrator=True)
+    
+    show_story_box("Mei", "“Someone… I guess you could call him a ‘friend’…of mine…is coming to assist us.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“A friend? Then why do you look so uneasy?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "“MEI-MEI!~”\n\nA loud, deeply annoying voice boomed from the park entrance.", is_narrator=True)
+    show_story_box("", "I closed my eyes.", is_narrator=True)
+    show_story_box("", "Striding toward us was a man. It was him.", is_narrator=True)
+    show_story_box("", "He looked to be about the same age as Kasakura’s “Masayoshi” or “President Kageyama”, who Hanefuji had described to me. He had silver hair like mine, but styled in a trendy taper fade. He wore pitch-black sunglasses despite the mild sunlight.", is_narrator=True)
+    show_story_box("", "He wore the same Captain’s uniform as me, but his sleeves were rolled up to his elbows, exposing his forearms in a flagrant violation of protocol.", is_narrator=True)
+    
+    show_story_box("Mei", "“Liwei. Your sleeves. It is against the dress code.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "The man—Liwei—stopped in front of us, flashing a charming, winning grin.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Come on, Mei! I can’t properly flow my chi unless my forearms are exposed to the fresh air of Sector II! You know how sensitive my pores are.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I rubbed my temples.", is_narrator=True)
+    
+    show_story_box("Mei", "“Kasakura Vanguard…this man is Liwei. Captain of the First Unit of my division.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“He is… technically… my senior and superior officer.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Liwei laughed, waving a hand dismissively.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Oh, stop it with the ‘superior’ talk! We all know you’re much more capable than me, Mei! You would’ve taken my position years ago if not for the dusty old rules of seniority!”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“Oh, I’m just a humble servant compared to your brilliance!!!”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "His tongue was silver, his tone polite, yet completely unpredictable.", is_narrator=True)
+    show_story_box("", "The Vanguard exchanged nervous glances.", is_narrator=True)
+    
+    show_story_box("Yuri", "“...I think I get why she reacted like that now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Mei", "“He is exhausting. But… he is a good person. In any case.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Liwei clapped his hands together.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Enough pleasantries! Our true destination is near. It’s our very next stop, actually.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He pointed down the main avenue.", is_narrator=True)
+    
+    show_story_box("Liwei", "“We are heading to the Luoxia [落霞] Gardening School.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Hana froze.", is_narrator=True)
+    show_story_box("", "Her ears practically perked up.", is_narrator=True)
+    
+    show_story_box("Hana", "“Gardening… School?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She jumped up from the bench, hands clasped together, looking like an excited puppy.", is_narrator=True)
+    
+    show_story_box("Hana", "“Mei-san! What kind of school is it?! Do they have rare flowers? Exotic pruning techniques?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We began walking again, with Liwei leading the way and whistling a tune.", is_narrator=True)
+    show_story_box("", "I fell back to walk beside the eager Hana.", is_narrator=True)
+    
+    show_story_box("Mei", "“It is unique. I do not know much, but Luoxia specializes in the cultivation of medicinal herbs and the philosophy of nature…and like everything in the Megastructure, it has a martial application.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Hana’s eyes sparkled.", is_narrator=True)
+    
+    show_story_box("Hana", "“Tell me everything!”", affiliation="Kasakura High School Student / Seven Wonders")
+
+def play_stage_4_7_start():
+    
+    # --- HANA'S POV ---
+    show_story_box("", "********* ◆ *********\nHana’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Luoxia Gardening School", is_narrator=True)
+    
+    show_story_box("", "The moment we stepped through the entrance, the scent hit me. Not the smell of ozone or oil, nor the heavy spices of the market. It was the smell of damp earth, blooming jasmine, and crushed herbs.", is_narrator=True)
+    
+    show_story_box("Hana", "“Oh my gosh! Look at that irrigation system! Is that a hydroponic setup woven into the bamboo trellis?! And those flowers—I’ve only seen those in textbooks!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I dashed toward the nearest flowerbed, my eyes sparkling.", is_narrator=True)
+    
+    show_story_box("Hana", "“Hello there, little ones! Aren't you growing beautifully in this climate?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I was about to inspect the soil composition when a hand clamped firmly onto my arm.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Ah, nope. Not yet. We have a schedule, Hana. You can geek out over photosynthesis later.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "It’s a shame, but we have a mission to complete. She dragged me back toward the group, which was already walking past the magnificent greenhouse.", is_narrator=True)
+    show_story_box("", "I reached out a longing hand toward a rare orchid as we passed.", is_narrator=True)
+    
+    show_story_box("", "[ The Main Campus Grounds ]", is_narrator=True)
+    
+    show_story_box("", "Liwei strode ahead of us, reaching the double wooden gates of the main training courtyard. He didn't open them; he threw them open with a dramatic flourish.", is_narrator=True)
+    
+    show_story_box("Liwei", "“HELLO, STUDENTS! YOUR FAVORITE CAPTAIN HAS RETURNED!”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "The courtyard was filled with students in green and white training uniforms, practicing forms.", is_narrator=True)
+    show_story_box("", "At the sound of his voice, every male student stopped. Their eyes lit up.", is_narrator=True)
+    
+    show_story_box("Male Student A", "“Captain Liwei!”", affiliation="Luoxia Gardening School")
+    show_story_box("Male Student B", "“He’s back! The legend!”", affiliation="Luoxia Gardening School")
+    
+    show_story_box("", "They abandoned their training instantly, flocking around him like pigeons to breadcrumbs. Liwei lowered his sunglasses down the bridge of his nose, flashing a cool, practiced grin.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Easy, boys, easy! I know, my radiance is blinding today. Keep up those horse stances! ‘Form looks good! You, straighten that back—looking sharp!”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "On the other side of the courtyard, however, the reaction was… different.", is_narrator=True)
+    show_story_box("", "The female students stopped training too. But they didn't cheer. They looked at Liwei with expressions ranging from mild annoyance to open disgust.", is_narrator=True)
+    
+    show_story_box("Female Student A", "“Ugh. The loudmouth is back.”", affiliation="Luoxia Gardening School")
+    show_story_box("Female Student B", "“Why does he always have to make an entrance? Lousy man.”", affiliation="Luoxia Gardening School")
+    
+    show_story_box("", "Then, their eyes shifted slightly to the right. They spotted Mei standing stoically behind him.", is_narrator=True)
+    show_story_box("", "Mei offered a small, professional wave.", is_narrator=True)
+    
+    show_story_box("Female Student A", "“Ahh! Captain Mei!”", affiliation="Luoxia Gardening School")
+    show_story_box("Female Student B", "“Mei-sama is here too! Thank goodness!”", affiliation="Luoxia Gardening School")
+    
+    show_story_box("", "The female students surged forward, completely ignoring Liwei to crowd around Mei, eyes shining with admiration and respect.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Girls?! Ouch. My heart. It cracks!”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He placed a hand over his chest dramatically, though he was still grinning.", is_narrator=True)
+    show_story_box("", "We watched from the sidelines, bewildered.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Wow. He really does have a specific demographic, doesn't he?”", affiliation="Benikawa Ninja Clan")
+    show_story_box("Akasuke", "“They perfectly divided the school in half. It’s kind of impressive.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "After the fanclubs settled down, Liwei cleared his throat, bringing the groups together.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Alright, settle down! Listen up! These are our guests from the outside—the Kasakura High School Vanguard~. They’re here to help us clean up the infiltrator mess.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He gestured to the Luoxia students.", is_narrator=True)
+    
+    show_story_box("Liwei", "“And this, Kasakura, is Luoxia’s pride. These are the martial arts practitioners of the school. They will be your partners for the cultural and battle theory exchange.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He checked the watch on his wrist, which still had the rolled up sleeves.", is_narrator=True)
+    
+    show_story_box("Liwei", "“There is also a program to tour and participate in the school’s botanical studies department, but… well, you guys are fighters. I assume none of you are interested in staring at dirt, so we can sk—”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I shot my hand into the air.", is_narrator=True)
+    
+    show_story_box("Hana", "“Me! I am! I am extremely interested!!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei paused, scratching his head in genuine surprise.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Oh. Really? One taker? Alright then.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He pointed at me with a finger gun.", is_narrator=True)
+    
+    show_story_box("Liwei", "“You can head over there after the exchange session. The first activity is hands-on!”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Mei stepped forward, her voice cutting through the chatter.", is_narrator=True)
+    
+    show_story_box("Mei", "“Both the Kasakura Vanguard and Luoxia students have already warmed up for battle today. There is no need for prolonged preparation.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She looked at Akasuke.", is_narrator=True)
+    
+    show_story_box("Mei", "“Are you ready to begin?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Akasuke cracked his knuckles, a confident smile on his face.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“We’re good to go. Let’s see what the Association has to offer.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    # --- NATSUME'S POV ---
+    show_story_box("", "********* ◆ *********\nNatsume’s POV", is_narrator=True)
+    show_story_box("", "[ The Training Floor ]", is_narrator=True)
+    show_story_box("", "I stood near the edge of the mats, clutching my tablet like a shield.", is_narrator=True)
+    
+    show_story_box("Natsume", "“It’s just sparring,” I told myself.\n“Just training. No one is trying to kill me.”\n“No one is trying to kidnap Kagaku.”\n“It’s fine.”", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("Natsume", "Come on…I’ll—", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "CRASH!\n\nA passionate Luoxia student let out a roar and chopped a stack of ten roof tiles in half with his bare hand. Dust exploded into the air.", is_narrator=True)
+    show_story_box("", "Benikawa clapped lightly.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Ooh. Nice density!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Natsume", "Hell nah.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I swallowed hard, taking a half-step back.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Nope. Still terrifying. These people are made of iron. I am made of normal, human tissue.”", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "Suddenly, a hand touched my shoulder. I jumped.", is_narrator=True)
+    show_story_box("", "It was Naganohara, again.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Oh. Tsukimiyama. Are you… here to give me another pep talk?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Naganohara", "“Nope! I’m here to kidnap you!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Natsume", "“Huh?—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Before I could react, she grabbed my arm and started dragging me away from the training floor.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Come on! I’ve got a brilliant idea! This is going to fix your fear of the frontlines once and for all!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "We passed Shigemura on the way out. He looked at us, confused.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Tsuki-chan? Where are you taking Natsume?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Naganohara didn't stop. She just flashed him a bright thumbs-up and a wink.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Top secret training! Don’t worry, Fuyu-kun!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Shigemura blinked. Then, he sighed, gave a small thumbs-up back, and turned away to join the sparring.", is_narrator=True)
+    
+    show_story_box("Natsume", "‘He trusts her way too much’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("", "I thought desperately as I was hauled toward the exit.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“First, you sit in the spectator seats! Watch everyone fight! Study them! I need to go prepare the… surprise!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Natsume", "“Surprise?! Tsukimiyama, I hate surprises!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She dumped me onto a bench and ran off.", is_narrator=True)
+    show_story_box("", "I adjusted my gaze, bewildered.", is_narrator=True)
+    show_story_box("", "In front of me, the first sparring match between Kasakura and Yunhai Association's Luoxia Gardening School finally began.", is_narrator=True)
+
+def play_stage_4_7_end():
+    
+    # --- NAGANOHARA'S POV ---
+    show_story_box("", "********* ◆ *********\nNaganohara’s POV", is_narrator=True)
+    show_story_box("", "I jogged back into the training hall, wiping a bit of sweat from my forehead.", is_narrator=True)
+    show_story_box("", "Down on the mats, the session was just wrapping up. Everyone was sweaty, smiling, and bowing to each other.", is_narrator=True)
+    show_story_box("", "Akasuke was already in deep analysis mode with a Luoxia student.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Your body conditioning is insane. You stuck to your techniques even when I pressured you with foreign karate stances. That mindset is solid.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri nodded, wiping her face with a towel.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Yeah. Ya guys just lack experience against different styles. Once ya get used to unpredictable rhythms, y’all are gonna be as strong as the Enforcers. No doubt!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I grinned. They did great, huh!", is_narrator=True)
+    show_story_box("", "I walked up to the spectator seats. Natsume was sitting there, looking nervous. She turned to me.", is_narrator=True)
+    
+    show_story_box("Natsume", "“You’re back. What did you go to get? A prop? A gadget?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I shook my head.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Nope! Not ‘something’. ‘Someone’!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I stepped aside.", is_narrator=True)
+    show_story_box("", "Walking out from behind me was Captain Mei.", is_narrator=True)
+    show_story_box("", "She had changed out of her heavy Enforcer cloak and was wearing streamlined training gear. She was gripping a long wooden training baton in one hand, scratching the back of her silver head with the other.", is_narrator=True)
+    
+    show_story_box("Mei", "“Tsukimiyama… are you certain this plan is wise?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Natsume stared at Mei. Then at me. Her jaw dropped.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...You’re crazy. You are actually crazy.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“You brought the Captain of the Enforcers to be my first opponent?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I put my hands on my hips.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Think about it, Natsume-chan! How did Kagaku start fighting? She was cornered by a kidnapper! How did I start? I was cornered by a thug!”", affiliation="Kasakura High School Student")
+    show_story_box("Naganohara", "“We overcame our fear because we had no other choice. Desperation is the key!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Mei sighed, spinning the baton.", is_narrator=True)
+    
+    show_story_box("Mei", "“I have worked as an instructor before. But… I do not know if I can hold back enough for a beginner. Please be careful.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Down on the floor, the Vanguard and the Luoxia students noticed the commotion. They cleared the center of the room, looking interested.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Natsume? She’s fighting?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei walked to the center of the floor. She didn't assume a stance. She just stood there, relaxed, but her presence was terrifying.", is_narrator=True)
+    show_story_box("", "A single bead of sweat rolled down her cheek—she was nervous about hurting Natsume, not losing.", is_narrator=True)
+    
+    show_story_box("Mei", "“Um…Yokubukai Natsume. Are you really fine with this?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Natsume stood up slowly. Her legs were shaking.", is_narrator=True)
+    show_story_box("", "She took off her jacket, mumbling to herself.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...I’m not fine. I’m really not fine. I’d rather be coding. I’d even rather be doing taxes. I’d rather be anywhere else.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She looked up. Her pink eyes were terrified, but focused.", is_narrator=True)
+    
+    show_story_box("Natsume", "“But… I can’t be the only one dragging the Vanguard down.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She pressed her hand against her chest.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Kata… Engage.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "FLASH.\n\nBlue light erupted around her.", is_narrator=True)
+    show_story_box("", "Akasuke leaned forward from the sidelines.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“It’s assimilating perfectly. No rejection. Who is she borrowing?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The light faded.", is_narrator=True)
+    show_story_box("", "The room went silent.", is_narrator=True)
+    show_story_box("", "Natsume stood there. But her Kasakura uniform was gone.", is_narrator=True)
+    show_story_box("", "She was wearing a pristine white Tang Suit. A flowing white cloak with cloud patterns draped over her shoulders. A simple white headband tied back her messy blue hair.", is_narrator=True)
+    show_story_box("", "And at her hip hung a legitimate copy of the Jian.", is_narrator=True)
+    show_story_box("", "She was borrowing a Yunhai Association Enforcer Kata.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“No way… she copied the administration?!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Natsume looked down at her hands, then at her clothes. She was still trembling.", is_narrator=True)
+    
+    show_story_box("Natsume", "“I… I’m still nervous. Why am I still nervous?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei’s eyes widened slightly. Then, she smiled.", is_narrator=True)
+    
+    show_story_box("Mei", "“If you understand the power of these ‘Katas’ correctly… then right now, you possess the muscle memory and discipline of one of my enforcers. Perhaps even one of my own squad.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Mei finally shifted her feet, assuming a proper combat stance.", is_narrator=True)
+    
+    show_story_box("Mei", "“...Then you will be fine. Trust the form.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Mei rushed in.", is_narrator=True)
+    show_story_box("", "It was a simple, straight thrust—fast, but basic. A test.", is_narrator=True)
+    show_story_box("", "Natsume flinched. She gasped.", is_narrator=True)
+    show_story_box("", "But her body moved on its own.", is_narrator=True)
+    show_story_box("", "Her left hand came up, parrying Mei’s baton to the side with perfect, elegant precision. Her right hand dropped to the hilt of her sword, ready to draw.", is_narrator=True)
+    show_story_box("", "CLACK.\n\nMei stepped back.", is_narrator=True)
+    show_story_box("", "Natsume stared at her own hand, stunned.", is_narrator=True)
+    
+    show_story_box("Natsume", "“I… I blocked it.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "A cheer erupted from the Vanguard and the Luoxia students.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“YEAH! GO NATSUME-CHAN!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Natsume gripped her weapon, her trembling slowing down. She looked at Mei, who was smiling proudly.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...Okay. Again.”", affiliation="Kasakura High School Student / Seven Wonders")
+
+def play_stage_4_8_start():
+    
+    # --- NATSUME'S POV ---
+    show_story_box("", "********* ◆ *********\nNatsume’s POV", is_narrator=True)
+    show_story_box("", "[ The Training Floor ]", is_narrator=True)
+    
+    show_story_box("", "Thwack.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Ouch..! Okay, that one actually hurt…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I stumbled back, rubbing my forearm where Mei’s baton had just connected.", is_narrator=True)
+    show_story_box("", "Fighting is such a pain. It’s an absolute logistical nightmare. You have to constantly monitor the opponent’s vector, calculate their reach, predict their intent, and keep your own center of gravity balanced—all while someone is actively trying to hit you with a stick.", is_narrator=True)
+    show_story_box("", "I glanced up at the spectator stands. The Vanguard and the Luoxia students were watching intently.", is_narrator=True)
+    
+    show_story_box("Natsume", "How do they do this?", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("", "I thought, wincing.", is_narrator=True)
+    
+    show_story_box("Natsume", "Akasuke, Yuri, Benikawa… they throw themselves into this meat grinder willingly every day. They are insane. Beautifully, bravely insane.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("Mei", "“Your guard was open, Natsume. You were thinking, not reacting.”", affiliation="Yunhai Association Second Unit Captain")
+    
+    show_story_box("", "I gritted my teeth.", is_narrator=True)
+    
+    show_story_box("Natsume", "“I-I’m trying! There’s a lot of input to process here…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Despite my complaints, my body was moving on its own.", is_narrator=True)
+    show_story_box("", "The Enforcer Kata I was borrowing…it was like downloading a driver update for my nervous system. It contained a ‘manual’—a library of muscle memory that knew exactly how to respond to every single angle of Mei’s attacks.", is_narrator=True)
+    show_story_box("", "Mei swung low. My body knew to jump.", is_narrator=True)
+    show_story_box("", "She thrust high. My wrist knew how to deflect.", is_narrator=True)
+    show_story_box("", "I didn't have to invent the solution; I just had to remember it.", is_narrator=True)
+    show_story_box("", "We clashed again—baton against sword and sheath. We locked weapons, pushing against each other.", is_narrator=True)
+    
+    show_story_box("Mei", "“Impressive. You have already mastered the basics of engagement. Your adaptation speed is terrifying.”", affiliation="Yunhai Association Second Unit Captain")
+    
+    show_story_box("Natsume", "“...You were going easy on me, weren’t you? Throwing attacks specifically meant for me to learn the counters?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei smiled—a small, rare expression.", is_narrator=True)
+    
+    show_story_box("Mei", "“Well, is that not what you need right now?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I stared at her.", is_narrator=True)
+    show_story_box("", "Then, I took a deep breath. I stepped back, lowered my center of gravity, and assumed the stance properly—not because the Kata forced me to, but because I chose to.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...You’re a good teacher, Captain…I-I’ll be in your care.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The crowd erupted in cheers.", is_narrator=True)
+    show_story_box("", "Mei’s eyes narrowed playfully. She spun her baton.", is_narrator=True)
+    
+    show_story_box("Mei", "“Then let us advance the curriculum.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She rushed in.", is_narrator=True)
+    show_story_box("", "This time, the pressure was different. It wasn't physical; it was mental. She feinted a strike to my ribs—my eyes followed it—but she stopped halfway.", is_narrator=True)
+    show_story_box("", "She deliberately left her left side open.", is_narrator=True)
+    
+    show_story_box("Natsume", "‘A gap!’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "My brain screamed it. The Kata screamed it.", is_narrator=True)
+    show_story_box("", "I lunged for the opening without thinking.", is_narrator=True)
+    show_story_box("", "SMACK.\n\nMei’s baton tapped the top of my head. Lightly, but firm enough to rattle my teeth.", is_narrator=True)
+    show_story_box("", "I froze, my strike stopped inches from her chest. She had baited me perfectly.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Gah—oww! Hey! That was mean! Isn’t hitting the head against the rules?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei stepped back, resting the baton on her shoulder.", is_narrator=True)
+    
+    show_story_box("Mei", "“I knew you would take the bait. Because you were starting to have fun.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I blinked.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...Huh? Fun? Me? Fighting?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Mei", "“Yes. You stopped calculating for a second and just moved. That is the ‘heat of battle’. It is what we live for.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“Fighting isn’t just about hurting others or reckless violence. It is a sport. A conversation. Under the right conditions, a clash of wills creates bonds that words cannot. It strengthens the soul.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I lowered my weapon.", is_narrator=True)
+    show_story_box("", "A conversation…", is_narrator=True)
+    show_story_box("", "I looked at my hands. They were trembling, but not from fear anymore. From adrenaline.", is_narrator=True)
+    show_story_box("", "She was right.", is_narrator=True)
+    show_story_box("", "I wasn't just processing data. I was engaging.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...I think I get it. It’s not just logic. There’s flow.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked up at her, a small genuine smile forming on my face.", is_narrator=True)
+    
+    show_story_box("Natsume", "Damnit, this really doesn’t suit me…", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("Natsume", "“Alright, Mei. One more round. I think I can actually—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "THUMP.\n\nThe words died in my throat.", is_narrator=True)
+    show_story_box("", "A sharp, searing pain exploded in the center of my chest.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Guh…ah?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I dropped my weapon, clutching my chest with both hands. The world tilted violently.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Natsume-chan?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri stood up from the bench.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Did she reach her limit?! Is the Kata draining her out?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke was already vaulting over the railing.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“No! It’s different! When the stamina runs out, the Kata usually fades away first! But look—she’s still transformed!”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“And an Enforcer’s body wouldn’t collapse from a light spar like that! Something else is happening!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei rushed to my side, dropping her baton.", is_narrator=True)
+    
+    show_story_box("Mei", "“Natsume! What is wrong? Is it your heart?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I gasped, my vision swimming in red and blue static.", is_narrator=True)
+    show_story_box("", "It wasn't exhaustion. It felt like… something was clawing its way out. Or clawing its way in.", is_narrator=True)
+    
+    show_story_box("Natsume", "“The… Kata…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked at Mei, terror seizing my throat.", is_narrator=True)
+    
+    show_story_box("Natsume", "“I feel… another Kata… being called…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    # --- KAGAKU'S POV ---
+    show_story_box("", "********* ◆ *********\nKagaku’s POV", is_narrator=True)
+    show_story_box("", "[ Spectator Seats ]", is_narrator=True)
+    
+    show_story_box("", "Everyone froze.", is_narrator=True)
+    show_story_box("", "Natsume said…another Kata?", is_narrator=True)
+    show_story_box("", "Akasuke was already halfway across the floor, rushing to help Mei support Natsume.", is_narrator=True)
+    show_story_box("", "My mind raced back to the hotel battle. To the moment Akasuke dispelled his own form to mimic the Riposte Leader. To Naganohara swapping forms mid-fight.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Kata Scaling.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I whispered the term I had coined in my notes.", is_narrator=True)
+    show_story_box("", "The process of gambling that a higher-tier Self from a stronger timeline will answer an immediate, desperate call during battle.", is_narrator=True)
+    show_story_box("", "But Natsume wasn't desperate. She wasn't gambling. She was in pain.", is_narrator=True)
+    show_story_box("", "This wasn't voluntary.", is_narrator=True)
+    show_story_box("", "A bad feeling coiled in my stomach.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Akasuke! Mei! Get away from her!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke turned his head, confused.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“What?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Kagaku", "“NOW!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "It was too late.\n\nBOOOM!", is_narrator=True)
+    show_story_box("", "A column of chaotic, blinding blue light erupted from Natsume’s chest.", is_narrator=True)
+    show_story_box("", "It wasn't the gentle glow of the earlier transformation. This was a torrent. A geyser of raw energy.", is_narrator=True)
+    show_story_box("", "The shockwave slammed into Akasuke and Mei, throwing them backward across the mats like ragdolls.", is_narrator=True)
+    show_story_box("", "Dust and debris from the floor swirled into a mini-tornado, obscuring the figure in the center.", is_narrator=True)
+    show_story_box("", "The air pressure in the room dropped. The lights flickered.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“The intensity of the transformation…if it scales with the strength of the original individual being summoned…if the energy is this violent…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The light slowly died down. The dust settled.", is_narrator=True)
+    show_story_box("", "Standing in the center of the crater was Natsume.", is_narrator=True)
+    show_story_box("", "Or at least… the one who was Natsume.", is_narrator=True)
+    show_story_box("", "She looked taller. More mature.", is_narrator=True)
+    show_story_box("", "Gone was the white Enforcer uniform.", is_narrator=True)
+    show_story_box("", "She was now wearing a long, traditional gray Changpao robe that extended all the way to the floor, with loose black linen pants underneath.", is_narrator=True)
+    show_story_box("", "Her messy blue hair had grown out, flowing freely down her back as an unnatural wind blew past her.", is_narrator=True)
+    show_story_box("", "The atmosphere in the dojo turned dark. Heavy. Gloomy. It felt like gravity had doubled.", is_narrator=True)
+    show_story_box("", "I looked at Mei.", is_narrator=True)
+    show_story_box("", "The Captain was on her knees, shaking. She wasn't injured. She was terrified.", is_narrator=True)
+    show_story_box("", "Her hand was gripping her sword, but she couldn't lift it. Her eyes were wide, fixed on the figure in gray.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“...Mei?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei didn't answer. She couldn't.", is_narrator=True)
+    show_story_box("", "I realized then what we were looking at.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Could it be…it’s hard to admit… but looking at Mei’s reaction… that Kata isn't just an Enforcer.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Kagaku", "“Natsume just pulled someone…straight from the Yunhai Association Administration.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "That explained it. The ingrained instinct. The absolute hierarchy of the Megastructure. I’ve read about it from her database.", is_narrator=True)
+    show_story_box("", "No citizen, no student, and certainly no Enforcer could ever raise a weapon against a member of the High Administration. Their bodies simply wouldn't allow it.", is_narrator=True)
+    show_story_box("", "Around the room, the Luoxia students were paralyzed, frozen in their seats by sheer presence.", is_narrator=True)
+    show_story_box("", "The figure in the gray robe slowly turned her head.", is_narrator=True)
+    show_story_box("", "She wasn't Natsume anymore. Her eyes were cold, devoid of Natsume’s usual anxiety or warmth.", is_narrator=True)
+    show_story_box("", "She looked at the Kasakura Vanguard.", is_narrator=True)
+    show_story_box("", "Slowly, a sinister smile spread across her face.", is_narrator=True)
+    show_story_box("", "She didn't speak a word.", is_narrator=True)
+    show_story_box("", "With a smooth, fluid motion, she reached into her sleeve and pulled out a new weapon—a Jian that pulsed with a new dark, heavy energy.", is_narrator=True)
+    show_story_box("", "She raised it, pointing it directly at the seven remaining Kata users.", is_narrator=True)
+    show_story_box("", "An invitation.", is_narrator=True)
+    show_story_box("", "Come and die.", is_narrator=True)
+
+def play_stage_4_8_end():
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    
+    show_story_box("Akasuke", "Too strong.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "The thought hammered against the inside of my skull with every desperate dodge.", is_narrator=True)
+    show_story_box("", "Around us, the dojo had turned into a nightmare. Mei was on her hands and knees, trembling, fighting a losing battle against her own ingrained instincts just to lift her head.", is_narrator=True)
+    show_story_box("", "The Luoxia students were statues, frozen in terror by the sheer oppressive aura of the figure standing before us.", is_narrator=True)
+    show_story_box("", "And us? The Vanguard was already winded from the sparring session. We were running on fumes.", is_narrator=True)
+    show_story_box("", "But none of that mattered as much as the simple fact that the thing wearing Natsume’s face was a monster.", is_narrator=True)
+    show_story_box("", "CRACK!", is_narrator=True)
+    show_story_box("", "Shigemura flew past me, crashing into a weapon rack. He clutched his left forearm, his face twisted in pain.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Don’t block! My vibration barrier shattered on impact! Just one kick… and my arm is broken!”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“Everyone! Focus entirely on evasion! Do not engage directly!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I gritted my teeth, weaving under a horizontal slash.", is_narrator=True)
+    show_story_box("", "Natsume—or whoever she was now—didn't even seem to be trying. Her movements were fluid, almost lazy, yet she moved with a speed that defied physics.", is_narrator=True)
+    show_story_box("", "It felt like her body was holding back an ocean of power, leaking just enough to toy with us.", is_narrator=True)
+    show_story_box("", "Then, the atmosphere changed again.", is_narrator=True)
+    show_story_box("", "She raised the dark Jian. The air around the blade began to warp.", is_narrator=True)
+    show_story_box("", "Ominous, dark energy gathered along the steel edge.", is_narrator=True)
+    show_story_box("", "She swung.\n\nSWISH.", is_narrator=True)
+    show_story_box("", "There was no shockwave. Instead, a thick, jet-black trail followed the blade’s path. It hung suspended in the air like heavy smoke or… ink.", is_narrator=True)
+    show_story_box("", "It looked less like swordplay and more like calligraphy.", is_narrator=True)
+    
+    show_story_box("Yuri", "“What is that?! It’s not fading!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Natsume swung again. And again. Vertical strokes. Horizontal slashes.", is_narrator=True)
+    show_story_box("", "Each movement left a solid curtain of black ink floating in the atmosphere.", is_narrator=True)
+    show_story_box("", "It wasn't attacking us. It was boxing us in.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“She’s separating us! Don’t let the ink cut your line of sight!—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "But it was too late.", is_narrator=True)
+    show_story_box("", "The black curtains expanded, swirling and interlocking until the training floor became a labyrinth of darkness. I couldn't see Yuri. I couldn't hear Benikawa.", is_narrator=True)
+    show_story_box("", "I was alone in a void of ink.", is_narrator=True)
+    show_story_box("", "Step.", is_narrator=True)
+    show_story_box("", "I spun around.", is_narrator=True)
+    show_story_box("", "She stepped out of the ink wall as if it were water.", is_narrator=True)
+    show_story_box("", "The gray robe flowed around her. Her eyes were locked on me.", is_narrator=True)
+    show_story_box("", "She had chosen her first target.", is_narrator=True)
+    show_story_box("", "Without a sound, she thrust the Jian forward.", is_narrator=True)
+    show_story_box("", "It was perfect. A strike aimed dead center at my torso. No wasted movement. No killing intent to sense until the blade was already in motion.", is_narrator=True)
+    
+    show_story_box("Akasuke", "!!—I can’t block this..!", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I braced myself for the impact, for the cold steel to pierce my chest once again—", is_narrator=True)
+    show_story_box("", "COUGH!\n\nThe blade stopped millimeters from my shirt.", is_narrator=True)
+    show_story_box("", "The figure froze.", is_narrator=True)
+    show_story_box("", "Natsume’s face contorted in a spasm of agony. She doubled over, coughing violently, the hand holding the sword shaking uncontrollably.", is_narrator=True)
+    
+    show_story_box("Akasuke", "Her body… it reached the limit!", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I didn't hesitate.", is_narrator=True)
+    show_story_box("", "I clenched my right fist, channeling every ounce of strength I had left.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Sorry, Natsume!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "BAM!\n\nI drove a straight punch into her shoulder.", is_narrator=True)
+    show_story_box("", "The impact sent her flying backward. She smashed through three layers of the ink walls, tumbling across the training floor.", is_narrator=True)
+    show_story_box("", "As her concentration broke, the suspended darkness evaporated instantly, dissolving into mist.", is_narrator=True)
+    show_story_box("", "The dojo was clear again.", is_narrator=True)
+    show_story_box("", "I panted, lowering my fist.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Is it… over?”", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "Across the room, Natsume slowly pushed herself up.", is_narrator=True)
+    show_story_box("", "Her gray robe was dusty, but her expression hadn't changed.", is_narrator=True)
+    show_story_box("", "She looked at me. And she smiled.", is_narrator=True)
+    show_story_box("", "That same, sinister, superior smile.", is_narrator=True)
+    show_story_box("", "She raised her hand, ready to summon the ink again.", is_narrator=True)
+    show_story_box("", "WHOOSH.\n\nA blur of silver and white flashed from the side.", is_narrator=True)
+    show_story_box("", "Before Natsume could channel a single drop of power, a figure tackled her, pinning her to the mats with terrifying precision.", is_narrator=True)
+    show_story_box("", "It was Liwei.", is_narrator=True)
+    show_story_box("", "He had moved so fast I hadn't even seen him leave his spot near the entrance.", is_narrator=True)
+    show_story_box("", "Natsume snarled, trying to throw him off, but Liwei didn't give her an inch.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Sleep.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "THWACK.\n\nHe delivered a sharp, calculated chop to the back of her neck.", is_narrator=True)
+    show_story_box("", "Natsume’s eyes rolled back. She went limp instantly.", is_narrator=True)
+    show_story_box("", "The heavy, gloomy atmosphere lifted. The gray robe and the dark sword dissolved into particles of blue light, fading away until only Natsume—wearing her normal training gear—lay unconscious on the floor.", is_narrator=True)
+    show_story_box("", "I sprinted over.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Natsume!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I scooped her up. She was burning up, her breathing shallow and ragged.", is_narrator=True)
+    show_story_box("", "I turned to Liwei, ready to thank him.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Liwei-san! Thank you, you saved—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei cut me off with a sharp gesture.", is_narrator=True)
+    show_story_box("", "His usual playful grin was gone. His eyes were hidden behind his sunglasses, but his mouth was set in a grim line.", is_narrator=True)
+    
+    show_story_box("Liwei", "“—You have a much higher priority right now.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“Take her to the infirmary. Immediately. Her vitals are unstable.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He stood up, dusting off his uniform.", is_narrator=True)
+    show_story_box("", "He leaned in close, his voice a low whisper.", is_narrator=True)
+    
+    show_story_box("Liwei", "“And get out of here. Now isn’t a good time for you lots to be the ‘good guys’.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“What?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked around.", is_narrator=True)
+    show_story_box("", "The paralysis had worn off. The Luoxia students were moving again.", is_narrator=True)
+    show_story_box("", "But they weren't looking at us with admiration anymore. They were huddled in groups, whispering, casting fearful, suspicious glances at the Vanguard.", is_narrator=True)
+    
+    show_story_box("", "“Did you see that?”\n“That energy…was that the Administration’s pressure..?”\n“Why can an outsider use that?”\n“Are they dangerous? Does this mean they’re enemies?”", is_narrator=True)
+    
+    show_story_box("", "The trust we had built during the sparring session was shattering in real-time.", is_narrator=True)
+    show_story_box("", "Liwei didn't wait for me to answer. He spun around, putting his loud, charismatic persona back on like a mask.", is_narrator=True)
+    show_story_box("", "He ran over to Mei, helping the trembling Captain to her feet.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Mei! You okay? Easy there!”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He turned to the students, throwing his arms wide.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Alright, show’s over, kids! Nothing to worry about! Just a little overheated technique! Everyone take five! Drink some water!”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I gritted my teeth.", is_narrator=True)
+    show_story_box("", "I adjusted my grip on Natsume and looked at the Vanguard.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Let’s move. To the infirmary.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We retreated from the training hall, the heavy gazes of the students burning into our backs.", is_narrator=True)
+
+def play_stage_4_9_story():
+    
+    # --- NAGANOHARA'S POV ---
+    show_story_box("", "********* ◆ *********\nNaganohara’s POV", is_narrator=True)
+    show_story_box("", "[ Luoxia Gardening School – Infirmary ]", is_narrator=True)
+    
+    show_story_box("", "The only sound in the room was the rhythmic beeping of the heart monitor and the soft hum of the air purifier.", is_narrator=True)
+    show_story_box("", "Natsume lay still on the white hospital bed. A blue cooling patch was stuck to her forehead, contrasting with her pale skin.", is_narrator=True)
+    show_story_box("", "She looked so small, so fragile—nothing like the terrifying, ink-wielding monster that had nearly killed us all an hour ago.", is_narrator=True)
+    show_story_box("", "I sat in the chair next to her, wringing my hands together.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“...It’s my fault.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "The words tasted like ash.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“I was the one who pushed her. I came up with the stupid ‘surprise training’ plan. I dragged her out there. If I hadn’t… she wouldn’t be like this.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I waited for the anger. For Akasuke to yell, or for Benikawa to tell me I was an idiot.", is_narrator=True)
+    show_story_box("", "But it never came.", is_narrator=True)
+    show_story_box("", "Shigemura stepped forward. He placed a hand gently on my head.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Tsuki-chan. Stop.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I looked up, tears stinging my eyes.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“But Fuyu-kun! I—”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Shigemura", "“You saved us.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I blinked.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“...Huh?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Shigemura", "“Think about it. That Kata… that ‘Administrator’ entity… you could say it was dormant inside her. A ticking time bomb.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“If you hadn’t dragged her out and triggered it here, in a controlled environment with Liwei and Mei present… what would have happened if it emerged later?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Akasuke nodded from the corner, his arms crossed.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“He’s right. Imagine if that monster came out while we were fighting a real enemy horde. Or worse—while we were exhausted and alone.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“We would have been decimated. You flushed out the threat early, Naganohara. You didn’t break her. You might have just saved her life.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I stared at Natsume’s sleeping face. The fear in my chest loosened, just a little bit.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“...That’s a really scary hypothetical story, guys. But… thanks.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Click.\n\nThe infirmary door opened.", is_narrator=True)
+    show_story_box("", "Captain Mei walked in. She had already changed back into her full Enforcer Captain uniform—the heavy cloak with the glittering clouds. She looked immaculate, as if she hadn’t been on her hands and knees an hour ago.", is_narrator=True)
+    
+    show_story_box("Mei", "“How is she?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Kagaku checked the monitor.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Stable. Her vitals are normalizing. The forced assimilation drained her stamina reserves, but she’ll recover.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Naganohara", "“Mei-san… about the students. I should apologize to them! I scared them half to death.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Mei shook her head gently.", is_narrator=True)
+    
+    show_story_box("Mei", "“That will not be necessary. The martial arts practitioners have all been sent home early.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Naganohara", "“Sent home?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Mei", "“They have never witnessed something of that caliber before. The pressure… the intent…it was traumatic for them. It is an expected reaction.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“I only hope you do not hold a grudge against them for fearing you. You will be living here for the duration of your mission, after all.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I shook my head frantically.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“No way! We aren’t mad! We totally get it!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Akasuke stepped forward.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Captain Mei. Where is Liwei-san? I need to thank him. If he hadn’t pinned Natsume down…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei’s expression tightened slightly. She let out a long, weary sigh.", is_narrator=True)
+    
+    show_story_box("Mei", "“That man… he said he ‘wanted some time for himself’.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“He specifically requested that if Kasakura wished to speak with him… to send only you, Hanefuji-dono.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Akasuke pointed to himself.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Just me?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei nodded.", is_narrator=True)
+    show_story_box("", "The rest of the Vanguard stared at Akasuke, confused.", is_narrator=True)
+    show_story_box("", "Hana clapped her hands together, breaking the tension.", is_narrator=True)
+    
+    show_story_box("Hana", "“Well! While Akasuke-kun handles diplomatic relations, why don’t we get some fresh air?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She placed a hand on my shoulder, smiling warmly.", is_narrator=True)
+    
+    show_story_box("Hana", "“Naganohara-chan, come with me. The botanical tour is next! Looking at flowers is the best way to wash away stress.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I managed a weak smile.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Yeah… yeah, that sounds nice. Thanks, Hana-senpai.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "As the group began to disperse—Hana dragging Benikawa and even Yuri toward the greenhouse, Shigemura staying behind to guard Natsume—I turned back to Mei.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Mei-san… what will you do now?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Mei hesitated. She looked down at her hands.", is_narrator=True)
+    
+    show_story_box("Mei", "“To be honest… I was not supposed to stay this long. My orders were simply to greet you and escort you to Luoxia.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“The Yunhai Association is currently… strained. We have our own internal problems to solve. We cannot spare human resources for long.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "She looked at us, her yellow eyes apologetic.", is_narrator=True)
+    
+    show_story_box("Mei", "“That is why we requested outside help. To handle the problems we cannot reach. From here on out… you are on your own.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Akasuke nodded understandingly.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“We understand. Thank you for getting us this far, Captain.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei gave a stiff bow.", is_narrator=True)
+    
+    show_story_box("Mei", "“Liwei is bound to leave with me soon. If you wish to speak with him, he is on the rooftop.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Akasuke didn't waste another second. He turned and headed for the stairs.", is_narrator=True)
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "[ Luoxia Gardening School – Rooftop ]", is_narrator=True)
+    
+    show_story_box("", "The wind on the roof was stronger than on the ground.", is_narrator=True)
+    show_story_box("", "Liwei was leaning against the balcony railing, his back to me. He was staring out at the sprawling, tiled skyline of Sector II under the cloudy afternoon sky.", is_narrator=True)
+    show_story_box("", "He wasn't wearing his sunglasses.", is_narrator=True)
+    show_story_box("", "Without them, and without his usual loud grin, he looked like a different person. Older. Heavier.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Liwei-san.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "He didn't turn around.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Yo. You came.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He tapped the railing.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Come here. Let’s have a conversation. From man to man.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I walked up beside him, leaning on the rail.", is_narrator=True)
+    
+    show_story_box("Liwei", "“So. How’re you liking my hometown? The Megastructure?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I looked out at the city. The blend of ancient architecture and industrial pipes. The smoke rising from food stalls.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“It’s… incredible. The food is great. The locals are friendly, resilient. Every activity in Sector I and II was fun.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“And your Enforcers…Mei-san, and the others…they have such a strong sense of duty. You guys are ‘insular’, as the rumors say…but only after seeing this place in person, I finally get it.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“It took you insane raw spirit and teamwork to keep a city like this running.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei listened quietly. Then, a small, genuine smile touched his lips.", is_narrator=True)
+    
+    show_story_box("Liwei", "“‘That so?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He exhaled, his shoulders relaxing.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Thanks. It’s a relief to hear that.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "His smile faded as he looked back at the clouds.", is_narrator=True)
+    
+    show_story_box("Liwei", "“I love this place too. But… you’re right. We’re too insular. Yunhai is holding on by a thread. If we don’t open up to outside knowledge—like your friend, Kagaku’s tech—we’re going to crumble into dust.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“The enemies are innovating. Adapting. And we’re just… polishing old swords.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He paused for a long moment.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Akasuke. Would you listen to a boring story from this senior’s past?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“Go ahead.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“I’m not a fully upstanding citizen. I come from this city’s underworld.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I flinched, instinctively shifting my feet into a defensive stance.", is_narrator=True)
+    show_story_box("", "Liwei saw it and laughed—a dry, bitter sound. He raised his hands in surrender.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Ahaha..! Relax! Hero. I mean I WAS a thug. I’m living a proper, honest life now. The Association accepts trash like me if we show enough ‘courage and compassion’.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He lowered his hands, gripping the rail again.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Back in my criminal days… I was a nobody. Unpopular. Shy. I ran with a small gang in a poor settlement way out west. We did petty crimes just to eat. But… I can’t deny I was happy then.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "His knuckles turned white.", is_narrator=True)
+    
+    show_story_box("Liwei", "“One day, I came home… and… the settlement was gone.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“Gone?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“Razed. Destroyed. No evidence left. The witnesses said it was a gang war that got out of hand. But I knew better. No gang in this city has the firepower to wipe a residential block off the map in a few hours.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He turned to look at me, his eyes cold and hard.", is_narrator=True)
+    
+    show_story_box("Liwei", "“And so I climbed the ranks of the underworld. I clawed my way up. And I bought the truth.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“It wasn't a gang. It was a scheme from the Westward Megastructure’s Administration itself. My very ‘good masters’.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“The Administration? Why would they destroy their own people?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“Because one of the high nobles of the court… originally grew up in that shit-hole settlement with me.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“Imagine the scandal. A high administrator, revealed to be a former thug? Preposterous. So… he used a certain ‘tool’ to induce a thorough erasure. He burned his past to protect his reputation.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Liwei spat over the railing.", is_narrator=True)
+    
+    show_story_box("Liwei", "“They covered it up with lies. Then they extended a ‘helping hand’ to the survivors later. Egotistical bastards. They don’t care about the city. They care about their image.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I stared at him. The puzzle pieces clicked together.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“So… you joined the Association to get close to them. To bring them to justice.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“That’s the dream. But reality is harsher. The Administrators are practically deities in this city. Touching them is impossible.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“So I have a different objective. I’m looking for the means of destruction they used. I’m going to find it, and I’m going to discard it so they can never use it again.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“A tool capable of erasing a settlement… what is it? A bomb? A biological weapon?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei shook his head.", is_narrator=True)
+    show_story_box("", "He turned fully toward me, his expression grave.", is_narrator=True)
+    
+    show_story_box("Liwei", "“A ‘Ritual’.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“A ritual?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“A Ritual used to completely erase traces of one's shame.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Then he turned to look out at the scenery of the city again.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Something that essential... one can't help but wonder why my good masters would let something become so freely tainted by the dregs of the underworld.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "The wind picked up, whipping his silver hair across his face.", is_narrator=True)
+    show_story_box("", "He looked me dead in the eye.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Akasuke Hanefuji. Are you ready to hear the Association’s—and my unit’s—true mission?”", affiliation="Yunhai Association Enforcer Captain")
+
+def play_stage_4_10_story():
+    
+    # --- MIYU'S POV ---
+    show_story_box("", "********* ◆ *********\nMiyu’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure - Residential Sector II\nAbandoned School Area – Old Dojo", is_narrator=True)
+    
+    show_story_box("", "The only sound in the room was the scratching of my black ink pen against paper.", is_narrator=True)
+    show_story_box("", "I sat perfectly still on the floor, using a wooden crate as a desk.", is_narrator=True)
+    show_story_box("", "Kasakura Observation Report: Day 2.", is_narrator=True)
+    show_story_box("", "Just then, my phone buzzed.", is_narrator=True)
+    show_story_box("", "I frowned.", is_narrator=True)
+    show_story_box("", "The number was blocked. Unknown.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...Strange.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "If this was a colleague, they knew better. Direct calls were a last resort, reserved for emergencies or extraction requests. We were taught to rely on encrypted text drops.", is_narrator=True)
+    show_story_box("", "If this was another agent sent by the Boss, they would follow protocol. I will be hearing a specific code phrase first. Cryptic aliases second.", is_narrator=True)
+    show_story_box("", "I picked up the phone, pressing it to my ear cautiously.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Speak—”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“MIYU-CHAAAAAAN! IT’S MIDORI! I-I MISSED YOU SO MUCH-!!”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "I winced, pulling the phone away from my ear as her voice boomed through the speaker without a care in the world.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Mi-Midori?! Are you insane? You forgot everything about secrecy and professionalism the moment you left the island?!”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“E-Ehh? B-But I haven’t heard your voice in days! Isn’t it fine? No one’s listening!”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "I pinched the bridge of my nose, regaining my composure.", is_narrator=True)
+    
+    show_story_box("Miyu", "“We are on active missions. Assume someone is always listening. Use the code names.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“O-Okay! Okay…jeez, you’re so stiff, Mimi-tan!”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("Miyu", "“...Do not call me that.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“And then you have to call me by my own code name! ‘Chloe Oran Esmeralda’!”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "I sighed.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Fine. ‘Chloe’. What is your status?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“Well…you remember that Miyabi-lapdog I encountered on the island? Fuyuki?”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("Miyu", "“I read your report. I already know about him. And speaking of that report—the formatting was atrocious. The grammar was a disaster. I wanted to scold you for that.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“H-Hey! U-useless report formatting can be shoved up the ass…it isn’t important right now!”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "Her voice dropped the shy act for a split second before bouncing back to timid innocence.", is_narrator=True)
+    
+    show_story_box("Midori", "“A-Anyway! I called to tell you first…the Boss reassigned me. I…I’m going to observe the schools in the Hoshizuradani Region next.”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "My pen stopped moving.\n\nHoshizuradani.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...Are you sure? The Boss assigned that place to you? It’s a warzone compared to here.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“Y-Yeah… I think he did it because I told him I wanted ‘Miyatrash Academy’s’ total extermination after Fuyuki insulted him. He probably thinks I need to blow off some steam…maybe.”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("Miyu", "“Calm down, ‘Chloe’. You’re spiraling.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "But I knew I was the one who needed to calm down.", is_narrator=True)
+    show_story_box("", "First, the ‘Bastard Child’ worries me with his unclear agenda here in the Megastructure. Now, the Boss is sending my closest friend into one of the most dangerous regions.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...Do you have backup? Anyone coming with you?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“None. J-just me.”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("Miyu", "“Where exactly in Hoshizuradani?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“Kagayakuyamamura. At the Central Observatory.”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "Midori must be hearing a muffled scream on the other end of the line by now—me screaming into a pillow.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...Midori.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I broke protocol. I used her real name.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Listen to me. Put a hold on the mission. Do not enter Hoshizuradani alone. Please.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“B-But the Boss—”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("Miyu", "“Wait until I finish here. I will return and assist you. We’ll go together…okay?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "There was a long silence on the other end.", is_narrator=True)
+    show_story_box("", "Finally, Midori’s voice came back, soft and relieved.", is_narrator=True)
+    
+    show_story_box("Midori", "“...Okay. Since it’s you asking, Mimi-tan. I’ll wait.”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "The call clicked off.", is_narrator=True)
+    show_story_box("", "I stared at my unfinished report.", is_narrator=True)
+    
+    show_story_box("Miyu", "“What is the Boss thinking?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I capped my pen. I couldn't write anymore tonight.", is_narrator=True)
+    show_story_box("", "I collapsed onto my futon, staring at the dusty ceiling.", is_narrator=True)
+    
+    show_story_box("Miyu", "“What should I do..?”", affiliation="Kasakura High School Student Council")
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nYesterday Afternoon – Luoxia School Rooftop\nAkasuke’s POV", is_narrator=True)
+    
+    show_story_box("", "Liwei leaned against the railing, the wind whipping his silver hair.", is_narrator=True)
+    
+    show_story_box("Liwei", "“So. Are you ready to hear the Association’s true mission?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He looked at me seriously.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Also, Kasakura isn’t supposed to know about this. So keep it to yourself for the time being.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I crossed my arms.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“I can’t promise that. If it means saving my friends at some point… I will reveal the secret without hesitation.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei smiled—a genuine, respecting smile.", is_narrator=True)
+    
+    show_story_box("Liwei", "“That’s fine~. You really are a man who thinks far for his companions, huh?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He turned back to the skyline.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Do you know what ‘Phenomena’ are?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“Huh?…Uh…they’re observable events in nature, right? Something unusual that needs scientific investigation?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“Correct. But I’m not talking about internet hoaxes.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“There are actual mystical powers and entities out there, you know.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“In our world, ‘Phenomena’ mainly refers to special abilities a human possesses. Usually related to battle. For example… being an Empath.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I blinked.", is_narrator=True)
+    show_story_box("", "I thought back to Kiryoku Gakuen. To President Aina, the sleeping ‘Queen of Fairies’.", is_narrator=True)
+    show_story_box("", "Absorbing malice. Promoting morale. Detecting dark motives.", is_narrator=True)
+    show_story_box("", "Liwei saw my expression and nodded.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Looks like you’ve met one. Good. That makes this easier.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He held up a finger.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Phenomena are mostly abilities. But they can also be entities, places, rules… and lastly, tools.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“So… the corrupt administrator used a ‘Phenomenon Tool’ to destroy your hometown?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“Correct again, Aka-boy. Now, listen closely. This is inferred from ancient texts, so take it with a grain of salt.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He leaned in.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Ages ago, this region—the ‘Yunhai Region’—was a breeding ground for war. Soldiers assimilated with the land’s raw Phenomena energy to destroy their opponents.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“But the energy was too raw. Soldiers lost their reason. It was chaos. Total anarchy.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“At the climax of the war, the surviving generals agreed on a ceasefire. They recreated nine new armies. The immense Phenomena energy of the region concentrated onto one spot and forged a physical treaty.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“It immersed all nine armies into a single tool. This gave birth to the Phenomena Tool: The Scroll Of The Nine Armies.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I stared at him.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“That sounds… like a fairy tale.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“Heh. Phenomena are the inspiration for fairy tales. They existed first.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“Then, every region eventually produced its own legendary Tool after diluting their raw Phenomena energy. The Scroll is our region’s.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“So the Administration owns the Scroll?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei shook his head.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Nah. It was recently ‘stolen’ by the Megastructure’s underworld.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“Stolen? How does a gang steal a legendary weapon from the government?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“That’s the thing…they didn’t. The Administration let them take it.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“The Scroll’s ability is simple: it temporarily breaks the ancient truce. It pulls out a random number of spectral armies and soldiers to fight tooth and nail without caring for their surroundings. It’s a weapon of mass destruction.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“But it needs to recharge. It absorbs the energy of battle and conflict. If the Association didn’t need to charge it, they would long be declaring all-out war on all the outside regions.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“By letting it fall into the chaotic underworld… they let the gangs fight, bleed, and charge the Scroll for them, I presume. Once it’s full… they’ll take it back. And use it to ‘erase their shame’ whenever they please.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He looked at me.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Having the underworld own it gives us a fighting chance. It’s easier to steal from a gang than from the overseers of the whole city. I don't know if we can destroy it… but we can at least confiscate it.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Akasuke", "“Let me—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei smiled sadly.", is_narrator=True)
+    
+    show_story_box("Liwei", "“No. Stick to your mission. Clear out the infiltrators in this Block. Then just go home.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“Your friends… Naganohara, Kagaku, the injured Natsume… you can’t drag them into this war. This is my fight.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I clenched my fist. He was right. I couldn't risk them.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Understood. I’ll follow your advice.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei pushed off the railing.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Good man.”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Liwei", "“Just a warning, Akasuke. Once Mei and I leave the Block… that’s when the local gangs will flood in. They’re only currently scared of us, the Association. Even if you’re in a school, you won’t be safe.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He turned to leave.", is_narrator=True)
+    
+    show_story_box("Liwei", "“...Good luck.”", affiliation="Yunhai Association Enforcer Captain")
+
+def play_stage_4_11_start():
+    # --- HANA'S POV ---
+    show_story_box("", "********* ◆ *********\nHana’s POV", is_narrator=True)
+    show_story_box("", "[ Westward Megastructure – Luoxia Gardening School Greenhouse ]", is_narrator=True)
+    
+    show_story_box("", "I was in absolute paradise.", is_narrator=True)
+    show_story_box("", "The greenhouse was a massive, climate-controlled dome of glass and jade, overflowing with flora I had only ever dreamed of seeing.", is_narrator=True)
+    
+    show_story_box("Hana", "“Look at soil humidity sensors woven directly into the planters! Ahh! The Nepenthes cultivars here are thriving!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The Luoxia students leading the tour—who seemed to be purely academic botanists, completely unrelated to the fierce martial artists back then—were beaming.", is_narrator=True)
+    show_story_box("", "They were clearly thrilled to have a guest who actually appreciated their life’s work.", is_narrator=True)
+    show_story_box("", "Behind me, Yuri and Benikawa were playing the role of bored chaperones. Yuri was wandering slowly, admiring the scenery, while Benikawa couldn’t sit still for two seconds, constantly poking the strangest-looking carnivorous plants.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Whoa. If I put my finger in this one, do you think it’ll bite?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Yuri", "“Benikawa, please don't trigger the local flora.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I noticed Naganohara lagging behind the group. Her usual bright, bubbly energy was completely gone. Her shoulders were slumped, and she was staring at the dirt path, lost in her own guilt.", is_narrator=True)
+    show_story_box("", "I couldn't have that.", is_narrator=True)
+    show_story_box("", "I marched over, grabbed her arm, and dragged her toward a large patch of tilled earth.", is_narrator=True)
+    
+    show_story_box("Hana", "“Naganohara-chan! We’re participating in the trial activity! We are going to cultivate local medicinal herbs!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri gave us a thumbs-up from the walkway.", is_narrator=True)
+    
+    show_story_box("Yuri", "“You two have fun! Benikawa and I are gonna go hunt down a vending machine!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The Luoxia guides handed us some tools and instructed us on the delicate process of preparing the soil. Our first task was simple: removing aggressive weeds that choked the young herbs.", is_narrator=True)
+    show_story_box("", "I fell into my element instantly. With graceful, precise movements, I isolated the roots and extracted the weeds without disturbing the surrounding soil, drawing impressed murmurs from the guides.", is_narrator=True)
+    show_story_box("", "Naganohara, on the other hand, was struggling. She was tugging at a massive, stubborn weed, but her grip kept slipping, her mind clearly somewhere else.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Ugh… why won't this thing just come out?!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Suddenly, another hand reached down, cupping over hers.", is_narrator=True)
+    show_story_box("", "With a smooth, practiced tug, the massive root popped out of the dirt perfectly intact.", is_narrator=True)
+    show_story_box("", "Naganohara gasped, looking up.", is_narrator=True)
+    show_story_box("", "It was Natsume.", is_narrator=True)
+    show_story_box("", "She was wearing a fresh tracksuit, looking slightly pale but completely awake.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“N-Natsume-chan?!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Hana", "“You’re awake already?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Before Natsume could answer, the greenhouse doors slid open, and Kagaku and Shigemura came rushing in.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“We’re here! Sorry, we had to chase her! The second she woke up, she ripped the cooling patch off her forehead and walked straight out of the infirmary!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kagaku stopped mid-sentence, her eyes locking onto the glowing green pipes running along the ceiling.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“...And is that the prototype Jade Irrigation System?! The bioengineering thermal regulators?! Oh my god, I need the schematics!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She abandoned us instantly, sprinting toward the bewildered Luoxia guides.", is_narrator=True)
+    show_story_box("", "Shigemura let out a quiet sigh of relief, realizing Natsume just wanted to find Naganohara. He walked over to me, casually rolling up his sleeves.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Need a hand with the soil preparation, Kaoru-senpai?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Hana", "“I would love one, Shigemura-kun.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We moved a few paces away, giving the two girls some much-needed space to talk.", is_narrator=True)
+    
+    # --- NATSUME'S POV ---
+    show_story_box("", "********* ◆ *********\nNatsume’s POV", is_narrator=True)
+    
+    show_story_box("", "I grabbed Naganohara’s wrist and pulled her away from the dirt patch, leading her deeper into the greenhouse.", is_narrator=True)
+    show_story_box("", "We found a secluded sightseeing room. It was a sophisticated, modern space filled with beautiful floral arrangements, small bubbling fountains, and artificial streams running across the stone floor.", is_narrator=True)
+    show_story_box("", "Naganohara fidgeted with her hands, looking down.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Natsume-chan… I’m so, so sor—”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Natsume", "“Stop.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I interrupted her, my voice firm but soft.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Everyone knows it wasn't your fault, Tsukimiyama. You couldn't have known I had a dormant ‘Administrator’ kata ticking inside me.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I took a breath, leaning against the edge of a fountain.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Actually… I came to thank you.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara blinked, looking up in surprise.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Thank me?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Natsume", "“Yeah. For helping me overcome my fear. It’s strange, but… I feel enlightened. Before my body gave out, I finally understood why Akasuke and the others do this.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“Like Mei said. It’s a conversation. There are some things you can only communicate to someone through the clash of weapons, without ever using words.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara stared at me for a second, then let out a small, genuine laugh.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Oh my gosh, Natsume-chan. You’re starting to sound exactly like one of the battle-hungry frontline freaks, like Benikawa-san!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I smirked, feeling a wave of relief seeing her smile again.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Hey, with my last transformation, I proved I have an insanely high ceiling. I might actually be ‘stronger’ than you now, Tsukimiyama. You better watch your words around me.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara puffed her cheeks out, placing her hands on her hips.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“N-No way! You get one super-powerful Kata and it’s already going straight to your head like every first-timer!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "We shared a laugh, the heavy tension between us finally evaporating.", is_narrator=True)
+    show_story_box("", "An awkward, but comfortable pause settled over the room.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“...Thanks, Natsume-chan. For making me feel better.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Natsume", "“I’m the one who should be thanking you. But… I’ll accept it.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I pushed off the seating.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Come on. Let’s go rendezvous with the others. The real mission is about to start.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "[ Luoxia Gardening School – Courtyard ]", is_narrator=True)
+    
+    show_story_box("", "My brain was throbbing.", is_narrator=True)
+    show_story_box("", "The massive info dump from Liwei—the Phenomena, the stolen Scroll of the Nine Armies, the corrupt Administration—was a lot to process.", is_narrator=True)
+    show_story_box("", "I was walking back toward the main building, completely lost in thought, when I rounded a corner—", is_narrator=True)
+    show_story_box("", "—And bumped squarely into someone.", is_narrator=True)
+    show_story_box("", "Thud.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Whoa!—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri stumbled back, clutching two cold cans of iced tea.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Ah! Akasuke-kun! Watch where you’re—oh. Here.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She was slightly flustered, but she handed me one of the drinks anyway.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Ah, thanks.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I popped the tab, taking a long drink. Behind Yuri, Benikawa was leaning against a vending machine, pouting slightly as she watched our interaction.", is_narrator=True)
+    
+    show_story_box("Yuri", "“So? Did Mei and Liwei head out already?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Akasuke", "“Yeah. They’re gone. And that means our grace period is over.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I crushed the empty can in my grip.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“The infiltrator gangs haven't made a move on this sector yet because they were terrified of the Association’s Captains. But now that we’re the only ones left guarding this school… the gangs are going to test us.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "[ Minutes Later – Luoxia Main Gates ]", is_narrator=True)
+    
+    show_story_box("", "The sun was beginning to set, casting long, fiery orange shadows across the courtyard. The eight of us stood together in a line, facing the open double gates.", is_narrator=True)
+    show_story_box("", "Just as Liwei predicted, the moment the Association’s presence vanished, the roaches crawled out of the woodwork.", is_narrator=True)
+    show_story_box("", "Local gangsters began pouring out of the surrounding streets and empty alleyways, forming a massive mob right in front of the school.", is_narrator=True)
+    show_story_box("", "The leader of the mob—a scarred brute with a jagged metal pipe—stepped to the front, pointing his weapon at us and laughing loudly.", is_narrator=True)
+    
+    show_story_box("Gang Leader", "“Hah! Is this a joke?! The Association requests outside help to clean up our turf, and Kasakura only sends eight brats?!”", affiliation="Megastructure Local Gang")
+    
+    show_story_box("", "Shigemura stood beside me, his hands resting in his pockets, his violet eyes scanning the massive crowd.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“I wonder if the driver’s assessment was accurate. Are their groups really as strong as a…tenth of me each? There’s a lot of groups, you know.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Akasuke", "“Only one way to find out. We confirm it right here and now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The gangsters didn't waste time on honor or duels. They roared, rushing the gates like a tidal wave.", is_narrator=True)
+    show_story_box("", "They wielded standard metal batons, but a few in the back began spinning a completely new weapon that Nishida and Yamashita had warned us about in their brochures: Stone Slings.", is_narrator=True)
+    show_story_box("", "I’ve seen these before. They were essentially a small leather pouch suspended between two rope cords.", is_narrator=True)
+    show_story_box("", "The thugs placed heavy, jagged stones in the pouch, spinning them at terrifying speeds before launching them forward with the velocity of a bullet.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Incoming projectiles! Brace yourselves!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I dropped into my stance, the blue light of my Kata already flaring to life.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Listen up, Vanguard! Once the fight starts, I have a plan!”", affiliation="Kasakura High School Student / Seven Wonders")
+
+
+def play_stage_4_11_end():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    
+    show_story_box("Gang Leader", "“Where the hell did they go?!”", affiliation="Golden Fist Union")
+    
+    show_story_box("", "A squad of over twenty thugs rushed into the main hallway of the Luoxia school building, gripping their batons tightly, looking wildly around the empty corridor.", is_narrator=True)
+    show_story_box("", "I dropped from the ceiling rafters directly behind their leader.", is_narrator=True)
+    show_story_box("", "Before he could even turn around, I delivered a brutal chop to the back of his neck, knocking him out cold.", is_narrator=True)
+    
+    show_story_box("Goons", "“He’s behind us! Get him!”", affiliation="Golden Fist Union")
+    
+    show_story_box("", "The remaining thugs roared, turning as one to rush me.", is_narrator=True)
+    show_story_box("", "But as they committed their momentum forward, the doors behind them burst open. Shigemura and Benikawa flanked them, striking with ruthless, silent precision. Within a matter of seconds, all twenty thugs were laid out flat on the floor.", is_narrator=True)
+    show_story_box("", "My first strategy was simple.", is_narrator=True)
+    show_story_box("", "It was the fundamental rule of fighting multiple opponents at once: Always run away first.", is_narrator=True)
+    show_story_box("", "Groups of thugs don't share the same cardiovascular fitness or running speed. By forcing them to chase us through the massive school grounds, the faster enemies naturally separated from the slower pack.", is_narrator=True)
+    show_story_box("", "Additionally, if the fast ones attempted to stop to wait for the slow ones, they would never catch us.", is_narrator=True)
+    show_story_box("", "Once they were strung out and separated, we simply picked off the faster squads in isolated ambushes.", is_narrator=True)
+    show_story_box("", "However, the local Megastructure gangs weren't entirely stupid. They had fought elite schools who used the same strategies before.", is_narrator=True)
+    show_story_box("", "They must have quickly adapted, realizing our trick, and stopped breaking formation. Instead, they simply flooded the hallways with pure, suffocating waves of numbers, overwhelming us through sheer volume.", is_narrator=True)
+    show_story_box("", "Which brought us to Strategy Two.", is_narrator=True)
+    show_story_box("", "When fighting a massive crowd with no room to maneuver, the best opening move is to target the biggest guy and inflict the highest possible damage immediately.", is_narrator=True)
+    show_story_box("", "Taking out the ‘leader’ or the strongest figure works wonders in shattering a mob’s morale. It instills the fear that if their absolute best fighter was crushed effortlessly, the grunts have no chance.", is_narrator=True)
+    show_story_box("", "I cornered another massive squad leader in the courtyard, shattering his batons and driving him into the dirt with a devastating hook kick.", is_narrator=True)
+    show_story_box("", "But to my frustration…the strategy only partially worked.", is_narrator=True)
+    show_story_box("", "The thugs gasped, but they didn't flee. Their morale didn't break.", is_narrator=True)
+    
+    show_story_box("", "I quickly realized why: The enemy had an unlimited supply of ‘leaders’.", is_narrator=True)
+    show_story_box("", "The moment I knocked the brute out, another thug simply stepped forward, yelled a battle cry, and the minions instantly shifted their loyalty to follow him instead.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘They don't care who leads,’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("", "I thought, dodging a flying stone from a sling.", is_narrator=True)
+    show_story_box("", "As long as someone points them in a direction, they’ll follow. The Megastructure is full of hotheaded, battle-hungry freaks more than willing to claim the title of ‘Boss’ for five minutes.", is_narrator=True)
+    show_story_box("", "We couldn't break their chain of command because they didn't really have one. It was pure, chaotic aggression.", is_narrator=True)
+    
+    show_story_box("", "[ Flashback – Right before the battle ]", is_narrator=True)
+    
+    show_story_box("Akasuke", "“We shouldn’t fight them all at once. We’ll be using a strict rotation system.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I drew a diagram in the dirt with a stick.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Four of us fight on the frontlines while the other four hide within the school’s inner rooms to rest and recuperate. Once the frontline is exhausted, we swap.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri crossed her arms.", is_narrator=True)
+    
+    show_story_box("Yuri", "“That sounds great in theory, but what happens if the enemy fully infiltrates the school and finds our hidin’ spots while we’re restin’?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Akasuke", "“I know hiding in plain sight is impossible. Past schools likely suffered heavy losses because they couldn't safely rest between the relentless waves.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I smirked, looking at Benikawa and Shigemura.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“But Kasakura has no qualms about throwing away a little bit of our pride—and our uniforms—if it means winning against wrongdoers.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I pointed to the approaching mob.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“The counter-plan is simple. When you need to rest, you disguise yourself as a defeated thug and blend right into the chaos of the battle.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Benikawa’s eyes lit up.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Oh! Infiltration 101! Even if they know our faces, the sheer quantity of bodies makes it impossible to constantly pick out one person wearing their exact uniform!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Akasuke", "“Exactly. Benikawa, Shigemura. You two will use your ninja techniques to manage the disguises, swapping our resting members’ outfits with whatever resources we strip from the unconscious enemies.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "[ Present Time ]", is_narrator=True)
+    
+    show_story_box("", "By the end of the first massive wave, the enemy was completely disoriented. None of the thugs were able to keep track of the Vanguard’s locations.", is_narrator=True)
+    show_story_box("", "They anxiously trashed the entire Luoxia School, searching for us, only to be constantly ambushed by fresh, fully-rested fighters stepping out of the shadows—or rising from the piles of \"unconscious\" bodies right under their noses.", is_narrator=True)
+    show_story_box("", "Finally, hours later, the sun fully set, and the school grounds fell dead quiet.", is_narrator=True)
+    show_story_box("", "We, only eight people, had just systematically dismantled a small army.", is_narrator=True)
+    show_story_box("", "I let out a long, exhausted breath, wiping sweat from my eyes.", is_narrator=True)
+    show_story_box("", "The courtyard and hallways were carpeted with groaning, unconscious thugs.", is_narrator=True)
+    show_story_box("", "Naganohara, Natsume, and Kagaku were completely spent. They collapsed near the fountain, too tired to even stand, relying on the rest of us to finish the cleanup.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Alright, team. Let’s get to work.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri, Benikawa, Shigemura, Hana, and I began running back and forth, gathering as much rope and zip-ties as we could find, systematically tying up the massive amount of defeated enemies before the second wave inevitably arrived at midnight.", is_narrator=True)
+
+def play_stage_4_12_start():
+    # --- MEI'S POV ---
+    show_story_box("", "********* ◆ *********\nMei’s POV", is_narrator=True)
+    show_story_box("", "[ Westward Megastructure - Residential Sector II\nDivision Station Office ]", is_narrator=True)
+    
+    show_story_box("", "The station was quiet, save for the rhythmic scratching of my pen against paper.", is_narrator=True)
+    show_story_box("", "I was buried under a mountain of incident reports—property damage, civilian complaints, and the logistics of the Kasakura Vanguard’s accommodation.", is_narrator=True)
+    show_story_box("", "Click.\n\nThe office door swung open, and Liwei casually strolled in, his sunglasses perched on top of his head.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Evening, Mei-Mei! Working late again? You’re going to get wrinkles.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I didn't look up from my paperwork.", is_narrator=True)
+    
+    show_story_box("Mei", "“What is your purpose for barging into my office at this hour, Liwei?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Liwei", "“Ah, just forgot some of my own documents. Don’t mind me.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He walked over to a filing cabinet, picked up a thick manila folder, and turned to leave.", is_narrator=True)
+    
+    show_story_box("Mei", "“Stop.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I put my pen down.", is_narrator=True)
+    show_story_box("", "Liwei paused, turning his head with a friendly, almost teasing smile.", is_narrator=True)
+    
+    show_story_box("Liwei", "“What’s wrong? Got scared working all alone into the night? Ya need some company~?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "I looked him dead in the eye.", is_narrator=True)
+    
+    show_story_box("Mei", "“I do need you, Liwei. Because I know.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "His smile faltered for a fraction of a second, shifting into a surprised, confused expression.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Woah. Why so serious all of a sudden?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Mei", "“I know you and your unit are doing something behind the scenes. Something the Association hasn't been keeping an eye on.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Liwei tightened his grip on the folder.", is_narrator=True)
+    
+    show_story_box("Liwei", "“...Why, did you read the files inside this folder or something?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Mei", "“No. I didn't need to. I’ve worked with you long enough to know when you are hiding something. You’ve been getting more and more anxious lately. Fixated on an objective you refuse to share.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Liwei chuckled, waving his free hand dismissively.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Mei, you’re overthinking this~! There’s really nothing else going on~. I am just a loyal little cog to the Association, doing my job, and you’ve just been working too hard these days. It’s making you paranoid.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He turned to leave again.", is_narrator=True)
+    show_story_box("", "Shhhhk.\n\nI drew my Jian from its sheath, pointing the tip directly at his back.", is_narrator=True)
+    
+    show_story_box("Mei", "“I told you to stop.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "Liwei didn't turn around, but his charismatic facade remained firmly in place.", is_narrator=True)
+    
+    show_story_box("Liwei", "“My, my. You’ve gotten quite feisty towards your senior tonight, haven't you?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "My grip on the hilt trembled slightly. My voice betrayed my nervousness.", is_narrator=True)
+    
+    show_story_box("Mei", "“Liwei… whatever you are dealing with, you should share the burden with me and my unit too. Am I not your colleague? Your junior? Did you not tell the Vanguard just today ago that I am ‘stronger than you’?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "The air in the room instantly dropped in temperature.", is_narrator=True)
+    show_story_box("", "Liwei’s playful smile vanished completely.", is_narrator=True)
+    show_story_box("", "In the blink of an eye—faster than I could even process—he drew his own Jian and parried my blade.", is_narrator=True)
+    show_story_box("", "CLANG.", is_narrator=True)
+    show_story_box("", "The moment our swords crossed, my arm felt incredibly heavy. The weight wasn't physical; it was an overwhelming, suffocating pressure radiating from him. My knees buckled slightly, and I found myself struggling to even keep my weapon raised towards him.", is_narrator=True)
+    
+    show_story_box("Mei", "‘This pressure…’", affiliation="Yunhai Association Enforcer Captain", is_thought=True)
+    show_story_box("", "I thought, my eyes widening in realization.", is_narrator=True)
+    show_story_box("", "Liwei was already starting to be favored by the Administration. He was assimilating into their ranks.", is_narrator=True)
+    show_story_box("", "His charismatic, kind facade attracted support and fame from the public, while the monstrous strength he rarely showed instilled absolute fear in his lurking opponents.", is_narrator=True)
+    show_story_box("", "This dual nature was building his image into one aligned with the highest echelons of the Megastructure.", is_narrator=True)
+    show_story_box("", "It explained everything. It explained why he was able to move so freely and suppress Natsume’s Administration Kata without freezing up, despite being a soldier of the Association.", is_narrator=True)
+    show_story_box("", "And it explained why I, a citizen of the Megastructure, was currently fighting the ingrained, biological instinct not to raise my weapon against a superior entity.", is_narrator=True)
+    show_story_box("", "Liwei looked down at me, his eyes cold and unreadable.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Don't joke around, Mei. Do you really think you are actually stronger than me?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "He sheathed his sword, turning his back on me once more.", is_narrator=True)
+    
+    show_story_box("Liwei", "“...I’ve always hated that ‘righteous hero attitude’ you’re always putting on. Keep out of my way.”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("", "The door clicked shut behind him.", is_narrator=True)
+    show_story_box("", "I gasped for air, the pressure lifting from the room. I took a step forward, ready to throw the door open and shout for him to come back.", is_narrator=True)
+    show_story_box("", "But a hand touched my shoulder.", is_narrator=True)
+    
+    show_story_box("Xiao", "“I wouldn’t do that if I were you.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "I spun around.", is_narrator=True)
+    show_story_box("", "Standing behind me was my close friend, the Captain of the 11th Unit of our Division.", is_narrator=True)
+    show_story_box("", "She wore the standard Enforcer Captain uniform, but her short orange hair was tied into twin-tails. She always wore a perfectly relaxed expression, her eyes constantly closed in a way that made her unreadable…", is_narrator=True)
+    show_story_box("", "She looked exactly like one of those 'mastermind' characters from the anime shows I secretly watched.", is_narrator=True)
+    
+    show_story_box("Mei", "“Xiao? When did you get in here?”", affiliation="Yunhai Association Enforcer Captain")
+    
+    show_story_box("Xiao", "“Through the window? What do you think? You’ve been working so hard you didn’t notice me entering the office.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    show_story_box("Xiao", "“And you shouldn't aggravate Liwei right now. He has almost the entirety of the Enforcement’s Bai Division supporting him. You’re outnumbered.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "I lowered my sword, feeling defeated.", is_narrator=True)
+    
+    show_story_box("Mei", "“He’s hiding something, Xiao. Something dangerous.”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "Xiao sighed, stretching her arms.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Yeah, well. I would’ve jumped the gun and smacked him in the back of the head first if he had invited you over to join his hidden cause.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "I blinked, confused.", is_narrator=True)
+    
+    show_story_box("Mei", "“Is it because… I really am too weak, after all?”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "Xiao opened one eye, giving me a flat look.", is_narrator=True)
+    
+    show_story_box("Xiao", "“No, you idiot. Because I wouldn't forgive him if he dragged any more of the people he cared about into whatever he’s been obsessing over for the past year. Especially you.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("Mei", "“What do you mean by that statement? Especially me?”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "Xiao closed her eye again, groaning.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Is it not obvious? The man is infuriating, but he definitely has feelings for you.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "I processed the reason for a while, then my brain short-circuited.", is_narrator=True)
+    
+    show_story_box("Mei", "“Wh-What?! Feelings?! For me?!”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "My face flushed incredibly hot. I waved my hands frantically.", is_narrator=True)
+    
+    show_story_box("Mei", "“There is no way! That airheaded senior would never fall for someone so… so uninteresting like me! We are strictly close colleagues in the same profession! It’s purely professional respect! He—”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "BONK.\n\nXiao expertly smacked the top of my head with the heavy handle of her Jian.", is_narrator=True)
+    
+    show_story_box("Mei", "“Ouch!”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("Xiao", "“Just accept the facts already, Mei. You shouldn't try to push him away any further.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "I rubbed my head, looking at Xiao.", is_narrator=True)
+    show_story_box("", "Despite her relaxed tone, there was a slight tension in her jaw. I thought for a short while, piecing her reaction together.", is_narrator=True)
+    
+    show_story_box("Mei", "“...Xiao. Are you reacting this much to this topic because…ah! You used to have a crush on Liwei yourself? But you were rejected?”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "Xiao froze. A violent blush spread across her cheeks, completely breaking her mysterious, closed-eye anime character facade.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Gaahh! Shut up! Shut up! I order you to shut up!”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "She pointed her sheathed sword at me accusingly.", is_narrator=True)
+    
+    show_story_box("Xiao", "“You are treating me to a midnight meal right now! As compensation for digging up bad memories!”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "I stared at her for a second, then finally relaxed.", is_narrator=True)
+    show_story_box("", "A small, genuine laugh escaped my lips.", is_narrator=True)
+    
+    show_story_box("Mei", "“Aha…alright, alright. I’ll treat you. Let’s go.”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "I sheathed my sword and let her drag me out of the office.", is_narrator=True)
+    show_story_box("", "For the first time in what felt like months, I was actually going to take a proper break.", is_narrator=True)
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "[ Luoxia Gardening School – Training Floor ]", is_narrator=True)
+    
+    show_story_box("", "Kagaku and I pushed open the double doors of a borrowed Luoxia laboratory classroom, stepping back out onto the main training floor.", is_narrator=True)
+    show_story_box("", "The place was thoroughly trashed. Shattered wooden racks, broken floorboards, and scorch marks painted a picture of absolute chaos.", is_narrator=True)
+    
+    show_story_box("Akasuke", "If the Administration could actually control these local gang disputes from the shadows, I thought playfully; they basically host their own ‘mini war of the nine armies’ every week given how much property damage just one fight causes.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I took one step onto the mats, and my vision swam.", is_narrator=True)
+    show_story_box("", "My knees gave out completely.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Whoa—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Before my face could hit the floorboards, Yuri caught me, wrapping my arm over her shoulder to keep me upright.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Akasuke-kun! What happened to ya?! Ya look like a ghost!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I offered a weak, pale smile.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“I’m fine… just a little… lightheaded.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kagaku trotted out behind me, holding a secure metal briefcase.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Sorry, sorry! He’s just suffering from severe blood loss! I had to siphon quite a bit of it for the trials tonight!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Yuri glared at her.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Ya sucked him dry?! Kagaku, ya really are livin’ up to your ‘mad scientist’ rumors!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kagaku laughed, unbothered, and popped the briefcase open on a relatively intact bench.", is_narrator=True)
+    show_story_box("", "Inside sat eight glowing, vibrant green vials.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Behold! By combining the original ‘Akasuke Blood Healing Factor Serums’ I brought from Kasakura with the Yunhai tech and Luoxia botany I interrogated the students about today… I have created the ‘Jade Serum’!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She proudly held up one of the vials.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“There are exactly eight produced. One for each member of the Vanguard. Not only does this new serum work multiple times faster than the original, but the Luoxia herbs fully replenish your stamina reserves!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura adjusted his collar, looking impressed.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Stamina recovery? That is an extremely useful upgrade. Especially for the endurance battles we are facing against these local gangs.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Kagaku grinned, reaching into a separate, highly padded compartment in the briefcase. She pulled out a single, brilliantly shining blue-green vial.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“In addition! After multiple failed trials—hence Akasuke’s current anemia—I managed to produce one ‘Azure Jade Serum’!”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Kagaku", "“The effects are still theoretical, but it acts as a SUPER-serum. It should provide instantaneous recovery from fatal damage to any combatant.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Benikawa leaned over, poking the vial curiously.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Instant recovery? Like, what, can it regrow lost limbs?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Kagaku snatched the vial back, glaring at her.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Wah! It’s only in the first stages of testing! I don't know the exact limits, but regrowing limbs is definitely way too far-fetched!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Natsume, who had been sitting quietly on a bench with a cold compress still on her head, tapped her watch.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Fascinating as this is, playtime is over.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "She looked up, her expression grim.", is_narrator=True)
+    
+    show_story_box("Natsume", "“It’s midnight, guys.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The atmosphere in the room shifted instantly.", is_narrator=True)
+    show_story_box("", "The exhaustion seemed to melt away, replaced by the cold, hard focus of the Vanguard. I pushed myself up from Yuri’s shoulder, shaking the dizziness from my head.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Alright. Grab your Serums. Check your gear.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We armed up in silence.", is_narrator=True)
+    show_story_box("", "The first wave had been survived using tricks, rotations, and disguises. But now, they knew we were here. They knew our tactics.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Let’s head to the front gates. The next wave is coming.”", affiliation="Kasakura High School Student / Seven Wonders")
+
+
+def play_stage_4_12_end():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "[ Luoxia Gardening School – Front Courtyard (Early Morning) ]", is_narrator=True)
+    
+    show_story_box("", "The second wave was finally over.", is_narrator=True)
+    show_story_box("", "We had fought from midnight until the early hours of the morning, turning the front gates of the school into a literal scrap heap of broken weapons and unconscious bodies.", is_narrator=True)
+    show_story_box("", "I leaned against a stone pillar, panting heavily, checking off another item from Nishida and Yamashita’s weapon brochures.", is_narrator=True)
+    show_story_box("", "The gang that assaulted us this time introduced themselves as \"The Black Water Dock\". They were a step up from the previous mob.", is_narrator=True)
+    show_story_box("", "Aside from the usual heavy metal batons, their elites wielded specialized Monk Spears with hidden electric tasers installed directly into the blades.", is_narrator=True)
+    show_story_box("", "I looked over at the Vanguard.", is_narrator=True)
+    show_story_box("", "They were completely battered. Everyone was covered in bruises, nursing burns from the tasers, and sleeping soundly on the floor of the main hall. Still, I had suggested we hold on to Kagaku’s Jade Serums for now.", is_narrator=True)
+    show_story_box("", "Since the local gangs seemed to attack in scheduled waves which Natsume’s database had already explained, we should have a window to rest normally between the midnight raid and daybreak.", is_narrator=True)
+    show_story_box("", "Only Shigemura and I were left awake, tough enough to stand guard.", is_narrator=True)
+    show_story_box("", "Shigemura was sitting on the steps, wiping blood from his cheek with a cloth. He looked over at me, his violet eyes reflecting the dim moonlight.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Hey. Akasuke. Do you think the Vanguard has improved since we arrived in this Megastructure?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I slid down the pillar, taking a seat on the ground.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Definitely. It’s obvious just looking at them.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I gestured to the sleeping forms inside.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“The biggest development is Natsume. She completely overcame her fear of the frontline. She’s even established a deeper, genuine bond with Naganohara—who’s doing amazing herself for a previous non-combatant.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I smiled, remembering the chaos of the second wave.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“And Kagaku… she’s giving it her absolute best, just like back at the field trip. During that last push, a thug tried to blindside me with a baton, and she actually stepped in and covered my back. I owe her for that.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura nodded.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Inami and Kaoru-senpai have also made massive strides. They successfully attempted Kata Scaling during the fight. They managed to borrow the Yunhai Enforcer Katas, just like Natsume did. Their adaptability is terrifying...”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Akasuke", "“...And, then there’s you and Benikawa. You two are finally stopping the act. You’re slowly immersing yourselves back into your full ninja capabilities after sealing them away for so long. It makes a huge difference having you guys at full power.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura let out a quiet, tired breath, looking down at his hands.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“I suppose so. But…well, what about you, Akasuke? How do you feel about your own development ever since stepping foot in the Megastructure?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I paused.", is_narrator=True)
+    show_story_box("", "My mind drifted back to the rooftop. To Liwei.", is_narrator=True)
+    show_story_box("", "A man who discovered that the 'gods' of his city, the Administration, had wiped his hometown off the map just to erase a noble's embarrassing past.", is_narrator=True)
+    show_story_box("", "And instead of seeking blind, bloodthirsty revenge, Liwei was working within the system, fighting for his righteous beliefs to dismantle their weapon of mass destruction.", is_narrator=True)
+    show_story_box("", "I looked at Shigemura, my close friend.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Actually… I have a request. I need to tell you something, Shigemura. Something I was told to keep to myself.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura raised an eyebrow, sensing the weight of my tone.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“I’m listening.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Akasuke", "“It’s about Captain Liwei. And the true mission of his unit. I want to share the burden of this with you, so maybe…after our own mission here is over, maybe we can help him.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I sat forward, and under the cover of the early morning darkness, I told him everything.", is_narrator=True)
+
+def play_stage_4_13_start():
+    # --- MIYU'S POV ---
+    show_story_box("", "[ 3 Hours After The Midnight Battle ]", is_narrator=True)
+    show_story_box("", "********* ◆ *********\nMiyu’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure - Residential Sector II\nStreet Market", is_narrator=True)
+    
+    show_story_box("", "It was finally daybreak…I was so hungry.", is_narrator=True)
+    show_story_box("", "The streets of Sector II, usually bustling with merchants and commuters, were completely desolate. The locals were hiding inside their homes, locking their doors and shuttering their windows in fear.", is_narrator=True)
+    show_story_box("", "Down the main road, the local gangs were already organizing, marching past the alleyways. Getting ready to launch their morning assault on Luoxia Gardening School, huh?", is_narrator=True)
+    show_story_box("", "I was the only ‘civilian’ still outside.", is_narrator=True)
+    show_story_box("", "I was hungry. I needed to eat, and physiological maintenance is a logical priority.", is_narrator=True)
+    show_story_box("", "I went to find the one single food stand still open. The shopkeeper was an experienced, wrinkled old man who seemed completely unbothered by the internal conflicts of his hometown, calmly managing his bamboo steamers.", is_narrator=True)
+    show_story_box("", "I took a seat on a small wooden stool and placed my order.", is_narrator=True)
+    show_story_box("", "Given my caloric deficit from the fieldwork, the lineup was…extensive.", is_narrator=True)
+    
+    show_story_box("Miyu", "“One serving of Har Gow. One Siu Mai. Cheung Fun with scallops. A lotus-leaf-wrapped Lo Mai Gai. Two Fried Taro Puffs—Wu Gok. And finish it with Dan Tat for dessert. Tea on the side.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The old man nodded and began placing the dishes in front of me.", is_narrator=True)
+    show_story_box("", "I broke apart my chopsticks and began to eat in silence.", is_narrator=True)
+    
+    show_story_box("", "“Oi, check her out.”", is_narrator=True)
+    show_story_box("", "A rough voice broke the quiet.", is_narrator=True)
+    show_story_box("", "A group of five passing gangsters had stopped in the street. They were staring at me, clearly bewildered that a high school girl in a pristine uniform wasn't cowering from their march.", is_narrator=True)
+    
+    show_story_box("Gang Member 1", "“The hell’s a school girl doin’ out here? Hey! You lost? Runnin’ a fever or somethin’? Everyone else is hidin’!”", affiliation="Local Thug")
+    
+    show_story_box("", "I didn't stop chewing my Har Gow. I simply shifted my eyes, staring blankly back at them.", is_narrator=True)
+    show_story_box("", "The lack of fear seemed to agitate them. They walked over, surrounding my small table, trying to cast intimidating shadows over my meal.", is_narrator=True)
+    
+    show_story_box("Gang Member 2", "“Hey! We’re talkin’ to you, four-eyes! You lackin’ respect for the local muscle?!”", affiliation="Local Thug")
+    
+    show_story_box("", "I swallowed my food, set my chopsticks down perfectly parallel to my plate, and looked up.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I lack respect for uneducated primates who fail to comprehend their own insignificance. Your posture is abhorrent, your breath reeks of cheap alcohol and gingivitis, and your collective intelligence couldn't power a lightbulb. Walk away before you embarrass yourselves further.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The thugs froze, their faces flushing dark red with pure, unadulterated fury.", is_narrator=True)
+    
+    show_story_box("Gang Member 1", "“You little bitch! I’m gonna smash your teeth in!”", affiliation="Local Thug")
+    
+    show_story_box("", "They cracked their knuckles, drawing their metal batons.", is_narrator=True)
+    show_story_box("", "I let out a measured sigh. I calculated the optimal vectors to disable all five of them within six seconds so my Dim Sum wouldn't get cold.", is_narrator=True)
+    show_story_box("", "I shifted my weight, ready to strike.", is_narrator=True)
+    show_story_box("", "CRUNCH!", is_narrator=True)
+    show_story_box("", "Someone dropped from the awning of the food stall right behind them.", is_narrator=True)
+    show_story_box("", "A heavy boot stomped directly into the lead gangster’s face, crushing him against the pavement with a sickening crack. Blood splattered across the cobblestones.", is_narrator=True)
+    show_story_box("", "The remaining gangsters recoiled in horror, raising their weapons toward the new arrival.", is_narrator=True)
+    show_story_box("", "I looked up, mildly surprised.", is_narrator=True)
+    show_story_box("", "Standing over the bleeding thug was the \"Bastard Child.\"", is_narrator=True)
+    
+    show_story_box("Miyu", "Not you again.", affiliation="Kasakura High School Student Council", is_thought=True)
+    
+    show_story_box("Relaxed Man", "“Now, now, boys~~. Are we really about to gang up on one gentle, innocent girl trying to eat her breakfast?”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "The gangsters bared their teeth, stepping into combat stances.", is_narrator=True)
+    
+    show_story_box("Gang Member 2", "“Who the hell are you?! You’re dead meat—! Huh?”", affiliation="Local Thug")
+    
+    show_story_box("", "The thug stopped mid-sentence. He got a good look at the man’s face.", is_narrator=True)
+    show_story_box("", "Instantly, all the color drained from the gangsters' faces. Their weapons clattered uselessly to the ground.", is_narrator=True)
+    show_story_box("", "In perfect, terrified unison, the remaining four thugs dropped to their hands and knees, bowing until their foreheads touched the dirty street.", is_narrator=True)
+    
+    show_story_box("Goons", "“B-BOSS! WE APOLOGIZE! WELCOME BACK, BOSS!”", affiliation="Local Thugs")
+    
+    show_story_box("", "I paused, picking up my teacup.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...‘Boss’? Care to explain?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The Relaxed Man sighed, scratching the back of his head before turning to me with a lazy smile.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“Ah, my bad, Miyu. I had to show off some power and assert dominance over a few of these local gangs. It’s the only reliable way to build influence and gather intel from the Megastructure’s underworld.”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "I leaned slightly forward, lowering my voice to a whisper.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...More importantly, what is your progress on the ‘Scroll of the Nine Armies’?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "He leaned in, whispering back, his tone turning serious.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“Aye. The ‘Scrap Paper’ I was chasing… it’s gone. It’s highly likely the Administration has already retaken it back from the underworld.”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "I frowned, leaning back and returning to a normal speaking volume.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Understood. Then the situation has changed. I will rush to finish my observation report today instead.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I picked up a Fried Taro Puff with my chopsticks.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I suggest you immediately head to the ‘Classical Performance’ being held today in Sector III. I will catch up with you there once my paperwork is concluded.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The man nodded, slipping his hands into his pockets.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“‘Aight. Sounds like a plan. See ya there~.”", affiliation="Mysterious Operative")
+    
+    show_story_box("", "He turned back to the groveling gangsters, kicking the unconscious, bleeding one lightly with his shoe.", is_narrator=True)
+    
+    show_story_box("Relaxed Man", "“Hey~~. Pick your buddy up and get out of here. And treat the lady with respect.”", affiliation="Mysterious Operative")
+    
+    show_story_box("Goons", "“YES, BOSS! HAVE A SAFE TRIP, BOSS! AND THE BOSS'S FRIEND TOO!”", affiliation="Local Thugs")
+    
+    show_story_box("", "The man gave a lazy wave and leaped effortlessly onto a nearby rooftop, bounding away toward the East, heading for Sector III.", is_narrator=True)
+    show_story_box("", "The gangsters hastily scooped up their broken comrade and scurried off down the road, resuming their march toward Luoxia School.", is_narrator=True)
+    show_story_box("", "I took a bite of my Taro Puff, watching them leave.", is_narrator=True)
+    
+    show_story_box("Miyu", "It seems that anyone carrying the title of ‘Boss’ is inevitably troublesome for their subordinates in some capacity.", affiliation="Kasakura High School Student Council", is_thought=True)
+    
+    show_story_box("", "I finished my meal precisely twenty minutes later.", is_narrator=True)
+    show_story_box("", "I wiped my mouth with a napkin, stood up, and turned to the old shopkeeper who had quietly continued steaming dumplings throughout the entire ordeal.", is_narrator=True)
+    show_story_box("", "I reached into my uniform pocket, pulling out a small, folded piece of paper.", is_narrator=True)
+    show_story_box("", "I placed it on the counter alongside my payment.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...Gather everyone on this list at Block V today.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The old man didn't look surprised. His eyes sharpened, entirely losing the aura of a helpless civilian. He took the paper, slipping it securely into his apron.", is_narrator=True)
+
+
+def play_stage_4_13_end():
+    # --- SHIGEMURA'S POV ---
+    show_story_box("", "********* ◆ *********\nShigemura’s POV", is_narrator=True)
+    show_story_box("", "[ Luoxia Gardening School – Front Gates (Daybreak) ]", is_narrator=True)
+    
+    show_story_box("", "Akasuke was at his absolute limit.", is_narrator=True)
+    show_story_box("", "His healing factor was incredible, but it wasn't magic. Without rest, his muscles would tear, and his reflexes would dull. He needed to sleep, even if only for a very short time.", is_narrator=True)
+    show_story_box("", "So, while he turned in to properly rest, the remaining seven members of the Vanguard took over to hold the fort.", is_narrator=True)
+    show_story_box("", "The plan was quite simple.", is_narrator=True)
+    show_story_box("", "The morning fog had barely lifted when the next local gang arrived. They marched up the street, chanting their affiliation: \"The Twin Mountain Gate\".", is_narrator=True)
+    show_story_box("", "However, when they reached Luoxia School, they didn't find a line of defenders.", is_narrator=True)
+    show_story_box("", "They were met with only the massive, wooden double gates, which were left slightly ajar.", is_narrator=True)
+    show_story_box("", "The gangsters slowed their march, murmuring in confusion.", is_narrator=True)
+    show_story_box("", "One of their leaders—a burly man with twin axes strapped to his back—held up a hand, his eyes narrowing suspiciously.", is_narrator=True)
+    
+    show_story_box("Gang Leader", "“Hold up! It’s too quiet. Might be a trap.”", affiliation="Twin Mountain Gate")
+    show_story_box("Gang Leader", "“You five! Rush in and check the perimeter!”", affiliation="Twin Mountain Gate")
+    
+    show_story_box("", "Five thugs nodded, tightening their grips on their weapons. They squeezed through the gap in the wooden gates, disappearing into the school courtyard.", is_narrator=True)
+    show_story_box("", "For ten agonizingly long seconds, there was no sound.", is_narrator=True)
+    show_story_box("", "No shouting. No clashing of metal. Just the eerie rustle of the morning wind.", is_narrator=True)
+    show_story_box("", "Then—", is_narrator=True)
+    show_story_box("", "BANG!", is_narrator=True)
+    show_story_box("", "The heavy wooden gates violently burst wide open.", is_narrator=True)
+    show_story_box("", "The five thugs flew out backward, already unconscious, tumbling across the dirt and coming to a stop at the side of the road like discarded trash.", is_narrator=True)
+    show_story_box("", "Standing perfectly still in the center of the open gateway were Benikawa and myself.", is_narrator=True)
+    show_story_box("", "We didn't say a single word. Our hands were resting casually at our sides, but our presence was a clear, unmistakable declaration: We were the ones who took them out.", is_narrator=True)
+    
+    show_story_box("", "The gang leader gritted his teeth, his face flushing with anger.", is_narrator=True)
+    
+    show_story_box("Gang Leader", "“So a trap?! But they already sprung it! They’re wide open! GET THEM!”", affiliation="Twin Mountain Gate")
+    
+    show_story_box("", "The entire army of gangsters roared, rushing the gates in a blind, furious stampede.", is_narrator=True)
+    show_story_box("", "Following Akasuke’s strategy, Benikawa and I immediately turned our backs and fell back, retreating deeper into the courtyard. The gangsters surged inside, eager to chase us down.", is_narrator=True)
+    show_story_box("", "But they forgot to look up.", is_narrator=True)
+    show_story_box("", "SWISH.", is_narrator=True)
+    show_story_box("", "From the top of the towering stone walls flanking the gates, two figures dropped down into the center of the mob.", is_narrator=True)
+    show_story_box("", "It was Yuri and Kaoru-senpai.", is_narrator=True)
+    show_story_box("", "Both were enveloped in brilliant blue light, their forms shifting into pristine white Tang Suits and flowing, cloud-patterned cloaks. They had activated their Kata Scaling, borrowing the absolute authority and power of the Yunhai Enforcers.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Too slow!”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Hana", "“Pardon our intrusion!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "In one fell, synchronized motion, they swept their Jian blades in a wide arc. The blunt force of their strikes created a shockwave that instantly knocked out over a dozen thugs in the immediate vicinity.", is_narrator=True)
+    show_story_box("", "The gang stumbled, their momentum completely shattered by the sudden ambush from above.", is_narrator=True)
+    show_story_box("", "Having created the necessary space and chaos, Yuri and Kaoru-senpai sheathed their weapons and immediately retreated deeper into the school, seamlessly drawing the rest of the enraged gangster army inside after them.", is_narrator=True)
+    show_story_box("", "The battle at daybreak had officially begun.", is_narrator=True)
+    show_story_box("", "I glanced back toward the front of the school, pulling a kunai from my sleeve.", is_narrator=True)
+    
+    show_story_box("Shigemura", "‘With this, his location has been fully secured.’", affiliation="Kasakura High School Student", is_thought=True)
+    
+    show_story_box("", "I thought, dropping into a combat stance.", is_narrator=True)
+    
+    show_story_box("Shigemura", "Rest as much as you need, Akasuke.", affiliation="Kasakura High School Student", is_thought=True)
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    
+    show_story_box("", "I opened my eyes.", is_narrator=True)
+    show_story_box("", "The first thing I saw was the bruised, unconscious face of a gangster lying about three inches from my nose.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Right.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Memory flooded back.", is_narrator=True)
+    show_story_box("", "The Vanguard’s plan to secure my rest wasn't to hide me deep inside the school. That was too predictable. If the enemy broke through the frontline, they would eventually search the rooms and find me vulnerable.", is_narrator=True)
+    show_story_box("", "Instead, the plan was much more… unorthodox.", is_narrator=True)
+    show_story_box("", "They had lured a few gangsters from the next enemy wave inside, quickly taken them out, and stripped one of them of their clothes.", is_narrator=True)
+    show_story_box("", "Benikawa and Shigemura had used their ninja infiltration expertise to dress me in the oversized, dirty thug attire. They even found a stained bandana and some mud to completely cover my meddlesome, easily recognizable red hair.", is_narrator=True)
+    show_story_box("", "Once I was fully disguised, they literally \"threw me away\" to the side of the road outside the school gates, right alongside a pile of actual unconscious thugs.", is_narrator=True)
+    show_story_box("", "It was a brilliant psychological trick.", is_narrator=True)
+    show_story_box("", "These local gangs didn't care about their fallen comrades. They trampled right past the pile of \"trash\" on the side of the street without giving it a second glance, hyper-focused on rushing the open gates.", is_narrator=True)
+    show_story_box("", "Because of that, I was able to simply lay face-down on my arms on the cold cobblestone and sleep.", is_narrator=True)
+    show_story_box("", "I checked my watch, damaged from all the fighting.", is_narrator=True)
+    show_story_box("", "Almost half an hour.", is_narrator=True)
+    show_story_box("", "Between the deep rest and my natural healing factor, my stamina had surged back up to one hundred percent. My muscles felt light again.", is_narrator=True)
+    show_story_box("", "I slowly pushed myself up from the pile of bodies, wiping mud off my face and pulling the bandana off my head. My red hair and most of its color fell back into its usual messy spikes.", is_narrator=True)
+    show_story_box("", "The chaotic sounds of battle—shouting, crashing, and breaking wood—were echoing loudly from inside Luoxia School.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Time to get back to work.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I cracked my knuckles and turned to rush through the gates to help Shigemura and the others.", is_narrator=True)
+    show_story_box("", "But I stopped.", is_narrator=True)
+    show_story_box("", "A tiny chill crawled up my spine.", is_narrator=True)
+    show_story_box("", "It wasn't the morning breeze. It was a faint, concentrated wave of bloodlust hitting me squarely in the back.", is_narrator=True)
+    show_story_box("", "I slowly turned around, looking away from the school and toward the opposite side of the main street.", is_narrator=True)
+    show_story_box("", "Standing in the shadows of a narrow alleyway were three figures.", is_narrator=True)
+    show_story_box("", "They weren't wearing the scrappy, mismatched clothes of the local Megastructure gangs. They wore dark, tactical gear under civilian clothing.", is_narrator=True)
+    show_story_box("", "One of them was holding a pair of binoculars, observing the ongoing battle at the school with deep curiosity.", is_narrator=True)
+    show_story_box("", "They were the infiltrator thugs. The operatives of the \"Boss\". The real targets of Mission Steadfastness.", is_narrator=True)
+    show_story_box("", "They hadn't expected one of the disposed, \"unconscious\" thugs lying in the street pile to suddenly sit up and take off a disguise, turning into “Akasuke”.", is_narrator=True)
+    show_story_box("", "The operative with the binoculars lowered them, his eyes locking directly onto mine.", is_narrator=True)
+    show_story_box("", "He recognized my red hair.", is_narrator=True)
+    show_story_box("", "I recognized their distinct, organized posture.", is_narrator=True)
+    
+    show_story_box("Operative A", "“Eh?...Target spotted outside the perimeter. Disperse!”", affiliation="The Boss's Faction")
+    
+    show_story_box("", "Without a second of hesitation, the three operatives turned and scattered, melting into the shadows of the alleyway like ghosts.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Wait!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I took a step toward the school gates, looking back at the flashes of blue light and the sounds of my friends fighting desperately inside. They needed me. They were holding the line so I could rest.", is_narrator=True)
+    show_story_box("", "But if I let these infiltrators go now, we might never find the \"Boss\" orchestrating this entire mess.", is_narrator=True)
+    show_story_box("", "I gritted my teeth, my fists clenching tight.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Sorry, guys. Shigemura, Yuri, everyone… hold out just a little longer without me!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I pivoted on my heel, kicking off the cobblestone with explosive speed.", is_narrator=True)
+    show_story_box("", "I abandoned the school, sprinting directly into the alleyway to chase down the true enemy.", is_narrator=True)
+
+def play_stage_4_14_story():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure - Sector III", is_narrator=True)
+    
+    show_story_box("", "I chased them all the way…into Sector III.", is_narrator=True)
+    show_story_box("", "The environment had changed drastically—the streets were wider, paved with smooth stones, and the buildings gleamed with jade accents and luxury architecture. It was a far cry from the cramped, chaotic slums of Sector I and II.", is_narrator=True)
+    show_story_box("", "But I wasn't here for sightseeing.", is_narrator=True)
+    show_story_box("", "I vaulted off a low wall, closing the distance between me and the three fleeing operatives.", is_narrator=True)
+    show_story_box("", "I aimed a flying jump kick directly at the back of the one carrying the heavy binoculars and observation equipment.", is_narrator=True)
+    show_story_box("", "THUD.", is_narrator=True)
+    
+    show_story_box("Operative A", "“Owwie!!!”", affiliation="The Boss's Faction")
+    
+    show_story_box("", "He face-planted into the cobblestones with a decidedly un-professional shriek, dropping his gear. It disassembled into pieces that flew everywhere.", is_narrator=True)
+    show_story_box("", "The other two skidded to a halt, turning around with genuine concern for their fallen comrade.", is_narrator=True)
+    
+    show_story_box("Operative B", "“Ah! Hey! Leave him alone!”", affiliation="The Boss's Faction")
+    
+    show_story_box("", "The second operative charged me, throwing a punch that was so telegraphed and weak I almost felt bad countering it. I casually sidestepped and delivered a light, measured strike right to the bridge of his nose.", is_narrator=True)
+    
+    show_story_box("Operative B", "“Guhh! Hieeegh—!”", affiliation="The Boss's Faction")
+    
+    show_story_box("", "He immediately dropped to his knees, clutching his face, wailing and crying as tears streamed down his cheeks.", is_narrator=True)
+    show_story_box("", "I turned to the third one—a girl.", is_narrator=True)
+    show_story_box("", "She was standing completely still, holding some kind of customized, high-tech energy weapon. It was humming, glowing bright red as it charged up.", is_narrator=True)
+    show_story_box("", "But she wasn't moving. She was just standing there, waiting for the charge to finish.", is_narrator=True)
+    show_story_box("", "I literally just walked up to her, took a step inside her guard, and slapped the weapon out of her hands.", is_narrator=True)
+    show_story_box("", "CRACK.", is_narrator=True)
+    show_story_box("", "The delicate glass nozzle of the gun shattered against the pavement.", is_narrator=True)
+    
+    show_story_box("Operative C", "“NOOOO! My custom blaster! Do you know how much allowance and overtime I put into building that?! Ahhh!!!”", affiliation="The Boss's Faction")
+    
+    show_story_box("", "She dropped to her knees, openly weeping over the broken pieces of tech, completely ignoring me.", is_narrator=True)
+    show_story_box("", "I stood there, looking at the three of them.", is_narrator=True)
+    show_story_box("", "One was rolling on the floor groaning about his back. The second was bawling while holding his bleeding nose. The third was mourning a broken toy.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...What is this?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I felt a profound sense of exhaustion wash over me. I felt less like a Vanguard fighter combating an elite criminal syndicate and more like a high school bully beating up a bunch of nerdy middle schoolers.", is_narrator=True)
+    show_story_box("", "If anything, I just felt sorry for them.", is_narrator=True)
+    show_story_box("", "But I shook my head, slapping my cheeks lightly to wake myself up.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘Focus, Akasuke,’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I reminded myself.", is_narrator=True)
+    show_story_box("", "These are the people working for the 'Boss'. The ones stirring up trouble in the underworld, manipulating the Megastructure, and putting my friends in danger.", is_narrator=True)
+    show_story_box("", "I sighed, rolling my shoulders, preparing to use a little force to apprehend and interrogate them.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Alright, you three. Fun’s over. Start talking—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Tap.\n\nA crisp footstep echoed in the alleyway.", is_narrator=True)
+    show_story_box("", "I looked up.", is_narrator=True)
+    show_story_box("", "A figure walked calmly into my field of view, stepping in front of the blubbering operatives.", is_narrator=True)
+    show_story_box("", "It was a short girl.", is_narrator=True)
+    show_story_box("", "But her outfit made my brain short-circuit for a second.", is_narrator=True)
+    show_story_box("", "She was wearing a uniform extremely similar to the Kasakura High School formal uniform—a pristine white shirt, a crimson red tie, and crisp black trousers. She wore thick, obsidian-colored glasses.", is_narrator=True)
+    show_story_box("", "But draped over her shoulders was a heavy capelet, patterned in elegant jade and gold—a clear symbol of the Yunhai Association's aesthetics.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Association? No, she’s wearing Kasakura colors. A traitor? An infiltrator?”", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "It was too late to assume.", is_narrator=True)
+    show_story_box("", "The girl didn't speak. She took a slow, measured deep breath, adjusted her glasses with one finger, and pivoted on her heel, priming a karate back kick.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘Fast!’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "It was faster than almost any kick I had seen in my life.", is_narrator=True)
+    show_story_box("", "I crossed my arms, bringing up a solid, textbook guard just in time.", is_narrator=True)
+    show_story_box("", "BAAAAAM!", is_narrator=True)
+    show_story_box("", "The impact was like getting hit by a speeding truck.", is_narrator=True)
+    show_story_box("", "The kinetic force completely shattered my posture. I was sent flying backward through the air, crashing violently into a stack of wooden market crates.", is_narrator=True)
+    show_story_box("", "Apples, oranges, and splintered wood rained down on me as I skidded across the pavement.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Gah…!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "No time to waste. I did a quick mental analysis.", is_narrator=True)
+    show_story_box("", "No loss of consciousness. Limbs still responsive. Ribs bruised, but not broken.", is_narrator=True)
+    show_story_box("", "I pushed the fruit off my chest and quickly scrambled back to my feet, settling into a low stance.", is_narrator=True)
+    show_story_box("", "The immature operatives were now huddling behind the girl, looking at her like she was their savior.", is_narrator=True)
+    
+    show_story_box("Operative A", "“You saved us! Thank you, Miy—I mean, Mimi-tan!”", affiliation="The Boss's Faction")
+    
+    show_story_box("", "The girl—visibly cringed, raised a hand to rub her temples in profound annoyance.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...I have repeatedly reminded you that I did not choose that ridiculous codename, and you are not obligated to only use that one. Now quickly, make yourselves scarce before you compromise the operation further.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The operatives scrambled over each other, bolting down the alleyway.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Hey! Stop!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I dashed forward to intercept them, but \"Mimi-tan\" stepped smoothly into my path, her back already turned, preparing to throw another spinning back kick.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘I’m not blocking this time,’ I thought. ‘I’ll dodge and counter.’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I watched her hips. I read the trajectory. It was aimed right at my ribs. I dropped my weight to duck under it.", is_narrator=True)
+    show_story_box("", "But the moment I moved, her kick suddenly lost all its tension.", is_narrator=True)
+    show_story_box("", "It became 'fluid'. 'Loose'.", is_narrator=True)
+    show_story_box("", "She completely relaxed her leg muscles mid-air, instantly killing the momentum, only to snap them tight again, changing the trajectory.", is_narrator=True)
+    
+    show_story_box("Akasuke", "I know this one—", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "Then, she did it again. The trajectory changed twice.", is_narrator=True)
+    show_story_box("", "CRACK!", is_narrator=True)
+    show_story_box("", "Her heel slammed straight down onto my left shoulder.", is_narrator=True)
+    show_story_box("", "The bone shattered instantly.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“AGH—!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The sheer downward force drove me straight into the pavement, the stone road cracking in a spiderweb pattern beneath my weight. My vision flashed white.", is_narrator=True)
+    show_story_box("", "It was a \"Question Mark Kick\"—a high-level feint that tricks the opponent’s initial defensive response, whipping around their guard at the last possible millisecond.", is_narrator=True)
+    show_story_box("", "Against a normal opponent, I would have read it…but facing someone with this level of overwhelming, raw power, the panic and the double-trajectory change got me.", is_narrator=True)
+    show_story_box("", "Mimi-tan didn't even look down at me.", is_narrator=True)
+    show_story_box("", "She adjusted her glasses again, turned, and began to calmly walk away, assuming I was done for.", is_narrator=True)
+    show_story_box("", "I gritted my teeth, tasting blood.", is_narrator=True)
+    
+    show_story_box("Akasuke", "No. I’m not letting her go..!", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I thought back to my fight with Benikawa after she revealed she was a ninja. The time I told myself I simply had to get up and fight, no matter how scrambled my body was.", is_narrator=True)
+    show_story_box("", "My healing factor flared to life, burning through the pain. Pure adrenaline pumped into my veins.", is_narrator=True)
+    show_story_box("", "I forced myself up, my left arm hanging uselessly at my side, but my right fist clenched tight.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“I’m not done!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu stopped.", is_narrator=True)
+    show_story_box("", "She turned around, her expression perfectly stoic, ready to receive my useless attack again.", is_narrator=True)
+    show_story_box("", "But I didn't swing. I glared at her, breathing heavily.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Who are you?! What is your goal in Yunhai?! And why…why go through all this trouble to OBSERVE Kasakura High?! We aren't even the strongest people around here!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu stared at me. Her upper lip curled into a look of absolute, logical disgust.", is_narrator=True)
+    
+    show_story_box("Miyu", "“You are an enemy. By what lapse in logic do you assume I would voluntarily disclose our operational objectives to you?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "BZZZZT.\n\nSuddenly, a loud crackle of static erupted from the radio transceiver clipped to her belt.", is_narrator=True)
+    show_story_box("", "A voice boomed out of the speaker. I recognized it instantly.", is_narrator=True)
+    
+    show_story_box("Midori", "“MIIIYUUU-CHAAAN! ARE YOU THERE?!”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "It was Midori from Kiryoku Gakuen.", is_narrator=True)
+    show_story_box("", "Miyu flinched, completely losing her cool, professional demeanor. She fumbled with the radio, desperately trying to lower the volume.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Mi-, Ch-Chloe! Protocol! I told you to—”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“Ugh, I’m so boooored! I-I’ve been waiting forever! When are you gonna finish writing your…stupid Observation Report so we can go..?!”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "Miyu’s face flushed bright red.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Please shut up! I am in the middle of—”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Midori", "“I just wanna head to the Hoshizuradani Region already! The Boss gave us the green light! Are you coming or not? Oh, and by the way, I’m using the radio because you wouldn't answer my calls!”", affiliation="Kiryoku Gakuen Student?")
+    
+    show_story_box("", "I stood there, clutching my shattered shoulder, blinking in absolute disbelief as Midori casually leaked their next destination, their operational status, and the existence of the \"Boss's\" orders on an open, booming speaker.", is_narrator=True)
+    show_story_box("", "Miyu stared at the radio in her hand. Her hands were shaking.", is_narrator=True)
+    show_story_box("", "She had completely given up.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...I will contact you later.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "She raised the transceiver high into the air and spiked it directly into the cobblestone road.", is_narrator=True)
+    show_story_box("", "SMASH.\n\nThe radio shattered into a dozen plastic pieces, finally cutting Midori off.", is_narrator=True)
+    show_story_box("", "A heavy, incredibly awkward silence fell over the alleyway.", is_narrator=True)
+    show_story_box("", "The terrifying, stoic martial artist from a minute ago was completely gone.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Um...”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu slowly looked up at me.", is_narrator=True)
+    show_story_box("", "Her cheeks were puffed out in a furious pout. Literal tears of sheer frustration and embarrassment were welling up in the corners of her eyes behind her obsidian glasses.", is_narrator=True)
+    show_story_box("", "I let out a weak, sympathetic sigh.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Look. I kind of understand. Having that one friend who absolutely cannot read the room and ruins everything unintentionally? Yeah. I get it.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu sniffled once, aggressively adjusting her glasses to hide her eyes. She took a deep breath, instantly snapping her cold, professional composure back into place.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Be quiet.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "She stared at me, calculating variables in her head for a few seconds. Then, she sighed.", is_narrator=True)
+    
+    show_story_box("Miyu", "“You have heard too much. Our destination and operational timeline have been compromised. I have no choice but to take you along with me.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I took a step back, raising my good arm.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Take me? Yeah, no thanks, I—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "WHAM.", is_narrator=True)
+    show_story_box("", "I didn't even see her foot leave the ground.", is_narrator=True)
+    show_story_box("", "A back kick planted itself squarely in the center of my face.", is_narrator=True)
+    show_story_box("", "My vision went instantly black.", is_narrator=True)
+
+def play_stage_4_15_start():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nGrand Pavilion", is_narrator=True)
+    
+    show_story_box("", "I woke up sitting in a remarkably comfortable, velvet-cushioned chair.", is_narrator=True)
+    show_story_box("", "My head throbbed, but as I blinked the blurriness away, I immediately tensed, expecting to be bound to the seat. I flexed my wrists and ankles.", is_narrator=True)
+    show_story_box("", "Nothing. I wasn't tied up.", is_narrator=True)
+    show_story_box("", "I checked my pockets. My phone, my wallet, everything from before I was knocked out was still there.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Where am I?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked around. I was sitting in the middle of a massive, opulent outdoor pavilion. There were hundreds of other fancy chairs arranged in a semi-circle around us.", is_narrator=True)
+    show_story_box("", "The people sitting in them were draped in lavish silks, expensive suits, and jade jewelry.", is_narrator=True)
+    show_story_box("", "Judging by their aura of wealth, I was definitely deep inside Sector III, surrounded by the rich elites and powerful citizens of the Megastructure.", is_narrator=True)
+    show_story_box("", "At the front of the seating arrangement was a grand, elevated stage. Staff members in pristine Tang Suits were rushing back and forth, setting up traditional instruments and backdrops for what looked like a massive theatrical performance.", is_narrator=True)
+    show_story_box("", "But what really caught my eye was the security.", is_narrator=True)
+    show_story_box("", "The perimeter was excessively guarded. And it wasn't just the white-cloaked enforcers from Mei’s Division. I saw enforcers in deep Red, emerald Green, bright Yellow, and pitch Black, all coordinating to maintain an ironclad perimeter.", is_narrator=True)
+    
+    show_story_box("", "“Are you awake?”", is_narrator=True)
+    show_story_box("", "A voice cut through my observation.", is_narrator=True)
+    show_story_box("", "I turned to my left. Miyu was sitting in the chair right next to me, her legs crossed elegantly. She was holding out a small, steaming porcelain cup of tea.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Drink. It will help with the concussion.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I stared at the cup, then at her.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Is it poisoned?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu pushed her obsidian glasses up the bridge of her nose, her expression flat.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Poisoning a high school student to death in the middle of a crowded pavilion in front of the Megastructure’s nobility would not end well for my operational cover now, would it? Drink it.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I took the cup cautiously and took a sip. It was actually really good.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Why am I not tied up? Or locked in a basement somewhere?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Miyu", "“Because I had nowhere secure to tie you where I could simultaneously supervise you and be present for the ‘Classical Performance’ today. This was the most efficient compromise.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Akasuke", "“A classical performance? Why are you even interested in—wait, never mind, stupid question. You’re an operative, you’re here for a reason. But seriously, Miyu, what—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu flinched visibly. Her cold demeanor cracked, replaced by a flash of genuine annoyance.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Do not address me so casually by my first name. I am your senior, you know.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I paused, lowering the teacup.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...My senior? Wait. Are you an actual student at Kasakura? So you’re an infiltrator at our school?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu froze. She realized her embarrassing mistake instantly. She snapped her mouth shut, looking away and staring rigidly at the stage.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...I will not answer any further questions. Watch the show for the time being.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Akasuke", "“And what happens if I just get up and try to escape?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu slowly turned her head back to me. She didn't say a word. She just stared absolute, piercing daggers through her lenses, the sheer weight of her bloodlust answering the question perfectly.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘Move, and I’ll shatter your other shoulder.’ Probably.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I sighed, sinking back into the velvet chair.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Fine. I’ll watch the show.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Just then, the lights around the pavilion dimmed. A single spotlight hit the center of the stage.", is_narrator=True)
+    show_story_box("", "An announcer holding a microphone stepped out.", is_narrator=True)
+    show_story_box("", "The moment he spoke, I recognized the voice.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Ladies and gentlemen! Honored residents of Sector III! Welcome to today’s grand exhibition!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "It was Liwei.", is_narrator=True)
+    show_story_box("", "He was wearing his pristine white uniform—though he finally had his sleeves rolled down to adhere to protocol. He worked the crowd with effortless charisma and reliability.", is_narrator=True)
+    
+    show_story_box("Liwei", "“I am Liwei, Captain of the First Unit of the Yunhai Association’s Bai Division, and I shall be your humble announcer for this afternoon’s festivities!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "He turned and stretched his arm grandly toward the massive, open gates of a towering pagoda building positioned right behind the stage’s VIP seating area.", is_narrator=True)
+    
+    show_story_box("Liwei", "“But before the music begins, please direct your attention to the Grand Seats! We are graced today by an unfathomable lineup of honored guests from regions across the world!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "His voice boomed through the speakers, echoing off the jade architecture.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Please welcome... A Propagator of The Seditious Garden!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“A Starguard of the illustrious ‘Starry Eyed’!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“A Playwright of The Auction House!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“A representative of the Ashenblade Family!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“An Avid Reader from The Library Club!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“An Alumna of the Heiwa Seiritsu Big Picture!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "As he announced the names, terrifying, vastly different figures began to emerge from the Pagoda’s gates, taking their places in the lavishly decorated VIP section. I felt the breath leave my lungs.", is_narrator=True)
+    show_story_box("", "The Starguards. The Alumnae. The true monsters of the world...they were all gathering here.", is_narrator=True)
+    
+    show_story_box("Liwei", "“And finally! Our venerable administrator... one of the Great Xiangyun [祥雲] of the Westward Megastructure!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "A man stepped out of the Pagoda, taking the central, most grandiose seat.", is_narrator=True)
+    show_story_box("", "My eyes widened.", is_narrator=True)
+    show_story_box("", "He wore a gray Changpao robe that cascaded all the way to the floor, with loose black linen pants underneath. A dark Jian rested at his side. His unnaturally long black hair flowed freely in the wind.", is_narrator=True)
+    show_story_box("", "It was him. The original holder of the Kata Natsume had accidentally summoned. The man whose sheer presence had completely paralyzed an entire dojo of martial artists back at Luoxia School.", is_narrator=True)
+    show_story_box("", "As the crowd erupted into applause, Liwei turned to exit the stage.", is_narrator=True)
+    show_story_box("", "As he walked down the steps, his eyes scanned the audience. He spotted me sitting next to Miyu.", is_narrator=True)
+    show_story_box("", "For a fraction of a second, Liwei looked incredibly confused to see me in the VIP section. But he quickly assessed the situation, noticing Miyu’s guarded posture next to me.", is_narrator=True)
+    show_story_box("", "Subtly, down by his waist where the rest of the crowd couldn't see, Liwei gave me a quick thumbs-up.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘He’s got my back,’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I thought, a glimmer of hope rising in my chest.", is_narrator=True)
+    show_story_box("", "If I make a move, Liwei might help me.", is_narrator=True)
+    show_story_box("", "Miyu didn't even look at me. She just kept her eyes on the stage, taking a sip of her own tea.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I am well aware that you are acquainted with the announcer. Do not think I will let you act as you please so easily.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "Gah. My hope immediately sank.", is_narrator=True)
+    show_story_box("", "For the moment, I had no choice but to sit in silence as the magnificent, royal classical music echoed through Sector III.", is_narrator=True)
+    
+    # --- SHIGEMURA'S POV ---
+    show_story_box("", "********* ◆ *********\nShigemura’s POV", is_narrator=True)
+    show_story_box("", "Luoxia Gardening School – Front Courtyard", is_narrator=True)
+    
+    show_story_box("", "The battle was finally over.", is_narrator=True)
+    show_story_box("", "The remaining members of the \"Twin Mountain Gate\" gang had either surrendered or been rendered entirely unconscious.", is_narrator=True)
+    show_story_box("", "The courtyard was a disaster zone. The Kasakura Vanguard sat heavily on the dirt, covered in sweat, dirt, and minor bruises, desperately catching their breath.", is_narrator=True)
+    show_story_box("", "Benikawa stretched her arms above her head, wincing slightly as a joint popped.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Phew… I’m definitely getting stronger surviving all these waves. This Megastructure is the best training camp ever~.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "I wiped a smear of dirt from my cheek, standing up straight. As the only one still mostly unharmed and full of stamina, I kept my guard up.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“We can celebrate our growth later. We still have to make progress on investigating the ‘infiltrators’ assigned to our Block.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I turned toward the front gates.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“I’m going to check on Akasuke. It’s time to wake him up.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I walked past the splintered wooden gates to the side of the road where we had hidden him.", is_narrator=True)
+    show_story_box("", "I reached the pile of disposed thugs. I checked the one wearing the dirty bandana. I checked the one next to him.", is_narrator=True)
+    show_story_box("", "My stomach dropped.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Huh...He’s gone.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I quickly scanned the area. All that was left were the unconscious local thugs we had used to blend him in.", is_narrator=True)
+    show_story_box("", "At first, the logical conclusion was kidnapping. But I immediately dismissed it. The disguise Benikawa and I had constructed was perfect; no local gang would bother kidnapping a random, unconscious grunt.", is_narrator=True)
+    
+    show_story_box("Shigemura", "‘He wasn't taken,’ I deduced.", affiliation="Kasakura High School Student", is_thought=True)
+    
+    show_story_box("", "He left on his own. He must have encountered something vastly more important to the mission and chased after it without having the time to tell us.", is_narrator=True)
+    show_story_box("", "I quickly jogged back into the courtyard.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Everyone! Check your phones! Did Akasuke send any messages?!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Yuri and Kagaku scrambled for their pockets, pulling out their devices.", is_narrator=True)
+    
+    show_story_box("Yuri", "“N-nothin’! Total radio silence!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Before panic could properly set in, the sound of rapid footsteps echoed from the street.", is_narrator=True)
+    show_story_box("", "Captain Mei burst through the gates, panting heavily. Right behind her was another Enforcer Captain—a girl with short orange twin-tails, her eyes closed in a perpetually relaxed expression despite her sprinting.", is_narrator=True)
+    
+    show_story_box("Mei", "“Kasakura Vanguard! We know where Hanefuji-dono is!”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "Mei paused to catch her breath, gesturing to her companion.", is_narrator=True)
+    
+    show_story_box("Mei", "“Ah, this is Xiao, Captain of the 11th Unit. Liwei just managed to contact us through a secure channel. He needs the Vanguard to come save Hanefuji immediately.”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("Xiao", "“He’s encountered some serious trouble at the edge of Sector III. Liwei can’t intervene directly without blowing his own cover.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "I turned to the exhausted Vanguard. They looked like they could barely stand, let alone march across the Megastructure for another fight.", is_narrator=True)
+    show_story_box("", "But I didn't hesitate.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Listen to me. We’re moving out. We reach Sector III, and we find Akasuke or the enemy holding him.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I looked at Kagaku, pointing to the secure briefcase.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Do not use the Jade Serums yet. We march there as we are. Once we locate him and assess the threat, then we inject the Serums to maximize our energy and completely overwhelm them in the next battle.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Yuri pushed herself off the ground, her legs shaking, but her eyes burning with fierce determination.", is_narrator=True)
+    
+    show_story_box("Yuri", "“If Akasuke-kun is in trouble, I ain’t sittin’ here.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara and Natsume helped each other up, nodding in agreement.", is_narrator=True)
+    show_story_box("", "Despite the overwhelming fatigue crushing their muscles, the Vanguard rose. ", is_narrator=True)
+    show_story_box("", "Carried by sheer will and loyalty, we formed up behind Mei and Xiao, beginning our long march toward Sector III.", is_narrator=True)
+
+
+def play_stage_4_15_end():
+    # --- MIYU'S POV ---
+    show_story_box("", "********* ◆ *********\nMiyu’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nGrand Pavilion", is_narrator=True)
+    
+    show_story_box("", "The classical performance on the stage was a masterful display of traditional artistry, but I kept my focus split.", is_narrator=True)
+    show_story_box("", "Beside me, Akasuke Hanefuji was tense. He was trying to hide it, but his eyes kept darting across the pavilion, specifically toward the VIP seating.", is_narrator=True)
+    show_story_box("", "I knew exactly what was making him nervous: the Starguard.", is_narrator=True)
+    show_story_box("", "According to Midori’s terribly formatted report from the Goodwill Island field trip, Hanefuji had a firsthand, traumatic encounter with one of the \"Starry Eyed\".", is_narrator=True)
+    show_story_box("", "It was only logical that being in the same room as one would trigger his fight-or-flight instincts, huh.", is_narrator=True)
+    show_story_box("", "I also knew he was waiting for a split-second opportunity to escape my custody.", is_narrator=True)
+    show_story_box("", "But keeping him captive wasn't my primary objective anyway. My goal was to ensure the success of our operation regarding the Phenomena Tool, the Scroll of the Nine Armies. Once that was accomplished, we would retreat.", is_narrator=True)
+    show_story_box("", "I shifted my gaze past the stage, locking eyes with one of the VIPs.", is_narrator=True)
+    show_story_box("", "The one introduced by the announcer as \"A representative of the Ashenblade Family\".", is_narrator=True)
+    show_story_box("", "It was none other than my colleague. The ‘Relaxed Man’. The one derisively known in the underworld as the ‘Bastard Child’.", is_narrator=True)
+    show_story_box("", "I analyzed his posture from afar.", is_narrator=True)
+    show_story_box("", "I wondered if this man—sent to infiltrate the VIPs under his legal Ashenblade name—would finally decide where his loyalties lay today.", is_narrator=True)
+    show_story_box("", "Was his heart with the Ashenblade Family, the ancient clan that took him in later in life? Or did it belong to the Megastructure, the city that provided him shelter and allowed him to survive until he left for the Family House?", is_narrator=True)
+    show_story_box("", "A lot had happened to him. The sudden reveal and scandal of his deep ties to the Yunhai Region had effectively gotten him \"banished\" from the Ashenblades.", is_narrator=True)
+    show_story_box("", "Legally, he still carried their name, but in practice, he was scorned and actively targeted for disposal by his own family members.", is_narrator=True)
+    show_story_box("", "That desperation was what forced him to temporarily seek asylum and employment under the Boss.", is_narrator=True)
+    show_story_box("", "I reviewed the Boss's master plan in my head.", is_narrator=True)
+    show_story_box("", "Regarding the Scroll of the Nine Armies, our objective was not theft.", is_narrator=True)
+    show_story_box("", "The Boss had explicitly stated that while possessing such a powerful weapon would be highly beneficial, wrestling a Region’s pride away from both the Administration and the local underworld syndicates was a logistical nightmare.", is_narrator=True)
+    show_story_box("", "Instead, our goal was \"Publicization\".", is_narrator=True)
+    show_story_box("", "We would confirm the Administration’s ownership of the Scroll inside the Pagoda. Then, if possible, we would forcibly activate it right here in the prosperous, crucial heart of Sector III.", is_narrator=True)
+    show_story_box("", "The resulting mass destruction would garner the utmost attention, utilizing international pressure from other regions to keep Yunhai’s overwhelming powers in check.", is_narrator=True)
+    show_story_box("", "I had to silently praise the Boss’s genius. His intricate information network had deduced the exact, minuscule time window when the Administration would finally retake the fully recharged Scroll from the underworld gangs.", is_narrator=True)
+    show_story_box("", "I stared at the Relaxed Man long enough for him to register it.", is_narrator=True)
+    show_story_box("", "It was our signal.", is_narrator=True)
+    show_story_box("", "He gave a subtle nod, stood up from his lavish VIP seat, and turned to a nearby Yunhai Association Enforcer Captain. I couldn't hear him, but I read his lips. He gave a polite excuse about needing to use the restroom.", is_narrator=True)
+    show_story_box("", "The Captain gestured for him to follow, leading the Relaxed Man out of the stage area and directly toward the Pagoda.", is_narrator=True)
+    
+    show_story_box("", "\"Was that your buddy?\"", is_narrator=True)
+    show_story_box("", "I blinked, turning my head.", is_narrator=True)
+    show_story_box("", "Akasuke was looking right at me. His eyes were sharp, completely lacking the nervous fog from earlier.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I have no idea what you are talking about.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Akasuke", "“Don't play dumb. I saw him leave, and I saw you staring at him. The Scroll of the Nine Armies...I know what it is, too, and it’s inside that Pagoda, isn't it? That’s why you sent someone to infiltrate the literal VIP section.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I let out a long, exhausted sigh, rubbing my temple.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I definitely should not have let you roam around as you pleased from the very beginning. Your observation skills are a nuisance.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "Akasuke smirked slightly, leaning back in his chair.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“I get that a lot~. I’ll consider it a compliment.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I turned my attention back to the stage as the performance came to a grandiose, sweeping close.", is_narrator=True)
+    show_story_box("", "Everything was fine. We would trigger the Scroll, retreat early, and I would finalize my report on Kasakura High School based on their new power assessments after enduring the local gang battles.", is_narrator=True)
+    show_story_box("", "I also made a mental note to thoroughly scold Midori for her blunders later.", is_narrator=True)
+    show_story_box("", "Despite the minor hiccups, my plan was finally back on the right track. There were no unaccounted factors left that could disrupt it.", is_narrator=True)
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    
+    show_story_box("", "The music swelled to a final crescendo, and the audience erupted into polite, wealthy applause.", is_narrator=True)
+    show_story_box("", "Right after the performance came to a close, Liwei walked back up onto the stage, microphone in hand.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Thank you, thank you! I hope the audience thoroughly enjoyed our traditional showcase!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "He paused, a wide, charismatic grin spreading across his face.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Now, we shall seamlessly move on to the second performance on today’s schedule!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I frowned.", is_narrator=True)
+    show_story_box("", "In the periphery, I could hear the Yunhai Association security details murmuring in confusion.", is_narrator=True)
+    show_story_box("", "“Second performance? What’s he talking about? The announcer is going completely off-script.”", is_narrator=True)
+    show_story_box("", "Liwei turned his body, directly facing the Grand Seat where the imposing Xiangyun administrator sat.", is_narrator=True)
+    
+    show_story_box("Liwei", "“For our second act: The complete and total takeover of the Yunhai Administration by the Bai Division. Happening right here, and right now.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "My breath hitched.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘This is it,’ I thought.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "This is Liwei’s resolve. He’s spent over a year perfecting this plan.", is_narrator=True)
+    show_story_box("", "He’s going to openly declare the Administration’s crimes—the destruction of his hometown, the misuse of the Scroll—in front of all these international VIPs to completely strip Yunhai of their political power.", is_narrator=True)
+    show_story_box("", "But Liwei didn't do that.", is_narrator=True)
+    
+    show_story_box("Liwei", "“That’s right! I am not your loyal Captain! I am the leader of a secret, cutthroat Shadow Organization from the deep underworld! We infiltrated the Association’s ranks to rot you from the inside out! Gahahaha!!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I stared at him in absolute shock.", is_narrator=True)
+    show_story_box("", "Beside me, Miyu was staring intently too, her stoic composure shattering.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘This isn't part of her plan either,’ I deduced instantly.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I shifted my weight, preparing to jump out of my seat to help Liwei or escape.", is_narrator=True)
+    show_story_box("", "Swish.\n\nA hand stopped an inch from my throat. Miyu had raised her arm, her fingers stiffened into a lethal spear-hand strike, her eyes locked onto me.", is_narrator=True)
+    
+    show_story_box("Miyu", "“—I have not given you permission to move.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "On stage, Liwei continued his theatrical, booming speech.", is_narrator=True)
+    
+    show_story_box("Liwei", "“That’s right…I am just dirty criminal scum! And I want to utterly annihilate all you uptight, arrogant nobles and VIPs currently in this venue! The way you conduct yourselves makes me want to puke!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "My mind raced.", is_narrator=True)
+    show_story_box("", "What is his true plan?! He’s deliberately branding himself as a villain to the entire Megastructure and the international guests!", is_narrator=True)
+    show_story_box("", "But I chose to trust my senior. I remained alert but calm, staying in my seat under Miyu’s guard, waiting for his next move.", is_narrator=True)
+    show_story_box("", "Listening closely, I realized Liwei was speaking half-truths. He used to be a criminal. He did hate the nobles. But he’s currently publicly adopting the exact ‘blind revenge’ mindset he had explicitly promised me he wasn't pursuing.", is_narrator=True)
+    show_story_box("", "Liwei pointed a finger directly at the Xiangyun.", is_narrator=True)
+    
+    show_story_box("Liwei", "“My ultimate goal is to tear you down, damned Xiangyun! I will take over your glorious power and sit on that throne myself!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I braced myself, fully expecting the Xiangyun to explode in a rage of absolute gravity and crushing pressure.", is_narrator=True)
+    show_story_box("", "But the Administrator didn't get mad.", is_narrator=True)
+    show_story_box("", "He simply leaned forward in his grand seat, resting his chin on his hand, and flashed a gentle, almost affectionate smile at Liwei.", is_narrator=True)
+    
+    show_story_box("Xiangyun", "“My friend, Liu.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "His voice was soft, but it carried across the entire pavilion without a microphone.", is_narrator=True)
+    
+    show_story_box("Xiangyun", "“If you merely wanted power, you did not need to go through all this trouble. The Administration could have simply sat down, had a proper discussion with you, and compromised on a fitting position for your talents.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Even Liwei looked genuinely taken aback by the response. He gritted his teeth, regaining his hostile posture.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Shut up! Hand over the position, or I’ll kill you where you sit!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "The Xiangyun playfully tapped his chin, thinking for a short moment.", is_narrator=True)
+    
+    show_story_box("Xiangyun", "“I see. It seems you are not thinking straight right now. Very well. I shall have to use a little force to calm you down. But after this, we can have a nice, long chat.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "The Administrator stood up.", is_narrator=True)
+    show_story_box("", "He reached to his side and drew his Jian.", is_narrator=True)
+    show_story_box("", "It was the exact same weapon Natsume’s Kata had used, but the aura radiating from it was entirely different.", is_narrator=True)
+    show_story_box("", "It was infinitely darker, heavier, and far more concentrated.", is_narrator=True)
+    show_story_box("", "The Xiangyun casually flicked his wrist, swinging the blade downward at Liwei from across the pavilion.", is_narrator=True)
+    show_story_box("", "Liwei’s eyes widened. He instantly drew his own Jian, swinging it upward to parry what seemed to be the empty air…but there was a sound.", is_narrator=True)
+    show_story_box("", "CLANG!", is_narrator=True)
+    show_story_box("", "A split second later, the black ink matter I expected to see materialized—but it didn't just form a wall.", is_narrator=True)
+    show_story_box("", "It was compressed into a tiny, hyper-dense, moving black ball, shooting through the air like a cannonball.", is_narrator=True)
+    show_story_box("", "Were the Xiangyun’s attacks in the form of projectiles from the start?!", is_narrator=True)
+    show_story_box("", "Liwei’s parry didn't stop it; it only slightly altered its trajectory.", is_narrator=True)
+    show_story_box("", "The deflected black projectile shot past the stage, flying directly toward the audience.", is_narrator=True)
+    show_story_box("", "Directly toward me and Miyu.", is_narrator=True)
+    show_story_box("", "In a fraction of an instant, the tiny black ball expanded violently into a towering, impenetrable wall of thick black ink.", is_narrator=True)
+    show_story_box("", "It sliced right between our two chairs with the screech of tearing metal.", is_narrator=True)
+    show_story_box("", "SHHHHK!", is_narrator=True)
+    show_story_box("", "The ink strike went right through the space where Miyu had stretched out her arm to hold me at bay.", is_narrator=True)
+    show_story_box("", "I watched in horror as her arm—from the elbow down—was cleanly severed, flying through the air and landing on the pavilion floor.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Agh! Miyu!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I lunged forward, genuinely terrified that she would start bleeding out right opposite of me.", is_narrator=True)
+    show_story_box("", "But as I looked at her severed limb, my brain stalled.", is_narrator=True)
+    show_story_box("", "There was no blood. No bones. No muscle tissue.", is_narrator=True)
+    show_story_box("", "Sparks fizzled from torn wires. Silver pneumatic joints and sleek, obsidian-colored mechanical servos twitched inside the cleanly sliced casing.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...What?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I stared at the severed, robotic hand on the floor, then up at the wall, where Miyu should still be on the other side.", is_narrator=True)
+    show_story_box("", "It all clicked.", is_narrator=True)
+    show_story_box("", "Her unnatural, overwhelming speed. The perfect, physics-defying double-feints. The raw, bone-shattering strength of her kicks.", is_narrator=True)
+    show_story_box("", "Miyu wasn't just a martial arts prodigy with a high battle IQ.", is_narrator=True)
+    show_story_box("", "She was a cyborg. Her body was heavily augmented with purely mechanical, high-tech components.", is_narrator=True)
+
+def play_stage_4_16_story():
+    # --- LIWEI'S POV ---
+    show_story_box("", "********* ◆ *********\nLiwei’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nGrand Pavilion", is_narrator=True)
+    
+    show_story_box("", "“That should do it.”", is_narrator=True)
+    show_story_box("", "My first thought as the dense ball of black ink ricocheted off my Jian was one of relief. I had deliberately taunted the Xiangyun into drawing his blade, calculating the exact angle needed to deflect his attack toward the VIP seating.", is_narrator=True)
+    show_story_box("", "My goal wasn't to hurt Akasuke; it was to separate him from \"the girl\" who was clearly holding him hostage.", is_narrator=True)
+    show_story_box("", "I spun my sword, turning back to face the Administrator.", is_narrator=True)
+    show_story_box("", "The Xiangyun stood there, his expression entirely indifferent, an ocean of calm amidst the chaos.", is_narrator=True)
+    show_story_box("", "With a casual flick of his wrist, he swung his Jian a second time.", is_narrator=True)
+    show_story_box("", "I narrowed my eyes, estimating the distance and the time it would take for the ink's expansion to reach my position.", is_narrator=True)
+    show_story_box("", "I swung my blade to parry.", is_narrator=True)
+    show_story_box("", "If I timed the rebound correctly, I would feel a heavy, concentrated weight on the flat of my sword that I simply needed to redirect.", is_narrator=True)
+    show_story_box("", "CLANG.", is_narrator=True)
+    show_story_box("", "The weight hit. I swung my arm in a wide arc, casting the projectile away.", is_narrator=True)
+    show_story_box("", "A second later, another section of the venue’s beautiful architecture blew up, replaced by a massive, gravity-defying streak of suspended, solid black ink.", is_narrator=True)
+    show_story_box("", "I continued to deflect his casual strikes, relying purely on my underworld honed survival instincts and all of my strength.", is_narrator=True)
+    show_story_box("", "But as the fight dragged on, my focus drifted toward the VIP seating.", is_narrator=True)
+    show_story_box("", "I was deeply concerned about the nobles. Not for their safety—they could all drop dead for all I cared—but for how unnervingly calm they were.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Do these rich fools even realize they could literally die from a single stray ink shot?”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I thought back to the Administrator’s crushing pressure. The ingrained instinct of the Megastructure’s people that made Mei freeze up against Natsume’s Kata. But looking at the crowd, this was different.", is_narrator=True)
+    show_story_box("", "Not only were none of the nobles trying to flee, but their faces showed absolutely no signs of the struggling or terror Mei had exhibited.", is_narrator=True)
+    show_story_box("", "Most of them were smiling. They were chatting with each other, pointing at my desperate parries, treating it as if the 'second performance' was just a highly immersive theatrical play.", is_narrator=True)
+    show_story_box("", "Some were literally passing jade coins around, taking bets on how many minutes I could last against the Great Xiangyun’s divine retribution.", is_narrator=True)
+    show_story_box("", "That’s when the horrifying pattern clicked in my head.", is_narrator=True)
+    
+    show_story_box("Liwei", "“...I always knew about the Megastructure’s ingrained obedience...but I never questioned how a mass mental effect like that came to be.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "There was only one reasonable, terrifying explanation.", is_narrator=True)
+    show_story_box("", "An Empath’s power. Does the administration have someone like that within their ranks?", is_narrator=True)
+    show_story_box("", "A wave of utter hopelessness washed over me. I wasn't just fighting a corrupt government. I was fighting a city-wide brainwashing wave that forced everyone to place their absolute faith and source of happiness entirely on their 'gods'.", is_narrator=True)
+    show_story_box("", "The outside VIPs were unaffected, of course, but they simply sat still, watching with mild amusement.", is_narrator=True)
+    show_story_box("", "With this, I wouldn’t even be able to convince the locals to doubt the Administration. They literally lacked the biological capacity to do so.", is_narrator=True)
+    show_story_box("", "I gripped my sword tightly, a bitter laugh escaping my throat.", is_narrator=True)
+    
+    show_story_box("Liwei", "“I see. So I really am alone in this.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "BAM!\n\nA red blur dropped from the sky.", is_narrator=True)
+    show_story_box("", "A perfectly executed flying jump kick landed directly on the side of the Xiangyun’s face.", is_narrator=True)
+    show_story_box("", "My jaw dropped so hard my sunglasses slipped off my nose and clattered to the floor.", is_narrator=True)
+    show_story_box("", "The literal Administrator of the Megastructure was sent flying backward several meters. He landed gracefully, his feet skidding against the stage, but he put a complete hold on his bladework.", is_narrator=True)
+    show_story_box("", "He stared at his new attacker with the exact same calm, unbothered expression.", is_narrator=True)
+    show_story_box("", "Akasuke Hanefuji stood there, cracking his knuckles, his red hair completely giving away his identity.", is_narrator=True)
+    show_story_box("", "Through the silence, I could hear the nobles murmuring in confusion.", is_narrator=True)
+    
+    show_story_box("", "“Who is that boy?”\n“Ah, isn't he from that outside school the Association called in to clear out the infiltrators?”", is_narrator=True)
+    
+    show_story_box("", "Akasuke didn't look at the crowd. He turned his head slightly toward me, flashing a confident grin.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Need a hand, senpai?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Before I could even process the absurdity of a high schooler drop-kicking a god, a Yunhai Unit Captain sprinted onto the stage, dropping to one knee beside the Xiangyun in a panic.", is_narrator=True)
+    
+    show_story_box("Enforcer Unit Captain", "“Administrator, sir! Forgive the interruption! We have an urgent situation!”", affiliation="Yunhai Association")
+    show_story_box("Enforcer Unit Captain", "“One of the VIPs… he asked another Captain to escort him to the restroom minutes ago. Neither of them has returned!”", affiliation="Yunhai Association")
+    
+    show_story_box("", "The Xiangyun’s eyes slowly shifted away from us, seemingly forgetting all about Akasuke and me in an instant.", is_narrator=True)
+    
+    show_story_box("Xiangyun", "“Oh? Which of the honored guests is missing?”", affiliation="Megastructure Administrator")
+    
+    show_story_box("Enforcer Unit Captain", "“The representative... Koharu Ashenblade!”", affiliation="Yunhai Association")
+    
+    # --- KOHARU'S POV ---
+    show_story_box("", "********* ◆ *********\nKoharu’s POV", is_narrator=True)
+    show_story_box("", "[ 5 Minutes Ago ]\nWestward Megastructure – Pagoda Side Entrance", is_narrator=True)
+    
+    show_story_box("", "I walked with a relaxed, lazy swagger, following the Yunhai Enforcer Captain down the opulent jade corridors. We passed right by the massive, heavily sealed side entrance of the main Pagoda.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Man, you Association folks really know how to build ‘em, huh? The architectural integrity here is just divine~. Very sturdy. Very flashy.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "The Captain walked stiffly ahead of me.", is_narrator=True)
+    
+    show_story_box("Enforcer Unit Captain", "“I formally thank you for your compliments, Honored Guest.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "His voice was polite, but it was wavering. Shaky.", is_narrator=True)
+    
+    show_story_box("Koharu", "“What’s wrong, buddy? Ya nervous being all alone around a big, scary VIP of the Megastructure?”", affiliation="Ashenblade Family")
+    
+    show_story_box("Enforcer Unit Captain", "“...There is no need for a distinguished guest to concern himself with a lowly grunt such as myself.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I chuckled, taking a step closer and leaning right over his shoulder.", is_narrator=True)
+    
+    show_story_box("Koharu", "“You know, you’re a verrrry bad liar~.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "The Captain stiffened, his hand hovering near his sheath.", is_narrator=True)
+    
+    show_story_box("Enforcer Unit Captain", "“W-whatever do you mean, sir?”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I sighed, shaking my head like a disappointed uncle at a family gathering.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Your bloodlust, man. It’s leaking out uncontrollably. You’re radiating killing intent like a dog who can’t hold its own piss.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "The Captain’s shoulders hitched. He was practically vibrating with anxiety now.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Honestly, it’s just sad. I heard the Association was insular, but I didn't think they were this backwards. You guys are so stuck in your own bubble, you won't even teach your elite soldiers the most basic outsider techniques for masking intent.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "I closed my eyes, letting out a long, theatrical sigh of disappointment.", is_narrator=True)
+    show_story_box("", "SHHHHK.", is_narrator=True)
+    
+    show_story_box("Koharu", "“!!!”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "The Captain drew his Jian and swung it in a lethal, horizontal arc, aiming straight for my neck.", is_narrator=True)
+    
+    show_story_box("Koharu", "“W-wha... no way... why..?”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "I opened my eyes, looking at him with genuine…pitying surprise.", is_narrator=True)
+    
+    show_story_box("Koharu", "“...Aren’t you a literal Captain of an entire Unit? Goddamn, I gotta wonder…why are you so weak?”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "I waited for him to answer. A dramatic monologue about loyalty, perhaps? Or a curse upon my family name?", is_narrator=True)
+    show_story_box("", "But the answer never came.", is_narrator=True)
+    show_story_box("", "The Jian clattered uselessly to the jade floor.", is_narrator=True)
+    show_story_box("", "The Captain didn't say a word, primarily because he had already been turned into a neat, smoldering pile of gray ash, scattering softly in the corridor's draft. I’ll say, it was quite a pretty little work from yours truly.", is_narrator=True)
+    show_story_box("", "I dusted off my coat, stepping over the scorch mark on the floor.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Well, ain’t that just killed the mood. I’m not really feeling like using the restroom anymore.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "I turned my gaze toward the massive, sealed doors of the Pagoda. A playful, adventurous grin spread across my face.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Who knows? Maybe ‘little old me will find some kinda treasure in there instead. Like a beautiful, antique Scroll~.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "I excused myself from the pile of ashes and casually strolled toward the Pagoda doors.", is_narrator=True)
+    
+    # --- LIWEI'S POV ---
+    show_story_box("", "********* ◆ *********\nLiwei’s POV", is_narrator=True)
+    show_story_box("", "[ Present Time ]", is_narrator=True)
+    
+    show_story_box("", "I was incredibly glad to have Akasuke’s support, but the cold reality quickly set back in. He was strong, but we were still up against a literal Xiangyun.", is_narrator=True)
+    show_story_box("", "Worse, the report about \"Koharu Ashenblade\" confirmed my darkest fear. The one known as the ‘Bastard Child’.", is_narrator=True)
+    show_story_box("", "This isn’t good. There’s a second faction moving behind the scenes, and they’re infiltrating the Administration’s vault right now.", is_narrator=True)
+    show_story_box("", "I immediately vaulted upwards, landing on the same level as the Grand Seat, right beside Akasuke.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Akasuke! You wanna help? Rush straight into that Pagoda and steal the Scroll first.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Akasuke looked at me, surprised.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Confiscating that Tool has always been the final goal of my plan! Keeping it out of the Administration's hands—and whatever faction that Ashenblade guy is working for—is the absolute highest priority. Now go!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Akasuke didn't waste a second.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Got it!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "He bolted toward the Pagoda entrance.", is_narrator=True)
+    show_story_box("", "Several Yunhai Unit Captains and elite enforcers moved to intercept him, drawing their weapons.", is_narrator=True)
+    show_story_box("", "I dashed ahead of him, my Jian flashing in the stage lights. With a flurry of precise, non-lethal strikes, I knocked the enforcers out of the way, carving a clear, open path to the doors.", is_narrator=True)
+    show_story_box("", "Just as Akasuke slipped inside, another figure dashed past me.", is_narrator=True)
+    show_story_box("", "It was a blur of incredible, unnatural speed. It was \"the girl\" I had separated Akasuke from earlier. So persistent.", is_narrator=True)
+    show_story_box("", "I noticed the arm I didn’t intend for the Xiangyun to chop off was sparking with mechanical joints—thankfully, it was just a robotic prosthetic, huh?", is_narrator=True)
+    show_story_box("", "She zipped into the Pagoda right on Akasuke’s heels.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Looks like you’ll have to deal with the cyborg girl yourself, kid. Good luck.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I gripped my sword with both hands, turning slowly back to face the Xiangyun.", is_narrator=True)
+    show_story_box("", "The Administrator hadn't moved to stop them. He was just standing there, his dark Jian still in hand, a serene smile resting on his face.", is_narrator=True)
+    show_story_box("", "I took a deep breath.", is_narrator=True)
+    
+    show_story_box("Liwei", "“All that’s left to do now is stall a literal god all on my own. What a fitting end for a piece of underworld trash.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "SMACK!\n\nA loud, wooden thud echoed across the stage.", is_narrator=True)
+    show_story_box("", "The Xiangyun didn't flinch, didn't stumble, didn't even blink. He just slowly turned his head to look over his shoulder.", is_narrator=True)
+    show_story_box("", "Standing right behind him, holding a standard-issue Enforcer Jian in a two-handed grip, was Okusora Mei. She had just smacked the Administrator of the Westward Megastructure squarely in the back.", is_narrator=True)
+    
+    show_story_box("Liwei", "“M-Mei?!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I had completely forgotten I called her and Xiao over to the performance stage earlier…and I provoked the Xiangyun early to lure an attack to help Akasuke!", is_narrator=True)
+    show_story_box("", "I reached my hand out, panic gripping my chest.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Mei! Get back! Are you crazy?!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "She ignored the Administrator completely. She marched right past the Xiangyun, storming up to me with furious, golden eyes.", is_narrator=True)
+    
+    show_story_box("Mei", "“You are an absolute idiot, Liu Liwei!”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "She yelled it so loudly it echoed across the pavilion.", is_narrator=True)
+    show_story_box("", "Even the Xiangyun seemed intrigued. He didn't attack.", is_narrator=True)
+    show_story_box("", "He just crossed his arms, hiding his sword in his long sleeves, and watched the dispute unfold with a neutral, polite expression, like he was just a bystander in the conversation. He seemed to have all the time in the world, after all.", is_narrator=True)
+    
+    show_story_box("Mei", "“So this is it, huh?! Your whole hidden agenda! It was against the Administration! And you think you’re protecting me by going off to fight them by yourself?!”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("Liwei", "“Mei, you don't understand, I—”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("Mei", "“I understand perfectly! You think that because you have a criminal past, you’re the only one who deserves to die for this cause!”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "She pointed an angry finger at my chest.", is_narrator=True)
+    
+    show_story_box("Mei", "“How foolish can you be, forsaking the people who care about you?! It’s not that your goal is pointless, Liwei! But what is the point of accomplishing it if you aren't alive to see the change you fought for?!”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "I stood there, completely dumbfounded. I couldn't get a single word in edgewise. The great, charismatic Captain Liwei was getting thoroughly and publicly scolded.", is_narrator=True)
+    show_story_box("", "Mei’s furious expression suddenly faltered. The anger melted away, replaced by a deep, flushed red that crept up to the tips of her ears. She looked down at her boots, gripping the hilt of her sword nervously.", is_narrator=True)
+    
+    show_story_box("Mei", "“A-And… who will I g-go out with… if you die..?”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "Huh?", is_narrator=True)
+    show_story_box("", "Silence.", is_narrator=True)
+    show_story_box("", "Absolute, pin-drop silence on the stage.", is_narrator=True)
+    show_story_box("", "My brain completely flatlined.", is_narrator=True)
+    show_story_box("", "All of my suicidal resolve, my guilt, my lifelong quest for vengeance—it all evaporated in the span of one single, stuttered sentence.", is_narrator=True)
+    show_story_box("", "Xiao suddenly popped her head out from behind Mei, pumping a fist in the air with her eyes closed.", is_narrator=True)
+    
+    show_story_box("Xiao", "“WOOO! SHE DID IT! NAILED THE CONFESSION! YOU GO, GIRL!”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    
+    show_story_box("", "Mei’s face turned the color of a tomato. She whipped around, raising her sword defensively.", is_narrator=True)
+    
+    show_story_box("Mei", "“X-Xiao! Please shut up! You’re ruining the moment!”", affiliation="Yunhai Association Bai Division 2nd Unit Captain")
+    
+    show_story_box("", "Before I could even formulate a response to the fact that the woman I loved had just confessed to me, a chaotic stampede of footsteps interrupted us.", is_narrator=True)
+    show_story_box("", "“Outta the way!”", is_narrator=True)
+    show_story_box("", "The rest of the Kasakura Vanguard—Shigemura, Yuri, Benikawa, Naganohara, Hana, Kagaku, and Natsume—sprinted past the stage, covered in dirt and sweat.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Liwei-san! Is Akasuke-kun inside the Pagoda?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I blinked, still entirely stunned by Mei’s speech, and just numbly pointed at the doors.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Uh… y-yeah. He went in.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("Benikawa", "“Thanks! Keep the big guy busy!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Without hesitating, the seven of them rushed the Pagoda doors, disappearing into the dark interior to back up their leader.", is_narrator=True)
+    show_story_box("", "I finally snapped out of my stupor.", is_narrator=True)
+    show_story_box("", "I looked at Mei, whose face was still bright red, and then at Xiao, who was casually resting her sword on her shoulder.", is_narrator=True)
+    show_story_box("", "Three Captains of the Bai Division.", is_narrator=True)
+    show_story_box("", "I couldn't help it. I started to laugh.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Alright. Change of plans, guys.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I stepped up beside Mei, raising my Jian, my heart feeling lighter than it had in years.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Let’s stall this ‘god’ long enough for the Vanguard to steal the Scroll.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+
+def play_stage_4_17_start():
+    # --- YURI'S POV ---
+    show_story_box("", "********* ◆ *********\nYuri’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nInterior of the Main Pagoda", is_narrator=True)
+    
+    show_story_box("", "My heart was hammering against my ribs as we sprinted down the massive, dimly lit corridors of the Pagoda.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Damnit… where did he go? Akasuke-kun, you idiot, don't just run off alone!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The group was all here: me, Benikawa, Shigemura, Naganohara, Hana, Natsume, and Kagaku. We were exhausted from the grueling, all-night endurance battles at the school, but we were pushing through on pure willpower.", is_narrator=True)
+    show_story_box("", "We kept our 'Jade Serums' securely in our pockets, explicitly saving them for the moment we inevitably encountered a serious threat.", is_narrator=True)
+    show_story_box("", "And we did.", is_narrator=True)
+    show_story_box("", "As we rounded a corner into a wide, heavily decorated hallway, I spotted them.", is_narrator=True)
+    show_story_box("", "Two Yunhai Association Enforcers were stationed ahead. They were leaning nonchalantly against opposite walls of the corridor, looking like they were taking a lazy break.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Enemy contact! Get ready to inject!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I reached into my pocket for the glowing green vial, but a hand shot out, grabbing my wrist.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Stop. Wait.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "His violet eyes were narrowed, completely focused on the two guards.", is_narrator=True)
+    show_story_box("", "The entire group halted.", is_narrator=True)
+    show_story_box("", "Shigemura slowly walked forward, closing the distance until he was just inches away from one of the Enforcers.", is_narrator=True)
+    show_story_box("", "The Enforcer didn't move. He didn't draw his sword. He didn't even blink or seem to notice Shigemura at all.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Shigemura-kun? What are ya doin’? They’re right there!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura ignored me. He slowly raised his hand, reaching out to touch the Enforcer’s chest.", is_narrator=True)
+    show_story_box("", "But right before his fingers made contact, he forcefully retracted his hand, squeezing it into a tight, regretful fist.", is_narrator=True)
+    show_story_box("", "He looked down at the floor, his expression grim. Almost like he was grieving.", is_narrator=True)
+    show_story_box("", "That was when the realization hit me like a bucket of ice water. The complete stillness. The lack of breathing.", is_narrator=True)
+    show_story_box("", "Shigemura turned back to us, his voice quiet.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“They’re dead.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Naganohara gasped, covering her mouth.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“They were taken out in an absolute instant. It was so fast, they likely died before their brains even processed the pain. That’s why their bodies haven't even collapsed yet. They’re literally still standing.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "We moved in cautiously to get a closer look.", is_narrator=True)
+    show_story_box("", "Naganohara squeezed her eyes shut, refusing to look.", is_narrator=True)
+    show_story_box("", "Across the chest and arms of each Enforcer was a single, devastating wound. It wasn't a clean cut from a sword.", is_narrator=True)
+    show_story_box("", "It was a long, horizontal black line of scorched, smoldering ash burned directly through their uniforms and flesh.", is_narrator=True)
+    show_story_box("", "And so…we continued our exploration of the Pagoda, slowing our pace to a cautious walk.", is_narrator=True)
+    show_story_box("", "The deeper we went, the more bodies we found. All leaning against walls, slumped over desks, or standing frozen in the middle of hallways. Over twenty men, all bearing the exact same horrific, ashen scar.", is_narrator=True)
+    show_story_box("", "Shigemura continuously knelt down to check the ID badges of each fallen guard.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“These are Liwei’s men…First Unit Enforcers.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "He stood up, looking at all of us. He took a deep breath.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Listen to me. It’s time I told you what Akasuke told me this morning. You all deserve to know exactly what kind of hell we’ve stepped into.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "He kept it brief and summarized, but he laid it all out. Liwei’s true motives. The corruption of the Administration.", is_narrator=True)
+    show_story_box("", "The existence of Phenomena.", is_narrator=True)
+    show_story_box("", "And the ultimate prize hidden inside this Pagoda: the Scroll of the Nine Armies.", is_narrator=True)
+    show_story_box("", "Coincidentally, right as he finished explaining the terrifying reality of the Scroll, we arrived at an ominous, towering set of double wooden doors.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“If Akasuke ran into this Pagoda, he did it to take the Scroll away from the Administration. I pray we find him inside this grand room.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I didn't wait. I kicked the heavy wooden doors open.", is_narrator=True)
+    show_story_box("", "Sure enough, Akasuke was inside.", is_narrator=True)
+    show_story_box("", "But he wasn't alone. And he definitely wasn't doing fine.", is_narrator=True)
+    
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "[ The Vault Room ]", is_narrator=True)
+    
+    show_story_box("", "My feet kicked uselessly in the air.", is_narrator=True)
+    show_story_box("", "My vision was swimming, black spots dancing at the edges of my sight as I desperately clawed at the hand wrapped around my throat.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘She’s too strong.’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "Even knowing that Miyu was a cyborg—that beneath her skin lay pneumatic joints and mechanical servos designed for lethal combat—it didn't make the reality any easier to swallow.", is_narrator=True)
+    show_story_box("", "I knew in my gut that even without the robotic augmentations, Miyu would still completely overpower me with her raw physical and technical prowess.", is_narrator=True)
+    show_story_box("", "She had caught up to me in this vault room a few minutes ago. The fight hadn't lasted long. With my left shoulder shattered and my stamina entirely depleted from the previous days' endurance waves, I was outmatched.", is_narrator=True)
+    show_story_box("", "Currently, Miyu was using her single remaining, fully functional arm to choke me, lifting my entire body weight off the floor effortlessly. Her obsidian glasses reflected my struggling face.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“I need to break her grip… or I’m dead.”", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "BANG!\n\nThe double doors burst open.", is_narrator=True)
+    
+    show_story_box("Yuri", "“AKASUKE-KUN!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I choked out a gasp of relief. The rest of the Vanguard had arrived.", is_narrator=True)
+    show_story_box("", "Without a second of hesitation, Yuri and Benikawa rushed Miyu from opposite sides.", is_narrator=True)
+    show_story_box("", "Calculating the new threat vectors, Miyu immediately decided to back off. She threw me backward toward them like a discarded ragdoll.", is_narrator=True)
+    show_story_box("", "Yuri and Shigemura caught me before I could hit the ground, sliding back slightly from the force of the throw.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Cough! Thanks… you guys…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu didn't pursue. She stood in the center of the vast, empty vault room, remaining entirely calm despite being surrounded by eight Kata users.", is_narrator=True)
+    
+    show_story_box("Miyu", "“As you can plainly see, the Scroll is supposed to be housed in this room. But it clearly isn't here.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "She raised her remaining hand to her collar almost instinctively, pressing down…where a radio transmitter would normally be.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Ashenb—”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "She froze.", is_narrator=True)
+    show_story_box("", "Ah, right. She realized she had completely smashed her own radio back in the alleyway when Midori contacted her at the absolute worst timing and leaked highly classified intel to me.", is_narrator=True)
+    show_story_box("", "A profound, visible aura of despair washed over Miyu.", is_narrator=True)
+    show_story_box("", "She lowered her hand, placed her palm over her face, and let out a long, shuddering sigh that seemed to empty every ounce of air from her robotic lungs.", is_narrator=True)
+    show_story_box("", "Yuri tilted her head, confused.", is_narrator=True)
+    
+    show_story_box("Yuri", "“...What is she doin’? Is the cyborg malfunctioning?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I rubbed my bruised throat, giving Miyu a sympathetic look.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Just give her a second. I know she’s been through a lot today.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Miyu eventually lowered her hand, regaining her stoic composure.", is_narrator=True)
+    show_story_box("", "She reached up, took her glasses off, and bit down gently on the frames to hold them.", is_narrator=True)
+    show_story_box("", "Using her one functional hand, she pulled out a microfiber cloth, meticulously wiped the lenses clean, and slid them back onto her face with a final, precise adjustment of her index finger.", is_narrator=True)
+    show_story_box("", "She looked at the eight of us.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...Nonetheless. I still cannot let you act as you please.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "She dropped into a combat stance, raising her one arm.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I must at least keep you, the Kasakura Vanguard, occupied before you completely ruin everything.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "I struggled to my feet, gritting my teeth.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Don't underestimate her! She might look like a mess, and she only has one arm, but she’s a cyborg! She’s incredibly strong! Extremely strong!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I pulled the glowing green vial from my pocket. The rest of the Vanguard did the same.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Inject!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We slammed the Jade Serums into our legs.", is_narrator=True)
+    show_story_box("", "Instantly, a rush of cool, vibrant energy flooded my veins. My shattered shoulder snapped back into place with a sickening pop, the bone knitting itself together in seconds. The exhaustion evaporated.", is_narrator=True)
+    show_story_box("", "Eight blue auras flared to life simultaneously.", is_narrator=True)
+    show_story_box("", "Our first true battle with an Executive of the 'Boss' began.", is_narrator=True)
+
+
+def play_stage_4_17_end():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    
+    show_story_box("", "We had been fighting Miyu for at least thirty minutes…", is_narrator=True)
+    show_story_box("", "…And we were losing. Badly.", is_narrator=True)
+    show_story_box("", "Even with Katas functioning on par with the Association’s elite Officers, even with our energy and injuries fully restored by the Jade Serums, and even with the combat experience we had ground out during the brutal Steadfastness endurance battles… she was holding us off.", is_narrator=True)
+    show_story_box("", "With one remaining usable arm. With physical and mental exhaustion. While being ganged up on by eight elite fighters. She still held her own.", is_narrator=True)
+    show_story_box("", "I easily recognized the main fighting style she used. It was Wing Chun, a famous southern Yunhai martial art specializing in rapid, close-quarters combat and highly efficient self-defense.", is_narrator=True)
+    show_story_box("", "But she wasn't just using Wing Chun. Paired with her robotic augmentations, she was calculating humanly impossible movements.", is_narrator=True)
+    show_story_box("", "She was combining simultaneous attack and defense technique executions into fractions of a second, and she was doing it eight times per clash—perfectly managing every single one of us.", is_narrator=True)
+    show_story_box("", "SMACK!", is_narrator=True)
+    show_story_box("", "Naganohara and Natsume were thrown back, landing hard on the vault floor. They were already on their knees, gasping for breath, their Katas flickering.", is_narrator=True)
+    show_story_box("", "I wiped a trail of blood from my lip, glaring at Miyu’s flawless posture.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘I won’t let this happen again…’ I thought, frustration burning in my chest.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("Akasuke", "I won’t let the overwhelming pressure of a stronger opponent simply crush us down anymore!", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("Akasuke", "“I have to reach their level! I WANT to reach their level!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I roared, channeling every ounce of intent and physical power into my legs. I dashed forward, pivoting sharply, and launched an all-out, full-power back kick directly at her one-armed guard.", is_narrator=True)
+    show_story_box("", "CLANG!\n\nThe impact echoed like a gong.", is_narrator=True)
+    show_story_box("", "To my absolute shock, it actually worked.", is_narrator=True)
+    show_story_box("", "Miyu was sent flying backward several meters. Without her other arm to act as a counterweight for balance, she tumbled, falling over before quickly scrambling back up to one knee.", is_narrator=True)
+    show_story_box("", "Her obsidian glasses were slightly askew. She looked genuinely surprised.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Did you just copy my—”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "She cut herself off, her eyes dropping to look at my leg. Her surprise shifted into deep fascination.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...So you can already use that?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Akasuke", "“...Use what?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked down at my leg.", is_narrator=True)
+    show_story_box("", "A tiny, consistent stream of white steam was pouring off my shin. At first, I thought it was just the physical friction from the sheer speed of the kick.", is_narrator=True)
+    show_story_box("", "But then I thought further back. To the hotel. To Kesler.", is_narrator=True)
+    show_story_box("", "When the Boss of Riposte threw that simple front kick at Hazuki, it had released a massive geyser of dark blue steam—so much that it seemed entirely unrealistic and defied natural physics.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘Liwei taught me about Phenomena,’ I realized, staring at the faint mist rising from my own skin.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("Akasuke", "Could this be… a physical manifestation of it? Am I starting to tap into a Phenomena?", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I had to put the revelation on hold.", is_narrator=True)
+    show_story_box("", "Heavy, synchronized footsteps and shouting echoed from the hallway behind us.", is_narrator=True)
+    
+    show_story_box("Enforcer A", "“They’re in the vault! Freeze! Drop your weapons!”", affiliation="Yunhai Association")
+    
+    show_story_box("", "A massive squad of Yunhai Enforcers flooded into the room, drawing their Jian and surrounding us.", is_narrator=True)
+    show_story_box("", "I cursed under my breath. We were technically criminals too.", is_narrator=True)
+    show_story_box("", "We had violently bypassed security, broken into the Administration’s sacred Pagoda, and our literal agenda was to steal their legendary Scroll of the Nine Armies.", is_narrator=True)
+    show_story_box("", "There was no diplomatic way out of this.", is_narrator=True)
+    show_story_box("", "The Vanguard and Miyu were getting arrested.", is_narrator=True)
+    
+    show_story_box("Akasuke", "Is there no way…out of this one..?", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "Click. Clack.\n\nLazy, rhythmic footsteps echoed from the entrance, cutting through the shouting of the Enforcers.", is_narrator=True)
+    show_story_box("", "It wasn't another guard. And it definitely wasn't backup for Kasakura.", is_narrator=True)
+    show_story_box("", "I recognized the man immediately. It was the VIP from the pavilion—\"Miyu’s buddy,\" the one she had signaled to retrieve the Scroll. The Relaxed Man.", is_narrator=True)
+    show_story_box("", "He strolled into the room, casually scratching his chin, ignoring the dozens of drawn swords pointed at him.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Aye, it ain't here too, huh...”", affiliation="Ashenblade Family")
+    
+    show_story_box("Akasuke", "‘He’s still looking for the Scroll’, I realized.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("Akasuke", "Which means the Administration moved it long before we got here.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "The Enforcers were thrown into chaos.", is_narrator=True)
+    
+    show_story_box("Enforcer B", "“You! Halt immediately!”", affiliation="Yunhai Association")
+    show_story_box("Enforcer C", "“Idiot, put your sword down! That’s the Honored Guest Koharu Ashenblade!”", affiliation="Yunhai Association")
+    
+    show_story_box("", "The man ignored them completely. He looked across the vast room and finally saw Miyu.", is_narrator=True)
+    show_story_box("", "She was kneeling on the floor, covered in dust, her glasses crooked, her robotic arm sparking, surrounded by enemies.", is_narrator=True)
+    show_story_box("", "It was the most pathetic, sorry state she had ever been in.", is_narrator=True)
+    show_story_box("", "The man’s lazy smile vanished.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Aye...This ain't good. I'm not someone who can stand seein’ kids cry.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "Every hair on my body stood up.", is_narrator=True)
+    show_story_box("", "Maybe it was my newly awakened senses, or maybe the gap in power was just that obvious now. But the moment his demeanor shifted, I understood exactly what we were looking at.", is_narrator=True)
+    show_story_box("", "He was another one on “that” level.", is_narrator=True)
+    show_story_box("", "The Knight. Kesler. Hazuki. The Starguards.", is_narrator=True)
+    show_story_box("", "He was a monster.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“GET DOWN! EVERYONE DUCK!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I screamed it at the top of my lungs, diving for the floor.", is_narrator=True)
+    show_story_box("", "The Vanguard trusted me instantly, throwing themselves flat against the jade tiles.", is_narrator=True)
+    show_story_box("", "The room exploded into a blinding, beautiful flash of vibrant orange flames.", is_narrator=True)
+    show_story_box("", "There was no sound of an explosion. Just a suffocating wave of intense heat that lasted for a single, terrifying second.", is_narrator=True)
+    show_story_box("", "When I opened my eyes, the bright orange light was gone, replaced by a dreadful, black gloom.", is_narrator=True)
+    show_story_box("", "The air was thick with pure black ash falling like snow.", is_narrator=True)
+    show_story_box("", "I looked around. The dozens of Enforcers who had been shouting seconds ago were completely silent. They stood perfectly still across the room, frozen like statues.", is_narrator=True)
+    show_story_box("", "They were dead. All of them. Turned to ash at the middle from the inside out in the blink of an eye.", is_narrator=True)
+    show_story_box("", "The man was already on the other side of the room. He didn't even seem to have moved. He just gently picked Miyu up, hoisting her onto his back for a piggyback ride.", is_narrator=True)
+    
+    show_story_box("", "Miyu pushed her glasses up, her voice trembling slightly despite her best efforts to sound cold.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I was not crying. I was never going to cry. And performing an unnecessary rescue like this will not earn you any extra favor with the Boss.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The man chuckled softly, adjusting his grip on her legs.", is_narrator=True)
+    
+    show_story_box("Koharu", "“I already told you, Miyu. I can’t stand seein’ kids cry.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "He looked around the empty vault.", is_narrator=True)
+    
+    show_story_box("Koharu", "“...I couldn't find the Scroll anywhere in the Pagoda. Which means either the underworld thugs still have it, or one of the Administrators is keeping it directly on their person.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "Miyu rested her head against his shoulder, looking thoroughly exhausted.", is_narrator=True)
+    
+    show_story_box("Miyu", "“That is enough intel gathered for today. I suggest you retreat from the Megastructure with me and the rest of the operatives immediately.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The man nodded, turning toward the exit. He stopped, glancing back at the eight of us still cowering on the floor amidst the falling ash.", is_narrator=True)
+    
+    show_story_box("Koharu", "“What about the Vanguard? Should I clean them up too?”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "Miyu sighed, not even looking at us.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...No. We are not allowed by the Boss to kill the Vanguard. Just leave them alone.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "Without another word, the man walked out of the room, carrying the Secretary away into the smoke.", is_narrator=True)
+    show_story_box("", "I stayed on the floor for a long time, the black ash settling onto my clothes.", is_narrator=True)
+    show_story_box("", "I needed a minute. Once again, I needed a lot of minutes to process the absolute, terrifying absurdity of the world we had just stepped into.", is_narrator=True)
+
+def play_stage_4_18_start():
+    # --- BENIKAWA'S POV ---
+    show_story_box("", "********* ◆ *********\nBenikawa’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nInterior of the Main Pagoda", is_narrator=True)
+    
+    show_story_box("", "I was still ducking against the cold jade floor, pure black ash settling over my clothes like morbid snow.", is_narrator=True)
+    show_story_box("", "But I was the first one to push myself up.", is_narrator=True)
+    show_story_box("", "I looked over at Akasuke. He was staring blankly at the spot where the man named Koharu had just been standing. A faint, lingering trace of white steam was still rolling off Akasuke's left shin.", is_narrator=True)
+    
+    show_story_box("Benikawa", "‘He used it again, huh~,’", affiliation="Benikawa Ninja Clan", is_thought=True)
+    
+    show_story_box("", "I thought, a small, knowing smile tugging at my lips.", is_narrator=True)
+    
+    show_story_box("Benikawa", "As expected of Akasuke-kun~.", affiliation="Benikawa Ninja Clan", is_thought=True)
+    
+    show_story_box("", "My mind drifted back to our very first fight. Our little \"date\" in the shopping district, where I finally dropped the cute underclassman act and revealed myself as an assassin sent by my clan to kill him~.", is_narrator=True)
+    show_story_box("", "At the absolute climax of that fight, when his back was against the wall, he used it. Something I completely didn't expect a normal high schooler to be capable of. Well, I wouldn’t consider him ‘normal’ nowadays.", is_narrator=True)
+    show_story_box("", "Such power, imbued right into that devastating back kick that actually managed to send a super cyborg girlie like Miyu flying.", is_narrator=True)
+    show_story_box("", "Akasuke is strong. He has always been ridiculously strong, but he isn't a hardened criminal.", is_narrator=True)
+    show_story_box("", "His will shatters easier when faced with the sheer, unapologetic horror of the underworld, compared to someone like me, or Shigemura. We’re ninjas, after all.", is_narrator=True)
+    show_story_box("", "Speaking of which, Shigemura was already getting up, calmly brushing the soot off his uniform while conducting a swift, clinical analysis of his own injuries.", is_narrator=True)
+    show_story_box("", "He turned his head, his violet eyes locking onto mine.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“You fine, Benikawa?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I threw him a bright okay sign and a playful wink. He nodded, understanding immediately that my combat capabilities were fully intact, and turned to check on the rest of the Vanguard, one by one.", is_narrator=True)
+    show_story_box("", "A minute or two later, we managed to drag everyone out of the vault room and into the adjoining hallway, since continuing to inhale the Koharu guy’s residual ash definitely wasn't going to end well for our lungs.", is_narrator=True)
+    show_story_box("", "Half of the Vanguard was still unwilling to get up.", is_narrator=True)
+    show_story_box("", "Naganohara, Natsume, and Kagaku were slumped against the wall, utterly spent. And to everyone's surprise, Akasuke was with them.", is_narrator=True)
+    show_story_box("", "Despite Kagaku injecting us all with the Jade Serums to restore our stamina…I guess his mental exhaustion had completely caught up to him.", is_narrator=True)
+    show_story_box("", "He’d been thrashed around by a cyborg, learned the horrifying truth of the corrupt Megastructure, and was forced to stare down another one of the literal monsters of the world. He was surely running on empty.", is_narrator=True)
+    show_story_box("", "Yuri hovered over him, her brow furrowed in deep concern.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Akasuke-kun… ya look like you’re gonna pass out again.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura placed a hand on Yuri’s shoulder.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Leave him be, Inami. He’ll have to catch up later once he’s recovered his mental footing. But this way, he can stay here and protect the other three while they also rest.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Yuri hesitated, then nodded firmly.", is_narrator=True)
+    show_story_box("", "The four of us who were still active—me, Yuri, Shigemura, and Hana—stood up. We left the resting members behind with a few encouraging words, continuing our push deeper into the Pagoda to search for the Scroll of the Nine Armies.", is_narrator=True)
+    show_story_box("", "The halls were silent, lined with the standing, frozen corpses of more enforcers.", is_narrator=True)
+    show_story_box("", "Hana stepped carefully around one of the ashen statues, her face pale.", is_narrator=True)
+    
+    show_story_box("Hana", "“Based on what we overheard from that girl, ‘Miyu’, and the VIP infiltrator… they’re already retreating from the Megastructure. That means their goal wasn't to steal the Scroll, after all?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura nodded, keeping his eyes peeled for ambushes.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“It boils down to writing a report in the end. They’re a syndicate highly obsessed with tracking Kasakura’s progress. It is very likely because of the fascinating power of the Katas—a power that even they do not know the full extent of.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Yuri cracked her knuckles, her voice tight with anticipation.", is_narrator=True)
+    
+    show_story_box("Yuri", "“So who’s left to fight? Any remainin’ Enforcers who want to arrest us, assumin’ they haven't been roasted by that Koharu guy… and the Administrator that Liwei, Mei, and Xiao are currently fightin’ outside.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“Then we should head to the exit to check on their progress. If Liwei is stalling a literal god, he’s going to need all the help he can get.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "We changed our route, moving toward the grand entrance of the Pagoda.", is_narrator=True)
+    show_story_box("", "But before we could reach the doors, we heard footsteps. Slow, heavy footsteps echoing down the marble corridor toward us.", is_narrator=True)
+    show_story_box("", "We immediately raised our guards.", is_narrator=True)
+    show_story_box("", "But to everyone’s absolute surprise, it was Captain Mei.", is_narrator=True)
+    show_story_box("", "She was walking toward us, carrying an unconscious Liwei horizontally in her arms.", is_narrator=True)
+    show_story_box("", "Yuri dropped her fighting stance instantly, rushing forward.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Mei-san! Liwei-san! Are ya guys okay?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Okusora Mei", "“Do not step any closer.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Her voice was ice-cold.", is_narrator=True)
+    show_story_box("", "The Vanguard froze in our tracks.", is_narrator=True)
+    show_story_box("", "Mei slowly knelt down, gently and respectfully placing Liwei’s unconscious body onto the floor against the wall.", is_narrator=True)
+    show_story_box("", "Then, she stood up, turned to face us, and smoothly drew her Jian.", is_narrator=True)
+    show_story_box("", "She pointed the tip of the blade directly at us.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Whoa, hey! Mei, what are you doing? Why’re you suddenly hostile toward us..?”", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "“Wait… were you the one who knocked Liwei out?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Mei’s golden eyes were devoid of their usual warmth.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“I did. I slashed him from behind using this very sword.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Shigemura stepped slightly in front of Naganohara, maintaining his calm, analytical demeanor.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Can you provide the reason you did so, Captain?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Mei’s grip on her sword didn't waver, but her voice carried a heavy, profound sadness.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“It was obvious. Three Captains of the Yunhai Association could never ‘fight’ against an Administrator. We cannot even draw a blade against him. Our ingrained instincts forbid it.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“Only Liwei was capable of doing so. Because for years, he had been assimilating into the image of an Administrator himself by building his flawless reputation. But… he threw it all away.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "She looked down at Liwei’s resting face for a fraction of a second.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“His public image rapidly turned into that of a criminal the moment he declared himself a traitor on that stage. By doing so, Xiao and I also became physically unable to assist him against the Xiangyun.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“Liwei was always planning to announce himself as a seeker of revenge rather than a soldier pursuing true justice.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“If he played the hero, he would be lying to himself and everyone in the Megastructure. He told his unit about his lofty ideals… his sole desire to simply discard the power of the Scroll…”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Mei shook her head.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“But no human is capable of not feeling a shred of vengeance after their entire hometown is destroyed like that.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“The people he knew… gone without a trace in a single day, all because of one Administrator's selfish ego. It is only normal to feel vengeance. I do not blame him for that. Nobody can.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Her eyes narrowed slightly.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“But… that is why he is such an idiot. There could have been infinitely better ways to execute his plan without sacrificing himself. He just had to think of going out with a bang like that…that is just…who Liwei is.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Shigemura shifted his stance, his brow furrowing as he started to get nervous.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“What actually happened during your encounter with the Administrator, Mei?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Okusora Mei", "“Right. The Xiangyun swung his blade. He used solid ink matter strokes to first physically separate Liwei and me from Xiao.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“Then… he directly ordered the ingrained instinct within me to attack Liwei from behind. I couldn't even warn him. My body just moved. But the expression he gave me when I struck him…”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“I…suppose it was one of complete understanding and acceptance.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Mei took a slow, measured breath.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“After Liwei fell, the Administrator ordered me to enter the Pagoda and suppress the rest of the intruders. By the Administration's standards, that means the Kasakura Vanguard.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“The order did not mention Liwei…so my body allowed me to carry him here to safety.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Yuri looked completely lost.", is_narrator=True)
+    
+    show_story_box("Yuri", "“I don't get it. Are ya currently sane, Mei-san? Are ya being mind-controlled?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "To demonstrate, Mei raised her free left hand, waving it casually at us. Her facial expression was lucid, pained, but entirely her own feelings.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“I am one hundred percent sane. I can fully think for myself. I can freely move the parts of my body that are not required for the objective.”", affiliation="Yunhai Association")
+    
+    show_story_box("Yuri", "“Then why is that sword still pointed at us?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei struggled to find the words.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“It is… incredibly hard to explain what I currently feel.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I shared a look with Shigemura. We both understood something similar. We stepped up to the front.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“You’re stuck in a ‘flow’, aren't you? Even if it isn't what you intend to do, your body is just following a current.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "It was something eerily similar to the rigid rules and instincts ingrained within ninjas regarding the Ibara Exemption, but I guess on a much, much more terrifying, biological level here.", is_narrator=True)
+    show_story_box("", "Shigemura addressed the confused Vanguard members.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“It is not mind control. She can move and think freely. And calling her a ‘puppet’ is also incorrect; no one is directly moving her muscles for her.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“The closest explanation is that the Administrator has the power to constantly add a single ‘movement’ to her subconscious pattern. A movement that cannot be resisted because her brain does not even register it as something to resist.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I nodded, gripping my kunai.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Um…think of it like walking. No, more like ‘going somewhere’. If an Administrator adds the movement of ‘running’ to her next action, it simply feels completely natural for her body to do it.”", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "“Right now, to Mei’s nervous system, assisting us and suppressing us feels like the exact same natural action.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Yuri groaned, aggressively rubbing her temples.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Ugh! The concept is way too complicated! Just tell me what we have to do!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura gave the simplest, most brutal answer possible.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“We have to fight Mei.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "The active Vanguard members had long prepared for the possibility of clashing with the Association, but hearing the sad truth of our next objective left a bitter taste in all of our mouths.", is_narrator=True)
+    show_story_box("", "Mei adjusted her grip on her Jian, dropping into a flawless, lethal stance. Despite the tragedy of the situation, a warrior's spark ignited in her golden eyes.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“It is a shame to not see Natsume currently with your group.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“Nevertheless… I wish to have a good fight with everyone present.”", affiliation="Yunhai Association")
+
+
+def play_stage_4_18_end():
+    # --- XIAO'S POV ---
+    show_story_box("", "********* ◆ *********\nXiao’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nGrand Pavilion", is_narrator=True)
+    
+    show_story_box("", "I stood perfectly still, trapped within the pitch-black walls of the Xiangyun’s solid ink.", is_narrator=True)
+    
+    show_story_box("Xiao", "‘I hope Mei and that idiot Liwei made it out,’", affiliation="Megastructure Administrator", is_thought=True)
+    
+    show_story_box("", "I thought, keeping my eyes closed, my posture perfectly relaxed despite the suffocating pressure of the dark matter surrounding me.", is_narrator=True)
+    show_story_box("", "After waiting what felt like an eternity, the dark energy finally yielded. The black ink surrounding the performance venue hissed and dissipated into thin air all on its own.", is_narrator=True)
+    show_story_box("", "When the veil lifted, I was left standing face-to-face with the Administrator.", is_narrator=True)
+    show_story_box("", "He stood there, exactly as he had been before the chaos started. His dark Jian was resting at his side…", is_narrator=True)
+    show_story_box("", "…And he was still wearing that infuriatingly gentle, serene expression.", is_narrator=True)
+    
+    show_story_box("Xiangyun", "“So. Are you finally returning to the court, Xiao?”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "I opened one eye, looking away toward the ruined stage.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Only because you were about to kill Mei and a bunch of other people I happen to value. Don’t get it twisted, Yu.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "The man named Yu let out a soft, airy chuckle.", is_narrator=True)
+    
+    show_story_box("Yu", "“Did you enjoy living the life with the commoners down there?”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "I looked back at him, a teasing, defiant smirk crossing my face.", is_narrator=True)
+    
+    show_story_box("Xiao", "“I had way more fun playing Enforcer down there than I ever did being an uptight, shameless Administrator up here.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“You folks sit in your high towers and see entire settlements of living people as nothing but pieces on a chessboard. It’s disgusting.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Yu returned a gentle laugh, completely unbothered by the insult. He elegantly put away his Jian, clasping his hands behind his back.", is_narrator=True)
+    
+    show_story_box("Yu", "“Can you guarantee that you will not be running away from the court’s duties again this time?”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "I sighed, dropping my shoulders.", is_narrator=True)
+    
+    show_story_box("Xiao", "“As long as you don't hurt them, Yu.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("Yu", "“You have my word. I will uphold my end of the deal. However…whatever befalls them next from my authority is a necessity. It must be done in order to appease the other Xiangyun, so they do not take matters into their own hands.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "I nodded slowly. I accepted the terms.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Fine. Do your worst. I know they’re strong enough to survive it. They’ll escape this Megastructure, and I bet they’ll bring great change to this place later.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“There will be no more corrupt Administrators. No more local gangs terrorizing the streets without the Enforcers turning a blind eye.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "I crossed my arms, closing my eyes again to picture my true endgame.", is_narrator=True)
+    
+    show_story_box("Xiao", "“And most importantly, I hope the factories can continue to steadily grow. If they boost production, I can finally play video games on a console with far more powerful ‘Jade Electronics’ specs.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Yu laughed out loud at that.", is_narrator=True)
+    
+    show_story_box("Yu", "“I myself am fine with your words, Xiao. But a word of advice: you probably should not call any of your fellow Administrators ‘corrupt’ right in front of their faces when you return to your seat.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "“Ahem.”\n\nA polite, thoroughly unimpressed voice interrupted us.", is_narrator=True)
+    show_story_box("", "Yu and I both turned toward the grand seatings. In the chaos of the ink walls and Liwei’s rebellion, I had completely forgotten about the audience.", is_narrator=True)
+    show_story_box("", "One of the VIPs was standing up.", is_narrator=True)
+    show_story_box("", "He was a young, mannerly gentleman with a slim build and long, impeccably styled yellow hair. He wore a crisp white suit that looked untouched by the battle’s debris.", is_narrator=True)
+    show_story_box("", "It was the representative of the \"Starry Eyed\". The Starguard.", is_narrator=True)
+    
+    show_story_box("Mannerly Starguard", "“Are you two quite finished? Are you fine with letting all of the other honored guests hear and see your secret administrative conversations over a ruined show like this?”", affiliation="Starguards")
+    
+    show_story_box("", "Yu bowed his head slightly, his gentle smile remaining.", is_narrator=True)
+    
+    show_story_box("Yu", "“My deepest apologies. I admit, I had momentarily forgotten about our honored guests in the midst of the commotion.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "The Starguard didn't accept the apology. He gracefully stepped up from the VIP platform, walking over with measured, silent steps until he was standing right in front of Yu. He looked around the ruined pavilion, then sizing the Administrator up.", is_narrator=True)
+    
+    show_story_box("Mannerly Starguard", "“I’m waiting. For any of you to finally use the ‘Scroll’.”", affiliation="Starguards")
+    
+    show_story_box("", "Yu remained silent. The Starguard continued, his tone perfectly polite but dripping with absolute condescension.", is_narrator=True)
+    
+    show_story_box("Mannerly Starguard", "“I know why the Administration invited us VIPs over. It was for one single purpose: to show us the might of your little toy.”", affiliation="Starguards")
+    show_story_box("Mannerly Starguard", "“Many outsiders would think the Yunhai Administration would try to keep their tool a secret, preparing it in the shadows for a regional war.”", affiliation="Starguards")
+    show_story_box("Mannerly Starguard", "“But I know you, Xiangyun. You are planning to activate it and destroy this entire sector right here and now, just to show us all exactly how terrifying your Phenomena Tool is.”", affiliation="Starguards")
+    
+    show_story_box("", "My eyes snapped open.", is_narrator=True)
+    
+    show_story_box("Xiao", "‘Huh? He’s going to activate it here? Now?’", affiliation="Megastructure Administrator", is_thought=True)
+    
+    show_story_box("Xiao", "“Yu, don't do it. Don't use the Scroll.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Yu paid absolutely no attention to me.", is_narrator=True)
+    show_story_box("", "The Starguard leaned his face closer to Yu’s, his neon-blue, star-shaped pupils glowing with a cold, intimidating light.", is_narrator=True)
+    
+    show_story_box("Mannerly Starguard", "“Come on. Pull out the bloody. Scroll. Already.”", affiliation="Starguards")
+    
+    show_story_box("", "After a short pause, Yu laughed gently again.", is_narrator=True)
+    show_story_box("", "He reached to his hip and pulled out a physical, rolled-up parchment. It was the genuine Scroll of the Nine Armies.", is_narrator=True)
+    show_story_box("", "It had been on him this entire time.", is_narrator=True)
+    show_story_box("", "With a flick of his wrist, Yu unfolded the paper.", is_narrator=True)
+    show_story_box("", "In the next millisecond, the build-up completely shattered.", is_narrator=True)
+    show_story_box("", "There was no wind-up. No warning.", is_narrator=True)
+    show_story_box("", "The Starguard unleashed a lazy front kick.", is_narrator=True)
+    show_story_box("", "It moved so fast the air itself tore apart. The kick punched straight through the ancient Scroll, ripping the legendary paper to shreds, and continued right through Yu’s entire torso, leaving a massive, gaping hole in the Administrator's chest.", is_narrator=True)
+    show_story_box("", "Elysium’s leg slid further past the body, stopping just an inch in front of my face.", is_narrator=True)
+    show_story_box("", "BOOOM!", is_narrator=True)
+    show_story_box("", "An impact so loud it sounded like a bomb detonating blessed my eardrums.", is_narrator=True)
+    show_story_box("", "I stared at the leg hovering perfectly still in front of me. Uncontrollable, thick light-blue smoke was spewing off the Starguard’s limb, accompanied by violently glowing cyan sparks that crackled with raw Phenomena energy.", is_narrator=True)
+    show_story_box("", "I looked past his leg at the VIP seating. The remaining guests were completely indifferent to the fact that a man had just been blown open in front of them.", is_narrator=True)
+    show_story_box("", "I let out a breath, my expression calming down slightly.", is_narrator=True)
+    show_story_box("", "I looked at the yellow-haired man as he retracted his leg.", is_narrator=True)
+    
+    show_story_box("Xiao", "“That was… impressive. What is your name?”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "The man smoothed out his jacket, bowing gracefully toward me.", is_narrator=True)
+    
+    show_story_box("Elysium", "“I am Elysium Starr. A proper Starguard of the Starr Bloodline. A pleasure.”", affiliation="Starguards")
+    
+    show_story_box("", "I pointed a finger at the ground behind him.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Well, Elysium-san. Please take a look at the ‘scrap paper’ you just punched through.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Elysium paused, turning his head.", is_narrator=True)
+    show_story_box("", "The tattered, shredded remains of the Scroll were fluttering to the ground. But they weren't dead.", is_narrator=True)
+    show_story_box("", "The torn pieces of paper continued to glow with an intense, blinding golden light, hovering in the air as if Yu was still holding them.", is_narrator=True)
+    show_story_box("", "Elysium’s star-shaped pupils contracted slightly in genuine, calm curiosity.", is_narrator=True)
+    
+    show_story_box("Elysium", "“Hm?”", affiliation="Starguards")
+    
+    show_story_box("", "He raised his foot and casually stomped directly onto Yu’s mangled, standing body.", is_narrator=True)
+    show_story_box("", "CRACK-BOOM!", is_narrator=True)
+    show_story_box("", "Another massive shockwave rocked the pavilion, accompanied by a violent release of light-blue steam as Yu's physical form was crushed against the floor.", is_narrator=True)
+    
+    show_story_box("Xiao", "“It’s no use, Elysium-san. Once the ritual starts, it cannot be stopped by physical destruction.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“And Yu is not actually dead.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "As if on cue, the mangled remains of the Administrator dissolved into golden dust. From the glowing, hovering pieces of the torn Scroll, Yu’s gentle voice echoed through the air, perfectly calm.", is_narrator=True)
+    
+    show_story_box("Yu", "“I will be waiting for you back at the court, Xiao.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Elysium sighed, dusting off his pristine white trousers.", is_narrator=True)
+    
+    show_story_box("Elysium", "“I suppose I am a little bummed. I knew destroying an entire Region’s pride wouldn't be as easy as kicking down some old guy, but still…how disappointing.”", affiliation="Starguards")
+    
+    show_story_box("", "He turned away, adjusting his cuffs.", is_narrator=True)
+    
+    show_story_box("Elysium", "“I have lost interest in all of Yunhai. Let us depart, people.”", affiliation="Starguards")
+    
+    show_story_box("", "Without another word, Elysium and the rest of the Multi-Regional VIPs stood up from their seats, turning their backs on the glowing ritual and calmly exiting the pavilion, leaving the Megastructure entirely.", is_narrator=True)
+    show_story_box("", "Except for one.", is_narrator=True)
+    show_story_box("", "Only one VIP remained seated in the grand stands.", is_narrator=True)
+    show_story_box("", "It was the one Liwei had introduced as the \"Propagator of The Seditious Garden.\" He was wearing a heavy cloak, his face entirely obscured by a hood.", is_narrator=True)
+    show_story_box("", "I narrowed my eyes.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Everyone else is leaving. What are you still doing here?”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "The hooded figure didn't move. His voice was strangely raspy.", is_narrator=True)
+    
+    show_story_box("Propagator", "“I am waiting for someone to show up.”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "I stared at him for a moment, weighing the threat. But I had my own promises to keep.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Very well. But the ritual’s area of effect will reach this place as well. You should be careful.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "I turned my back on the pavilion, walking toward the imposing doors of the Main Pagoda.", is_narrator=True)
+    show_story_box("", "Beneath my boots, the jade tiles began to vibrate.", is_narrator=True)
+    show_story_box("", "The ground started quaking violently as the sky above Sector III turned an ominous, black and red hue. The initialization of the ritual was complete.", is_narrator=True)
+    show_story_box("", "I closed my eyes, stepping into the darkness of the Pagoda.", is_narrator=True)
+    
+    show_story_box("Xiao", "‘To the friends I made over the very short time I was free… please be safe.’", affiliation="Megastructure Administrator", is_thought=True)
+    
+    show_story_box("", "The Nine Armies were being unleashed.", is_narrator=True)
+    show_story_box("", "Yunhai was about to show the world its true, terrifying might.", is_narrator=True)
+
+def play_stage_4_19_start():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nInterior of the Main Pagoda - Hallway outside the Vault", is_narrator=True)
+    
+    show_story_box("", "The black ash had finally stopped falling, leaving a thick, morbid layer of soot over the beautiful jade floor.", is_narrator=True)
+    show_story_box("", "I sat with my back against the wall, my breathing slow and even. Beside me, Naganohara, Natsume, and Kagaku were resting in similar states of exhaustion.", is_narrator=True)
+    show_story_box("", "The Jade Serums had healed our physical wounds and restored our stamina, but the mental toll of the last hour was heavy.", is_narrator=True)
+    show_story_box("", "Naganohara shifted uncomfortably, her golden eyes darting toward me with worry.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Um… Akasuke-kun? Are you doing okay over there?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Natsume leaned her head back against the wall, her eyes closed.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Give him some space, Tsukimiyama. He just had his shoulder shattered, got thrashed by a cyborg, and stood face-to-face with a literal monster. He has to be at his absolute mental limit right now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked at my hands, clenching and unclenching my fists. The memory of the white steam rolling off my shin during my fight with Miyu flashed in my mind.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Nah. I’m fine. It’s not fatigue. And I’m not at my limit.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The three girls blinked, looking over at me.", is_narrator=True)
+    show_story_box("", "I pushed myself off the floor, standing up straight and dusting the ash off my Kasakura uniform.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Alright. I’m fully recovered. When I said I wanted to reach the level of the monsters we’ve encountered so far… I meant it.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“Miyu even said it herself. When I copied her back kick, she asked how I could ‘already use that’. The steam… the friction… I think I’m starting to touch the edges of an actual Phenomena.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked at them, a confident, fiery resolve burning in my chest.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“I’m not backing down now. None of us are.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kagaku smiled, adjusting her lab coat. Naganohara let out a deep sigh of relief, clutching her chest.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Thank goodness! You had that super serious brooding face on, so I thought you were depressed! If our leader is still rearing to go, then I’m not giving up either!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Natsume smirked, opening her eyes.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Idiots, the whole lot of you. But… it’s good to see you haven't broken yet.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "RUUUUUMBLE.\n\nThe tender moment was violently interrupted.", is_narrator=True)
+    show_story_box("", "The entire Pagoda shook. It wasn't a localized tremor; it felt like the very foundation of the Megastructure was vibrating. Dust and loose jade tiles cascaded from the ceiling.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“An earthquake?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Natsume", "“No! Look at the corridor!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I snapped my head toward the far end of the hallway.", is_narrator=True)
+    show_story_box("", "A blinding, blood-red light was washing over the walls. Accompanying the light was the sound of heavy, synchronized, metallic marching.", is_narrator=True)
+    show_story_box("", "CLANK. CLANK. CLANK.\n\nAround the corner poured a massive wave of figures.", is_narrator=True)
+    show_story_box("", "They were strange, bulky soldiers, completely covered head-to-toe in rusted, ancient armor plates. Thick, unnatural gray smoke billowed from their joints. They didn't look human; they looked like ghastly, physical manifestations of ancient malice.", is_narrator=True)
+    
+    show_story_box("", "Naganohara shrieked, hiding behind me.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“G-G-GHOSTS?! Are those literal ghosts?!!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "My eyes widened as Liwei’s story clicked into place.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“You aren't completely off the mark, Naganohara! Those are the soldiers of the Nine Armies! Damnit, The Administration must have activated the Scroll!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The red-glowing army surged down the hallway, their rusted polearms and heavy swords raised. They were charging like a tidal wave of steel right toward our position.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Brace yourselves! We have to hold them off!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I dropped into my karate stance, blue Kata energy flaring to life around me. The girls readied their weapons, their own auras igniting the dim hallway.", is_narrator=True)
+    show_story_box("", "The front line of the ghastly soldiers reached me. I pulled back my fist to strike—", is_narrator=True)
+    show_story_box("", "WHOOSH.\n\nThey ran right past me.", is_narrator=True)
+    show_story_box("", "They completely ignored me. They ignored Naganohara, stepped around Kagaku, and bumped right past Natsume. The entire red army flooded the corridor, their glowing eyes fixed firmly on something else.", is_narrator=True)
+    
+    show_story_box("", "I lowered my fist, completely bewildered.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“What the…?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I turned to look to my left, following the direction they were charging.", is_narrator=True)
+    show_story_box("", "From the opposite side of the massive intersection, another wave of soldiers was pouring in.", is_narrator=True)
+    show_story_box("", "But this army was emanating a toxic, neon-green aura. They wore distinctly different armor—lighter, jagged, wielding dual curved blades.", is_narrator=True)
+    show_story_box("", "The Green Army let out a hollow, echoing war cry, rushing headlong to meet the Red Army.", is_narrator=True)
+    show_story_box("", "CLANG! SHATTER! CRUNCH!", is_narrator=True)
+    show_story_box("", "The two armies collided in the center of the hallway.", is_narrator=True)
+    show_story_box("", "It was an absolute bloodbath of phantom steel and phenomena smoke. Blades tore through armor, bodies were trampled, and the sheer kinetic force of their impacts began to obliterate the jade walls and support pillars around them.", is_narrator=True)
+    
+    show_story_box("Natsume", "“They aren't targeting us! They’re fighting each other!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Akasuke", "“The ceasefire! Liwei told me the Scroll of the Nine Armies was a tool created to break the ancient truce! So these autonomous warriors are only designated to attack the other armies!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We watched in horror as the corridor began to collapse under the weight of their eternal war.", is_narrator=True)
+    show_story_box("", "The phantom soldiers just kept flooding in from both sides, mindlessly hacking each other to pieces, uncaring about the collateral damage they were causing to the Pagoda.", is_narrator=True)
+    show_story_box("", "CRASH!\n\nA stray swing from a massive Red Army halberd cleaved right through a stone pillar three feet from my head. The ceiling groaned dangerously.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“Fascinating as this historical anomaly is, we are going to be crushed under the rubble!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Akasuke", "“We have to move! Now! We need to break out of this crossfire!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I pointed toward the back halls, away from the main intersection.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Naganohara, Natsume, Kagaku, stick close to me! Follow my lead!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We sprinted through the edges of the battlefield, dodging swinging blades and collapsing debris.", is_narrator=True)
+    show_story_box("", "But as we tried to slip through a side door, a handful of Green Army soldiers and Red Army brutes were knocked out of the main clash and sent stumbling directly into our escape route.", is_narrator=True)
+    show_story_box("", "The phantoms recovered, their glowing eyes locking onto the closest targets blocking their path to the enemy—us.", is_narrator=True)
+    show_story_box("", "A Green soldier raised its dual blades, charging Natsume, while a massive Red brute swung its halberd down at Kagaku.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“They might not be prioritizing us, but they’ll still cut down anything in their way! Girls, I need your help! Clear the stragglers so we can break through!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara stepped up, her Riposte Gang Kata blazing.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“Leave it to us, Leader! We’re not dead weight!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Akasuke", "“Let’s push through!”", affiliation="Kasakura High School Student / Seven Wonders")
+
+def play_stage_4_20_start():
+    # --- YURI'S POV ---
+    show_story_box("", "********* ◆ *********\nYuri’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nInterior of the Main Pagoda - Eastern Corridors", is_narrator=True)
+    
+    show_story_box("", "Thud.", is_narrator=True)
+    show_story_box("", "Mei’s knees hit the jade floor. She was wearing a relieved expression.", is_narrator=True)
+    show_story_box("", "We had finally done it. We managed to suppress Captain Mei’s ‘Ingrained Command’ while actively trying to inflict the least possible damage to her.", is_narrator=True)
+    show_story_box("", "It wasn't easy—even holding back, an Enforcer Captain of the Yunhai Association was a terrifying opponent.", is_narrator=True)
+    show_story_box("", "Benikawa was now on Mei’s back, her legs wrapped around the Captain's torso and her arms securing Mei’s dominant sword-arm in a tight, inescapable lock.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Gotcha! Don't move, Captain, or I’m gonna have to dislocate this shoulder!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Mei struggled for a moment, but then, she suddenly stopped.", is_narrator=True)
+    show_story_box("", "The rigid, unnatural tension in her muscles completely melted away. She let out a long, exhausted breath, her head dropping forward.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“...You can let go of me now, Ayame-san.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Her voice was different. The robotic, mission-focused edge was gone. It was just Mei again.", is_narrator=True)
+    show_story_box("", "Benikawa kept her hold tight, leaning her head over Mei’s shoulder suspiciously.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Are you sure? You aren't gonna try to slice my head off the second I loosen my grip, right~?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Okusora Mei", "“I am sure. The compulsion… it is gone. I have complete control of my body back.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "She turned her head slightly to look at us, offering a weak but sincere smile.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“Thank you, Kasakura Vanguard. For fighting me with your all, yet sparing my life.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Benikawa uncoiled herself, hopping off Mei’s back and offering her a hand up.", is_narrator=True)
+    show_story_box("", "Mei took it, brushing the dust off her white uniform before safely sheathing her Jian.", is_narrator=True)
+    show_story_box("", "Shigemura lowered his fists, his violet eyes analytical as always.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“The ingrained suppression order was rendered ineffective? That shouldn't happen naturally so easily. What caused the link to break?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Mei rubbed her temple, her expression darkening.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“The Administrator’s authority is absolute. For the command to drop so suddenly…the Xiangyun must have encountered a severe problem back at the Grand Seat. A lethal distraction, or perhaps…”", affiliation="Yunhai Association")
+    
+    show_story_box("", "She trailed off. Her eyes widened, a look of sudden, panicked realization washing over her face.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“Right, Xiao! I left Xiao back at the performance venue with him!”", affiliation="Yunhai Association")
+    
+    show_story_box("Hana", "“Do you want to go back and save her? We can help you!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei opened her mouth to answer, but before she could speak, the words were drowned out.", is_narrator=True)
+    show_story_box("", "RUUUUUMBLE.\n\nA violent, deafening tremor ripped through the entire hallway. It wasn't an explosion; it was the rhythmic, terrifying sound of thousands of armored boots hitting the stone floor in perfect unison.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Whoa! Earthquake?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“No! Look down the hall!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "We all snapped our heads toward the corridor intersection.", is_narrator=True)
+    show_story_box("", "A blinding, neon-green light washed over the jade walls. Then, they turned the corner.", is_narrator=True)
+    show_story_box("", "It was an army.", is_narrator=True)
+    show_story_box("", "But they weren't human. They were ghastly, spectral soldiers emanating a toxic green aura, clad in jagged, ancient armor and wielding dual curved blades. They were moving in a mindless, grouped rush, leaving trails of ethereal smoke in their wake.", is_narrator=True)
+    show_story_box("", "Hana let out a terrified gasp.", is_narrator=True)
+    
+    show_story_box("Hana", "“Wh-What the heck are those?! Ghosts?!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“Since when does the Megastructure have a haunted house attraction?!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Mei didn't waste a single second staring. She immediately ducked down, hoisting the still-unconscious Liwei onto her shoulder with impressive strength.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“I do not know what those are, but we cannot fight an army of apparitions! We are fleeing the area!”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I stared at the spectral soldiers. The puzzle pieces from Shigemura’s earlier briefing suddenly slammed into place.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Wait! The ancient armor… the crazy energy… this must be what Akasuke-kun was talkin’ about, right?! The Nine Armies thing!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura’s face went pale. He immediately understood the gravity of the situation.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“He’s right..! The Scroll of the Nine Armies has been activated. The ancient ceasefire is broken..!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "The Green Army wasn't looking at us directly—they seemed to be charging blindly toward some unseen enemy further down the Pagoda—but a dozen of their stragglers peeled off from the main horde, their glowing green eyes locking onto us.", is_narrator=True)
+    show_story_box("", "They raised their curved blades.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“We cannot let ourselves get bogged down here! If we get caught in their main marching path, we’ll be trampled to death!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "He pointed toward a narrow side-corridor that branched off from the main hall, away from the spectral army's trajectory.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“We break through any soldiers directly in our path and turn down that corner! Inami! Benikawa! Take the front!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("Yuri", "“Got it! Get behind me, everyone!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I channeled my Kata, blue light igniting around my fists as I charged head-first toward the charging phantoms.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Outta my way, ya oversized glowsticks!”", affiliation="Kasakura High School Student / Seven Wonders")
+
+def play_stage_4_21_start():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nInterior of the Main Pagoda - Safe Corridor", is_narrator=True)
+    
+    show_story_box("", "We ran until the sounds of the grinding metal and phantom war cries faded into a muffled echo.", is_narrator=True)
+    show_story_box("", "Naganohara, Natsume, Kagaku, and I collapsed against the jade walls of a relatively pristine hallway, finally escaping the crossfire of the Nine Armies.", is_narrator=True)
+    show_story_box("", "I looked back the way we came, my mind racing.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“They aren't trying to hide it. The Administration wasn't planning on keeping the Scroll a secret.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Natsume caught her breath, adjusting her shirt.", is_narrator=True)
+    
+    show_story_box("Natsume", "“What do you mean?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Akasuke", "“They invited all those VIPs here to use the Scroll right in front of them. It was a massive, arrogant display of the Yunhai Region's might.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara hugged her knees to her chest, looking worried.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“But… won’t those VIPs be in danger? With all those ghosts running around destroying the Pagoda?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I couldn't help but look at her in genuine confusion for a second. Then, I remembered that she and the rest of the Vanguard hadn't been in the pavilion to feel the crushing weight of the 'Starry Eyed' or the others.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Naganohara… if the Administrator was planning to kill those VIPs just to taunt their factions with the Scroll, it means he resolved himself to get instantly obliterated by…let’s say, six ‘Kesler’s.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Naganohara’s eyes went wide, terrified by the cold facts, yet simultaneously reassured that the guests weren't helpless victims.", is_narrator=True)
+    show_story_box("", "Tap. Tap. Tap.\n\nLight, hurried footsteps echoed from the opposite end of our new hallway.", is_narrator=True)
+    show_story_box("", "I immediately jumped to my feet, dropping into a fighting stance, expecting another wave of phantom soldiers or Yunhai Enforcers.", is_narrator=True)
+    
+    show_story_box("", "‘Akasuke-kun!’", is_narrator=True)
+    
+    show_story_box("", "!! I dropped my guard, letting out a massive sigh of relief.", is_narrator=True)
+    show_story_box("", "It was Yuri. She was leading Benikawa, Shigemura, Hana, and Captain Mei down the hall.", is_narrator=True)
+    show_story_box("", "Mei was carrying an unconscious, heavily bruised Liwei on her back.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“You guys made it!...What happened to Liwei-san?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei carefully set Liwei down against the wall, her expression pained.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“It is a long story. I… I had to strike him down myself.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I didn't wait for the full explanation. Seeing how battered and unresponsive the First Unit Captain was, I turned directly to Kagaku.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Kagaku! The Azure Jade Serum. Let’s use it on him.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Mei flinched, looking at the glowing blue-green vial Kagaku pulled from her padded briefcase.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“Wait. Are you certain? That is your only prototype. Your ultimate trump card. Is it truly fine to waste something so precious on a man like him?”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Benikawa leaned against the wall, a wicked, teasing smirk crossing her face.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Oh, come on, Captain~. How are you going to go on that big romantic date with him if he bleeds out right here?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Mei’s face instantly flushed a brilliant, explosive red. She became completely embarrassed to be reminded of her scrappy battlefield confession.", is_narrator=True)
+    show_story_box("", "She aggressively turned her back to us, hiding her face while Kagaku prepped the injection.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“It’s not a waste, Mei-san. Liwei is a formidable fighter and our strongest ally right now. Supporting him with everything we have is our absolute best bet for surviving this.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Kagaku administered the Azure Jade Serum directly into Liwei’s arm. Instantly, the deep gashes on his back began to knit themselves together, signs of rapid recovery already showing.", is_narrator=True)
+    show_story_box("", "We waited in silence for him to wake up.", is_narrator=True)
+    show_story_box("", "Despite the distant, muffled sounds of war and trampling echoing through the Pagoda’s halls, the corridor we were in was quiet.", is_narrator=True)
+    show_story_box("", "Until it wasn't.", is_narrator=True)
+    show_story_box("", "A tiny, almost imperceptible noise—softer than a footstep, gentler than a breeze—rippled through the air.", is_narrator=True)
+    show_story_box("", "Instantly, Benikawa and Shigemura both snapped their heads up, turning to look down the empty, ash-covered hallway behind us.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Shigemura? Benikawa? What did you sense?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "They didn't answer. They were too focused.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“...Benikawa.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Benikawa’s teasing demeanor vanished completely. Her purple eyes sharpened into deadly, serious slits.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Yeah.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "I took a step toward them.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Guys, what is it—”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Shigemura", "“It’s coming!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Both ninjas moved in perfect unison. They took a rapid step back, drawing their kunai, and swung at the completely empty air in front of them.", is_narrator=True)
+    show_story_box("", "CLANG!\n\nSparks flew from empty space. The sheer force of the invisible, massive attack pushed both Shigemura and Benikawa sliding all the way back into the wall.", is_narrator=True)
+    show_story_box("", "Slowly, the air warped and shimmered.", is_narrator=True)
+    show_story_box("", "The figure who unleashed the attack began to show themselves, materializing seemingly out of thin air.", is_narrator=True)
+    show_story_box("", "I couldn't sense a single thing. No bloodlust. No shift in the air currents. No breathing. No body heat. This assailant was able to hide his entire existence completely.", is_narrator=True)
+    show_story_box("", "Shigemura gripped his kunai, his voice tight with warning.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Everyone, stay back. What we are dealing with right now is even worse than the Nine Armies.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“That’s an Ibara. An outcast of the ninja world.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Benikawa wiped a bead of sweat from her cheek.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Damn…I always wanted to see and fight against a real one… but definitely not in this situation. And I never expected my first Ibara encounter to be this strong.”", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "“Shigemura, have you ever faced one like this before?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("Shigemura", "“I have suppressed a few low-level ones. But never one of this caliber.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“It is an iron rule regarding any Ibara: Since they are perpetually hunted down by the entire ninja world, any outcast who manages to survive for a very long time hones their skills and survivability to the absolute extremes.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“They become a formidable force of nature… until they become completely out of reach for even our clans to control.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I finally got a good glimpse of the assassin.", is_narrator=True)
+    show_story_box("", "He was a bulky, muscular male with short purple hair, covered head-to-toe in dark, tactical ninja-mercenary clothing. He clearly favored heavy, singular, punishing attacks.", is_narrator=True)
+    show_story_box("", "He pulled back his weapon—a short, lethal Wakizashi blade—and stepped backward. His body slowly began to dissipate into the air again, his invisibility technique reactivating.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“It’s either highly advanced shinobi stealth equipment, or his own specialized Awakened technique. Likely the latter.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“Vanguard! Captain Mei! Group together and stay entirely on the defensive! Do not attack!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Only ninjas with their heightened senses fully engaged could perceive the Ibara’s attacks a fraction of a second before they landed.", is_narrator=True)
+    show_story_box("", "Shigemura and Benikawa stepped forward, forming a two-person vanguard to take on the outcast.", is_narrator=True)
+
+def play_stage_4_21_end():
+    # --- SHIGEMURA'S POV ---
+    show_story_box("", "********* ◆ *********\nShigemura’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nInterior of the Main Pagoda", is_narrator=True)
+    
+    show_story_box("", "We were being cornered.", is_narrator=True)
+    show_story_box("", "We could somewhat defend against the Ibara’s invisible strikes, but moving onto the offensive was completely out of the question.", is_narrator=True)
+    show_story_box("", "CLASH!\n\nI parried a heavy, downward slash aimed at my neck, the force vibrating painfully up my reinforced arm.", is_narrator=True)
+    show_story_box("", "The Ibara immediately vanished, reappearing a split second later beside Benikawa.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Guh!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "She couldn't react perfectly in time. She dodged, but the Wakizashi tore a small, bleeding gash across her torso.", is_narrator=True)
+    show_story_box("", "Akasuke stood defensively in front of the others, his voice tense.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Shigemura! We can’t keep this up! We’re just waiting to be slowly culled by him!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Shigemura", "“I know! I am thinking! Just hold on and look for an opportunity!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "A deep, sadistic, manly voice echoed from the empty air around us, seemingly coming from all directions at once.", is_narrator=True)
+    
+    show_story_box("Ibara", "“Hahahaha! I can never get enough of this! Psychologically torturing and cornering my prey before moving in for the kill… it’s the sweetest nectar in the world!”", affiliation="Outcast Ninja")
+    show_story_box("Ibara", "“That’s why I was branded, you see! I’m a ninja genius! A prodigy! But my weak, pathetic village couldn't stomach my methods, so they cast me out!”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "A blade sparked against my kunai in the dark.", is_narrator=True)
+    
+    show_story_box("Ibara", "“They were fools! But I’m actually grateful! Because now, I am entirely free to be the heinous criminal I was born to be! I can do whatever I want!”", affiliation="Outcast Ninja")
+    
+    show_story_box("Shigemura", "‘He’s getting arrogant,’", affiliation="Kasakura High School Student", is_thought=True)
+    show_story_box("Shigemura", "I can sense his next attack.", affiliation="Kasakura High School Student", is_thought=True)
+    
+    show_story_box("", "I pivoted, moving in to parry his heavy strike.", is_narrator=True)
+    show_story_box("", "CLANG!", is_narrator=True)
+    show_story_box("", "The Ibara pushed his weight into the clash, becoming fully visible as our blades locked.", is_narrator=True)
+    show_story_box("", "But suddenly, the Ibara’s form blurred. He divided into two identical figures.", is_narrator=True)
+    
+    show_story_box("Shigemura", "‘A body double!’ I realized, engaging the one on the left.", affiliation="Kasakura High School Student", is_thought=True)
+    
+    show_story_box("", "Benikawa dashed forward to intercept the newly separated form.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“He can’t use body doubles and invisibility at the same time! Stop him!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "But as Benikawa swung, the second Ibara simply split again. And again.", is_narrator=True)
+    show_story_box("", "Suddenly, there were four clones rushing directly toward the defenseless Vanguard.", is_narrator=True)
+    show_story_box("", "Akasuke, Yuri, Hana, and Mei stepped out slightly, launching coordinated strikes to take out the clones. Their attacks connected, and the body doubles easily dissipated into bursts of leaves and smoke.", is_narrator=True)
+    show_story_box("", "That was when the horrifying realization hit me. But I was a second too late.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Wait! Body doubles are basic curriculum! If he’s a genius—he’s likely using BOTH techniques at the same time!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Behind Yuri, the air shimmered.", is_narrator=True)
+    show_story_box("", "A blade swung down, aimed directly at her unprotected neck.", is_narrator=True)
+    show_story_box("", "Akasuke didn't think. He used pure, unadulterated instinct to throw himself in front of her.", is_narrator=True)
+    show_story_box("", "SHLLLRK.\n\nAkasuke took the would-be lethal slash directly across his right arm, blood spraying across the jade floor.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Akasuke-kun!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Shigemura", "“It’s not over! The one that just struck him was also a double imbued with invisibility! Brace yourselves!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Out of thin air, three more carefully placed body doubles broke their invisibility spells simultaneously. They were already mid-swing, their blades inches away from the backs of the defenseless Vanguard members.", is_narrator=True)
+    show_story_box("", "Everything moved in slow motion. I pushed off the floor, but I knew I couldn't reach them in time. I wasn't going to make it.", is_narrator=True)
+    show_story_box("", "SHING. SHING. SHING.\n\nA streak of white and silver flashed from the very back of the group.", is_narrator=True)
+    show_story_box("", "A figure parried every single body double’s strike in the span of a single heartbeat, his Jian already having sliced through their torsos before they could even register the counterattack.", is_narrator=True)
+    show_story_box("", "Two of the body doubles dissipated into leaves.", is_narrator=True)
+    show_story_box("", "The third figure—standing to the far left of the group—gasped, spewing a mouthful of blood. The true Ibara’s form fully appeared, staggering backward to catch his breath, clutching a deep slash across his chest.", is_narrator=True)
+    show_story_box("", "The man who had saved us stood tall, rolling his shoulders, the glowing aura of the Azure Jade Serum fading from his skin.", is_narrator=True)
+    show_story_box("", "It was Liwei. He had gotten up in an instant.", is_narrator=True)
+    show_story_box("", "He didn't look at the bleeding assassin. He turned his head, looking over his shoulder at Akasuke with his signature, charismatic grin.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Need a hand, kouhai?”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Akasuke clutched his bleeding arm, letting out a weak, relieved laugh.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Are you seriously stealing my line, senpai?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The Ibara snarled, his form instantly turning invisible again, weaving rapidly around the corridor for his next ambush.", is_narrator=True)
+    show_story_box("", "Liwei didn't panic. He just casually turned, facing what appeared to be completely empty air.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Can’t a senior have a little touching reunion with his juniors before you try to stab them?”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("Shigemura", "‘He can sense him.’", affiliation="Kasakura High School Student", is_thought=True)
+    
+    show_story_box("", "Despite Benikawa and I barely being able to track the Ibara’s bloodlust, Liwei is tracking him perfectly!", is_narrator=True)
+    show_story_box("", "Liwei smirked, cracking his neck.", is_narrator=True)
+    
+    show_story_box("Liwei", "“I don't know what was in that glowing juice you gave me, but I feel like I just took a reallllly long nap. I feel so refreshed, it’s like I’ve just been reborn~!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "The invisible Ibara lunged.", is_narrator=True)
+    show_story_box("", "I didn't even need to shout a warning. Liwei side-stepped effortlessly, parrying the unseen blade and delivering a lightning-fast counter-slash that cut the Ibara’s shoulder, forcing a grunt of pain and severe irritation from the empty air.", is_narrator=True)
+    show_story_box("", "Furious, the Ibara dropped his stealth. He rapidly performed a series of hand seals.", is_narrator=True)
+    show_story_box("", "In an instant, over twenty body doubles filled the corridor. Some proudly displayed their overwhelming bloodlust to distract us, while others immediately turned invisible, creating a chaotic, impossible minefield of attacks.", is_narrator=True)
+    show_story_box("", "But Liwei wasn't looking at them. He wasn't afraid.", is_narrator=True)
+    show_story_box("", "His focus had shifted entirely to the solid jade wall to his left.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Oh my.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "BOOOOOOM!\n\nThe wall violently exploded inward.", is_narrator=True)
+    show_story_box("", "A massive, chaotic wave of the Nine Armies blasted through the stone. It wasn't just the red and green soldiers anymore—", is_narrator=True)
+    show_story_box("", "—Yellow-armored spearmen and blue-cloaked phantom archers poured through the breach, rolling on the ground, fading into smoke, and hacking at each other as their eternal rivalry spilled into our corridor.", is_narrator=True)
+    show_story_box("", "Liwei stepped forward, raising his Jian, fully engaging the frontmost charging phantom armies and the Ibara’s clones all at once.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Vanguard! Keep running to the back of the Pagoda! Don't stop until you reach the Administration’s private quarters!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“We’ll meet up again there! Go!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "A wave of ghostly soldiers and invisible assassins surged forward, seemingly swallowing Liwei whole in a sea of blades and smoke.", is_narrator=True)
+    show_story_box("", "But Mei didn't hesitate, and neither did we. We trusted him.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Run! Go, go, go!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The Vanguard sprinted down the remaining corridor, leaving the chaotic warzone behind us.", is_narrator=True)
+
+def play_stage_4_22_story():
+    # --- MEI'S POV ---
+    show_story_box("", "********* ◆ *********\nMei’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nAdministration Courtyard (Behind the Main Pagoda)", is_narrator=True)
+    
+    show_story_box("", "We burst through the heavy rear doors of the Pagoda, stumbling out into the open air.", is_narrator=True)
+    show_story_box("", "The contrast was so jarring it gave me whiplash.", is_narrator=True)
+    show_story_box("", "Behind us, the interior of the Pagoda was a literal warzone of phantom steel, dark ash, and collapsing jade. But out here? It was perfectly serene.", is_narrator=True)
+    show_story_box("", "We were standing in a wide, meticulously swept stone brick courtyard. Lush, exotic flowers bloomed from ornate pots, and ancient, beautiful willow trees swayed gently in the breeze.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“...We are in the Administration’s private quarters. The atmosphere here… it is completely insulated from the chaos they just activated within Sector III.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Akasuke leaned against a stone pillar, clutching his bleeding arm, but his eyes were sharp.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Mei-san. You know this place better than any of us. Is there any way to stop the ritual of the Nine Armies? How do we end the war?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I lowered my gaze, shaking my head helplessly.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“I cannot help you with that, Hanefuji-dono. I barely know anything about the Region’s Phenomena Tool myself.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“It is a hidden, top-secret asset of the Administration. Officers of the Association like myself knew better than to poke around investigating it.”", affiliation="Yunhai Association")
+    show_story_box("Okusora Mei", "“If anyone knows how to stop the ritual—if such a method even exists—it would be Liwei…or a member of the Administration themselves.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "“I know the condition for the ritual to end.”\n\nA gentle, deeply familiar voice drifted from the garden path.", is_narrator=True)
+    show_story_box("", "I froze. I recognized that voice instantly.", is_narrator=True)
+    show_story_box("", "I turned around.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“Xiao…?”", affiliation="Yunhai Association")
+    
+    show_story_box("", "But the person standing before me was not the lazy, orange-haired Captain of the 11th Unit I knew.", is_narrator=True)
+    show_story_box("", "Xiao was dressed in a breathtakingly beautiful, over-decorated light orange Hanfu dress. The robes flowed elegantly around her, the wide sleeves trailing in the wind, embroidered with a distinct, glittering golden and orange cloud pattern.", is_narrator=True)
+    show_story_box("", "Her signature orange twin-tails were still there, but they were tied much more intricately now, adorned with expensive jade hairpins.", is_narrator=True)
+    show_story_box("", "Standing in front of me felt less like my outgoing, extroverted best friend, and more like another graceful, elegant, and entirely unreadable Xiangyun of the Megastructure Administration.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“Xiao, you… you are…”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I was in absolute disbelief. But looking at her soft, familiar smile, I couldn't find it in myself to be angry. She didn't look like she was here to betray us or stop us. She looked like she was here to reveal the truth, and possibly… to say goodbye.", is_narrator=True)
+    show_story_box("", "Xiao bowed gracefully, her hands clasped delicately in front of her.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Allow me to formally introduce myself once again. I am Xiao. Xiangyun, and Administrator of the Westward Megastructure.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "The Kasakura Vanguard stared at her in stunned silence.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Given my true position, I naturally know all about the mechanics of the Scroll of the Nine Armies. The condition to stop the war before it consumes all of Sector III is remarkably simple: The complete annihilation of any one of the Nine Armies.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("Akasuke", "“Annihilation?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Xiao", "“Yes. Once one specific army has been thoroughly crushed and wiped out from the conflict, the balance of the ancient ceasefire is restored. The ritual will forcefully end, and all the phantom soldiers will return back to the Scroll’s dimension.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "She glanced toward the sky, where the red hue of the ritual was still bleeding through the clouds.", is_narrator=True)
+    
+    show_story_box("Xiao", "“The physical Scroll itself was destroyed just moments ago by a rather rude VIP. But Phenomena energy cannot be destroyed so easily. It will simply reform and create an entirely new, usable Scroll in due time.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“However, if an army does not get decisively defeated today, the ritual will only end when the bloodlust and Phenomena energy naturally run out.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“By that point… there might be barely any of Sector III left to speak of.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "I stared at her, my mind reeling.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“Xiao, that is impossible. How are nine mere people supposed to take out an entire, berserk ancient army?”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Before Xiao could answer, Akasuke stepped forward. He didn't look scared. He looked completely resolved.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Xiao-san. Which army is currently the weakest? And who is their general?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Everyone—including Xiao—blinked in surprise at his immediate acceptance of the impossible objective.", is_narrator=True)
+    show_story_box("", "Naganohara panicked, waving her hands frantically.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“W-Wait! Akasuke-kun! We’ve already done way more than what we came here to accomplish! The infiltrators are practically wiped out by the crossfire, right?! We can just leave right now since everything is in chaos!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Kagaku nodded rapidly in agreement.", is_narrator=True)
+    
+    show_story_box("Kagaku", "“S-she has a point! Even if we decide to go through with this, we’ll be constantly fighting entire waves of spectral soldiers just to reach the core general! It’s suicide!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke turned to his friends. His expression was soft, carrying no judgment.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“I understand how you feel. You’re right. We’ve done enough.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "He pointed toward the tranquil stone benches lining the courtyard garden.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Anyone who doesn't want to participate can stay here and rest in the courtyard. It’s safe. But Liwei-san… my friend and my senior… he’s currently doing his absolute best back inside that Pagoda. I have to at least head back in and help him.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "He offered them a warm, reassuring smile.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“I promise you. I will come back and pick up everyone who chooses to rest here after I accomplish the mission.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "A heavy silence fell over the group.", is_narrator=True)
+    show_story_box("", "I watched closely. One would expect the non-combatants to walk toward the benches. It was the logical, safe choice.", is_narrator=True)
+    show_story_box("", "But to no one’s surprise, nobody moved an inch.", is_narrator=True)
+    show_story_box("", "Naganohara hesitated, pointing her index fingers together nervously. She looked at the benches, then at the Pagoda doors. Finally, she stepped over and hugged Shigemura’s arm tightly.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“F-Fuyu-kun will just protect me once we go in! Right?!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Shigemura’s stoic face instantly turned a brilliant shade of crimson. He looked away, completely unable to speak.", is_narrator=True)
+    show_story_box("", "But he didn't pull his arm away.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "‘Ah,’", affiliation="Yunhai Association", is_thought=True)
+    show_story_box("", "I thought, a warm feeling blooming in my chest.", is_narrator=True)
+    show_story_box("Okusora Mei", "The Vanguard has their own romantic interests developing between the members, too. How incredibly sweet it is to observe.", affiliation="Yunhai Association", is_thought=True)
+    
+    show_story_box("", "Natsume stretched her arms high above her head, letting out a long, exaggerated groan.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Ughhhh. It’s going to be a massive pain to go back in there and fight again.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Then she lowered her arms, a sharp, focused glint in her eyes.", is_narrator=True)
+    
+    show_story_box("Natsume", "“But… isn't that the entire purpose of this mission? ‘Steadfastness’ [勇往直前]. Unwavering resolve. After we do this, I have a feeling the Vanguard is going to become much stronger, and far more resolute.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I couldn't help but chuckle, stepping up beside her.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“My, Natsume. I remember you trying your absolute best to avoid fighting just a day or two ago. Now you are quite the motivated warrior after our one little sparring match together. Have you developed such a taste for battle?”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Natsume’s confident facade shattered. She realized how painfully cheesy her speech sounded out loud. She flushed red and looked away, grumbling under her breath.", is_narrator=True)
+    
+    show_story_box("Natsume", "“S-Shut up. I’m just trying to keep morale high…”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Xiao laughed—a bright, genuine sound that belonged entirely to the 11th Unit Captain I knew, not the Xiangyun she was dressed as.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Haha! This… this kind of warm interaction right here. This is what I live for. It is exactly why I ran away from the Administration to act as a normal Yunhai Enforcer.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“I just wanted to get a taste of a life like this. Mei.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Her smile softened, and she returned to the topic at hand.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Listen closely, Akasuke. You need to search for the ‘Ten Thousand Blossom Brotherhood’. They emanate a distinct pink aura.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“Their general is crumbling. He is currently at his absolute weakest after months of being continuously summoned and fighting. We’ve been observing each usage of the Scroll’s ritual for the past few months.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“The next army to naturally be crushed by the others would likely be them anyway. You just need to speed up the process. Target the ‘Pink Army’.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Akasuke nodded firmly.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Ten Thousand Blossom Brotherhood. Pink aura. Got it. Thank you, Xiao-san.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Xiao stepped back, bowing her head.", is_narrator=True)
+    
+    show_story_box("Xiao", "“I wish you, Mei, Liwei, and the entirety of the Kasakura Vanguard the absolute best of luck.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "She winked, a playful smirk returning to her face.", is_narrator=True)
+    
+    show_story_box("Xiao", "“And please, I really hope you guys save the factories in Sector III today! If you do, your Vanguard can get those ‘Jade Microchip’ prototypes you wanted for your research…”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“...And I can finally upgrade the manufacturing lines to play my video games on much better ‘Jade Electronics’ specs!”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Nobody expected to hear a line about gaming specs coming from the mouth of a regal Megastructure Administrator. The Vanguard stared at her, dumbfounded.", is_narrator=True)
+    show_story_box("", "But I just smiled.", is_narrator=True)
+    show_story_box("", "I knew now that a large part of the woman I knew as my friend was still entirely true. She wasn't gone.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“We will save your console specs, Xiao. Stay safe.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I gave her a warm, final farewell smile.", is_narrator=True)
+    show_story_box("", "Then, turning my back on the peaceful courtyard, I drew my Jian and followed Akasuke and the Vanguard back into the chaotic, burning halls of the Pagoda.", is_narrator=True)
+
+def play_stage_4_23_start():
+    # --- LIWEI'S POV ---
+    show_story_box("", "********* ◆ *********\nLiwei’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nInterior of the Main Pagoda – The War Zone", is_narrator=True)
+    
+    show_story_box("", "The hallway was an absolute meat grinder.", is_narrator=True)
+    show_story_box("", "Red, green, yellow, and blue phantom soldiers were hacking each other to pieces, filling the air with the ear-splitting sounds of clashing steel and ethereal smoke.", is_narrator=True)
+    show_story_box("", "But honestly? They were just background noise.", is_narrator=True)
+    show_story_box("", "I ducked under a stray halberd swing, my eyes tracking the subtle, almost imperceptible shifts in the chaotic air currents. The Ibara—the supposedly elite outcast ninja—was struggling significantly more than I was in this environment.", is_narrator=True)
+    
+    show_story_box("Liwei", "‘There.’", affiliation="Yunhai Association Bai Division 1st Unit Captain", is_thought=True)
+    
+    show_story_box("", "I saw the opening. I dashed forward, planting my foot and slashing my Jian directly at a patch of completely empty air.", is_narrator=True)
+    show_story_box("", "SHLLLRK.", is_narrator=True)
+    show_story_box("", "A split second later, blood spewed out of nowhere. The invisible Ibara’s camouflage flickered and broke, revealing him stumbling backward, clutching a deep, fresh wound across his chest.", is_narrator=True)
+    show_story_box("", "He was panting heavily, looking completely ragged.", is_narrator=True)
+    
+    show_story_box("Ibara", "“Huff… huff… What the hell are you?! Are you even human?! How are you lasting this long with all these damn warrior ghosts flooding the palace?!”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "I rested the flat of my blade on my shoulder, giving him a lazy, teasing smirk.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Me? I’m just a guy who gets enough sleep. You, on the other hand… you just lack Steadfastness.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "The outcast ninja didn't understand the reference at all, but the sheer condescension in my voice infuriated him anyway.", is_narrator=True)
+    
+    show_story_box("Ibara", "“Don't mock me, you Association lapdog! I’ll carve you into—”", affiliation="Outcast Ninja")
+    
+    show_story_box("Liwei", "‘Alright, playtime is over,’ I thought.", affiliation="Yunhai Association Bai Division 1st Unit Captain", is_thought=True)
+    show_story_box("Liwei", "I need to go assist my kouhai.", affiliation="Yunhai Association Bai Division 1st Unit Captain", is_thought=True)
+    
+    show_story_box("", "Before he could even finish his threat, I closed the distance. I didn't swing my sword. Instead, I channeled my physical strength and intent into my leg, throwing a devastating, full-power front kick squarely into his chest.", is_narrator=True)
+    show_story_box("", "CRACK!", is_narrator=True)
+    show_story_box("", "The impact launched the bulky ninja entirely off his feet. He flew backward like a cannonball, crashing straight through one of the Pagoda’s ornate stained-glass windows.", is_narrator=True)
+    
+    show_story_box("Ibara", "“CURSE YOOOOOUUU——!”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "His voice faded into the distance as he plummeted into the lower courtyards outside.", is_narrator=True)
+    show_story_box("", "I stood there for a second, lowering my leg.", is_narrator=True)
+    
+    show_story_box("Liwei", "“...Why did I use a kick as a finisher?”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "It wasn't my usual style. I was a swordsman. But as I looked down at my boot, I noticed something strange.", is_narrator=True)
+    show_story_box("", "A thick, sizzling trail of red steam was pouring off my foot, evaporating into the air.", is_narrator=True)
+    show_story_box("", "I blinked, thoroughly confused by the physics of it. But I shrugged it off.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Well, it was super effective. I’m not going to question it.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I sheathed my Jian and prepared to turn toward the Administration’s courtyard to find the Vanguard. But before I could take a step, the heavy double doors at the end of the hall burst open.", is_narrator=True)
+    show_story_box("", "To my surprise, it was Akasuke, leading the entire Kasakura Vanguard and… Mei. They were rushing directly toward my direction instead of fleeing.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Akasuke? Mei? What are you guys doing back here now?”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Akasuke skidded to a halt in front of me, his expression dead serious.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Liwei-san! We have a way to stop the ritual! We just spoke to Xiangyun Xiao in the courtyard!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Liwei", "“Xiangyun?—Ah. I see. I had my suspicions.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "He quickly briefed me on the plan.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“We have to target the Ten Thousand Blossom Brotherhood. They’re an army with a distinct pink aura. Their General is currently severely weakened.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“If we crush him, it destroys their entire chain of command, wiping out the army and bringing the ongoing ritual to a swift end!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I felt a massive grin spread across my face.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Assassinate the weakest General to break the game board? Now that’s a strategy I can get behind.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I drew my sword again, stepping up next to Mei.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Alright, Kasakura! Stick behind us! Mei and I will take the front and clear the path to this ‘Pink Army’!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Mei drew her own Jian, nodding firmly.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“Understood. Do not fall behind, Liwei.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "We charged into the fray together, our blades flashing in perfect, mirrored synchronization, effortlessly carving a path through the red and green phantom soldiers blocking our way.", is_narrator=True)
+    show_story_box("", "As we fought side-by-side, a sudden, overwhelming wave of happiness hit me.", is_narrator=True)
+    show_story_box("", "I couldn't help myself. I leaned over while casually deflecting a phantom spear.", is_narrator=True)
+    
+    show_story_box("Liwei", "“You know, Mei-Mei… we’re so perfectly coordinated doing this together. Like a married couple~!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I fully expected her to snap at me. I expected her to threaten to kill me right then and there for babbling during an incredibly important, life-or-death battle.", is_narrator=True)
+    show_story_box("", "Instead, Mei effortlessly parried two soldiers, her movements graceful and fluid. She didn't look at me, but a soft, gentle smile touched her lips.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“I suppose so.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "...What?", is_narrator=True)
+    show_story_box("", "My heart practically exploded in my chest.", is_narrator=True)
+    show_story_box("", "Did she just agree?!", is_narrator=True)
+    
+    show_story_box("Liwei", "‘Holy crap,’ I thought, my grip on my sword tightening as pure, unadulterated adrenaline flooded my system.", affiliation="Yunhai Association Bai Division 1st Unit Captain", is_thought=True)
+    show_story_box("Liwei", "I can take on the rest of the Nine Armies entirely by myself with this~~!", affiliation="Yunhai Association Bai Division 1st Unit Captain", is_thought=True)
+    
+    show_story_box("", "I laughed out loud, swinging my sword with ten times more vigor, sending phantom soldiers flying in every direction.", is_narrator=True)
+    show_story_box("", "As we pushed forward, I glanced over my shoulder to check on the Vanguard.", is_narrator=True)
+    show_story_box("", "Akasuke was right behind us, his eyes narrowed, hyper-focused on the battlefield ahead, completely oblivious to everything else.", is_narrator=True)
+    show_story_box("", "But right behind him was Yuri. She had clearly noticed my little exchange with Mei.", is_narrator=True)
+    show_story_box("", "She was looking at Akasuke’s broad back, a wistful, slightly blushing expression on her face as she watched him focus entirely on the mission.", is_narrator=True)
+    show_story_box("", "I chuckled softly to myself, slicing through another spectral guard.", is_narrator=True)
+    
+    show_story_box("Liwei", "‘Ah, youth,’ I thought sympathetically.", affiliation="Yunhai Association Bai Division 1st Unit Captain", is_thought=True)
+    show_story_box("Liwei", "She definitely has it rough with a dense, battle-brained guy like him. Good luck, little junior.", affiliation="Yunhai Association Bai Division 1st Unit Captain", is_thought=True)
+
+def play_stage_4_24_start():
+    # --- LIWEI'S POV ---
+    show_story_box("", "********* ◆ *********\nLiwei’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nWest Pagoda Exit – Fountain Musical Show Venue", is_narrator=True)
+    
+    show_story_box("", "Tracking the enemy wasn't hard.", is_narrator=True)
+    show_story_box("", "All we had to do was follow the neon pink glow.", is_narrator=True)
+    show_story_box("", "Mei and I took the point, cutting down any spectral soldiers that got too close, while the Kasakura Vanguard stayed in a tight formation behind us.", is_narrator=True)
+    show_story_box("", "We tracked the densest concentrations of the \"Ten Thousand Blossom Brotherhood,\" following their marching lines backward toward their summoning point.", is_narrator=True)
+    show_story_box("", "Soon enough, the thick jade corridors of the Pagoda gave way to the heavy, lacquered doors of the west exit.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Through here! Get ready for some fresh air!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I kicked the double doors open, stepping out into the twilight of Sector III.", is_narrator=True)
+    show_story_box("", "We had entered one of the Megastructure’s most famous tourist attractions: The Grand Fountain Musical Show Venue.", is_narrator=True)
+    show_story_box("", "It was a breathtaking, massive, sunken plaza. The entire floor was made of smooth, polished marble, intentionally flooded with a thin, aesthetic layer of crystal-clear water that reflected the chaotic, blood-red sky above us.", is_narrator=True)
+    show_story_box("", "Lining the perimeter and submerged beneath the shallow water were hundreds of unactivated water jets, heavy acoustic speakers, and high-end lighting equipment.", is_narrator=True)
+    show_story_box("", "I kept my sword lowered, glancing back at the Vanguard as they splashed lightly into the plaza.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Normally, during performance hours, this place is packed with tourists. It hosts this regionally famous, synchronized choreographed spectacle.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“You get rhythmic activations of water fountain jets, beautiful jade lasers, and aesthetic mist effects perfectly timed to classical music~. You should come watch one day!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Akasuke tightened the bandage on his arm, looking out across the flooded marble.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Well, it definitely looks a lot less aesthetic today.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "He was right.", is_narrator=True)
+    show_story_box("", "Instead of tourists and lasers, the massive plaza was currently acting as the staging ground for an entire spectral army.", is_narrator=True)
+    show_story_box("", "Thousands of phantom soldiers radiating a bright, cherry-blossom pink aura were standing in formation, their boots splashing silently in the shallow water.", is_narrator=True)
+    show_story_box("", "Squads were constantly breaking off, marching out into the surrounding sectors to join the wider, chaotic war of the Nine Armies.", is_narrator=True)
+    show_story_box("", "But my eyes bypassed the grunts entirely. I was looking for the core.", is_narrator=True)
+    show_story_box("", "There, in the dead center of the massive marble basin, stood the General.", is_narrator=True)
+    show_story_box("", "He was obviously towering, but didn't look like a monster or a sleek, modern warrior. He was an old man.", is_narrator=True)
+    show_story_box("", "His traditional armor was completely tattered and broken, heavily scarred from what looked like centuries of endless, repeating battles. His weapons were chipped, and his spectral clothing was reduced to glowing rags.", is_narrator=True)
+    show_story_box("", "But the most terrifying part of him was his face.", is_narrator=True)
+    show_story_box("", "The right half of his visage had entirely crumbled away, replaced by a swirling, dark pink miasma of pure Phenomena energy.", is_narrator=True)
+    show_story_box("", "From within that localized storm of mist, a single, piercing pink eye glowed with intense, unnatural light.", is_narrator=True)
+    show_story_box("", "Despite his broken, ruined state, the old General’s posture was perfectly straight. His chin was held high, his remaining human eye locked forward with an expression of absolute, unwavering determination.", is_narrator=True)
+    
+    show_story_box("Liwei", "“He’s falling apart at the seams, yet he hasn't dropped his guard for a second. This old ghost… he must have some crazy Steadfastness himself!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I felt a twinge of genuine respect for the phantom. But he was in our way, and destroying him was the only way to save the Megastructure.", is_narrator=True)
+    show_story_box("", "I crouched down slightly, signaling the group to halt behind a decorative stone barrier near the entrance.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Look alive, Kasakura. The General hasn't noticed us yet. He’s too focused on deploying his troops to the outer sectors.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Shigemura scanned the sea of pink soldiers between us and the center of the plaza.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“There are hundreds of them between us and the target. An all-out brawl will drain our remaining stamina before we even reach him.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I nodded, pointing my Jian toward the center.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Exactly. So we do not directly engage with the soldiers unless it is absolutely necessary to defend yourselves.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“We are going to move fast and strike hard. We will carve the most optimal, direct path straight through their ranks, from this Pagoda exit to the dead center of the fountain. We ignore the grunts, and we focus everything on the General..!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I looked back at Mei, and then at Akasuke and the rest of the Vanguard.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Cut the head off the snake, and the rest of the army crumbles.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“Ready? Then go!”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+
+def play_stage_4_25_start():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nFountain Musical Show Venue", is_narrator=True)
+    
+    show_story_box("", "My lungs burned.", is_narrator=True)
+    show_story_box("", "Even with the Jade Serum pumping through my veins, repairing my muscles and artificially inflating my stamina, the sheer, crushing weight of everything we had been through was dragging on my mind.", is_narrator=True)
+    show_story_box("", "We had been fighting for what felt like an eternity.", is_narrator=True)
+    show_story_box("", "But as I parried a phantom soldier’s spear and glanced back at my friends—at Yuri, Shigemura, Benikawa, and the others pushing themselves past their absolute limits—I knew I couldn't let them down. I couldn't stop now.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Push through! We’re almost there!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I took the lead, throwing myself into the thickest cluster of the pink-glowing soldiers. I dropped low, sweeping my leg in a wide, devastating arc.", is_narrator=True)
+    show_story_box("", "The kinetic force shattered the spectral legs of three soldiers at once, completely breaking their defensive line.", is_narrator=True)
+    show_story_box("", "I burst through the gap, stumbling out into the wide, open space in the dead center of the venue.", is_narrator=True)
+    show_story_box("", "And then, almost as if it had been perfectly scripted, the dormant stage mechanisms roared to life.", is_narrator=True)
+    show_story_box("", "Whether it was a system malfunction caused by the Phenomena energy or the Megastructure’s automated schedule kicking in, I didn't know…", is_narrator=True)
+    show_story_box("", "…But suddenly, aesthetic mist began billowing from hidden vents in the marble floor. Crystal-clear water jets shot upward in rhythmic, synchronized arcs, and dreadful, dramatic jade lighting illuminated the flooded plaza.", is_narrator=True)
+    show_story_box("", "Standing in the center of the mist and the dancing water, surrounded by his cherry-blossom aura, was the General.", is_narrator=True)
+    show_story_box("", "He didn't move to attack. His single, glowing pink eye locked onto me through the swirling miasma that consumed the right half of his face.", is_narrator=True)
+    
+    show_story_box("General", "“Who are you, boy?”", affiliation="Ten Thousand Blossom Brotherhood")
+    
+    show_story_box("", "His voice was incredibly heavy, carrying a deep, unnatural echo that resonated in the water beneath my boots.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...I am Hanefuji Akasuke.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "As I spoke, the splashing of footsteps echoed behind me. The rest of the Vanguard broke through the perimeter, fanning out and taking their stances beside me. Eight of us, standing against the commander of an ancient army.", is_narrator=True)
+    show_story_box("", "I glanced over my shoulder.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Where are Liwei-san and Mei-san?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Yuri", "“They stayed back at the perimeter! They’re holdin’ off the rest of the soldiers so they won't interrupt our fight with the General!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The old phantom slowly rested his hand on the hilt of his chipped, rusted sword.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“I have gone by countless names and titles throughout the ages. But for today, you may simply call me Zhao Feng [赵锋].”", affiliation="Ten Thousand Blossom Brotherhood General")
+    show_story_box("Zhao Feng", "“‘The Vanguard Who Breaks Through Enemy Lines’.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "I lowered my stance, a bitter sense of irony washing over me.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“A Vanguard? So… you used to fight just like us.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I looked at his scarred, battered armor.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“You were the one who rushed headfirst into unexplored territory to light the way for your people. But look at you now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Akasuke", "“You’re trapped in an endless cycle of constant fighting. It’s not fair…how it doesn't benefit anyone but the selfish Administrators who came ages after you died!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Zhao Feng didn't look angry. The miasma swirling around his ruined face seemed to calm slightly.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“Hm. You are a wise boy, Hanefuji Akasuke. You will strive to great heights in your era.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "He drew his rusted blade. The sheer weight of his killing intent made the dancing fountain jets around him tremble.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“But first, my army and I have a duty to uphold. The glory from our ancient war must not be tarnished. I will keep fighting, upholding my duty, until I am no longer called upon to do so.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "He pointed the tip of his sword at me.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“I do not mind being used as a tool of destruction. The politics and selfishness of the current age are matters for the people of the current age to settle.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    show_story_box("Zhao Feng", "“My entire purpose lied back in my golden age of constant fighting. The only thing I knew to do then—and the only thing I need to do now—is to destroy the enemy.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "His glowing pink eye flared with terrible resolve.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“If you and your comrades are trying to stop me from fulfilling my duty… then you are also the enemy.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "He lowered his center of gravity, the water rippling violently outward from his boots.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“Come! All eight of you! Face me at once!”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "I tightened my fists, feeling the absolute weight of his resolve. He was a weapon trapped in time, but his warrior’s pride was entirely real.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“...Let’s go, Vanguard!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "We honor this fight.", is_narrator=True)
+
+
+def play_stage_4_25_end():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    
+    show_story_box("", "We were at our absolute limits.", is_narrator=True)
+    show_story_box("", "Everyone was battered, bruised, and gasping for air. The marble floor of the venue was cracked and scorched.", is_narrator=True)
+    show_story_box("", "From the perimeter of the plaza, I could hear Liwei and Mei shouting over the clash of steel.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Hurry it up, Kasakura! We can’t hold this perimeter forever!”", affiliation="Yunhai Association Unit I Captain")
+    
+    show_story_box("", "They were reaching their breaking point. We were out of time.", is_narrator=True)
+    show_story_box("", "I looked at Zhao Feng.", is_narrator=True)
+    show_story_box("", "Despite his overwhelming power, the General was crumbling. His tattered armor was failing, and the pink miasma consuming his face was violently flickering, losing its form. He had reached his limit too.", is_narrator=True)
+    show_story_box("", "Suddenly, Zhao Feng let out a fierce battle cry. He raised his free hand high into the air.", is_narrator=True)
+    show_story_box("", "A terrifying, suffocating vortex of pink Phenomena energy began to gather above him. The sheer density of the aura felt like gravity itself was increasing. It was an ultimate attack—a final, desperate strike meant to wipe us all out.", is_narrator=True)
+    show_story_box("", "Despair flashed across the faces of the Vanguard. Naganohara squeezed her eyes shut. Kagaku braced for the end.", is_narrator=True)
+    show_story_box("", "But then… he stopped.", is_narrator=True)
+    show_story_box("", "Zhao Feng looked at us—at the eight battered teenagers standing before him, refusing to run away.", is_narrator=True)
+    show_story_box("", "The vortex of energy halted.", is_narrator=True)
+    show_story_box("", "He slowly closed his raised hand into a tight fist. The swirling Phenomena energy dissipated into the aesthetic mist of the fountains. He lowered his arm and simply stood perfectly still, leaving himself completely open.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘He’s surrendering’.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "I didn't hesitate. I couldn't insult him by stopping now.", is_narrator=True)
+    show_story_box("", "I channeled the last dregs of my strength, dashing through the shallow water. I pivoted sharply, launching a perfect, full-power back kick squarely into the center of his rusted breastplate.", is_narrator=True)
+    show_story_box("", "CRACK.\n\nThe ancient armor shattered.", is_narrator=True)
+    show_story_box("", "Zhao Feng was knocked off his feet, crashing backward into the flooded marble.", is_narrator=True)
+    show_story_box("", "The pink aura surrounding him instantly shattered like glass, dissolving into the air. The heavy, suffocating pressure over the plaza vanished.", is_narrator=True)
+    show_story_box("", "I stood over him, panting heavily, my leg trembling.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“A magnificent strike… A flawless victory for your Vanguard.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "I lowered my guard, looking down at the crumbling phantom.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Why? Why didn't you use that last move in the end? You could have taken us out.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Zhao Feng let out a weak, echoing laugh.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“Someone as young as you should not rush so quickly to his own demise. As I gathered my strength, I looked at you and your comrades. I simply thought… it would be a terrible waste to let go of warriors with so much potential.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "He looked up at the blood-red sky, the miasma on his face slowly turning to ash.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“Do not fret for me, boy. After this ritual ends, I will simply be summoned anew in the next War of the Nine Armies. That is the nature of the Scroll. It is both a blessing and a curse.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    show_story_box("Zhao Feng", "“I am allowed to keep fighting to chase my glory… but I will never truly claim it. No matter how many feats I obtain in this spectral form, it is meaningless. Because achievements and history are only truly birthed once a war ends.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "He turned his glowing eye back to me, a teasing, warrior's glint in his gaze.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“If you are unsatisfied with this battle, you may simply summon me again with the Scroll one day. Face me at my full power.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "I let out a nervous, exhausted laugh, rubbing the back of my neck.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Ah! Uh, I’m perfectly fine with the current results, General! My friends and my seniors are safe. That’s all I wanted.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Zhao Feng smiled—a genuine, human expression breaking through the phantom malice.", is_narrator=True)
+    
+    show_story_box("Zhao Feng", "“A true Vanguard leader. My final advice to you, Hanefuji Akasuke: Look after your comrades and your loved ones. Do not let your era become a tragedy like mine.”", affiliation="Ten Thousand Blossom Brotherhood General")
+    
+    show_story_box("", "With those final words, his physical form lost its cohesion.", is_narrator=True)
+    show_story_box("", "General Zhao Feng disintegrated completely, turning into a cloud of pale smoke and glittering pink dust that drifted upward into the mist of the fountains.", is_narrator=True)
+    show_story_box("", "I turned around, looking out past the plaza toward the rest of Sector III.", is_narrator=True)
+    show_story_box("", "It was a domino effect.", is_narrator=True)
+    show_story_box("", "With the Ten Thousand Blossom Brotherhood decisively crushed, the ancient ceasefire condition was met.", is_narrator=True)
+    show_story_box("", "Across the Megastructure, the phantom soldiers of the Red, Green, Yellow, and Blue armies stopped fighting. Their weapons dropped from their hands, and one by one, they met the exact same fate.", is_narrator=True)
+    show_story_box("", "Thousands of spectral warriors dissolved into smoke and brightly colored dust.", is_narrator=True)
+    show_story_box("", "I watched as rivers of glowing ash flowed through the sky, all converging and rushing toward the far eastern palace of the Administration, returning to the dimensional space of the Scroll.", is_narrator=True)
+    show_story_box("", "The blood-red hue faded from the clouds. The unnatural quaking of the earth ceased.", is_narrator=True)
+    show_story_box("", "The War of the Nine Armies had officially come to an end.", is_narrator=True)
+
+def play_stage_4_26_start():
+    # --- AKASUKE'S POV ---
+    show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nFountain Musical Show Venue", is_narrator=True)
+    
+    show_story_box("", "The moment the red sky cleared and the golden dust drifted away, our adrenaline completely crashed.", is_narrator=True)
+    show_story_box("", "SPLASH.", is_narrator=True)
+    show_story_box("", "Almost in perfect unison, the entire Kasakura Vanguard collapsed into the shallow water covering the marble floor. Nobody cared about getting wet or ruining their uniforms anymore.", is_narrator=True)
+    show_story_box("", "Naganohara and Kagaku laid flat on their backs like starfish, their limbs splayed out, weakly swishing the aesthetic fountain water around with their hands like exhausted little kids.", is_narrator=True)
+    show_story_box("", "I was sitting on my knees, staring at the sky.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘We won,’ I thought, my chest heaving.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("", "We actually won. We took down a General of the Nine Armies.", is_narrator=True)
+    show_story_box("", "Beside me, Benikawa groaned. She rolled over onto her stomach, cupping her hands into the shallow water, and brought it toward her mouth.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“So thirsty… don't mind if I do…”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "SMACK!\n\nYuri slapped her hands, sending the water splashing back onto the marble.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Are ya crazy?! Don't drink that! It’s aesthetic fountain water covered in centuries-old ghost ash!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Benikawa whined, dropping her head against the wet stone floor.", is_narrator=True)
+    show_story_box("", "I let out a weak, breathy laugh, the tension finally leaving my shoulders. It was a massive victory.", is_narrator=True)
+    show_story_box("", "But in the back of my mind, my instincts were screaming that it wasn't the end of everything just yet.", is_narrator=True)
+    
+    show_story_box("", "“AKASUKE!”", is_narrator=True)
+    
+    show_story_box("", "Shigemura’s frantic voice pierced the quiet plaza from afar.", is_narrator=True)
+    show_story_box("", "Before I could even turn my head, the air directly beside me warped.", is_narrator=True)
+    show_story_box("", "A terrifying, invisible Wakizashi blade materialized out of thin air, already in a lethal, downward swinging motion aimed dead center at my neck.", is_narrator=True)
+    show_story_box("", "I was entirely out of stamina. I couldn't dodge.", is_narrator=True)
+    show_story_box("", "CLANG!", is_narrator=True)
+    
+    show_story_box("", "A flurry of white and silver intercepted the blade millimeters from my skin.", is_narrator=True)
+    
+    show_story_box("Liwei", "“You sure don't know when to give up, eh~?”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "But the moment he pushed the invisible attacker back, Liwei’s legs gave out. He fell heavily onto one knee, using his sword as a crutch, his breath ragged. He had finally reached his absolute limit.", is_narrator=True)
+    show_story_box("", "Without the element of surprise, the Ibara ninja’s invisibility broke, his bulky, dark-clad form showing itself completely in the shallow water.", is_narrator=True)
+    
+    show_story_box("Ibara", "“It’s just business~.”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "He spun his Wakizashi, taking a few steps back to put distance between us.", is_narrator=True)
+    
+    show_story_box("Ibara", "“In the reality of the cruel underworld, real mercenaries have to wait and see. You let the big players tire each other out, then you swoop in to claim the spoils and complete your mission with minimum risk. It’s just business, nothing more.”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "He paused, a twisted, sadistic grin stretching across his face.", is_narrator=True)
+    
+    show_story_box("Ibara", "“...Is what an absolute idiot would say~!”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "He laughed—a dark, grating sound.", is_narrator=True)
+    
+    show_story_box("Ibara", "“I just wanted to watch you celebrate! I love crushing a target's hopes at the absolute last second! Look at you all. You’re so tired you can’t even stand! Now I can take my sweet time slaughtering every single one of you, one by one!”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "The Vanguard tensed on the floor, struggling to push themselves up.", is_narrator=True)
+    show_story_box("", "But Shigemura’s cold, analytical voice cut through the Ibara’s gloating.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Stop lying to yourself.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "The Ibara’s grin twitched.", is_narrator=True)
+    
+    show_story_box("Ibara", "“What did you say, brat?”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "Shigemura slowly stood up, water dripping from his uniform.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“I said, stop lying. You aren't playing with us. You’re at your limit, too, aren't you?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Almost as if his body was vividly remembering getting brutally beaten up by Liwei just minutes prior, the Ibara’s arrogant facade crumbled entirely.", is_narrator=True)
+    show_story_box("", "He winced, his free hand instinctively shooting up to clutch the massive, bleeding gash on his chest. He slumped forward slightly, his breathing hitched.", is_narrator=True)
+    show_story_box("", "Despite managing to stop the worst of the bleeding, the enemy wasn't fooling anyone. He was just as battered as we were.", is_narrator=True)
+    
+    show_story_box("Akasuke", "‘Everyone is so tired,’ I thought, looking around at my friends.", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    show_story_box("", "We just want to go home. It’s just…there are only a few more obstacles in our way before we can triumphantly return.", is_narrator=True)
+    show_story_box("", "I pushed myself off the marble floor, standing tall. I looked at the exhausted, soaked Kasakura Vanguard, and a genuine smile spread across my face.", is_narrator=True)
+    show_story_box("", "I asked a truly, horribly unnecessary question.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“If anyone can't continue fighting… just lie down and watch me. For those who can, get up right now.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Splash. Splash. Splash.", is_narrator=True)
+    show_story_box("", "To absolutely no one’s surprise, every single member of the Vanguard pushed themselves off the ground.", is_narrator=True)
+    show_story_box("", "Yuri cracked her knuckles. Benikawa drew her kunai with a tired sigh. Naganohara gripped Shigemura’s sleeve, standing firm. Natsume and Kagaku readied their basic stances.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Ugh. I am going to write a formal complaint about a leader who constantly overworks his team.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Yuri", "“I’ll sign it. Right after we beat this guy’s face in.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I laughed lightly, the sound carrying across the quiet venue.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“This is exactly why I love you guys.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I turned my attention to Liwei and Mei. They were kneeling together in the shallow water, completely drained. They had given everything they had to clear the path for us.", is_narrator=True)
+    show_story_box("", "It was our turn to protect them.", is_narrator=True)
+    show_story_box("", "I looked down at the First Unit Captain, echoing the exact same teasing question I first gave him back at the grand seats, then he had given back at the pagoda.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Need a hand, senpai?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Liwei let out a weak, breathy chuckle. He didn't even try to stand. He just casually waved his free hand at me.", is_narrator=True)
+    
+    show_story_box("Liwei", "“I’m good. My reliable ‘kouhai’s should be able to handle that bum with absolutely no problem.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I turned my eyes back to the trembling outcast ninja, the blue aura of my Kata flaring to life one last time.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“You heard the man. Let’s finish this.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The final fight between the exhausted Kasakura Vanguard and the desperate Ibara enemy began.", is_narrator=True)
+
+def play_stage_4_26_end():
+    # --- BENIKAWA'S POV ---
+    show_story_box("", "********* ◆ *********\nBenikawa’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure – Sector III\nFountain Musical Show Venue", is_narrator=True)
+    
+    show_story_box("", "We were decisively winning.", is_narrator=True)
+    show_story_box("", "Even with our exhaustion, the Vanguard’s coordination was flawless. Shigemura and I were already rapidly adapting to the Ibara’s invisibility.", is_narrator=True)
+    show_story_box("", "With his stamina completely drained and the massive gash on his chest continuously bleeding, his camouflage was flickering wildly, failing to conceal him as perfectly as it had before.", is_narrator=True)
+    show_story_box("", "He was no longer the untouchable phantom we fought in the corridor.", is_narrator=True)
+    show_story_box("", "He was just a cornered rat~.", is_narrator=True)
+    show_story_box("", "I deflected a sloppy thrust from his Wakizashi, my kunai sliding off his blade to deliver a shallow cut to his forearm.", is_narrator=True)
+    show_story_box("", "He hissed, stumbling backward through the shallow water, his breath coming in ragged, desperate gasps.", is_narrator=True)
+    
+    show_story_box("Ibara", "“Don't get cocky, you brats!”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "He spun his blade, his eyes wild and bloodshot.", is_narrator=True)
+    
+    show_story_box("Ibara", "“I am Kagerou! Kagerou the Untouchable! I am one of the most notorious Ibara within the entire ninja world! You should all be fearing me! You should be bowing before my genius!”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "He forced himself into a wide, grounded horse stance. He closed his eyes, his muscles bulging as he began to charge something up.", is_narrator=True)
+    show_story_box("", "There was no visible aura. No change in the air currents or the water around him. It was a complete, terrifying stillness.", is_narrator=True)
+    show_story_box("", "But I felt it. A familiar, dense pressure building inside his core.", is_narrator=True)
+    
+    show_story_box("Benikawa", "‘Is he gonna use that, too?’", affiliation="Benikawa Ninja Clan", is_thought=True)
+    
+    show_story_box("", "I thought, my eyes widening slightly.", is_narrator=True)
+    show_story_box("", "Kagerou let out a desperate, guttural roar, his eyes snapping open. He was about to launch himself forward in a final, suicidal strike—", is_narrator=True)
+    show_story_box("", "SPLASH!", is_narrator=True)
+    
+    show_story_box("", "A heavy figure dropped from the sky, landing squarely on the center of Kagerou’s back.", is_narrator=True)
+    show_story_box("", "The impact was catastrophic. Kagerou was driven face-first into the marble floor with the force of a falling boulder. Shallow water exploded outward in a massive geyser, spraying everywhere as if someone had just belly-flopped into a swimming pool.", is_narrator=True)
+    show_story_box("", "Akasuke wiped the water from his eyes, staring at the new arrival.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“It’s him! The one from the pavilion! It was the VIP introduced by Liwei back at the performance: the \"Propagator of The Seditious Garden\"!”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "He was wearing a heavy, obscuring cloak.", is_narrator=True)
+    show_story_box("", "Wait…Propagator?!", is_narrator=True)
+    show_story_box("", "The Propagator casually stepped off Kagerou’s twitching back. He didn't draw a sword or a kunai. Instead, he calmly reached down, grabbed Kagerou by his left ankle, and pulled a small harvesting knife from his belt.", is_narrator=True)
+    show_story_box("", "With a swift, practiced motion—as if he were simply pruning a stubborn branch from a plant—he sliced cleanly through Kagerou’s Achilles tendon.", is_narrator=True)
+    
+    show_story_box("Kagerou", "“GAAAAAAAHHHHH!”", affiliation="Outcast Ninja")
+    
+    show_story_box("", "The outcast screamed in absolute, blinding agony, his hands clawing uselessly at the flooded marble.", is_narrator=True)
+    show_story_box("", "The Propagator didn't even blink. He showed zero empathy. He simply dropped the left leg, picked up the right, and sliced the tendon there too, completely severing the ninja’s mobility.", is_narrator=True)
+    show_story_box("", "The rest of the Vanguard watched in stunned horror.", is_narrator=True)
+    show_story_box("", "But I didn't. I watched the surgical precision of the cuts. I knew exactly why he did it, and it wasn't just to stop Kagerou from running away.", is_narrator=True)
+    show_story_box("", "The Propagator paused, wiping the blood from his small knife. He noticed the analytical look in my eyes.", is_narrator=True)
+    
+    show_story_box("Propagator", "“Hoh?”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "He sounded genuinely intrigued.", is_narrator=True)
+    show_story_box("", "He reached up and pulled back his hood, revealing his face to us for the first time.", is_narrator=True)
+    show_story_box("", "He was a man with messy, spiky black hair tied carelessly into a small ponytail at the back of his head. His face was covered in old, rugged scars, and he wore what looked like cheap, tattered leather rags beneath his cloak. But his eyes—a deep, vibrant purple—were incredibly kind, burning with an intense, raw ambition and motivation.", is_narrator=True)
+    show_story_box("", "He offered a lazy smile.", is_narrator=True)
+    
+    show_story_box("Nue", "“I am known in the ninja world as ‘The Chimera’. You can call me Nue!”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "My jaw dropped. Beside me, Shigemura stiffened, his violet eyes widening in absolute shock.", is_narrator=True)
+    show_story_box("", "We recognized the name instantly.", is_narrator=True)
+    show_story_box("", "This man… this scruffy guy in leather rags… was a living legend. He was someone extremely, terrifyingly famous within the deepest, darkest annals of the ninja world.", is_narrator=True)
+    show_story_box("", "Akasuke looked back and forth between us.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Who is he? A famous ninja?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“He’s a myth! I… I can tell you all about him and his faction after this, Akasuke-kun. Just… don't make him mad. I gotta have good first impressions!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Nue ignored Akasuke, walking over to me. He observed me closely for a few seconds, his purple eyes analyzing my stance, my breathing, and the way I held my kunai.", is_narrator=True)
+    
+    show_story_box("Nue", "“You’ve got good eyes, kid. You have the potential to become an excellent ‘Propagator’ yourself one day.”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "He reached out and casually patted my head like I was a promising student.", is_narrator=True)
+    show_story_box("", "My eyes practically sparkled. I felt like a fan meeting her idol.", is_narrator=True)
+    show_story_box("", "Nue chuckled, then turned his gaze toward Shigemura.", is_narrator=True)
+    show_story_box("", "Shigemura visibly tensed. Despite his usual stoic demeanor, he was clearly nervous standing face-to-face with a literal celebrity of our hidden world.", is_narrator=True)
+    show_story_box("", "Nue pointed a calloused finger directly at Shigemura’s chest. He looked him up and down, offering a serious, clinical assessment.", is_narrator=True)
+    
+    show_story_box("Nue", "“You, on the other hand…hmm…you could probably become an absolutely amazing ‘Ibara’!”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "The entire Vanguard stared at Shigemura in shock.", is_narrator=True)
+    show_story_box("", "Shigemura flushed, instinctively taking a half-step back.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“I… I obviously have no intention of ever becoming an outcast, sir..!”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Nue threw his head back and laughed heartily, the sound echoing across the plaza.", is_narrator=True)
+    
+    show_story_box("Nue", "“Hahaha! I know, I know! Just an observation!”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "He turned back to the groveling, paralyzed Kagerou. He reached down, grabbing the muscular ninja by the scruff of his neck, hoisting his heavy body up with one arm effortlessly.", is_narrator=True)
+    
+    show_story_box("Nue", "“This guy really had the nerve to steal the title and naming style of an elite Ibara. ‘Kagerou the Untouchable’? Give me a break.”", affiliation="The Seditious Garden")
+    show_story_box("Nue", "“It embarrasses even me to hear some cheap knock-off use the name of the real deal~.”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "He slung Kagerou’s bleeding body over his shoulder like a sack of potatoes, turning to leave the venue.", is_narrator=True)
+    show_story_box("", "Before he could step away, I called out to him.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Wait! Nue…sama! What should I do… in order to become a great Propagator like you?”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Nue stopped. He looked over his shoulder at me, his kind purple eyes glinting with a dark, ruthless wisdom.", is_narrator=True)
+    show_story_box("", "He offered a single, simple piece of advice.", is_narrator=True)
+    
+    show_story_box("Nue", "“The longer you let a thorned plant [帶刺植物] grow… the more troublesome it becomes to weed it out later. And the more painfully it will sting those who dare to touch it.”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "He adjusted the bleeding ninja on his shoulder.", is_narrator=True)
+    
+    show_story_box("Nue", "“If you want to survive our world, kid, you should handle the Ibara as early as possible. Even executing them the exact second they receive their official branding is allowed, right? Never let the thorns grow.”", affiliation="The Seditious Garden")
+    
+    show_story_box("", "With that grim lesson, Nue gave a final, lazy wave and bounded out of the venue, disappearing into the shadows of Sector III.", is_narrator=True)
+    show_story_box("", "Silence fell over the flooded plaza.", is_narrator=True)
+    show_story_box("", "The final fight had truly come to an end.", is_narrator=True)
+    show_story_box("", "Naganohara let out a long, shaky breath, dropping her Kata and slumping against Shigemura’s arm.", is_narrator=True)
+    
+    show_story_box("Naganohara", "“So… what do we do next?”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "Liwei grunted, using Mei’s hand to finally push himself up from the shallow water. He looked completely battered, but his signature grin was back.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Next? Next, we stay for a little celebratory feast!! You kids are way too tired to travel. You’ll stay the night in one of the luxury inns here in Sector III, and you can leave for Kasakura in the morning.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "He looked around at the ruined Pagoda and the ash-covered venue.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Mei and I…of course, we’ll handle the Megastructure’s internal affairs and the political fallout ourselves. We’ve even got Xiao to help.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "He stood up straight, bowing his head deeply toward us.", is_narrator=True)
+    
+    show_story_box("Liwei", "“...I formally thank the Kasakura Vanguard. For everything you’ve done for my hometown.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Mei stepped forward, standing beside him. She sheathed her Jian and bowed just as deeply, her golden eyes filled with genuine gratitude.", is_narrator=True)
+    show_story_box("", "Akasuke smiled, rubbing the back of my neck nervously.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Ah… please, raise your heads, senpais. There’s no need for such formalities between friends.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The mission was over. We had survived the Megastructure.", is_narrator=True)
+
+def play_stage_4_27_story():
+    # --- MEI'S POV ---
+    show_story_box("", "********* ◆ *********\nMei’s POV", is_narrator=True)
+    show_story_box("", "Westward Megastructure - Sector III\nYunhai Association Bai Division Office – Night Time", is_narrator=True)
+    
+    show_story_box("", "The contrast was absolutely fascinating.", is_narrator=True)
+    show_story_box("", "Just a few hours ago, the Kasakura Vanguard were battered, bleeding, and fighting to the death against ancient phantoms and notorious outcasts.", is_narrator=True)
+    show_story_box("", "Now? They were gathered around the large coffee table in our office lounge, cheerfully devouring a massive hotpot feast.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“We have thinly sliced beef, lamb, lotus root, enoki mushrooms, fish balls, tofu skin, and three different types of broth…”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I tried my best to list out the sheer volume of food Liwei had managed to procure, but the Vanguard was already tearing into it, joking and laughing like completely normal high schoolers.", is_narrator=True)
+    show_story_box("", "I looked across the table and blinked.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“Xiao…is it really fine for you to be here?”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Sitting casually between Naganohara and Hana was the literal Administrator of the Westward Megastructure.", is_narrator=True)
+    show_story_box("", "She had completely stripped off her regal Hanfu and elaborate hairpins, opting instead for a plain white tank top and baggy gray sweatpants just to join the hotpot celebration comfortably.", is_narrator=True)
+    
+    show_story_box("Xiao", "“Relax, Mei. The Administration can’t control my free time anyway. My deal with Yu only included working with the court again—it didn't say I had to live with them 24/7.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“So don’t worry. It was a price I was more than willing to pay to ensure they overlook what you and Liwei pulled today.”", affiliation="Megastructure Administrator")
+    show_story_box("Xiao", "“...You guys are my precious friends, after all.”", affiliation="Megastructure Administrator")
+    
+    show_story_box("", "Across the table, Liwei was chewing on a dumpling, staring at Xiao.", is_narrator=True)
+    
+    show_story_box("Liwei", "“You know, Xiao, if my heart wasn't already entirely taken by Mei-Mei over there… I would totally date you right now.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "Both Xiao and I flushed with immediate, violent fury. We raised our fists, fully prepared to punch him across the room—but we were beaten to the punch.", is_narrator=True)
+    show_story_box("", "THWACK. SMACK.", is_narrator=True)
+    show_story_box("", "Akasuke and Yuri, who were sitting right next to him, simultaneously elbowed him in the ribs.", is_narrator=True)
+    show_story_box("", "Liwei choked on his dumpling, coughing while the table erupted into laughter.", is_narrator=True)
+    
+    show_story_box("", "[ 30 Minutes Later ]", is_narrator=True)
+    show_story_box("", "The adrenaline crash had finally claimed them all.", is_narrator=True)
+    show_story_box("", "Everyone in the Vanguard—even the usually hyper-vigilant Shigemura and their tireless leader, Akasuke—were fast asleep, sprawled across the office lounge chairs and sofas.", is_narrator=True)
+    show_story_box("", "I offered them a small, reassured smile. I pulled a blanket over Naganohara’s shoulders, then quietly slipped out the front doors of the office.", is_narrator=True)
+    show_story_box("", "Liwei was standing on the balcony, leaning against the railing with a steaming cup of tea in his hand, gazing up at the starry night sky.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“You know… this is the exact spot where you told me you ‘hated my righteous hero attitude’ before storming off.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Liwei winced, rubbing the back of his neck awkwardly.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Ah! Yeah… sorry about that. It was just a really shitty act I put on.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("Okusora Mei", "“I know. It was an act to protect me. And while I am grateful for the sentiment… I didn't like how you pushed everyone away. Especially me. I am a capable fighter in my own right, Liwei.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "I stepped up beside him, leaning on the railing.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“You must promise me. No more doing things entirely on your own.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Liwei looked at me, his gaze softening.", is_narrator=True)
+    
+    show_story_box("Liwei", "“I promise. Keeping secrets from each other isn't exactly something a ‘couple’ should do, right?”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "My face flushed hot again. I crossed my arms, looking away.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“You keep going on and on about us being a ‘couple’… but you haven't done a single couple-like thing since we got back from Sector III.”", affiliation="Yunhai Association")
+    
+    show_story_box("", "Liwei blinked, genuinely surprised.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Oh. You’re right. My bad.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I fully expected him to drop a cheesy pick-up line or tone down his flirty advances.", is_narrator=True)
+    show_story_box("", "Instead, he simply leaned over and pressed a soft, warm kiss directly onto my cheek without any warning whatsoever.", is_narrator=True)
+    
+    show_story_box("", "!!", is_narrator=True)
+    show_story_box("", "My brain completely froze.", is_narrator=True)
+    show_story_box("", "I stood there, stiff as a board, desperately trying to process what had just happened.", is_narrator=True)
+    show_story_box("", "Seeing my paralyzed state, Liwei panicked, thinking he had crossed a line.", is_narrator=True)
+    
+    show_story_box("Liwei", "“Ah! Crap, did I mess up? I’m sorry, I should have asked—”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I grabbed the collar of his uniform, pulling his face down to mine, and kissed him back. Properly. On the lips.", is_narrator=True)
+    show_story_box("", "When I finally let go, Liwei was the one frozen.", is_narrator=True)
+    show_story_box("", "He slowly turned back to look at the starry night sky, a dopey, completely overwhelmed smile spreading across his face.", is_narrator=True)
+    
+    show_story_box("Liwei", "“...You know what? Maybe I’ll just go and take over the whole Megastructure for you right now.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    
+    show_story_box("", "I sighed, hiding my burning red face behind my hands.", is_narrator=True)
+    
+    show_story_box("Okusora Mei", "“You’re overreacting.”", affiliation="Yunhai Association")
+    
+    # --- YURI'S POV ---
+    show_story_box("", "********* ◆ *********\nYuri’s POV", is_narrator=True)
+    show_story_box("", "The Next Morning – Westward Megastructure Main Gates", is_narrator=True)
+    
+    show_story_box("", "The morning air was thick and solemn.", is_narrator=True)
+    show_story_box("", "The Vanguard stood alongside multiple Yunhai Enforcers, paying our final respects and mourning the officers who had lost their lives during the infiltration incident.", is_narrator=True)
+    show_story_box("", "I glanced over at Akasuke. His head was bowed, but his expression was incredibly tight. He was contemplating hard.", is_narrator=True)
+    show_story_box("", "I knew exactly what was eating at him. He was being reminded of the grim, cruel truth of the world we had stepped into.", is_narrator=True)
+    show_story_box("", "That no matter how hard we fought, there would always be monsters lurking in the shadows who could sweep away lives without batting an eye.", is_narrator=True)
+    show_story_box("", "I reached out and firmly patted his shoulder.", is_narrator=True)
+    
+    show_story_box("Yuri", "“It’s time to go, Akasuke-kun.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I gave him a reassuring smile.", is_narrator=True)
+    
+    show_story_box("Yuri", "“Don't look so down. We’re still gettin’ stronger. One day, we’ll reach the exact same level as those monsters. Ya know this. And we’ll stop ‘em.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "He looked at me, the heavy shadow in his eyes lifting just a bit. He nodded.", is_narrator=True)
+    show_story_box("", "Liwei and Mei were standing by the massive west main gates to officially send us off.", is_narrator=True)
+    show_story_box("", "The old driver who had dropped us off days ago had finally returned with the armored van. He leaned out the window, looking us up and down.", is_narrator=True)
+    
+    show_story_box("Driver", "“Ho! You kids look like you’ve gotten much stronger since I dropped you off! Especially the blue-haired girlie over there!”", affiliation="Kasakura School Staff")
+    
+    show_story_box("", "Natsume gets on the van, flipping her hair over her shoulder without a change to her expression.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Obviously. It’s only natural for a genius like me.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Akasuke grabbed his duffel bag, looking over at our two Yunhai Captains.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Hey. Why are they standing so distantly from each other today? They won't even make eye contact.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Both Liwei and Mei violently flinched, blushing profusely and looking even further away from each other.", is_narrator=True)
+    show_story_box("", "Akasuke grinned, nudging Shigemura.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Young love, huh~? Must be nice.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura let out a heavy, incredibly tired sigh.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Why are you speaking like some gossiping old man? Just get in the damn van already.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I climbed into the back seat, staring daggers into the back of Akasuke's thick skull.", is_narrator=True)
+    
+    show_story_box("Yuri", "‘You dense, battle-brained idiot!’", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    show_story_box("", "I yelled at him internally.", is_narrator=True)
+    
+    show_story_box("Yuri", "Sayin’ ‘must be nice’ when you literally have me right here…", affiliation="Kasakura High School Student / Seven Wonders", is_thought=True)
+    
+    # --- BENIKAWA'S POV ---
+    show_story_box("", "********* ◆ *********\nBenikawa’s POV", is_narrator=True)
+    show_story_box("", "The Transport Van – Heading back to Kasakura", is_narrator=True)
+    
+    show_story_box("", "The hum of the van’s engine was a lullaby. Half the Vanguard—Naganohara, Kagaku, and Natsume—were already fast asleep in their seats.", is_narrator=True)
+    show_story_box("", "Akasuke, however, was still wide awake. He turned around in the passenger seat, looking back at me.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Hey, Benikawa. Tell me about what we encountered yesterday. ‘Nue’. And that faction you mentioned… the ‘Propagators of the Seditious Garden’.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“Oh! Right, right~!”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Just hearing the name made me jump up from my slumped position. I leaned over the seats, completely energized.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Okay, so, the Seditious Garden is an obscure, highly specialized faction within the ninja world. They consist entirely of ‘Propagators’ and their ‘Assistants’.”", affiliation="Benikawa Ninja Clan")
+    show_story_box("Benikawa", "“Their entire job is to suppress the Ibara—the outcasts. A Propagator takes care of the ‘environment’ of the ninja world. They nurture the good plants—active, loyal ninjas—and they violently prune out the ‘Thorns’ that threaten the ecosystem.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Akasuke frowned, resting his chin on his hand.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“So they’re basically ninja police. Are they funded by the…well, main clans, I assume?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Benikawa", "“Nope! That’s the catch. They’re an official organization, but most clans don’t directly support them financially. So, they make their living primarily by collecting massive bounty rewards for capturing or killing Ibara.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Shigemura chimed in from the back, his eyes closed.", is_narrator=True)
+    
+    show_story_box("Shigemura", "“Which led to a massive corruption incident in the past.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“A few members of the Garden were running a bounty-farming scheme. Traitorous Propagators would purposefully contact young Ibara with high potential and hide them from the Garden’s own surveillance.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“They would let the Ibara commit crimes until their bounty skyrocketed.”", affiliation="Kasakura High School Student")
+    show_story_box("Shigemura", "“Then, the Ibara would 'turn themselves in' to the corrupt Propagator, split the reward money, and the Propagator would help them break out of captivity a few days later.”", affiliation="Kasakura High School Student")
+    
+    show_story_box("", "I nodded.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“Yeah! The Seditious Garden has a lot of eccentric, dangerous members, and they face a ton of internal strife. Just like that ‘Boss’s’ group we’re dealing with now, the ninja world has its own major infiltrator problems.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Akasuke looked at us curiously.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“You two seemed really excited to see Nue. Do you guys want to become Propagators when you grow up?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Shigemura and I answered in immediate unison.", is_narrator=True)
+    show_story_box("", "“No.”", is_narrator=True)
+    show_story_box("", "I laughed, leaning back in my seat.", is_narrator=True)
+    
+    show_story_box("Benikawa", "“We both want to live normal, happy lives while simply upholding our hidden duties to our clans. Being a Propagator is a brutal, exhausting life.”", affiliation="Benikawa Ninja Clan")
+    
+    show_story_box("", "Akasuke looked at us curiously.", is_narrator=True)
+    
+    show_story_box("Akasuke", "“Wait. If this is such a huge part of your world, why haven't you or Shigemura told us about the Ibara and the Propagators before?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Natsume cracked one eye open from her nap, groaning.", is_narrator=True)
+    
+    show_story_box("Natsume", "“...Because I filtered that information out during our initial briefings, Hanefuji. As we discussed in Kagaku’s lab… truly dangerous Ibara are exceedingly rare.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“Unless the Vanguard actively poked around in the deepest pits of the criminal underworld, we were statistically never supposed to encounter one.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "Natsume sat up, rubbing her temples.", is_narrator=True)
+    
+    show_story_box("Natsume", "“Which makes yesterday’s encounter incredibly problematic. An elite Ibara specifically targeted us. Did someone hire him, or was he acting on his own?”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "The heavy implication settled over the van.", is_narrator=True)
+    
+    show_story_box("Natsume", "“If he was acting on his own to claim a prize… that means there is already an active bounty placed on the Kasakura Vanguard’s heads.”", affiliation="Kasakura High School Student / Seven Wonders")
+    show_story_box("Natsume", "“We are starting to garner severe, unwanted attention from the underworld.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("Akasuke", "“And we couldn't even interrogate him to find out who placed the bounty… because Nue was already waiting to take him away, huh.”", affiliation="Kasakura High School Student / Seven Wonders")
+    
+    show_story_box("", "I slumped back in my seat, staring out the window at the passing scenery.", is_narrator=True)
+    show_story_box("", "We had survived the Megastructure, but the web was only getting more tangled.", is_narrator=True)
+
+def play_stage_4_28_story():
+    # --- MIYU'S POV ---
+    show_story_box("", "********* ◆ *********\nMiyu’s POV", is_narrator=True)
+    show_story_box("", "Unknown Location\nUnderground Access Tunnel", is_narrator=True)
+    
+    show_story_box("", "The rhythmic click of my shoes echoed sharply against the damp concrete walls.", is_narrator=True)
+    show_story_box("", "I was walking down a long, incredibly dark underground tunnel. The air was cold and stale, a stark contrast to the burning ash of the Pagoda I had just escaped.", is_narrator=True)
+    show_story_box("", "Walking lazily beside me, his hands tucked deep into his pockets, was Koharu Ashenblade.", is_narrator=True)
+    
+    show_story_box("Koharu", "“You sure you’re actually fine, secretary? Walking around with a chopped-off arm looks pretty rough, even for a cyborg.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "I didn't break my stride. I kept my eyes fixed on the heavy steel door at the end of the tunnel.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I am operating at acceptable parameters. I do not have pain receptors installed in those specific extremities precisely for situations like this.”", affiliation="Kasakura High School Student Council")
+    show_story_box("Miyu", "“Furthermore…my biological components have already mostly recovered from the blunt force trauma.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "Koharu chuckled, shaking his head.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Whatever you say. You gearheads are built different.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "We reached the end of the tunnel.", is_narrator=True)
+    show_story_box("", "Sensing our approach, the massive, reinforced steel screen automatically began to raise upwards with a heavy, grinding mechanical hum.", is_narrator=True)
+    show_story_box("", "A dim, warm yellow light spilled out from the crack, flooding the dark tunnel.", is_narrator=True)
+    
+    show_story_box("", "Koharu squinted, throwing a hand over his eyes with an exaggerated groan.", is_narrator=True)
+    
+    show_story_box("Koharu", "“Ugh. Aye, way too bright for my tastes.”", affiliation="Ashenblade Family")
+    
+    show_story_box("", "We stepped through the threshold, leaving the cold tunnel behind and finally returning to the Boss’s base of operations.", is_narrator=True)
+    show_story_box("", "It was a surreal space. Despite being buried deep underground, the room was lavishly decorated to look exactly like a high-end, vintage hotel lobby.", is_narrator=True)
+    show_story_box("", "The floors were lined with plush red carpets, the walls adorned with ambient sconces, and jazz played softly from an unseen speaker.", is_narrator=True)
+    show_story_box("", "Two of my colleagues, Kaho and Yuji, were standing quietly by the side pillars, organizing equipment. They gave me a brief, acknowledging nod as I walked past.", is_narrator=True)
+    show_story_box("", "In the center of the room, sitting comfortably on a velvet sofa, was the Boss.", is_narrator=True)
+    show_story_box("", "He was quietly flipping through the pages of a thick, leather-bound book about macro-economics and wealth generation. He didn't look up immediately.", is_narrator=True)
+    
+    show_story_box("Boss", "“Miyu. Welcome back.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "I stopped a respectful distance from the sofa, bowing my head slightly.", is_narrator=True)
+    
+    show_story_box("Miyu", "“...Yes. Boss.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Boss", "“I've read your report. Though it was hastily written.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("Miyu", "Ah. That was...", affiliation="Kasakura High School Student Council", is_thought=True)
+    
+    show_story_box("", "I flinched inwardly, the memory of Midori screaming through the radio flashing through my mind.", is_narrator=True)
+    show_story_box("", "The Boss finally looked up from his book, closing it gently and resting it on his lap.", is_narrator=True)
+    
+    show_story_box("Boss", "“I know. You've done well. I'm more worried about your arm.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "I glanced down at the sparking, severed stump of my shoulder.", is_narrator=True)
+    
+    show_story_box("Miyu", "“I'm fine, Boss. I'll have it fixed by the next mission. It is a minor logistical setback.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The Boss leaned back into the sofa, lacing his fingers together.", is_narrator=True)
+    
+    show_story_box("Boss", "“I'm curious. Do you now hate Kasakura High School, or the Kasakura Vanguard, after all this?”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "I blinked, genuinely caught off guard by the question.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Huh? N-no. Boss. It was the Megastructure’s Administration who took my arm, anyway.”", affiliation="Kasakura High School Student Council")
+    show_story_box("Miyu", "“And even then… I understand that both us and them were simply doing our own jobs.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The Boss offered a small, approving nod.", is_narrator=True)
+    
+    show_story_box("Boss", "“That's right, Miyu. Do you know why people take on jobs?”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("Miyu", "“Is it... to survive, Boss?”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Boss", "“Ultimately, that is the goal. But everyone does it for ‘money’. Money is the medium of exchange for ‘desire’.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "I mentally braced myself.", is_narrator=True)
+    show_story_box("", "I adjusted my posture, preparing for another one of the Boss’s philosophical ramblings. I had long gotten used to this routine.", is_narrator=True)
+    show_story_box("", "My role was to listen, absorb, and occasionally paraphrase or answer his rhetorical questions to keep the flow of conversation moving. It goes on for long, but I find such lessons beneficial.", is_narrator=True)
+    
+    show_story_box("Boss", "“To survive, one needs money. And to get money in this world, you need to work. No pain, no gain. But Miyu, you need money not just to survive, but to satisfy your ‘wants’ as well.”", affiliation="Miyu's Benefactor")
+    show_story_box("Boss", "“All humans have a certain ‘desire’ that is entirely unrelated to their biological survival. And that is perfectly normal. It is a desire precisely because you do not currently possess it. You must work in order to obtain that thing.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("Miyu", "“Yes…the drive is the desire itself. It provides the necessary kinetic energy to work for it.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Boss", "“Exactly. It is such a remarkably simple concept. Yet, people have begun to forget something so fundamental these days.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "He tapped the cover of the book on his lap.", is_narrator=True)
+    
+    show_story_box("Boss", "“Do you know why they forget? It is because of the creation of ‘Standards’. Ideals. Morals.”", affiliation="Miyu's Benefactor")
+    show_story_box("Boss", "“What gets in the way of purely satisfying one’s desire are these very standards. Standards give birth to conflicting, secondary desires…”", affiliation="Miyu's Benefactor")
+    show_story_box("Boss", "“...But pure desire is what you need in order to work, in order to truly live… even though your work is constantly being impeded by those very same societal standards.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "He looked at me, his gaze piercing.", is_narrator=True)
+    
+    show_story_box("Boss", "“That is why people tend to seek ‘balance’. They try to walk the middle road. And in doing so, they end up finding themselves becoming more and more unhappy. Because not having the whole of anything is paramount to having nothing.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "I nodded slowly, processing the absolute, ruthless logic of his worldview.", is_narrator=True)
+    
+    show_story_box("Boss", "“Otherwise, you must melt your standards. You must fully immerse yourself in desire. The reason why people are strong—the reason why the ones you saw in your last mission are monsters…”", affiliation="Miyu's Benefactor")
+    show_story_box("Boss", "“...Is because they want something. They desire something, just as badly as normal people do, but they are also able to overcome the barrier that is their ‘familiar self’. They can shed their standards to walk a new, dangerous path.”", affiliation="Miyu's Benefactor")
+    show_story_box("Boss", "“Dangerous, yes. But enticing in the end. Extremes are the right options. At least, within the world we live in.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "He stood up from the sofa, walking slowly toward a vintage globe resting on a mahogany desk.", is_narrator=True)
+    
+    show_story_box("Boss", "“To summarize, Miyu: Do not hate any of your enemies in the end. Kasakura has their own ‘Miyu’. They have their own ‘Midori’, who beats up other people to keep the peace, simply because that is their end goal of happiness.”", affiliation="Miyu's Benefactor")
+    show_story_box("Boss", "“If someone is stronger than you, it simply means they had a bigger desire, and they held on to it for longer than you did.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "He turned back to look at me.", is_narrator=True)
+    
+    show_story_box("Boss", "“Whatever happens out there in the field… leave it purely as business.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "A long silence settled over the hotel-lobby base.", is_narrator=True)
+    show_story_box("", "I adjusted my glasses with my remaining hand, looking at him with genuine, unfiltered concern.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Boss. I believe you have been reading far too many philosophical books lately. I am starting to worry about your mental diet.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "Kaho and Yuji stiffened by the pillars, but the Boss simply let out a light, amused laugh.", is_narrator=True)
+    
+    show_story_box("Boss", "“Haha… perhaps what you are saying is true. Sitting underground reading theory all day is suffocating.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "He stretched his arms slightly.", is_narrator=True)
+    
+    show_story_box("Boss", "“I might need some fresh air.”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("", "I tilted my head, thoroughly confused.", is_narrator=True)
+    
+    show_story_box("Miyu", "“Do you mean...”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("Boss", "“You proposed putting a hold on Midori’s mission to head to the Hoshizuradani Region with her, correct?”", affiliation="Miyu's Benefactor")
+    
+    show_story_box("Miyu", "“Yes. I requested permission to reinforce her.”", affiliation="Kasakura High School Student Council")
+    
+    show_story_box("", "The Boss picked up his suit jacket from the back of the sofa, slipping it over his shoulders.", is_narrator=True)
+    
+    show_story_box("Boss", "“I approve the proposal.”", affiliation="Miyu's Benefactor")
+    show_story_box("Boss", "“In fact… I am planning to go with you.”", affiliation="Miyu's Benefactor")

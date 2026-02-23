@@ -37,7 +37,7 @@ MATERIALS_DB = {
     ),
     "Microprocessor": Material(
         "Microprocessor", 
-        "A common electronic component found in old tech. Used to enhance basic Kata capabilities.", 
+        "A common electronic component found in old tech. Used to unlock basic Kata capabilities.", 
         "02"
     ),
     "Cafeteria Melon Bread": Material(
@@ -54,7 +54,17 @@ MATERIALS_DB = {
         "Sports Water Bottle",
         "A bottle athelete students across all the four major schools commonly use to replenish themselves with cool water during long workout sessions.",
         "05"
-    )
+    ),
+    "Yunhai Herbal Powder": Material(
+        "Yunhai Herbal Powder",
+        "An intricate mix of Yunhai Region's local medicinal herbal specialities grounded and mixed in a traditional laboratory. Used to make wound-treating salves and disease-curing supplements.",
+        "06"
+    ),
+    "Jade Microchip": Material(
+        "Jade Microchip", 
+        "A complex computing unit upgraded with help of the Yunhai Association Industrial Sectors' Jade production lines. Essential for unlocking the true potential of higher-level Katas.", 
+        "07"
+    ),
 }
 
 class StatusEffect:
