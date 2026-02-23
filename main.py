@@ -162,9 +162,9 @@ def sync_player_roster():
         ("Benikawa", 4, stages.create_benikawa),
         ("Shigemura", 15, stages.create_shigemura),
         ("Naganohara", 41, stages.create_naganohara),
+        ("Natsume", 56, stages.create_natsume),
         ("Hana", 56, stages.create_hana),
-        ("Kagaku", 56, stages.create_kagaku),
-        ("Natsume", 56, stages.create_natsume)
+        ("Kagaku", 56, stages.create_kagaku)
     ]
     
     for name, req_stage, factory_func in unlock_milestones:
@@ -302,7 +302,7 @@ def run_game():
                 guest_kagaku = stages.create_kagaku(guest_loadout)
                 party.append(guest_kagaku)
 
-            if stage_id in [49, 50, 51, 52, 53, 54]:
+            if stage_id in [49, 50, 51, 52, 53, 54, 56001, 56002, 56003, 56004, 56005]:
                 required_members = ["Akasuke", "Yuri", "Benikawa", "Shigemura", "Naganohara", "Hana", "Kagaku"]
                 for req_name in required_members:
                     if not any(u.name == req_name for u in party):
@@ -317,6 +317,12 @@ def run_game():
                 guest_loadout = scd.get_kata_data_by_name("Kasakura High School Disciplinary Committee Member Kagaku")
                 guest_kagaku = stages.create_kagaku(guest_loadout)
                 party.insert(6, guest_kagaku)
+
+            if stage_id in [56001, 56002, 56003, 56004, 56005]:
+                party = [p for p in party if p.name != "Natsume"]
+                guest_loadout = scd.get_kata_data_by_name("Kasakura High School Student Natsume")
+                guest_natsume = stages.create_natsume(guest_loadout)
+                party.insert(5, guest_natsume)
 
             enemies = stages.load_stage_enemies(stage_id)
             if not enemies:
@@ -739,12 +745,12 @@ def run_game():
                 31: (story_manager.play_stage_3_10_start, 32),
                 33: (story_manager.play_stage_3_12_start, 34),
                 40: (story_manager.play_stage_3_19_start, 41),
-                56: (story_manager.play_stage_4_11_start, 57),
-                57: (story_manager.play_stage_4_12_start, 58),
-                58: (story_manager.play_stage_4_13_start, 59),
-                60: (story_manager.play_stage_4_15_start, 61),
-                68: (story_manager.play_stage_4_23_start, 69),
-                69: (story_manager.play_stage_4_24_start, 70),
+                55: (story_manager.play_stage_4_11_start, 56),
+                56: (story_manager.play_stage_4_12_start, 57),
+                57: (story_manager.play_stage_4_13_start, 58),
+                59: (story_manager.play_stage_4_15_start, 60),
+                67: (story_manager.play_stage_4_23_start, 68),
+                68: (story_manager.play_stage_4_24_start, 69),
             }
             
             unlocked = config.player_data.get("latest_stage", 0)
@@ -855,6 +861,30 @@ def run_game():
                 draw_node_select_menu("3-19: Riposte", np["cleared_indices"])
                 valid_indices = ["1", "2", "3", "4"]
                 start_id = 41001
+            elif stage_num == 56:
+                draw_node_select_menu("4-11: Endless Wave I", np["cleared_indices"])
+                valid_indices = ["1", "2", "3", "4", "5"]
+                start_id = 56001
+            elif stage_num == 57:
+                draw_node_select_menu("4-12: Endless Wave II", np["cleared_indices"])
+                valid_indices = ["1", "2", "3", "4", "5"]
+                start_id = 57001
+            elif stage_num == 58:
+                draw_node_select_menu("4-13: Endless Wave III", np["cleared_indices"])
+                valid_indices = ["1", "2", "3", "4", "5"]
+                start_id = 58001
+            elif stage_num == 60:
+                draw_node_select_menu("4-15: Classical Performance", np["cleared_indices"])
+                valid_indices = ["1", "2", "3"]
+                start_id = 50001
+            elif stage_num == 68:
+                draw_node_select_menu("4-23: A Senior's Morale", np["cleared_indices"])
+                valid_indices = ["1", "2", "3", "4"]
+                start_id = 68001
+            elif stage_num == 69:
+                draw_node_select_menu("4-24: The Thousand Blossom Brotherhood", np["cleared_indices"])
+                valid_indices = ["1", "2", "3"]
+                start_id = 69001
             else:
                 config.current_state = config.STATE_MAIN_MENU
                 continue

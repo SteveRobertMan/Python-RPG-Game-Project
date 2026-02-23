@@ -11,7 +11,7 @@ from ui_components import clear_screen, get_player_input
 from entities import ELEMENT_NAMES, get_element_color, get_tier_roman, to_subscript, StatusEffect
 
 DURATION_ONLY_EFFECTS = ["Bind", "Haste", "Pierce Affinity", "Riposte"]
-DUAL_STACK_EFFECTS =  ["Bleed", "Rupture", "Fairylight", "Poise"]
+DUAL_STACK_EFFECTS =  ["Bleed", "Rupture", "Fairylight", "Poise", "Sinking"]
 
 """
 --------------------------------------------------------------------------------
@@ -94,6 +94,8 @@ class BattleManager:
             unit.nerve_disruption_turns = 0 
             unit.pending_bind = 0
             unit.pending_haste = 0
+            unit.pending_ls = 0
+            unit.active_ls = 0
             
             unit.temp_modifiers = {
                 "outgoing_dmg_mult": 1.0,
@@ -190,7 +192,7 @@ class BattleManager:
             
     def apply_status_modifiers(self, unit):
         for effect in unit.status_effects:
-            if effect.name in ["Poise", "Bleed"]:
+            if effect.name in DUAL_STACK_EFFECTS:
                 if effect.potency > 99: effect.potency = 99
                 if effect.duration > 99: effect.duration = 99
             elif effect.name == "Bind":
@@ -279,6 +281,14 @@ class BattleManager:
             haste_eff = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=skill.effect_val)
             self.apply_status_logic(unit, haste_eff)
 
+        elif skill.effect_type == "GOLDEN_FIST_SPECIAL":
+            unit.temp_modifiers["final_dmg_reduction"] += 8
+            team = self.allies if unit in self.allies else self.enemies
+            for member in team:
+                # The prompt specified allies FROM "Golden Fist Union"
+                if member.hp > 0 and "Golden Fist Union" in member.name:
+                    member.temp_modifiers["outgoing_dmg_flat"] = member.temp_modifiers.get("outgoing_dmg_flat", 0) + 4
+
     def process_turn_end_effects(self):
         effects_triggered = False
         all_units = self.allies + self.enemies
@@ -364,6 +374,10 @@ class BattleManager:
                     if effect.potency <= 0 or effect.duration <= 0:
                         unit.status_effects.remove(effect)
                         effects_triggered = True
+
+            # --- End of Unit Loop: Transfer Sinking Tally ---
+            unit.active_ls = getattr(unit, "pending_ls", 0)
+            unit.pending_ls = 0
 
         if effects_triggered:
             self.render_battle_screen()
@@ -690,6 +704,14 @@ class BattleManager:
                 if not any(s.name == "Haste" for s in attacker.status_effects):
                     self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
 
+            # Check Skill Condition
+            if skill.effect_type == "BLEED_RUPTURE_BUFF_FLAT_TYPE1":
+                if any(s.name == "Rupture" for s in target.status_effects):
+                    attacker.temp_modifiers["outgoing_dmg_flat"] = attacker.temp_modifiers.get("outgoing_dmg_flat", 0) + skill.effect_val
+            elif skill.effect_type == "RUPTURE_BUFF_AND_COUNT_SPECIAL":
+                if any(s.name == "Rupture" for s in target.status_effects):
+                    attacker.temp_modifiers["outgoing_dmg_flat"] = attacker.temp_modifiers.get("outgoing_dmg_flat", 0) + skill.effect_val
+
         # --- PREPARE MULTI-HIT LOGIC ---
         chips_to_execute = getattr(skill, "chips", [skill])
 
@@ -760,6 +782,36 @@ class BattleManager:
                     if any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects):
                         base_dmg_val += chip.effect_val
 
+                # --- NATSUME STRANGE KATA (ON USE) ---
+                if chip.effect_type in ["NATSUME_STRANGE_SPECIAL_1", "NATSUME_STRANGE_SPECIAL_2", "NATSUME_STRANGE_SPECIAL_3", "NATSUME_STRANGE_SPECIAL_4"]:
+                    base_dmg_val *= 0.20
+                elif chip.effect_type in ["NATSUME_STRANGE_SPECIAL_5", "NATSUME_STRANGE_SPECIAL_6"]:
+                    base_dmg_val *= 0.15
+
+                if chip.effect_type == "NATSUME_STRANGE_SPECIAL_1":
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2))
+                elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_2":
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=1))
+                elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_3":
+                    self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
+                elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_5":
+                    self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2))
+                elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_6":
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2))
+
+                # Check Passive Condition
+                active_passives = getattr(attacker, "passives", [])
+                if not active_passives and getattr(attacker, "kata", None):
+                    active_passives = getattr(attacker.kata, "passives", [])
+
+                if active_passives:
+                    for p in active_passives:
+                        if p.effect_type == "PASSIVE_GOLDEN_FIST":
+                            if any(s.name == "Bleed" for s in target.status_effects):
+                                attacker.temp_modifiers["outgoing_dmg_flat"] = attacker.temp_modifiers.get("outgoing_dmg_flat", 0) + p.effect_val
+                                self.log(f"[bold yellow][Passive][/bold yellow] {p.name} activated! (+{p.effect_val} Dmg)")
+
                 # 2. Bind Penalty
                 bind_effect = next((s for s in attacker.status_effects if s.name == "Bind"), None)
                 if bind_effect:
@@ -798,6 +850,12 @@ class BattleManager:
                 final_dmg = nbd + target.temp_modifiers.get("incoming_dmg_flat", 0)
                 final_dmg += attacker.temp_modifiers.get("outgoing_dmg_flat", 0)
                 final_dmg -= target.temp_modifiers["final_dmg_reduction"]
+                # --- SINKING LS CHECK (Attacker Penalty) ---
+                if getattr(attacker, "active_ls", 0) > 0:
+                    if random.randint(1, 100) <= attacker.active_ls:
+                        reduction_pct = (attacker.active_ls / 2.0) / 100.0
+                        final_dmg = final_dmg * (1.0 - reduction_pct)
+                        self.log(f"[blue3]Sinking[/blue3] disrupted {attacker.name}'s attack! Damage reduced by {int(reduction_pct*100)}%.")
 
                 # Consume Hit Bonuses
                 if target.next_hit_taken_flat_bonus > 0:
@@ -833,6 +891,17 @@ class BattleManager:
                     damage = damage * (1.0 - reduction_pct)
 
                 damage = max(1, int(damage)) # Minimum 1 damage if hit connects
+
+                if "Golden Fist Union" in target.name:
+                    target_team = self.allies if target in self.allies else self.enemies
+                    for ally in target_team:
+                        if ally.hp > 0:
+                            ap = getattr(ally, "passives", [])
+                            if not ap and getattr(ally, "kata", None): ap = getattr(ally.kata, "passives", [])
+                            for p in ap:
+                                if p.effect_type == "PASSIVE_CRUDE_COMMAND":
+                                    final_dmg -= p.effect_val
+                                    break # Only apply the reduction once, even if multiple units with the passive are alive
 
                 # CONVERT DAMAGE TO HEAL
                 if chip.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
@@ -995,6 +1064,15 @@ class BattleManager:
                                 poise_effect.potency -= chip.effect_val
                                 poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
                                 if poise_effect.potency <= 0 or poise_effect.duration <= 0: member.status_effects.remove(poise_effect)
+                    
+                    # SINKING TRIGGER
+                    sinking_eff = next((s for s in target.status_effects if s.name == "Sinking"), None)
+                    if sinking_eff:
+                        if not hasattr(target, "pending_ls"): target.pending_ls = 0
+                        target.pending_ls = min(90, target.pending_ls + sinking_eff.potency)
+                        sinking_eff.duration -= 1
+                        #self.log(f"[blue3]Sinking[/blue3] disrupted {target.name}'s mind! LS Tally +{sinking_eff.potency} (Total: {target.pending_ls}).")
+                        if sinking_eff.duration <= 0: target.status_effects.remove(sinking_eff)
 
                     # NEXT HIT BONUSES
                     elif chip.effect_type == "ON_HIT_NEXT_TAKEN_FLAT": target.next_hit_taken_flat_bonus += chip.effect_val
@@ -1274,6 +1352,29 @@ class BattleManager:
             elif chip.effect_type == "POISE_RUPTURE_SPECIAL_TYPE1":
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", chip.effect_val, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=chip.effect_val))
                 self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", chip.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
+    
+            # --- NATSUME STRANGE KATA (ON HIT) ---
+            elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_1":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3))
+            elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_2":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
+            elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_3":
+                self.apply_status_logic(target, StatusEffect("Sinking", "[blue3]♆[/blue3]", 0, "Upon getting hit by a skill, add Potency to an 'LS' (Low Sanity) tally and reduce Count by 1. Next turn, before attacking, each hit has an LS% chance to deal -(LS/2)% Final Damage. LS resets to 0 at turn end. Max LS: 90. Max Potency or Count: 99", duration=5, type="DEBUFF"))
+            elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_4":
+                self.apply_status_logic(target, StatusEffect("Sinking", "[blue3]♆[/blue3]", 1, "Upon getting hit by a skill, add Potency to an 'LS' (Low Sanity) tally and reduce Count by 1. Next turn, before attacking, each hit has an LS% chance to deal -(LS/2)% Final Damage. LS resets to 0 at turn end. Max LS: 90. Max Potency or Count: 99", duration=0, type="DEBUFF"))
+            elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_5":
+                self.apply_status_logic(target, StatusEffect("Sinking", "[blue3]♆[/blue3]", 2, "Upon getting hit by a skill, add Potency to an 'LS' (Low Sanity) tally and reduce Count by 1. Next turn, before attacking, each hit has an LS% chance to deal -(LS/2)% Final Damage. LS resets to 0 at turn end. Max LS: 90. Max Potency or Count: 99", duration=0, type="DEBUFF"))
+            elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_6":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
+
+            # --- GOLDEN FIST UNION ---
+            elif skill.effect_type == "GOLDEN_FIST_SPECIAL":
+                self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 0, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=5))
+            elif chip.effect_type == "APPLY_BLEED_RUPTURE_HEAVY_STACKS":
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]🩸[/red]", 2, "Take (Potency) damage on turn end, then reduce count by 1. Max Potency or Count: 99", duration=2))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+            elif chip.effect_type == "RUPTURE_BUFF_AND_COUNT_SPECIAL":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3))
 
             if target.hp <= 0:
                 target.hp = 0
@@ -1320,7 +1421,7 @@ class BattleManager:
         
         if existing:
             # --- MERGE LOGIC ---
-            if new_status.name in ["Bleed", "Poise", "Rupture", "Fairylight"]:
+            if new_status.name in DUAL_STACK_EFFECTS:
                 existing.duration = min(99, existing.duration + new_status.duration)
                 existing.potency = min(99, existing.potency + new_status.potency)
             elif new_status.name in ["Bind", "Haste", "Pierce Affinity"]:
@@ -1332,7 +1433,7 @@ class BattleManager:
                 existing.potency += new_status.potency
         else:
             # --- NEW APPLICATION (FIRST TIME LOGIC) ---
-            if new_status.name in ["Bleed", "Poise", "Rupture", "Fairylight"]:
+            if new_status.name in DUAL_STACK_EFFECTS:
                 # Rule 1: Ensure Duration starts at least 1.
                 if new_status.duration < 1:
                     new_status.duration = 1
@@ -1434,7 +1535,20 @@ class BattleManager:
                     else:
                         se_text += f"[bold cyan]SE{i+1}[/bold cyan]: {effect.symbol} {effect.name} (Potency: {effect.potency}, Count: {effect.duration})\n"
             else:
-                se_text = "No active status effects."
+                se_text = "No active status effects.\n"
+
+            # --- PASSIVE TEXT LOGIC ---
+            passives_text = ""
+            active_passives = getattr(unit, "passives", [])
+            if not active_passives and getattr(unit, "kata", None):
+                active_passives = getattr(unit.kata, "passives", [])
+
+            if active_passives:
+                for i, p in enumerate(active_passives):
+                    # The color tag now wraps the entire line, keeping the Px bolded!
+                    passives_text += f"[{p.color}][bold]P{i+1}[/bold]: {p.name}[/{p.color}]\n"
+            else:
+                passives_text = "No active passives.\n"
 
             content = f"""
 [bold]{unit.name}[/bold]
@@ -1444,14 +1558,15 @@ Modifiers: {status_str}
 
 [bold]Status Effects:[/bold]
 {se_text}
-
+[bold]Passives:[/bold]
+{passives_text}
 [bold]Full Skill Pool:[/bold]
 {pool_text}
             """
             layout = Layout()
             layout.split_row(Layout(Panel(content)), Layout(Panel(res_table)))
             config.console.print(layout)
-            config.console.print("\nType [bold]SE#[/bold] (e.g. SE1) to view status details, or [Enter] to return.")
+            config.console.print("\nType [bold]SE#[/bold] to view status details, [bold]P#[/bold] to view passive details, or [Enter] to return.")
             
             choice = get_player_input("Input > ").upper()
             if choice == "": break
@@ -1461,7 +1576,7 @@ Modifiers: {status_str}
                 if 0 <= idx < len(unit.status_effects):
                     eff = unit.status_effects[idx]
                     
-                    # --- FIX: Ensure Fairylight and Rupture always display correct descriptions ---
+                    # --- Ensure Fairylight and Rupture always display correct descriptions ---
                     disp_name = eff.name
                     disp_desc = eff.description
                     
@@ -1471,6 +1586,20 @@ Modifiers: {status_str}
                         disp_desc = "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99"
                     
                     config.console.print(Panel(f"[bold]{disp_name}[/bold]\n\n{disp_desc}", title="Status Effect", style="green"))
+                    get_player_input("Press Enter...")
+                    
+            # --- PASSIVE EXPANSION INPUT ---
+            elif choice.startswith("P") and choice[1:].isdigit():
+                idx = int(choice[1:]) - 1
+                
+                active_passives = getattr(unit, "passives", [])
+                if not active_passives and getattr(unit, "kata", None):
+                    active_passives = getattr(unit.kata, "passives", [])
+                    
+                if active_passives and 0 <= idx < len(active_passives):
+                    p = active_passives[idx]
+                    # Uses dynamic p.color for the Panel style boundary!
+                    config.console.print(Panel(f"[bold]{p.name}[/bold]\n\n{p.description}", title="Passive", style=p.color))
                     get_player_input("Press Enter...")
 
     def check_win_condition(self):

@@ -9073,7 +9073,7 @@ def play_stage_4_11_start():
     show_story_box("", "Local gangsters began pouring out of the surrounding streets and empty alleyways, forming a massive mob right in front of the school.", is_narrator=True)
     show_story_box("", "The leader of the mob—a scarred brute with a jagged metal pipe—stepped to the front, pointing his weapon at us and laughing loudly.", is_narrator=True)
     
-    show_story_box("Gang Leader", "“Hah! Is this a joke?! The Association requests outside help to clean up our turf, and Kasakura only sends eight brats?!”", affiliation="Megastructure Local Gang")
+    show_story_box("Gang Leader", "“Hah! Is this a joke?! The Association requests outside help to clean up our turf, and Kasakura only sends eight brats?!”", affiliation="Golden Fist Union")
     
     show_story_box("", "Shigemura stood beside me, his hands resting in his pockets, his violet eyes scanning the massive crowd.", is_narrator=True)
     

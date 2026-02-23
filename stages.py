@@ -5,7 +5,7 @@ import config
 import scd
 from player_state import player
 from scd import bleed_1, bleed_2, bleed_3, bind_1, rupture_1, rupture_2, rupture_3, rupturecount_2, bleedcount_2, bind_4, pierce_affinity_1
-from entities import Chip, ChipSkill
+from entities import Chip, ChipSkill, Passive
 
 # --- PARTY MEMBER CREATION ---
 
@@ -250,12 +250,7 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Kidnapper Hooligan Leader"))
 
     elif stage_id == 6:
-        # In the original code, the node spawned her simply as "Ayame Benikawa". 
-        # The database names her "Ayame Benikawa (Sparring)". We rename it here to match standard text.
-        enemy = spawn("Ayame Benikawa (Sparring)")
-        if enemy:
-            enemy.name = "Ayame Benikawa"
-            enemies.append(enemy)
+        enemies.append(spawn("Ayame Benikawa (Sparring)"))
 
     elif stage_id == 7:
         enemies.append(spawn("Ayame Benikawa (Ninja)"))
@@ -512,6 +507,34 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Luoxia Martial Arts Practitioner Student", "A"))
         enemies.append(spawn("Luoxia Martial Arts Practitioner Student", "B"))
         enemies.append(spawn("Luoxia Martial Arts Practitioner Student", "C"))
+    
+    elif stage_id == 53:
+        enemies.append(spawn("Natsume(?)"))
+
+    elif stage_id == 56001:
+        enemies.append(spawn("Golden Fist Union Gangster", "A"))
+        enemies.append(spawn("Golden Fist Union Gangster", "B"))
+        enemies.append(spawn("Golden Fist Union Gangster", "C"))
+        enemies.append(spawn("Golden Fist Union Gangster", "D"))
+    elif stage_id == 56002:
+        enemies.append(spawn("Golden Fist Union Gangster Leader"))
+        enemies.append(spawn("Golden Fist Union Gangster", "A"))
+        enemies.append(spawn("Golden Fist Union Gangster", "B"))
+    elif stage_id == 56003:
+        enemies.append(spawn("Golden Fist Union Gangster Leader", "A"))
+        enemies.append(spawn("Golden Fist Union Gangster Leader", "B"))
+        enemies.append(spawn("Golden Fist Union Gangster Leader", "C"))
+    elif stage_id == 56004:
+        enemies.append(spawn("Golden Fist Union Gangster Leader", "A"))
+        enemies.append(spawn("Golden Fist Union Gangster Leader", "B"))
+        enemies.append(spawn("Golden Fist Union Gangster", "A"))
+        enemies.append(spawn("Golden Fist Union Gangster", "B"))
+    elif stage_id == 56005:
+        enemies.append(spawn("Golden Fist Union Gangster", "A"))
+        enemies.append(spawn("Golden Fist Union Gangster", "B"))
+        enemies.append(spawn("Golden Fist Union Gangster", "C"))
+        enemies.append(spawn("Golden Fist Union Gangster", "D"))
+        enemies.append(spawn("Golden Fist Union Gangster", "E"))
 
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
@@ -1058,9 +1081,76 @@ def get_enemy_database():
     luoxia_student.description = "luoxiamartialartspractitionerstudent"
     luoxia_student.unlock_stage_id = 52
 
+    #################################
+    # --- NATSUME? (ACT 4 BOSS) --- #
+    #################################
+    natsume = Entity("Natsume(?)", is_player=False)
+    natsume.max_hp = 333
+    natsume.pace = 4
+    k_natsume = Kata("Strange Kata", "Natsume?", 1, 16, [1.3, 1.1, 1.1, 1.1, 1.1, 1.1, 1.3])
+    # Skill I: Chop / Split [劈] ◈◈◈
+    n_s1_c1 = Chip(base_damage=10, effect_type="NATSUME_STRANGE_SPECIAL_1")
+    n_s1_c2 = Chip(base_damage=20, effect_type="NATSUME_STRANGE_SPECIAL_2")
+    n_s1_c3 = Chip(base_damage=20, effect_type="NATSUME_STRANGE_SPECIAL_2")
+    n_s1_desc = "[On Use] Gain Poise Count\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
+    n_s1_insp = "◈ Base Damage: 10\n       [On Use] Base Damage -80%\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 3 Rupture Count\n       ◈ Base Damage: 20\n       [On Use] Base Damage -80%\n       [On Use] Gain 1 Poise Count\n       [On Hit] Inflict 1 Rupture Potency\n       ◈ Base Damage: 20\n       [On Use] Base Damage -80%\n       [On Use] Gain 1 Poise Count\n       [On Hit] Inflict 1 Rupture Potency"
+    n_s1 = ChipSkill("Chop / Split [劈] ◈◈◈", 1, EL_PHILAUTIA, [n_s1_c1, n_s1_c2, n_s1_c3], description=n_s1_desc, inspect_description=n_s1_insp)
+    # Skill II: Frost Moon Slice [霜月斬] ◈◈◈◈
+    n_s2_c1 = Chip(base_damage=16, effect_type="NATSUME_STRANGE_SPECIAL_3")
+    n_s2_c2 = Chip(base_damage=16, effect_type="NATSUME_STRANGE_SPECIAL_4")
+    n_s2_c3 = Chip(base_damage=16, effect_type="NATSUME_STRANGE_SPECIAL_4")
+    n_s2_c4 = Chip(base_damage=16, effect_type="NATSUME_STRANGE_SPECIAL_4")
+    n_s2_desc = "[On Use] Gain Bind next turn\n       [On Hit] Inflict Sinking Potency\n       [On Hit] Inflict Sinking Count"
+    n_s2_insp = "◈ Base Damage: 16\n       [On Use] Base Damage -80%\n       [On Use] Gain 1 Bind next turn\n       [On Hit] Inflict 5 Sinking Count\n       ◈ Base Damage: 16\n       [On Use] Base Damage -80%\n       [On Hit] Inflict 1 Sinking Potency\n       ◈ Base Damage: 16\n       [On Use] Base Damage -80%\n       [On Hit] Inflict 1 Sinking Potency\n       ◈ Base Damage: 16\n       [On Use] Base Damage -80%\n       [On Hit] Inflict 1 Sinking Potency"
+    n_s2 = ChipSkill("Frost Moon Slice [霜月斬] ◈◈◈◈", 2, EL_LUDUS, [n_s2_c1, n_s2_c2, n_s2_c3, n_s2_c4], description=n_s2_desc, inspect_description=n_s2_insp)
+    # Skill III: Star Fall Thrust [墜星刺] ◈◈◈◈
+    n_s3_c1 = Chip(base_damage=100, effect_type="NATSUME_STRANGE_SPECIAL_5")
+    n_s3_c2 = Chip(base_damage=34, effect_type="NATSUME_STRANGE_SPECIAL_6")
+    n_s3_c3 = Chip(base_damage=34, effect_type="NATSUME_STRANGE_SPECIAL_5")
+    n_s3_c4 = Chip(base_damage=34, effect_type="NATSUME_STRANGE_SPECIAL_6")
+    n_s3_desc = "[On Use] Gain Bind next turn\n       [On Use] Gain Poise Count\n       [On Use] Gain Poise Potency\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Sinking Potency"
+    n_s3_insp = "◈ Base Damage: 100\n       [On Use] Base Damage -85%\n       [On Use] Gain 1 Bind next turn\n       [On Use] Gain 2 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 2 Sinking Potency\n       ◈ Base Damage: 34\n       [On Use] Base Damage -85%\n       [On Use] Gain 2 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 2 Rupture Potency\n       ◈ Base Damage: 34\n       [On Use] Base Damage -85%\n       [On Use] Gain 1 Bind next turn\n       [On Use] Gain 2 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 2 Sinking Potency\n       ◈ Base Damage: 34\n       [On Use] Base Damage -85%\n       [On Use] Gain 2 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 2 Rupture Potency"
+    n_s3 = ChipSkill("Star Fall Thrust [墜星刺] ◈◈◈◈", 3, EL_PRAGMA, [n_s3_c1, n_s3_c2, n_s3_c3, n_s3_c4], description=n_s3_desc, inspect_description=n_s3_insp)
+    k_natsume.skill_pool_def = [(n_s1, 3), (n_s2, 2), (n_s3, 2)]
+    natsume.equip_kata(k_natsume)
+    natsume.description = "natsumestrangekatadescription"
+    natsume.unlock_stage_id = 53
+
+    ######################################
+    # --- GOLDEN FIST UNION (ACT 4) --- #
+    ######################################
+    gf_gangster = Entity("Golden Fist Union Gangster", is_player=False)
+    gf_gangster.max_hp = 30
+    gf_gangster.pace = 1
+    k_gfg = Kata("Golden Fist Thug", "Golden Fist", 1, 2, [1.6, 1.0, 1.0, 1.5, 1.5, 1.5, 1.6])
+    gfg_s1 = Skill("Gilded Hands", 1, EL_STORGE, 6, "[On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count", effect_type="APPLY_BLEED_HEAVY_STACKS")
+    gfg_s2 = Skill("Beatdown", 2, EL_STORGE, 8, "[On Hit] If target has Rupture, deal +3 Final Damage", effect_type="RUPTURE_DAMAGE_BUFF_TYPE2", effect_val=3)
+    k_gfg.skill_pool_def = [(gfg_s1, 4), (gfg_s2, 4)]
+    gfg_p1 = Passive("For The Golden Fist", "When attacking, if target has Bleed, deal +2 Final Damage", "PASSIVE_GOLDEN_FIST", 2, color="yellow")
+    k_gfg.passives.append(gfg_p1)
+    gf_gangster.equip_kata(k_gfg)
+    gf_gangster.description = "goldenfistuniongangsterdescription"
+    gf_gangster.unlock_stage_id = 56
+    
+    gf_leader = Entity("Golden Fist Union Gangster Leader", is_player=False)
+    gf_leader.max_hp = 50
+    gf_leader.pace = 1
+    k_gfl = Kata("Golden Fist Leader", "Golden Fist Leader", 1, 2, [1.7, 1.0, 0.9, 1.4, 1.4, 1.4, 1.7])
+    gfl_s1 = Skill("Gilded Grapple", 1, EL_STORGE, 8, "[On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count", effect_type="APPLY_BLEED_RUPTURE_HEAVY_STACKS")
+    gfl_s2 = Skill("Heavy Beatdown", 2, EL_EROS, 10, "[On Hit] If target has Rupture, deal +3 Final Damage\n       [On Hit] Inflict 3 Rupture Count", effect_type="RUPTURE_BUFF_AND_COUNT_SPECIAL", effect_val=3)
+    gfl_s3 = Skill("Flashy Gear", 3, EL_STORGE, 0, "[Combat Start] This unit takes -8 Final Damage this turn\n       [Combat Start] All of this unit’s allies from “Golden Fist Union” deal +4 Final Damage this turn\n       [On Use] Gain 5 Bind next turn", effect_type="GOLDEN_FIST_SPECIAL")
+    k_gfl.skill_pool_def = [(gfl_s1, 3), (gfl_s2, 3), (gfl_s3, 2)]
+    # Assign Passives
+    gfl_p1 = Passive("For The Golden Fist", "When attacking, if target has Bleed, deal +2 Final Damage", "PASSIVE_GOLDEN_FIST", 2, color="yellow")
+    gfl_p2 = Passive("Crude Command", "When this unit is present, all of this unit’s allies from “Golden Fist Union” take -2 Final Damage from attacks (does not stack)", "PASSIVE_CRUDE_COMMAND", 2, color="yellow")
+    k_gfl.passives.extend([gfl_p1, gfl_p2])
+    gf_leader.equip_kata(k_gfl)
+    gf_leader.description = "goldenfistuniongangsterleaderdescription"
+    gf_leader.unlock_stage_id = 56
+    
     ################################################
     # Append to existing return list in stages.py: #
     ################################################
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro, 
             sp_kiryoku, c_kiryoku, ayako, sumiko, inf_heiwa, inf_kiryoku, inf_kasa, inf_lead, hisayuki, inf_council, inf_disc, 
-            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student]
+            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student, natsume, gf_gangster, gf_leader]

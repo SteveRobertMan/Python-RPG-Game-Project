@@ -104,6 +104,14 @@ class ChipSkill(Skill):
         self.chips = chips
         self.inspect_description = inspect_description
 
+class Passive:
+    def __init__(self, name, description, effect_type="", effect_val=0, color="tan"):
+        self.name = name
+        self.description = description
+        self.effect_type = effect_type
+        self.effect_val = effect_val
+        self.color = color
+
 class Kata:
     def __init__(self, name, owner_name, rarity, rift_aptitude, resistances, description=""):
         self.name = name
@@ -114,6 +122,7 @@ class Kata:
         self.skill_pool_def = [] 
         self.source_key = None
         self.description = description
+        self.passives = []
         
     def generate_deck(self):
         deck = []
@@ -143,7 +152,8 @@ class Entity:
         self.discard_pile = []
         self.intent = None
         self.intents = []
-        self.auto_target = None 
+        self.auto_target = None
+        self.passives = []
         
         self.temp_modifiers = {
             "final_dmg_reduction": 0, 

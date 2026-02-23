@@ -277,7 +277,6 @@ def draw_node_select_menu(stage_name, cleared_indices):
     # config.console.print(f"[dim red]Debug - Cleared Indices: {safe_cleared}[/dim red]")
 
     nodes = []
-
     # Stage 1-5: Weekday Errands
     if stage_name == "1-5: Weekday Errands":
         nodes = [
@@ -285,7 +284,6 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 2", "Kidnapper Hooligan(s)"),
             ("Node 3", "Kidnapper Hooligan Leader (Mixed Group)")
         ]
-    
     # Stage 1-10: Raid
     elif stage_name == "1-10: Raid":
         nodes = [
@@ -294,14 +292,12 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 3", "Slender Heiwa Seiritsu Delinquent(s) (Mixed Group)"),
             ("Node 4", "Bulky Heiwa Seiritsu Delinquent(s) (Mixed Group)")
         ]
-    
     # Stage 2-3: Stalemate At The Gates
     elif stage_name == "2-3: Stalemate At The Gates":
         nodes = [
             ("Node 1", "Slender Heiwa Seiritsu Delinquent(s) (Mixed Group)"),
             ("Node 2", "Bulky Heiwa Seiritsu Delinquent(s) (Mixed Group)"),
         ]
-
     # Stage 2-4: Breakthrough Plan
     elif stage_name == "2-4: Breakthrough Plan":
         nodes = [
@@ -309,7 +305,6 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 2", "Chain Fist Heiwa Seiritsu Delinquent(s)"),
             ("Node 3", "Spike Bat Heiwa Seiritsu Delinquent (Mixed Group)"),
         ]
-
     # Stage 2-5: Labyrinth Of Motives
     elif stage_name == "2-5: Labyrinth Of Motives":
         nodes = [
@@ -319,7 +314,6 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 4", "Chain Fist Heiwa Seiritsu Delinquent(s) (Mixed Group)"),
             ("Node 5", "Slender Heiwa Seiritsu Delinquent(s) (Mixed Group)"),
         ]
-
     # Stage 3-10: Silent Passenger
     elif stage_name == "3-10: Silent Passenger":
         nodes = [
@@ -327,7 +321,6 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 2", "Infiltrating Kiryoku Gakuen Student(s) (Mixed Group)"),
             ("Node 3", "Infiltrating Kasakura High School Student(s) (Mixed Group)")
         ]
-
     # Stage 3-12: Weapons
     elif stage_name == "3-12: Weapons":
         nodes = [
@@ -335,7 +328,6 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 2", "Infiltrating Kiryoku Gakuen Student Council Combatant(s) (Mixed Group)"),
             ("Node 3", "Infiltrating Kasakura High School Disciplinary Committee Combatant(s) (Mixed Group)")
         ]
-
     # Stage 3-19: Riposte
     elif stage_name == "3-19: Riposte":
         nodes = [
@@ -343,6 +335,15 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 2", "Riposte Gang Squad Leader"),
             ("Node 3", "Riposte Gang Henchman(s) (Mixed Group)"),
             ("Node 4", "Riposte Gang Squad Leader(s) (Mixed Group)")
+        ]
+    # Stage 4-11: Endless Wave I
+    elif stage_name == "4-11: Endless Wave I":
+        nodes = [
+            ("Node 1", "Golden Fist Union Gangster(s)"),
+            ("Node 2", "Golden Fist Union Gangster Leader (Mixed Group)"),
+            ("Node 3", "Golden Fist Union Gangster Leader(s)"),
+            ("Node 4", "Golden Fist Union Gangster Leader(s) (Mixed Group)"),
+            ("Node 5", "Golden Fist Union Gangster(s)")
         ]
     
     # Render the selected list
@@ -435,11 +436,34 @@ def draw_bestiary_details(unit):
         for skill, count in sorted_pool:
             c = get_element_color(skill.element)
             t_r = get_tier_roman(skill.tier)
-            desc = skill.description if skill.description else ""
+            
+            # --- CHIP SKILL / DETAILED DESCRIPTION LOGIC ---
+            if hasattr(skill, "inspect_description") and skill.inspect_description:
+                desc = skill.inspect_description
+            else:
+                desc = skill.description if skill.description else ""
+                
             dmg_str = f"[bold]Dmg: {skill.base_damage}[/bold]"
-            pool_text += f"x{count} [{c}]{skill.name}[/{c}] ({t_r}) {dmg_str} [light_green]{desc}[/light_green]\n"
+            
+            # Format newlines so multi-line inspect descriptions indent perfectly
+            formatted_desc = desc.replace("\n", "\n")
+            
+            pool_text += f"x{count} [{c}]{skill.name}[/{c}] ({t_r}) {dmg_str}\n       [light_green]{formatted_desc}[/light_green]\n"
     else:
         pool_text = "No Kata / Skill info available."
+
+    # --- PASSIVES DISPLAY LOGIC ---
+    passives_text = ""
+    # Check if the unit or its kata has passives
+    active_passives = getattr(unit, "passives", [])
+    if not active_passives and unit.kata:
+        active_passives = getattr(unit.kata, "passives", [])
+        
+    if active_passives:
+        passives_text = "\nPassives:\n"
+        for p in active_passives:
+            # Uses dynamic p.color for the passive's name!
+            passives_text += f"〘[bold {p.color}]{p.name}[/bold {p.color}]〙\n       [italic]{p.description}[/italic]\n"
 
     desc_text = getattr(unit, 'description', 'No description available.')
 
@@ -449,7 +473,7 @@ HP: {unit.max_hp}
 Rift Aptitude: {unit.kata.rift_aptitude if unit.kata else "?"}
 
 [bold italic]{desc_text}[/bold italic]
-
+{passives_text}
 [bold]Skill Pool:[/bold]
 {pool_text}
     """
@@ -630,6 +654,7 @@ def open_equip_menu(unit, player_obj):
                 unit.equip_kata(default_data["kata_obj"])
                 unit.max_hp = default_data["max_hp"]
                 unit.hp = unit.max_hp # Full heal
+                unit.passives = unit.passives[:]
                 
                 # We can optionally reset description to default, though unit object might have persistent bio
                 if "description" in default_data:
