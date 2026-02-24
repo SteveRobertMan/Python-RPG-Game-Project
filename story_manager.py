@@ -161,7 +161,7 @@ def play_prologue():
 def play_stage_1_1_story():
     # Intro
     show_story_box("???", "Good work as always, you two.")
-    show_story_box("", "The man named Kageyama adjusted his glasses with a sheepish smile... His raven-black hair was slicked back with near obsessive neatness...", is_narrator=True)
+    show_story_box("", "The man named Seiryuu Kageyama adjusted his glasses with a sheepish smile... His raven-black hair was slicked back with near obsessive neatness...", is_narrator=True)
     show_story_box("", "He looked like someone who’d never raised his voice in his life—and probably hadn’t. But his words often carried the weight of silent authority.", is_narrator=True)
     
     show_story_box("Akasuke", "You say it like this isn’t the third time this week.", affiliation="Kasakura High School Student")
