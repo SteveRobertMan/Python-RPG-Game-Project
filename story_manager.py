@@ -9255,7 +9255,7 @@ def play_stage_4_12_start():
     show_story_box("", "I gasped for air, the pressure lifting from the room. I took a step forward, ready to throw the door open and shout for him to come back.", is_narrator=True)
     show_story_box("", "But a hand touched my shoulder.", is_narrator=True)
     
-    show_story_box("Xiao", "“I wouldn’t do that if I were you.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    show_story_box("Xiao", "“I wouldn’t do that if I were you.”", affiliation="Yunhai Association Enforcer Captain")
     
     show_story_box("", "I spun around.", is_narrator=True)
     show_story_box("", "Standing behind me was my close friend, the Captain of the 11th Unit of our Division.", is_narrator=True)
@@ -9264,7 +9264,7 @@ def play_stage_4_12_start():
     
     show_story_box("Mei", "“Xiao? When did you get in here?”", affiliation="Yunhai Association Enforcer Captain")
     
-    show_story_box("Xiao", "“Through the window? What do you think? You’ve been working so hard you didn’t notice me entering the office.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
+    show_story_box("Xiao", "“Through the window? What do you think? You’ve been working so hard you didn’t notice me entering the office.”", affiliation="Yunhai Association Enforcer Captain")
     show_story_box("Xiao", "“And you shouldn't aggravate Liwei right now. He has almost the entirety of the Enforcement’s Bai Division supporting him. You’re outnumbered.”", affiliation="Yunhai Association Bai Division 11th Unit Captain")
     
     show_story_box("", "I lowered my sword, feeling defeated.", is_narrator=True)
@@ -9397,7 +9397,6 @@ def play_stage_4_12_start():
     show_story_box("", "The first wave had been survived using tricks, rotations, and disguises. But now, they knew we were here. They knew our tactics.", is_narrator=True)
     
     show_story_box("Akasuke", "“Let’s head to the front gates. The next wave is coming.”", affiliation="Kasakura High School Student / Seven Wonders")
-
 
 def play_stage_4_12_end():
     # --- AKASUKE'S POV ---
@@ -9567,8 +9566,6 @@ def play_stage_4_13_start():
     
     show_story_box("", "The old man didn't look surprised. His eyes sharpened, entirely losing the aura of a helpless civilian. He took the paper, slipping it securely into his apron.", is_narrator=True)
 
-
-def play_stage_4_13_end():
     # --- SHIGEMURA'S POV ---
     show_story_box("", "********* ◆ *********\nShigemura’s POV", is_narrator=True)
     show_story_box("", "[ Luoxia Gardening School – Front Gates (Daybreak) ]", is_narrator=True)
@@ -9622,7 +9619,8 @@ def play_stage_4_13_end():
     show_story_box("", "I thought, dropping into a combat stance.", is_narrator=True)
     
     show_story_box("Shigemura", "Rest as much as you need, Akasuke.", affiliation="Kasakura High School Student", is_thought=True)
-    
+
+def play_stage_4_13_end():
     # --- AKASUKE'S POV ---
     show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
     

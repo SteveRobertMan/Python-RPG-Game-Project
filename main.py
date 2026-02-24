@@ -876,7 +876,7 @@ def run_game():
             elif stage_num == 60:
                 draw_node_select_menu("4-15: Classical Performance", np["cleared_indices"])
                 valid_indices = ["1", "2", "3"]
-                start_id = 50001
+                start_id = 60001
             elif stage_num == 68:
                 draw_node_select_menu("4-23: A Senior's Morale", np["cleared_indices"])
                 valid_indices = ["1", "2", "3", "4"]

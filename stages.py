@@ -517,24 +517,92 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Golden Fist Union Gangster", "C"))
         enemies.append(spawn("Golden Fist Union Gangster", "D"))
     elif stage_id == 56002:
-        enemies.append(spawn("Golden Fist Union Gangster Leader"))
         enemies.append(spawn("Golden Fist Union Gangster", "A"))
         enemies.append(spawn("Golden Fist Union Gangster", "B"))
+        enemies.append(spawn("Golden Fist Union Gangster", "C"))
+        enemies.append(spawn("Golden Fist Union Gangster Leader"))
     elif stage_id == 56003:
         enemies.append(spawn("Golden Fist Union Gangster Leader", "A"))
         enemies.append(spawn("Golden Fist Union Gangster Leader", "B"))
         enemies.append(spawn("Golden Fist Union Gangster Leader", "C"))
     elif stage_id == 56004:
-        enemies.append(spawn("Golden Fist Union Gangster Leader", "A"))
-        enemies.append(spawn("Golden Fist Union Gangster Leader", "B"))
         enemies.append(spawn("Golden Fist Union Gangster", "A"))
         enemies.append(spawn("Golden Fist Union Gangster", "B"))
+        enemies.append(spawn("Golden Fist Union Gangster Leader", "A"))
+        enemies.append(spawn("Golden Fist Union Gangster Leader", "B"))
     elif stage_id == 56005:
         enemies.append(spawn("Golden Fist Union Gangster", "A"))
         enemies.append(spawn("Golden Fist Union Gangster", "B"))
         enemies.append(spawn("Golden Fist Union Gangster", "C"))
         enemies.append(spawn("Golden Fist Union Gangster", "D"))
         enemies.append(spawn("Golden Fist Union Gangster", "E"))
+
+    elif stage_id == 57001:
+        enemies.append(spawn("Black Water Dock Gangster", "A"))
+        enemies.append(spawn("Black Water Dock Gangster", "B"))
+        enemies.append(spawn("Black Water Dock Gangster", "C"))
+        enemies.append(spawn("Black Water Dock Gangster", "D"))
+    elif stage_id == 57002:
+        enemies.append(spawn("Black Water Dock Gangster", "A"))
+        enemies.append(spawn("Black Water Dock Gangster", "B"))
+        enemies.append(spawn("Black Water Dock Gangster", "C"))
+        enemies.append(spawn("Black Water Dock Gangster Leader"))
+    elif stage_id == 57003:
+        enemies.append(spawn("Black Water Dock Gangster Leader", "A"))
+        enemies.append(spawn("Black Water Dock Gangster Leader", "B"))
+        enemies.append(spawn("Black Water Dock Gangster Leader", "C"))
+    elif stage_id == 57004:
+        enemies.append(spawn("Black Water Dock Gangster", "A"))
+        enemies.append(spawn("Black Water Dock Gangster", "B"))
+        enemies.append(spawn("Black Water Dock Gangster Leader", "A"))
+        enemies.append(spawn("Black Water Dock Gangster Leader", "B"))
+    elif stage_id == 57005:
+        enemies.append(spawn("Black Water Dock Gangster", "A"))
+        enemies.append(spawn("Black Water Dock Gangster", "B"))
+        enemies.append(spawn("Black Water Dock Gangster", "C"))
+        enemies.append(spawn("Black Water Dock Gangster", "D"))
+        enemies.append(spawn("Black Water Dock Gangster", "E"))
+
+    elif stage_id == 58001:
+        enemies.append(spawn("Twin Mountain Gate Gangster", "A"))
+        enemies.append(spawn("Twin Mountain Gate Gangster", "B"))
+        enemies.append(spawn("Twin Mountain Gate Gangster", "C"))
+    elif stage_id == 58002:
+        enemies.append(spawn("Twin Mountain Gate Gangster", "A"))
+        enemies.append(spawn("Twin Mountain Gate Gangster", "B"))
+        enemies.append(spawn("Twin Mountain Gate Gangster Leader"))
+    elif stage_id == 58003:
+        enemies.append(spawn("Twin Mountain Gate Gangster Leader", "A"))
+        enemies.append(spawn("Twin Mountain Gate Gangster Leader", "B"))
+    elif stage_id == 58004:
+        enemies.append(spawn("Twin Mountain Gate Gangster"))
+        enemies.append(spawn("Twin Mountain Gate Gangster Leader", "A"))
+        enemies.append(spawn("Twin Mountain Gate Gangster Leader", "B"))
+    elif stage_id == 58005:
+        enemies.append(spawn("Twin Mountain Gate Gangster", "A"))
+        enemies.append(spawn("Twin Mountain Gate Gangster", "B"))
+        enemies.append(spawn("Twin Mountain Gate Gangster", "C"))
+    elif stage_id == 60001:
+        enemies.append(spawn("Golden Fist Union Gangster", "A"))
+        enemies.append(spawn("Golden Fist Union Gangster", "B"))
+        enemies.append(spawn("Golden Fist Union Gangster Leader"))
+        enemies.append(spawn("Black Water Dock Gangster"))
+        enemies.append(spawn("Black Water Dock Gangster Leader"))
+    elif stage_id == 60002:
+        enemies.append(spawn("Golden Fist Union Gangster Leader"))
+        enemies.append(spawn("Black Water Dock Gangster", "A"))
+        enemies.append(spawn("Black Water Dock Gangster", "B"))
+        enemies.append(spawn("Twin Mountain Gate Gangster"))
+        enemies.append(spawn("Twin Mountain Gate Gangster Leader"))
+    elif stage_id == 60003:
+        enemies.append(spawn("Golden Fist Union Gangster"))
+        enemies.append(spawn("Golden Fist Union Gangster Leader"))
+        enemies.append(spawn("Black Water Dock Gangster"))
+        enemies.append(spawn("Black Water Dock Gangster Leader"))
+        enemies.append(spawn("Twin Mountain Gate Gangster"))
+        enemies.append(spawn("Twin Mountain Gate Gangster Leader"))
+    elif stage_id == 62:
+        enemies.append(spawn("Miyu"))
 
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
@@ -1147,10 +1215,169 @@ def get_enemy_database():
     gf_leader.equip_kata(k_gfl)
     gf_leader.description = "goldenfistuniongangsterleaderdescription"
     gf_leader.unlock_stage_id = 56
+
+    ####################################
+    # --- BLACK WATER DOCK (ACT 4) --- #
+    ####################################
+
+    bw_gangster = Entity("Black Water Dock Gangster", is_player=False)
+    bw_gangster.max_hp = 45
+    bw_gangster.pace = 1
+    k_bw = Kata("Dock Gangster Arts", "Black Water Dock", 1, 2, [1.1, 1.5, 1.5, 1.0, 1.6, 1.0, 1.3])
+    # Skill I
+    bw_s1_desc = "[On Use] If this unit has Poise, gain 3 Poise Potency\n       [On Hit] Gain 3 Poise Count\n       [On Hit] Inflict 3 Rupture Potency"
+    bw_s1 = Skill("Close Quarters Combat", 1, EL_PRAGMA, 5, bw_s1_desc, effect_type="POISE_RUPTURE_SPECIAL_TYPE2", effect_val=3)
+    # Skill II
+    bw_s2_desc = "[On Hit] Inflict 1 Rupture Count\n       [On Hit] If this unit has Poise, inflict 1 Paralysis\n       [On Hit] Inflict 1 Paralysis"
+    bw_s2 = Skill("Shocking Spearplay", 2, EL_LUDUS, 10, bw_s2_desc, effect_type="RUPTURE_PARALYSIS_SPECIAL_TYPE1", effect_val=1)
+    k_bw.skill_pool_def = [(bw_s1, 4), (bw_s2, 4)]
+    # Passive
+    bw_p1 = Passive("The Dock’s Spearplay", "When attacking, if target has Paralysis, inflict 1 Rupture Potency", "PASSIVE_DOCK_SPEARPLAY", 1, color="blue")
+    k_bw.passives.append(bw_p1)
+    bw_gangster.equip_kata(k_bw)
+    bw_gangster.description = "blackwaterdockgangster"
+    bw_gangster.unlock_stage_id = 57
+
+    bw_leader = Entity("Black Water Dock Gangster Leader", is_player=False)
+    bw_leader.max_hp = 63
+    bw_leader.pace = 1
+    k_bw_leader = Kata("Dock Leader Arts", "Black Water Dock Leader", 1, 2, [1.0, 1.3, 1.3, 1.0, 1.7, 1.0, 1.2])
+    # Skill I
+    bw_l_s1_desc = "[On Hit] Gain 2 Poise Count\n       [On Hit] Gain 2 Poise Potency\n       [On Hit] Gain 2 Haste next turn"
+    bw_l_s1 = Skill("Unreachable Footwork", 1, EL_LUDUS, 5, bw_l_s1_desc, effect_type="POISE_HASTE_SPECIAL_TYPE1", effect_val=2)
+    # Skill II
+    bw_l_s2_desc = "[On Hit] Inflict 2 Rupture Count\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Paralysis"
+    bw_l_s2 = Skill("Paralyzing Spearplay", 2, EL_PHILAUTIA, 11, bw_l_s2_desc, effect_type="RUPTURE_PARALYSIS_SPECIAL_TYPE2", effect_val=2)
+    # Skill III
+    bw_l_s3_desc = "[On Hit] Deal +3 Base Damage for every stack of Paralysis the target has (Max +15 Base Damage)\n       [On Hit] Inflict 3 Paralysis"
+    bw_l_s3 = Skill("Heart Point", 3, EL_AGAPE, 4, bw_l_s3_desc, effect_type="PARALYSIS_SPECIAL_TYPE1", effect_val=3)
+    k_bw_leader.skill_pool_def = [(bw_l_s1, 3), (bw_l_s2, 3), (bw_l_s3, 3)]
+    # Passives
+    bw_l_p1 = Passive("The Dock’s Spearplay", "When attacking, if target has Paralysis, inflict 1 Rupture Potency", "PASSIVE_DOCK_SPEARPLAY", 1, color="blue")
+    bw_l_p2 = Passive("Returning Current", "When this unit gets hit, if attacker has Paralysis, inflict 2 Rupture Count", "PASSIVE_RETURNING_CURRENT", 2, color="blue")
+    k_bw_leader.passives.extend([bw_l_p1, bw_l_p2])
+    bw_leader.equip_kata(k_bw_leader)
+    bw_leader.description = "blackwaterdockgangsterleader"
+    bw_leader.unlock_stage_id = 57
+
+    #######################################
+    # --- TWIN MOUNTAIN GATE (ACT 4) --- #
+    #######################################
+
+    tmg_gangster = Entity("Twin Mountain Gate Gangster", is_player=False)
+    tmg_gangster.max_hp = 43
+    tmg_gangster.pace = 1
+    k_tmg = Kata("Twin Axe Arts", "Twin Mountain Gate", 1, 2, [1.4, 1.5, 1.5, 1.5, 1.3, 1.4, 1.4])
+    # Skill I ◈◈
+    tmg_s1_c1 = Chip(base_damage=3, effect_type="APPLY_STATUS")
+    tmg_s1_c1.status_effect = scd.bleed_3
+    tmg_s1_c2 = Chip(base_damage=4, effect_type="APPLY_STATUS")
+    tmg_s1_c2.status_effect = scd.rupture_3
+    tmg_s1_desc_brief = "[On Hit] Inflict Bleed Potency\n       [On Hit] Inflict Rupture Potency"
+    tmg_s1_desc_inspect = "◈ Base Damage: 3\n       [On Hit] Inflict 3 Bleed Potency\n       ◈ Base Damage: 4\n       [On Hit] Inflict 3 Rupture Potency"
+    tmg_s1 = ChipSkill("Twin Axe ◈◈", 1, EL_EROS, [tmg_s1_c1, tmg_s1_c2], description=tmg_s1_desc_brief, inspect_description=tmg_s1_desc_inspect)
+    # Skill II ◈◈◈◈
+    tmg_s2_c1 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE2")
+    tmg_s2_c2 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE2")
+    tmg_s2_c3 = Chip(base_damage=2, effect_type="BLEED_RUPTURE_SPECIAL_TYPE2")
+    tmg_s2_c4 = Chip(base_damage=2, effect_type="RUMBLE_SPECIAL")
+    tmg_s2_desc_brief = "[On Use] This unit takes +Final Damage next turn\n       [On Hit] Inflict Bleed Count\n       [On Hit] Inflict Rupture Count\n       [On Hit] Inflict Paralysis"
+    tmg_s2_desc_inspect = "◈ Base Damage: 2\n       [On Hit] Inflict 1 Bleed Count\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 2\n       [On Hit] Inflict 1 Bleed Count\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 2\n       [On Hit] Inflict 1 Bleed Count\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 2\n       [On Use] This unit takes +5 Final Damage next turn\n       [On Hit] Inflict 2 Paralysis"
+    tmg_s2 = ChipSkill("Rumble ◈◈◈◈", 2, EL_EROS, [tmg_s2_c1, tmg_s2_c2, tmg_s2_c3, tmg_s2_c4], description=tmg_s2_desc_brief, inspect_description=tmg_s2_desc_inspect)
+    k_tmg.skill_pool_def = [(tmg_s1, 4), (tmg_s2, 4)]
+    tmg_p1 = Passive("Ruthlessness", "When attacking, deal +1 Base Damage for every chip used within this turn", "PASSIVE_RUTHLESSNESS", 1, color="red")
+    k_tmg.passives.append(tmg_p1)
+    tmg_gangster.equip_kata(k_tmg)
+    tmg_gangster.description = "twinmountaingategangster"
+    tmg_gangster.unlock_stage_id = 58
+
+    tmg_leader = Entity("Twin Mountain Gate Gangster Leader", is_player=False)
+    tmg_leader.max_hp = 55
+    tmg_leader.pace = 1
+    k_tmg_leader = Kata("Leader Axe Arts", "Twin Mountain Gate Leader", 1, 2, [1.4, 1.5, 1.5, 1.5, 1.6, 1.4, 1.4])
+    # Skill I
+    tmg_l_s1_desc = "[On Hit] Inflict 4 Bleed Potency"
+    tmg_l_s1 = Skill("Double Axe", 1, EL_PHILIA, 8, tmg_l_s1_desc, effect_type="APPLY_STATUS")
+    tmg_l_s1.status_effect = scd.bleed_4
+    # Skill II ◈◈◈
+    tmg_l_s2_c1 = Chip(base_damage=3, effect_type="BLEED_PARALYSIS_SPECIAL_TYPE1")
+    tmg_l_s2_c2 = Chip(base_damage=3, effect_type="BLEED_PARALYSIS_SPECIAL_TYPE1")
+    tmg_l_s2_c3 = Chip(base_damage=4, effect_type="BLEED_PARALYSIS_SPECIAL_TYPE2")
+    tmg_l_s2_desc_brief = "[On Use] This unit takes +Final Damage next turn\n       [On Hit] Inflict Bleed Count\n       [On Hit] Inflict Paralysis"
+    tmg_l_s2_desc_inspect = "◈ Base Damage: 3\n       [On Hit] Inflict 2 Bleed Count\n       [On Hit] Inflict 1 Paralysis\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Bleed Count\n       [On Hit] Inflict 1 Paralysis\n       ◈ Base Damage: 4\n       [On Use] This unit takes +6 Final Damage next turn\n       [On Hit] Inflict 2 Bleed Count\n       [On Hit] Inflict 1 Paralysis"
+    tmg_l_s2 = ChipSkill("Disable ◈◈◈", 2, EL_EROS, [tmg_l_s2_c1, tmg_l_s2_c2, tmg_l_s2_c3], description=tmg_l_s2_desc_brief, inspect_description=tmg_l_s2_desc_inspect)
+    # Skill III ◈◈◈◈◈
+    tmg_l_s3_c1 = Chip(base_damage=3, effect_type="APPLY_BLEED_HEAVY_STACKS")
+    tmg_l_s3_c2 = Chip(base_damage=3, effect_type="BLEED_PARALYSIS_SPECIAL_TYPE1")
+    tmg_l_s3_c3 = Chip(base_damage=3, effect_type="SWITCH_RANDOM_TYPE1")
+    tmg_l_s3_c4 = Chip(base_damage=3, effect_type="APPLY_BLEED_HEAVY_STACKS")
+    tmg_l_s3_c5 = Chip(base_damage=3, effect_type="BLEED_PARALYSIS_SPECIAL_TYPE1")
+    tmg_l_s3_desc_brief = "[On Hit] Inflict Bleed Potency\n       [On Hit] Inflict Bleed Count\n       [On Hit] Inflict Paralysis\n       [On Hit] Switches to a new random target"
+    tmg_l_s3_desc_inspect = "◈ Base Damage: 3\n       [On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Bleed Count\n       [On Hit] Inflict 1 Paralysis\n       ◈ Base Damage: 3\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Bleed Count\n       [On Hit] Inflict 1 Paralysis"
+    tmg_l_s3 = ChipSkill("Frenzy ◈◈◈◈◈", 3, EL_EROS, [tmg_l_s3_c1, tmg_l_s3_c2, tmg_l_s3_c3, tmg_l_s3_c4, tmg_l_s3_c5], description=tmg_l_s3_desc_brief, inspect_description=tmg_l_s3_desc_inspect)
+    k_tmg_leader.skill_pool_def = [(tmg_l_s1, 5), (tmg_l_s2, 2), (tmg_l_s3, 1)]
+    tmg_l_p1 = Passive("Ruthlessness", "When attacking, deal +1 Base Damage for every chip used within this turn", "PASSIVE_RUTHLESSNESS", 1, color="red")
+    tmg_l_p2 = Passive("Unpredictable", "Take -1 Final Damage for every chip used within this turn on the next turn", "PASSIVE_UNPREDICTABLE", 2, color="red")
+    k_tmg_leader.passives.extend([tmg_l_p1, tmg_l_p2])
+    tmg_leader.equip_kata(k_tmg_leader)
+    tmg_leader.description = "twinmountaingategangsterleader"
+    tmg_leader.unlock_stage_id = 58
+
+    #############################
+    # --- MIYU (ACT 4 BOSS) --- #
+    #############################
+    miyu = Entity("Miyu", is_player=False)
+    miyu.max_hp = 1020
+    miyu.pace = 3
+    k_miyu = Kata("Wing Chun Arts", "Miyu", 1, 20, [0.9, 1.0, 1.0, 1.1, 0.9, 0.9, 1.0])
+    # === ORIGINAL SKILL POOL ===
+    # S1: Pak Sau [拍手]
+    m_s1_desc_brief = "[On Use] Gain 3 Poise Count\n       [On Hit] Inflict 3 Rupture Potency"
+    m_s1 = Skill("Pak Sau [拍手]", 1, EL_PRAGMA, 14, m_s1_desc_brief, effect_type="POISE_RUPTURE_SPECIAL_TYPE3", effect_val=3)
+    # S2: Circling Hand [圈手] ◈◈
+    m_s2_c1 = Chip(base_damage=8, effect_type="GAIN_POISE_SPECIAL_2")
+    m_s2_c2 = Chip(base_damage=10, effect_type="APPLY_RUPTURE_SPECIAL_1")
+    m_s2_desc = "[On Use] Gain Poise Potency\n       [On Use] Gain Poise Count\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
+    m_s2_insp = "◈ Base Damage: 8\n       [On Use] Gain 3 Poise Potency\n       [On Use] Gain 2 Poise Count\n       ◈ Base Damage: 10\n       [On Hit] Inflict 3 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count"
+    m_s2 = ChipSkill("Circling Hand [圈手] ◈◈", 2, EL_LUDUS, [m_s2_c1, m_s2_c2], description=m_s2_desc, inspect_description=m_s2_insp)
+    k_miyu.skill_pool_def = [(m_s1, 4), (m_s2, 3)]
+    # === APPENDABLE TEMPORARY SKILLS ===
+    # S3: Tan Sau [攤手]
+    m_s3_desc = "[On Use] Gain 4 Poise Potency\n       [On Use] Gain 4 Poise Count\n       [On Hit] Inflict 4 Rupture Potency"
+    m_s3 = Skill("Tan Sau [攤手]", 1, EL_EROS, 22, m_s3_desc, effect_type="POISE_RUPTURE_SPECIAL_TYPE2", effect_val=4)
+    m_s3.is_temporary = True
+    # S4: Lifting Hand [問手] ◈◈◈
+    m_s4_c1 = Chip(base_damage=8, effect_type="GAIN_POISE_SPECIAL_3")
+    m_s4_c2 = Chip(base_damage=8, effect_type="APPLY_RUPTURE_SPECIAL_2")
+    m_s4_c3 = Chip(base_damage=10, effect_type="POISE_RUPTURE_SPECIAL_TYPE4")
+    m_s4_desc = "[On Use] Gain Poise Potency\n       [On Use] Gain Poise Count\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count\n       [On Hit] Switches to a new random target"
+    m_s4_insp = "◈ Base Damage: 8\n       [On Use] Gain 4 Poise Potency\n       [On Use] Gain 3 Poise Count\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 8\n       [On Hit] Inflict 4 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 10\n       [On Use] Gain 4 Poise Potency\n       [On Use] Gain 6 Poise Count\n       [On Hit] Inflict 4 Rupture Potency\n       [On Hit] Inflict 4 Rupture Count"
+    m_s4 = ChipSkill("Lifting Hand [問手] ◈◈◈", 2, EL_EROS, [m_s4_c1, m_s4_c2, m_s4_c3], description=m_s4_desc, inspect_description=m_s4_insp)
+    m_s4.is_temporary = True
+    for c in m_s4.chips: c.is_temporary = True
+    # S5: Question Mark Kick [問號踢] ◈◈◈
+    m_s5_c1 = Chip(base_damage=15, effect_type="MIYU_SPECIAL_1")
+    m_s5_c2 = Chip(base_damage=15, effect_type="MIYU_SPECIAL_2")
+    m_s5_c3 = Chip(base_damage=20, effect_type="APPLY_STATUS")
+    m_s5_c3.status_effect = scd.paralysis_5
+    m_s5_desc = "[Combat Start] Deal +[(Pace-2)*10]% Base Damage with all skills this turn\n       [Combat Start] Take +[8+(Pace-3)] Final Damage for this turn\n       [On Use] Gain Poise Potency\n       [On Use] Gain Poise Count\n       [On Hit] Inflict Paralysis\n       [On Hit] Switches to a new random target (Prioritizes units without Paralysis)"
+    m_s5_insp = "◈ Base Damage: 15\n       [On Use] Gain 7 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 2 Paralysis\n       [On Hit] Switches to a new random target (Prioritizes units without Paralysis)\n       ◈ Base Damage: 15\n       [On Use] Gain 4 Poise Potency\n       [On Use] Gain 4 Poise Count\n       [On Hit] Inflict 3 Paralysis\n       [On Hit] Switches to a new random target (Prioritizes units without Paralysis)\n       ◈ Base Damage: 20\n       [On Hit] Inflict 5 Paralysis"
+    m_s5 = ChipSkill("Question Mark Kick [問號踢] ◈◈◈", 3, EL_EROS, [m_s5_c1, m_s5_c2, m_s5_c3], description=m_s5_desc, inspect_description=m_s5_insp, effect_type="MIYU_S5_COMBAT_START")
+    m_s5.is_temporary = True
+    for c in m_s5.chips: c.is_temporary = True
+    # === PASSIVES ===
+    m_p1 = Passive("Wing Chun [詠春]", "Tally amount of Critical Hits this unit performs throughout battle. Append these skills randomly into Skill Pool when the amount reaches the following numbers:\n2 Critical Hits – ‘Tan Sau [攤手]’\n4 Critical Hits – ‘Lifting Hand [問手]’\n7 Critical Hits – ‘Question Mark Kick [問號踢]’\nAfter reaching 7 Critical Hits, immediately reset the tally.", "PASSIVE_WING_CHUN", 1, color="pale_turquoise1")
+    m_p2 = Passive("Acceleration [加速度]", "At start of turn, convert all Poise Potency and Poise Count and add to Acceleration Potency and Acceleration Count, respectively. Then, if this unit has 30 [Acceleration Potency+Count], remove all Acceleration, Pick Up 1 Pace, and gain 1 Overheat. This effect can occur 3 times\nIf this unit already has 6+ Pace, instead, remove 70% of Acceleration Potency and Acceleration Count each, then gain 2 Overheat.", "PASSIVE_ACCELERATION", 2, color="pale_turquoise1")
+    m_p3 = Passive("Impediment - Severed Arm [障礙－斷臂]", "Deal -50% Final Damage with attacks\nTake 200% Final Damage from attacks", "PASSIVE_SEVERED_ARM", 3, color="grey74")
+    k_miyu.passives.extend([m_p1, m_p2, m_p3])
+    miyu.equip_kata(k_miyu)
+    miyu.description = "miyudescription"
+    miyu.unlock_stage_id = 62
+    miyu.appendable_skills = {2: m_s3, 4: m_s4, 7: m_s5}
     
     ################################################
     # Append to existing return list in stages.py: #
     ################################################
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro, 
             sp_kiryoku, c_kiryoku, ayako, sumiko, inf_heiwa, inf_kiryoku, inf_kasa, inf_lead, hisayuki, inf_council, inf_disc, 
-            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student, natsume, gf_gangster, gf_leader]
+            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student, natsume, gf_gangster, gf_leader, bw_gangster, bw_leader, tmg_gangster, tmg_leader, miyu]

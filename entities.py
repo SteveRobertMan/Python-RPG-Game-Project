@@ -17,7 +17,7 @@ def get_element_color(el_idx):
     return "white"
 
 def get_tier_roman(tier):
-    return ["", "I", "II", "III"][tier] if 0 < tier <= 3 else str(tier)
+    return ["", "I", "II", "III", "IV", "V"][tier] if 0 < tier <= 5 else str(tier)
 
 def to_subscript(number):
     sub_map = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")

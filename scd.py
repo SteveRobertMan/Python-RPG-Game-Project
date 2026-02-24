@@ -7,10 +7,10 @@ bleed_4 = StatusEffect("Bleed", "[red]💧︎[/red]", 4, "Upon dealing damage, T
 bleedcount_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF")
 bleedcount_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF")
 bleedcount_3 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=3, type="DEBUFF")
-bind_1 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF")
-bind_2 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2, type="DEBUFF")
-bind_3 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=3, type="DEBUFF")
-bind_4 = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=4, type="DEBUFF")
+bind_1 = StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF")
+bind_2 = StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2, type="DEBUFF")
+bind_3 = StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=3, type="DEBUFF")
+bind_4 = StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=4, type="DEBUFF")
 haste_1 = StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1, type="BUFF")
 poise_1 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
 poise_2 = StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0, type="BUFF")
@@ -29,6 +29,10 @@ fairylight_3 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]",
 pierce_affinity_1 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1, type="DEBUFF")
 pierce_affinity_2 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2, type="DEBUFF")
 pierce_affinity_3 = StatusEffect("Pierce Affinity", "[light_yellow3]➾[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3, type="DEBUFF")
+paralysis_1 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=1, type="DEBUFF")
+paralysis_5 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=5, type="DEBUFF")
+acceleration_1 = StatusEffect("Acceleration", "[bold pale_turquoise1]>>[/bold pale_turquoise1]", 1, "Unique Poise (Counts As Poise)\nBoost Critical Hit chance by (Potency*5)%. When taking damage, reduce Final Damage by 1-3, then also reduce Count (max 2 times per turn) by the same amount. Count cannot go below 1 this way. Max potency or count: 99", duration=1, type="UNIQUEBUFF")
+overheat_1 = StatusEffect("Overheat", "[indian_red]>>[/indian_red]", 0, "Apply the following effects when owning at least 1 Count:\nDeal -25% Base Damage with attacks, and take +30% Base Damage from attacks. When attacking, fix Critical Strike chance to 0%. At turn end, reduce count by 1. Max count: 3", duration=1, type="DEBUFF")
 
 # --- KATA ID REGISTRY ---
 KATA_ID_MAP = {
@@ -565,7 +569,7 @@ def get_kata_data_by_name(name):
         k.source_key = name
         desc_s1 = "[On Use] If this unit does not have Riposte, gain 10 Riposte. Otherwise, gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Affinity"
         s1 = Skill("En Garde", 1, EL_LUDUS, 7, desc_s1, effect_type="AKASUKE_RIPOSTE_ENGARDE")
-        desc_s2 = "[On Use] Gain 1 Haste next turn\n       [On Use] If this unit has 10+ Riposte, Gain 1 Haste next turn\n       [On Hit] If target has Pierce Affinity, gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Affinity"
+        desc_s2 = "[On Use] Gain 1 Haste next turn\n       [On Use] If this unit has 10+ Riposte, gain 1 Haste next turn\n       [On Hit] If target has Pierce Affinity, gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Affinity"
         s2 = Skill("Feint", 2, EL_STORGE, 6, desc_s2, effect_type="AKASUKE_RIPOSTE_FEINT")
         desc_s3 = "This skill deals +2% base damage for each stack of Riposte owned (Max +100%)\n       [On Use] Gain 10 Riposte\n       [On Hit] Inflict 3 Pierce Affinity"
         s3 = Skill("Prise De Fer", 3, EL_LUDUS, 15, desc_s3, effect_type="AKASUKE_RIPOSTE_PRISEDEFER")

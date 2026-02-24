@@ -345,7 +345,32 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 4", "Golden Fist Union Gangster Leader(s) (Mixed Group)"),
             ("Node 5", "Golden Fist Union Gangster(s)")
         ]
-    
+    # Stage 4-12: Endless Wave II
+    elif stage_name == "4-12: Endless Wave II":
+        nodes = [
+            ("Node 1", "Black Water Dock Gangster(s)"),
+            ("Node 2", "Black Water Dock Gangster Leader (Mixed Group)"),
+            ("Node 3", "Black Water Dock Gangster Leader(s)"),
+            ("Node 4", "Black Water Dock Gangster Leader(s) (Mixed Group)"),
+            ("Node 5", "Black Water Dock Gangster(s)")
+        ]
+    # Stage 4-13: Endless Wave III
+    elif stage_name == "4-13: Endless Wave III":
+        nodes = [
+            ("Node 1", "Twin Mountain Gate Gangster(s)"),
+            ("Node 2", "Twin Mountain Gate Gangster Leader (Mixed Group)"),
+            ("Node 3", "Twin Mountain Gate Gangster Leader(s)"),
+            ("Node 4", "Twin Mountain Gate Gangster Leader(s) (Mixed Group)"),
+            ("Node 5", "Twin Mountain Gate Gangster(s)")
+        ]
+    # Stage 4-15: Classical Performace
+    elif stage_name == "4-15: Classical Performance":
+        nodes = [
+            ("Node 1", "Golden Fist Union Gangster(s) (Mixed Group)"),
+            ("Node 2", "Black Water Dock Gangster(s) (Mixed Group)"),
+            ("Node 3", "Twin Mountain Gate Gangster (Mixed Group)")
+        ]
+
     # Render the selected list
     for i, (name, desc) in enumerate(nodes):
         desc_text = f"[white]{desc}[/white]"

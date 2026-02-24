@@ -10,8 +10,10 @@ import config
 from ui_components import clear_screen, get_player_input
 from entities import ELEMENT_NAMES, get_element_color, get_tier_roman, to_subscript, StatusEffect
 
-DURATION_ONLY_EFFECTS = ["Bind", "Haste", "Pierce Affinity", "Riposte"]
-DUAL_STACK_EFFECTS =  ["Bleed", "Rupture", "Fairylight", "Poise", "Sinking"]
+DURATION_ONLY_EFFECTS = ["Bind", "Haste", "Pierce Affinity", "Riposte", "Paralysis", "Overheat"]
+DUAL_STACK_EFFECTS =  ["Bleed", "Rupture", "Fairylight", "Poise", "Sinking", "Acceleration"]
+RUPTURE_LIST = ["Rupture", "Fairylight"]
+POISE_LIST = ["Poise", "Acceleration"]
 
 """
 --------------------------------------------------------------------------------
@@ -205,6 +207,49 @@ class BattleManager:
             elif effect.name == "Haste":
                 bonus = 1.0 + (0.1 * effect.duration)
                 unit.temp_modifiers["outgoing_dmg_mult"] *= bonus
+
+        # --- IMPEDIMENT: SEVERED ARM ---
+        active_passives = getattr(unit, "passives", [])
+        if not active_passives and getattr(unit, "kata", None): active_passives = getattr(unit.kata, "passives", [])
+        for p in active_passives:
+            if p.effect_type == "PASSIVE_SEVERED_ARM":
+                unit.temp_modifiers["outgoing_dmg_mult"] *= 0.5
+                unit.temp_modifiers["incoming_dmg_mult"] *= 2.0
+                
+        # --- ACCELERATION POISE CONVERSION & PACE LIMIT ---
+        has_accel_passive = any(p.effect_type == "PASSIVE_ACCELERATION" for p in active_passives)
+        if has_accel_passive:
+            poise = next((s for s in unit.status_effects if s.name == "Poise"), None)
+            accel = next((s for s in unit.status_effects if s.name == "Acceleration"), None)
+            if poise:
+                if accel:
+                    accel.potency = min(99, accel.potency + poise.potency)
+                    accel.duration = min(99, accel.duration + poise.duration)
+                else:
+                    accel = StatusEffect("Acceleration", "[bold pale_turquoise1]>>[/bold pale_turquoise1]", poise.potency, "Unique Poise (Counts As Poise)\nBoost Critical Hit chance by (Potency*5)%. When taking damage, reduce Final Damage by 1-3, then also reduce Count (max 2 times per turn) by the same amount. Count cannot go below 1 this way. Max potency or count: 99", duration=poise.duration, type="UNIQUEBUFF")
+                    unit.status_effects.append(accel)
+                unit.status_effects.remove(poise)
+            
+            # 30-Stack Pace Check
+            accel_check = next((s for s in unit.status_effects if s.name == "Acceleration"), None)
+            if accel_check:
+                total_accel = accel_check.potency + accel_check.duration
+                if total_accel >= 30:
+                    if unit.pace >= 6:
+                        # --- 6+ Pace Fallback ---
+                        accel_check.potency = max(1, int(accel_check.potency * 0.3))
+                        accel_check.duration = max(1, int(accel_check.duration * 0.3))
+                        self.apply_status_logic(unit, StatusEffect("Overheat", "[indian_red]>>[/indian_red]", 0, "Apply the following effects when owning at least 1 Count:\nDeal -25% Base Damage with attacks, and take +30% Base Damage from attacks. When attacking, fix Critical Strike chance to 0%. At turn end, reduce count by 1. Max count: 3", duration=2, type="DEBUFF"))
+                        self.log(f"[indian_red]{unit.name} Overheated at max velocity! Acceleration plummeted.[/indian_red]")
+                    else:
+                        # --- Normal Pace Up ---
+                        unit.status_effects.remove(accel_check)
+                        if getattr(unit, "miyu_pace_increases", 0) < 3:
+                            unit.pace += 1
+                            unit.miyu_pace_increases = getattr(unit, "miyu_pace_increases", 0) + 1
+                            self.apply_status_logic(unit, StatusEffect("Overheat", "[indian_red]>>[/indian_red]", 0, "Apply the following effects when owning at least 1 Count:\nDeal -25% Base Damage with attacks, and take +30% Base Damage from attacks. When attacking, fix Critical Strike chance to 0%. At turn end, reduce count by 1. Max count: 3", duration=1, type="DEBUFF"))
+                            self.log(f"[bold pale_turquoise1]{unit.name} reached velocity limit! Pace permanently increased to {unit.pace}![/bold pale_turquoise1]")
+                            self.log(f"[indian_red]{unit.name}'s Systems Overheated![/indian_red]")
         
         if getattr(unit, "nerve_disruption_turns", 0) > 0:
             unit.temp_modifiers["outgoing_dmg_mult"] *= 0.2
@@ -289,6 +334,10 @@ class BattleManager:
                 if member.hp > 0 and "Golden Fist Union" in member.name:
                     member.temp_modifiers["outgoing_dmg_flat"] = member.temp_modifiers.get("outgoing_dmg_flat", 0) + 4
 
+        elif skill.effect_type == "MIYU_S5_COMBAT_START":
+            unit.temp_modifiers["outgoing_base_dmg_pct"] = unit.temp_modifiers.get("outgoing_base_dmg_pct", 0) + ((unit.pace - 2) * 0.10)
+            unit.temp_modifiers["final_dmg_reduction"] -= (8 + (unit.pace - 3))
+
     def process_turn_end_effects(self):
         effects_triggered = False
         all_units = self.allies + self.enemies
@@ -308,14 +357,14 @@ class BattleManager:
 
                 if effect.name == "Bleed":
                     pass 
-                elif effect.name in ["Bind", "Poise", "Haste"]:
+                elif effect.name in ["Bind", "Poise", "Haste", "Overheat"]:
                     effect.duration -= 1
                 elif effect.name == "Fairylight":
                     old_duration = effect.duration
                     effect.duration = effect.duration // 2 
                     reduced_amount = old_duration - effect.duration
                     if reduced_amount > 0:
-                        rupture_eff = next((s for s in unit.status_effects if s.name == "Rupture"), None)
+                        rupture_eff = next((s for s in unit.status_effects if s.name in RUPTURE_LIST), None)
                         if rupture_eff:
                             rupture_eff.potency = min(99, rupture_eff.potency + reduced_amount)
                             self.log(f"[spring_green1]Fairylight decay granted {unit.name} +{reduced_amount} Rupture Potency![/spring_green1]")
@@ -353,7 +402,7 @@ class BattleManager:
                 if existing_bind:
                     existing_bind.duration = min(5, existing_bind.duration + actual_duration)
                 else:
-                    bind_effect = StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=actual_duration)
+                    bind_effect = StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=actual_duration)
                     unit.status_effects.append(bind_effect)
                 unit.pending_bind = 0
                 effects_triggered = True
@@ -390,6 +439,8 @@ class BattleManager:
             u.slot_targets = []
             u.intents = []
             u.turn_committed_skills = [] # Clear committed skills for the new round
+            u.chips_used_this_turn = 0   # Reset chip tracker at start of turn
+            u.accel_reductions_this_turn = 0 # NEW: Track Acceleration reductions
 
         target_counts_allies = {a: 0 for a in self.allies if a.hp > 0}
         target_counts_enemies = {e: 0 for e in self.enemies if e.hp > 0}
@@ -427,14 +478,21 @@ class BattleManager:
                         opt1 = slot_idx * 2
                         opt2 = slot_idx * 2 + 1
                         valid_opts = []
-                        if opt1 < len(enemy.hand): valid_opts.append(opt1)
-                        if opt2 < len(enemy.hand): valid_opts.append(opt2)
+                        if opt1 < len(enemy.hand) and enemy.hand[opt1] is not None: valid_opts.append(opt1)
+                        if opt2 < len(enemy.hand) and enemy.hand[opt2] is not None: valid_opts.append(opt2)
+                        
+                        # --- TINY DECK FALLBACK ---
+                        # If the enemy's deck is too small to reach these strict hand indices, 
+                        # pull from ANY remaining available cards they haven't queued yet!
+                        if not valid_opts:
+                            used_indices = [intent[2] for intent in enemy.intents]
+                            available = [i for i in range(len(enemy.hand)) if i not in used_indices and enemy.hand[i] is not None]
+                            if available:
+                                valid_opts = available
                         
                         if valid_opts:
                             chosen_idx = random.choice(valid_opts)
                             enemy.intents.append((enemy.hand[chosen_idx], t, chosen_idx))
-                    else:
-                        enemy.slot_targets.append(None)
 
     def handle_player_command_phase(self):
         self.ally_action_queue = []
@@ -618,14 +676,16 @@ class BattleManager:
         for slot_idx in range(max_enemy_pace):
             for enemy in self.enemies:
                 if enemy.hp > 0 and slot_idx < len(enemy.intents):
-                    skill, target, _ = enemy.intents[slot_idx]
-                    
+                    # Unpack the specific hand index (h_idx) they planned to use
+                    skill, target, h_idx = enemy.intents[slot_idx] 
                     if target.hp <= 0:
                         living = [a for a in self.allies if a.hp > 0]
                         if living: target = random.choice(living)
                         else: break
-                        
                     enemy.turn_committed_skills.append(skill)
+                    # --- Empty the hand slot so they draw new cards next turn ---
+                    if h_idx < len(enemy.hand):
+                        enemy.hand[h_idx] = None
                     self.execute_skill(enemy, skill, target)
 
     def get_avg_defense_tier(self, unit):
@@ -635,7 +695,8 @@ class BattleManager:
         return math.ceil(total / len(unit.turn_committed_skills))
 
     def execute_skill(self, attacker, skill, target):
-        attacker.discard_pile.append(skill)
+        if getattr(skill, "is_temporary", False) == False:
+            attacker.discard_pile.append(skill)
         
         # Log Action
         self.log(f"{attacker.name} uses [bold]{skill.name}[/bold]!")
@@ -704,13 +765,25 @@ class BattleManager:
                 if not any(s.name == "Haste" for s in attacker.status_effects):
                     self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
 
-            # Check Skill Condition
             if skill.effect_type == "BLEED_RUPTURE_BUFF_FLAT_TYPE1":
-                if any(s.name == "Rupture" for s in target.status_effects):
+                if any(s.name in RUPTURE_LIST for s in target.status_effects):
                     attacker.temp_modifiers["outgoing_dmg_flat"] = attacker.temp_modifiers.get("outgoing_dmg_flat", 0) + skill.effect_val
             elif skill.effect_type == "RUPTURE_BUFF_AND_COUNT_SPECIAL":
-                if any(s.name == "Rupture" for s in target.status_effects):
+                if any(s.name in RUPTURE_LIST for s in target.status_effects):
                     attacker.temp_modifiers["outgoing_dmg_flat"] = attacker.temp_modifiers.get("outgoing_dmg_flat", 0) + skill.effect_val
+
+            elif skill.effect_type == "POISE_RUPTURE_SPECIAL_TYPE2":
+                poise = next((s for s in attacker.status_effects if s.name in POISE_LIST), None)
+                if poise:
+                    poise.potency = min(99, poise.potency + skill.effect_val)
+
+            elif skill.effect_type == "POISE_HASTE_SPECIAL_TYPE1":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2))
+                self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
+            
+            elif skill.effect_type == "RUPTURE_PARALYSIS_SPECIAL_TYPE2":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=2, type="DEBUFF"))
 
         # --- PREPARE MULTI-HIT LOGIC ---
         chips_to_execute = getattr(skill, "chips", [skill])
@@ -723,6 +796,9 @@ class BattleManager:
                     self.log(f"[dim]Remaining hits fizzled out...[/dim]")
                 break 
 
+            # Increment Chip Tracker
+            attacker.chips_used_this_turn = getattr(attacker, "chips_used_this_turn", 0) + 1
+
             damage = 0
             is_crit = False
 
@@ -731,6 +807,17 @@ class BattleManager:
                 # 1. Base Damage & Variance
                 base_dmg_val = float(chip.base_damage)
                 base_dmg_val += attacker.temp_modifiers.get("outgoing_base_dmg_flat", 0)
+                
+                # --- S5 BASE PCT BONUS ---
+                base_pct_bonus = attacker.temp_modifiers.get("outgoing_base_dmg_pct", 0)
+                if base_pct_bonus > 0:
+                    base_dmg_val *= (1.0 + base_pct_bonus)
+
+                # --- OVERHEAT BASE DMG LOGIC ---
+                atk_overheat = next((s for s in attacker.status_effects if s.name == "Overheat"), None)
+                if atk_overheat: base_dmg_val *= 0.75
+                tgt_overheat = next((s for s in target.status_effects if s.name == "Overheat"), None)
+                if tgt_overheat: base_dmg_val *= 1.30
                 
                 if chip.effect_type == "HISAYUKI_SPECIAL_3":
                     haste = next((s for s in attacker.status_effects if s.name == "Haste"), None)
@@ -779,7 +866,7 @@ class BattleManager:
 
                 # RUPTURE FLAT BONUS
                 if chip.effect_type == "RUPTURE_DAMAGE_BUFF_TYPE2":
-                    if any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects):
+                    if any(s.name in RUPTURE_LIST for s in target.status_effects):
                         base_dmg_val += chip.effect_val
 
                 # --- NATSUME STRANGE KATA (ON USE) ---
@@ -793,24 +880,43 @@ class BattleManager:
                 elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_2":
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=1))
                 elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_3":
-                    self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
+                    self.apply_status_logic(attacker, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
                 elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_5":
-                    self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
+                    self.apply_status_logic(attacker, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2))
                 elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_6":
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2))
+
+                if chip.effect_type == "PARALYSIS_SPECIAL_TYPE1":
+                    para = next((s for s in target.status_effects if s.name == "Paralysis"), None)
+                    if para:
+                        bonus = min(15, 3 * para.duration)
+                        base_dmg_val += bonus
 
                 # Check Passive Condition
                 active_passives = getattr(attacker, "passives", [])
                 if not active_passives and getattr(attacker, "kata", None):
                     active_passives = getattr(attacker.kata, "passives", [])
 
+                # Crucial Passive Loop
                 if active_passives:
                     for p in active_passives:
                         if p.effect_type == "PASSIVE_GOLDEN_FIST":
                             if any(s.name == "Bleed" for s in target.status_effects):
                                 attacker.temp_modifiers["outgoing_dmg_flat"] = attacker.temp_modifiers.get("outgoing_dmg_flat", 0) + p.effect_val
                                 self.log(f"[bold yellow][Passive][/bold yellow] {p.name} activated! (+{p.effect_val} Dmg)")
+                        if p.effect_type == "PASSIVE_DOCK_SPEARPLAY":
+                            if any(s.name == "Paralysis" for s in target.status_effects):
+                                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
+                                self.log(f"[bold yellow][Passive][/bold yellow] {p.name} activated! (+1 Rupture Potency)")
+                        if p.effect_type == "PASSIVE_RUTHLESSNESS":
+                            bonus_dmg = getattr(attacker, "chips_used_this_turn", 0)
+                            if bonus_dmg > 0:
+                                base_dmg_val += bonus_dmg
+                                # Note: Logging this per chip can spam the log heavily. Can log if needed.
+                        if p.effect_type == "PASSIVE_UNPREDICTABLE":
+                            if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                            attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) + 1
 
                 # 2. Bind Penalty
                 bind_effect = next((s for s in attacker.status_effects if s.name == "Bind"), None)
@@ -827,18 +933,44 @@ class BattleManager:
                 elif chip.effect_type == "GAIN_POISE_SPECIAL_1":
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0))
 
-                # 5. Critical Hit Roll (POISE CHECK - DECREMENTS PER CHIP)
-                poise = next((se for se in attacker.status_effects if se.name == "Poise"), None)
-                if poise and poise.potency > 0 and poise.duration > 0:
-                    crit_chance = min(100, poise.potency * 5)
+                # 5. Critical Hit Roll (POISE & ACCELERATION)
+                poise_eff = next((se for se in attacker.status_effects if se.name == "Poise"), None)
+                accel_eff = next((se for se in attacker.status_effects if se.name == "Acceleration"), None)
+                
+                poise_pot = 0
+                if poise_eff and poise_eff.duration > 0: poise_pot += poise_eff.potency
+                if accel_eff and accel_eff.duration > 0: poise_pot += accel_eff.potency
+
+                if poise_pot > 0:
+                    crit_chance = min(100, poise_pot * 5)
+                    if atk_overheat: crit_chance = 0 # Fixed to 0 by Overheat
+                    
                     if random.randint(1, 100) <= crit_chance:
                         is_crit = True
-                        dmg *= 1.2  # 20% Crit Multiplier
-                        # Consume Poise Count immediately on this chip
-                        poise.duration -= 1
-                        if poise.duration <= 0:
-                            attacker.status_effects.remove(poise)
-                            poise = None # Clear reference
+                        dmg *= 1.2
+                        # Consume Poise Count (But not Acceleration count for crits)
+                        if poise_eff and poise_eff.duration > 0:
+                            poise_eff.duration -= 1
+                            if poise_eff.duration <= 0: attacker.status_effects.remove(poise_eff)
+                            
+                        # --- WING CHUN CRIT TALLY ---
+                        active_atk_passives = getattr(attacker, "passives", [])
+                        if not active_atk_passives and getattr(attacker, "kata", None): 
+                            active_atk_passives = getattr(attacker.kata, "passives", [])
+                            
+                        if any(p.effect_type == "PASSIVE_WING_CHUN" for p in active_atk_passives):
+                            attacker.crit_tally = getattr(attacker, "crit_tally", 0) + 1
+                            tally = attacker.crit_tally
+                            if tally in getattr(attacker, "appendable_skills", {}):
+                                app_skill = copy.deepcopy(attacker.appendable_skills[tally])
+                                
+                                # FIX: Insert the skill randomly into the draw pile!
+                                insert_idx = random.randint(0, len(attacker.deck))
+                                attacker.deck.insert(insert_idx, app_skill)
+                                
+                                self.log(f"[bold grey74]Wing Chun appended '{app_skill.name}' to {attacker.name}'s deck![/bold grey74]")
+                            if tally >= 7:
+                                attacker.crit_tally = 0
 
                 # 6. Elemental & Global Multipliers (Uses PARENT skill element)
                 res_mult = target.resistances[skill.element]
@@ -850,6 +982,21 @@ class BattleManager:
                 final_dmg = nbd + target.temp_modifiers.get("incoming_dmg_flat", 0)
                 final_dmg += attacker.temp_modifiers.get("outgoing_dmg_flat", 0)
                 final_dmg -= target.temp_modifiers["final_dmg_reduction"]
+
+                # Acceleration Final Damage Reduction & Count Penalty
+                tgt_accel = next((s for s in target.status_effects if s.name == "Acceleration"), None)
+                if tgt_accel:
+                    red_amount = random.randint(1, 3)
+                    final_dmg -= red_amount  # Final damage is ALWAYS reduced
+                    # Count reduction penalty (max 2 times per turn)
+                    reductions_done = getattr(target, "accel_reductions_this_turn", 0)
+                    if reductions_done < 2:
+                        max_count_red = max(0, tgt_accel.duration - 1)
+                        actual_count_red = min(red_amount, max_count_red)
+                        if actual_count_red > 0:
+                            tgt_accel.duration -= actual_count_red
+                            target.accel_reductions_this_turn = reductions_done + 1
+                            
                 # --- SINKING LS CHECK (Attacker Penalty) ---
                 if getattr(attacker, "active_ls", 0) > 0:
                     if random.randint(1, 100) <= attacker.active_ls:
@@ -874,8 +1021,26 @@ class BattleManager:
 
                 # DEFENSE TIER REDUCTION (Uses Parent skill tier)
                 def_max_tier = self.get_avg_defense_tier(target)
+                
+                # --- PARALYSIS LOGIC ---
+                # Debuffed unit (attacker) perceives the target's defense tier as lower, triggering the game's tier penalty system
+                para_eff = next((s for s in attacker.status_effects if s.name == "Paralysis"), None)
+                if para_eff:
+                    def_max_tier -= 1
+                    
                 if skill.tier > def_max_tier:
                     final_dmg -= (final_dmg * min(0.60, 0.15 * (skill.tier - def_max_tier)))
+
+                if "Golden Fist Union" in target.name:
+                    target_team = self.allies if target in self.allies else self.enemies
+                    for ally in target_team:
+                        if ally.hp > 0:
+                            ap = getattr(ally, "passives", [])
+                            if not ap and getattr(ally, "kata", None): ap = getattr(ally.kata, "passives", [])
+                            for p in ap:
+                                if p.effect_type == "PASSIVE_CRUDE_COMMAND":
+                                    final_dmg -= p.effect_val
+                                    break # Only apply the reduction once, even if multiple units with the passive are alive
 
                 damage = int(final_dmg)
 
@@ -891,17 +1056,6 @@ class BattleManager:
                     damage = damage * (1.0 - reduction_pct)
 
                 damage = max(1, int(damage)) # Minimum 1 damage if hit connects
-
-                if "Golden Fist Union" in target.name:
-                    target_team = self.allies if target in self.allies else self.enemies
-                    for ally in target_team:
-                        if ally.hp > 0:
-                            ap = getattr(ally, "passives", [])
-                            if not ap and getattr(ally, "kata", None): ap = getattr(ally.kata, "passives", [])
-                            for p in ap:
-                                if p.effect_type == "PASSIVE_CRUDE_COMMAND":
-                                    final_dmg -= p.effect_val
-                                    break # Only apply the reduction once, even if multiple units with the passive are alive
 
                 # CONVERT DAMAGE TO HEAL
                 if chip.effect_type == "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
@@ -999,7 +1153,7 @@ class BattleManager:
                         if riposte_eff.duration <= 0: target.status_effects.remove(riposte_eff)
 
                     # RUPTURE & FAIRYLIGHT TRIGGERS
-                    rupture_eff = next((s for s in target.status_effects if s.name == "Rupture"), None)
+                    rupture_eff = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
                     if rupture_eff:
                         target.hp -= rupture_eff.potency
                         rupture_eff.duration -= 1
@@ -1028,30 +1182,30 @@ class BattleManager:
                     if chip.effect_type == "ON_HIT_PROVIDE_POISE_TYPE1":
                         team = self.allies if attacker in self.allies else self.enemies
                         for member in team:
-                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            poise_effect = next((e for e in member.status_effects if e.name in POISE_LIST), None)
                             if poise_effect: poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
                     elif chip.effect_type == "ON_HIT_PROVIDE_POISE_TYPE2":
                         team = self.allies if attacker in self.allies else self.enemies
                         for member in team:
-                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            poise_effect = next((e for e in member.status_effects if e.name in POISE_LIST), None)
                             if poise_effect:
                                 poise_effect.potency = min(99, poise_effect.potency + chip.effect_val)
                                 poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
                     elif chip.effect_type == "ON_HIT_PROVIDE_POISE_TYPE3":
                         team = self.allies if attacker in self.allies else self.enemies
                         for member in team:
-                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            poise_effect = next((e for e in member.status_effects if e.name in POISE_LIST), None)
                             if poise_effect: poise_effect.potency = min(99, poise_effect.potency + chip.effect_val)
                     elif chip.effect_type == "ON_HIT_PROVIDE_POISE_TYPE4":
                         team = self.allies if attacker in self.allies else self.enemies
                         for member in team:
-                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            poise_effect = next((e for e in member.status_effects if e.name in POISE_LIST), None)
                             if poise_effect: poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
                             else: self.apply_status_logic(member, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", chip.effect_val, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=0))
                     elif chip.effect_type == "ON_HIT_CONVERT_POISE_TYPE1":
                         team = self.allies if attacker in self.allies else self.enemies
                         for member in team:
-                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            poise_effect = next((e for e in member.status_effects if e.name in POISE_LIST), None)
                             if poise_effect and poise_effect.potency >= 2:
                                 poise_effect.potency -= 1
                                 poise_effect.duration = min(99, poise_effect.duration + 1)
@@ -1059,7 +1213,7 @@ class BattleManager:
                     elif chip.effect_type == "ON_HIT_CONVERT_POISE_TYPE2":
                         team = self.allies if attacker in self.allies else self.enemies
                         for member in team:
-                            poise_effect = next((e for e in member.status_effects if e.name == "Poise"), None)
+                            poise_effect = next((e for e in member.status_effects if e.name in POISE_LIST), None)
                             if poise_effect and poise_effect.potency >= 4:
                                 poise_effect.potency -= chip.effect_val
                                 poise_effect.duration = min(99, poise_effect.duration + chip.effect_val)
@@ -1074,11 +1228,22 @@ class BattleManager:
                         #self.log(f"[blue3]Sinking[/blue3] disrupted {target.name}'s mind! LS Tally +{sinking_eff.potency} (Total: {target.pending_ls}).")
                         if sinking_eff.duration <= 0: target.status_effects.remove(sinking_eff)
 
+                    # --- RETURNING CURRENT PASSIVE ---
+                    active_target_passives = getattr(target, "passives", [])
+                    if not active_target_passives and getattr(target, "kata", None): 
+                        active_target_passives = getattr(target.kata, "passives", [])
+                        
+                    for p in active_target_passives:
+                        if p.effect_type == "PASSIVE_RETURNING_CURRENT":
+                            if any(s.name == "Paralysis" for s in attacker.status_effects):
+                                self.apply_status_logic(attacker, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+                                #self.log(f"[bold yellow][Passive][/bold yellow] {p.name} triggered! (+2 Rupture Count to {attacker.name})")
+
                     # NEXT HIT BONUSES
-                    elif chip.effect_type == "ON_HIT_NEXT_TAKEN_FLAT": target.next_hit_taken_flat_bonus += chip.effect_val
-                    elif chip.effect_type == "ON_HIT_NEXT_DEAL_FLAT": attacker.next_hit_deal_flat_bonus += chip.effect_val
-                    elif chip.effect_type == "SELF_NEXT_TAKEN_FLAT": attacker.next_hit_taken_flat_bonus += chip.effect_val
-                    elif chip.effect_type == "DEBUFF_INCOMING_DMG_FLAT": target.temp_modifiers["incoming_dmg_flat"] += chip.effect_val
+                    if chip.effect_type == "ON_HIT_NEXT_TAKEN_FLAT": target.next_hit_taken_flat_bonus += chip.effect_val
+                    if chip.effect_type == "ON_HIT_NEXT_DEAL_FLAT": attacker.next_hit_deal_flat_bonus += chip.effect_val
+                    if chip.effect_type == "SELF_NEXT_TAKEN_FLAT": attacker.next_hit_taken_flat_bonus += chip.effect_val
+                    if chip.effect_type == "DEBUFF_INCOMING_DMG_FLAT": target.temp_modifiers["incoming_dmg_flat"] += chip.effect_val
 
             else:
                 if chip.effect_type != "SPECIAL_CONVERT_DMG_TO_HEAL_LOWEST":
@@ -1121,17 +1286,17 @@ class BattleManager:
                     bonus_dmg = int(chip.base_damage * (chip.effect_val / 10.0))
                     target.hp -= bonus_dmg
                     if 'sadism_bind_to_apply' in locals() and sadism_bind_to_apply > 0:
-                        self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=sadism_bind_to_apply))
+                        self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=sadism_bind_to_apply))
 
             # KUROGANE & GENERIC EFFECTS
             elif chip.effect_type == "APPLY_BLEED_HEAVY_STACKS":
                 self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 2, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=2, type="DEBUFF"))
             elif chip.effect_type == "APPLY_BLEED_AND_BIND":
                 self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF"))
-                self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF"))
+                self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1, type="DEBUFF"))
             elif chip.effect_type == "APPLY_BLEED_AND_BIND_HEAVY":
                 self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1 Max potency or count: 99", duration=1, type="DEBUFF"))
-                self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2, type="DEBUFF"))
+                self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2, type="DEBUFF"))
             elif (chip.effect_type == "APPLY_STATUS" or chip.effect_type == "COND_BLEED_DMG_AND_APPLY") and hasattr(chip, "status_effect") and chip.status_effect:
                 if chip.status_effect.name == "Nerve Disruption": target.nerve_disruption_turns = chip.status_effect.duration
                 else: self.apply_status_logic(target, copy.deepcopy(chip.status_effect))
@@ -1144,7 +1309,7 @@ class BattleManager:
                 chosen_allies = random.sample(valid_allies, min(2, len(valid_allies)))
                 chosen_enemies = random.sample(valid_enemies, min(2, len(valid_enemies)))
                 for a in chosen_allies: self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=chip.effect_val))
-                for e in chosen_enemies: self.apply_status_logic(e, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=chip.effect_val))
+                for e in chosen_enemies: self.apply_status_logic(e, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=chip.effect_val))
                 
             elif chip.effect_type == "HANA_SPECIAL_RAGE":
                 if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
@@ -1170,12 +1335,12 @@ class BattleManager:
                 valid_allies = [u for u in team if u.hp > 0 and u != attacker]
                 for a in random.sample(valid_allies, min(2, len(valid_allies))):
                     self.apply_status_logic(a, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
-                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                has_rupture = any(s.name in RUPTURE_LIST for s in target.status_effects)
                 if has_rupture: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
                 else: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))   
                     
             elif chip.effect_type == "RUPTURE_DAMAGE_BUFF_TYPE1":
-                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                has_rupture = any(s.name in RUPTURE_LIST for s in target.status_effects)
                 if has_rupture and damage > 0:
                     bonus = int(damage * 0.25)
                     target.hp -= bonus
@@ -1205,10 +1370,10 @@ class BattleManager:
                 self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
             
             elif chip.effect_type == "HISAYUKI_SPECIAL_1":
-                if any(s.name == "Haste" for s in attacker.status_effects): self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
+                if any(s.name == "Haste" for s in attacker.status_effects): self.apply_status_logic(attacker, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=1))
                 else: self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
             elif chip.effect_type == "BIND_RUPTURE_SPECIAL_TYPE1":
-                self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2))
                 self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
             
             elif chip.effect_type == "RAVEN_SPECIAL_1":
@@ -1224,7 +1389,7 @@ class BattleManager:
                 if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
                 target.next_turn_modifiers["outgoing_dmg_mult"] = target.next_turn_modifiers.get("outgoing_dmg_mult", 1.0) * 0.30
                 self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=2))
-                self.apply_status_logic(target, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=2))
             elif chip.effect_type == "EAGLE_SPECIAL_1":
                 target.next_hit_taken_flat_bonus += 5
                 if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
@@ -1293,14 +1458,14 @@ class BattleManager:
 
             # KIRYOKU FAIRY & INFILTRATOR
             elif chip.effect_type == "RUPTURE_SPECIAL1":
-                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                has_rupture = any(s.name in RUPTURE_LIST for s in target.status_effects)
                 if has_rupture: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=chip.effect_val))
                 else: self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", chip.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
             elif chip.effect_type == "FAIRYLIGHT_APPLY":
-                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                has_rupture = any(s.name in RUPTURE_LIST for s in target.status_effects)
                 if has_rupture: self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", chip.effect_val, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
             elif chip.effect_type == "BENIKAWA_KIRYOKU_SPECIAL":
-                has_rupture = any(s.name in ["Rupture", "Fairylight"] for s in target.status_effects)
+                has_rupture = any(s.name in RUPTURE_LIST for s in target.status_effects)
                 if has_rupture: self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1))
             elif chip.effect_type == "FAIRYLIGHT_SPECIAL1":
                 has_fairylight = any(s.name == "Fairylight" for s in target.status_effects)
@@ -1324,7 +1489,7 @@ class BattleManager:
                 if has_bleed: self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=1))
                 self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=1))
             elif chip.effect_type == "BENIKAWA_CLAN_SPECIAL_2":
-                has_poise = any(s.name == "Poise" for s in attacker.status_effects)
+                has_poise = any(s.name in POISE_LIST for s in attacker.status_effects)
                 if not has_poise: self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "", duration=4))
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=1))
                 self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=2))
@@ -1367,14 +1532,93 @@ class BattleManager:
             elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_6":
                 self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=0))
 
-            # --- GOLDEN FIST UNION ---
+            # --- GOLDEN FIST UNION ENEMIES ---
             elif skill.effect_type == "GOLDEN_FIST_SPECIAL":
-                self.apply_status_logic(attacker, StatusEffect("Bind", "[dim gold1]⛓[/dim gold1]", 0, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=5))
+                self.apply_status_logic(attacker, StatusEffect("Bind", "[gold1]⛓[/gold1]", 0, "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5", duration=5))
             elif chip.effect_type == "APPLY_BLEED_RUPTURE_HEAVY_STACKS":
                 self.apply_status_logic(target, StatusEffect("Bleed", "[red]🩸[/red]", 2, "Take (Potency) damage on turn end, then reduce count by 1. Max Potency or Count: 99", duration=2))
                 self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
             elif chip.effect_type == "RUPTURE_BUFF_AND_COUNT_SPECIAL":
                 self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=3))
+
+            # --- BLACK WATER DOCK ENEMIES ---
+            elif chip.effect_type == "POISE_RUPTURE_SPECIAL_TYPE2":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=chip.effect_val))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", chip.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "RUPTURE_PARALYSIS_SPECIAL_TYPE1":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=chip.effect_val, type="DEBUFF"))
+                if any(s.name in POISE_LIST for s in attacker.status_effects):
+                    self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=chip.effect_val, type="DEBUFF"))
+            elif chip.effect_type == "PARALYSIS_SPECIAL_TYPE1":
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=3, type="DEBUFF"))
+
+            # --- TWIN MOUNTAIN GATE ENEMIES ---
+            elif chip.effect_type == "BLEED_RUPTURE_SPECIAL_TYPE2":
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=1, type="DEBUFF"))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+            elif chip.effect_type == "RUMBLE_SPECIAL":
+                if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) - 5
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=2, type="DEBUFF"))
+            elif chip.effect_type == "BLEED_PARALYSIS_SPECIAL_TYPE1":
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF"))
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=1, type="DEBUFF"))
+            elif chip.effect_type == "BLEED_PARALYSIS_SPECIAL_TYPE2":
+                if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) - 6
+                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 1, "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99", duration=2, type="DEBUFF"))
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=1, type="DEBUFF"))
+            elif chip.effect_type == "SWITCH_RANDOM_TYPE1":
+                team = self.enemies if target in self.enemies else self.allies
+                living = [u for u in team if u.hp > 0 and u != target]
+                if living:
+                    target = random.choice(living)
+                    self.log(f"[bold magenta]-> {attacker.name} switches focus to {target.name}![/bold magenta]")
+
+            # --- MIYU EFFECTS ---
+            elif chip.effect_type == "POISE_RUPTURE_SPECIAL_TYPE3":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=chip.effect_val))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", chip.effect_val, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=1))
+            elif chip.effect_type == "GAIN_POISE_SPECIAL_2":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2))
+            elif chip.effect_type == "APPLY_RUPTURE_SPECIAL_1":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+            elif chip.effect_type == "GAIN_POISE_SPECIAL_3":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=3))
+                team = self.enemies if target in self.enemies else self.allies
+                living = [u for u in team if u.hp > 0 and u != target]
+                if living:
+                    target = __import__('random').choice(living)
+                    self.log(f"[bold magenta]-> {attacker.name} switches focus to {target.name}![/bold magenta]")
+            elif chip.effect_type == "APPLY_RUPTURE_SPECIAL_2":
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=2))
+                team = self.enemies if target in self.enemies else self.allies
+                living = [u for u in team if u.hp > 0 and u != target]
+                if living:
+                    target = __import__('random').choice(living)
+                    self.log(f"[bold magenta]-> {attacker.name} switches focus to {target.name}![/bold magenta]")      
+            elif chip.effect_type == "POISE_RUPTURE_SPECIAL_TYPE4":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=6))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99", duration=4))    
+            elif chip.effect_type == "MIYU_SPECIAL_1":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 7, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=2))
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=2, type="DEBUFF"))
+                team = self.enemies if target in self.enemies else self.allies
+                living = [u for u in team if u.hp > 0 and u != target]
+                if living:
+                    non_paralyzed = [u for u in living if not any(s.name == "Paralysis" for s in u.status_effects)]
+                    target = __import__('random').choice(non_paralyzed) if non_paralyzed else __import__('random').choice(living)
+                    self.log(f"[bold magenta]-> {attacker.name} switches focus to {target.name}![/bold magenta]")
+            elif chip.effect_type == "MIYU_SPECIAL_2":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99", duration=4))
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=3, type="DEBUFF"))
+                team = self.enemies if target in self.enemies else self.allies
+                living = [u for u in team if u.hp > 0 and u != target]
+                if living:
+                    non_paralyzed = [u for u in living if not any(s.name == "Paralysis" for s in u.status_effects)]
+                    target = __import__('random').choice(non_paralyzed) if non_paralyzed else __import__('random').choice(living)
+                    self.log(f"[bold magenta]-> {attacker.name} switches focus to {target.name}![/bold magenta]")
 
             if target.hp <= 0:
                 target.hp = 0
@@ -1385,6 +1629,13 @@ class BattleManager:
             if len(chips_to_execute) > 1 and chip_idx < len(chips_to_execute) - 1:
                 self.render_battle_screen()
                 time.sleep(0.75)
+
+        # --- PARALYSIS DECAY ---
+        para_eff_end = next((s for s in attacker.status_effects if s.name == "Paralysis"), None)
+        if para_eff_end:
+            para_eff_end.duration -= 1
+            if para_eff_end.duration <= 0:
+                attacker.status_effects.remove(para_eff_end)
 
         self.render_battle_screen()
         time.sleep(0.5)
@@ -1426,6 +1677,12 @@ class BattleManager:
                 existing.potency = min(99, existing.potency + new_status.potency)
             elif new_status.name in ["Bind", "Haste", "Pierce Affinity"]:
                 existing.duration = min(5, existing.duration + new_status.duration)
+            elif new_status.name == "Riposte":
+                existing.duration = min(50, existing.duration + new_status.duration)
+            elif new_status.name == "Paralysis":
+                existing.duration = min(99, existing.duration + new_status.duration)
+            elif new_status.name == "Overheat":
+                existing.duration = min(3, existing.duration + new_status.duration)
             
             else:
                 # Generic Stacking
@@ -1444,7 +1701,6 @@ class BattleManager:
                 new_status.duration = min(99, new_status.duration)
                 new_status.potency = min(99, new_status.potency)
             target.status_effects.append(new_status)
-            
 
             """
             End of execute_skill()
@@ -1510,6 +1766,24 @@ class BattleManager:
             else:
                 pool_text = "No Kata / Skill info available."
 
+            # --- EXTERNAL SKILL POOL LOGIC ---
+            external_pool_text = ""
+            external_skills_list = []  # Store for input handling
+            
+            if hasattr(unit, "appendable_skills") and unit.appendable_skills:
+                external_pool_text += "\n[bold]External Skill Pool:[/bold]\n"
+                
+                # Sort by tier to keep it organized
+                sorted_external = sorted(unit.appendable_skills.items(), key=lambda item: item[1].tier)
+                for idx, (_, skill) in enumerate(sorted_external):
+                    external_skills_list.append(skill)
+                    c = get_element_color(skill.element)
+                    t_r = get_tier_roman(skill.tier)
+                    dmg_str = f"[bold]Dmg: {skill.base_damage}[/bold]"
+                    
+                    # Just print the summary line with the EX index
+                    external_pool_text += f"[bold light_green]EX{idx+1}[/bold light_green]: [{c}]{skill.name}[/{c}] ({t_r}) {dmg_str}\n"
+
             status_list = []
             if unit.temp_modifiers["final_dmg_reduction"] > 0:
                  status_list.append(f"Defense +{unit.temp_modifiers['final_dmg_reduction']}")
@@ -1561,12 +1835,12 @@ Modifiers: {status_str}
 [bold]Passives:[/bold]
 {passives_text}
 [bold]Full Skill Pool:[/bold]
-{pool_text}
+{pool_text}{external_pool_text}
             """
             layout = Layout()
             layout.split_row(Layout(Panel(content)), Layout(Panel(res_table)))
             config.console.print(layout)
-            config.console.print("\nType [bold]SE#[/bold] to view status details, [bold]P#[/bold] to view passive details, or [Enter] to return.")
+            config.console.print("\nType [bold]SE#[/bold] to view status details, [bold]P#[/bold] to view passive details, [bold]EX#[/bold] for external skills, or [Enter] to return.")
             
             choice = get_player_input("Input > ").upper()
             if choice == "": break
@@ -1601,6 +1875,30 @@ Modifiers: {status_str}
                     # Uses dynamic p.color for the Panel style boundary!
                     config.console.print(Panel(f"[bold]{p.name}[/bold]\n\n{p.description}", title="Passive", style=p.color))
                     get_player_input("Press Enter...")
+
+            # --- EXTERNAL SKILL EXPANSION INPUT ---
+            elif choice.startswith("EX") and choice[2:].isdigit():
+                idx = int(choice[2:]) - 1
+                
+                if hasattr(unit, "appendable_skills") and unit.appendable_skills:
+                    if 0 <= idx < len(external_skills_list):
+                        skill = external_skills_list[idx]
+                        c = get_element_color(skill.element)
+                        t_r = get_tier_roman(skill.tier)
+                        
+                        if hasattr(skill, "inspect_description") and skill.inspect_description:
+                            desc = skill.inspect_description
+                        else:
+                            desc = skill.description if skill.description else ""
+                            
+                        dmg_str = f"[bold]Dmg: {skill.base_damage}[/bold]"
+                        formatted_desc = desc.replace("\n", "\n")
+                        
+                        # Preserve original element colors and description formatting
+                        skill_content = f"[{c}]{skill.name}[/{c}][white] ({t_r}) {dmg_str}[/white]\n       [light_green]{formatted_desc}[/light_green]"
+                        
+                        config.console.print(Panel(skill_content, title="External Skill", style="light_green"))
+                        get_player_input("Press Enter...")
 
     def check_win_condition(self):
         if all(e.hp <= 0 for e in self.enemies):
