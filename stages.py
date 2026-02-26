@@ -603,6 +603,8 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Twin Mountain Gate Gangster Leader"))
     elif stage_id == 62:
         enemies.append(spawn("Miyu"))
+    elif stage_id == 63:
+        enemies.append(spawn("Mei"))
 
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
@@ -1366,7 +1368,7 @@ def get_enemy_database():
     m_s5.is_temporary = True
     for c in m_s5.chips: c.is_temporary = True
     # === PASSIVES ===
-    m_p1 = Passive("Wing Chun [詠春]", "Tally amount of Critical Hits this unit performs throughout battle. Append these skills randomly into Skill Pool when the amount reaches the following numbers:\n2 Critical Hits – ‘Tan Sau [攤手]’\n4 Critical Hits – ‘Lifting Hand [問手]’\n7 Critical Hits – ‘Question Mark Kick [問號踢]’\nAfter reaching 7 Critical Hits, immediately reset the tally.", "PASSIVE_WING_CHUN", 1, color="pale_turquoise1")
+    m_p1 = Passive("Wing Chun [詠春]", "Tally amount of Critical Hits this unit performs throughout battle. Append these skills randomly into Skill Pool when the Tally reaches the following numbers:\n2 Critical Hits – ‘Tan Sau [攤手]’\n4 Critical Hits – ‘Lifting Hand [問手]’\n7 Critical Hits – ‘Question Mark Kick [問號踢]’\nAfter reaching 7 Critical Hits, immediately reset the Tally.", "PASSIVE_WING_CHUN", 1, color="pale_turquoise1")
     m_p2 = Passive("Acceleration [加速度]", "At start of turn, convert all Poise Potency and Poise Count and add to Acceleration Potency and Acceleration Count, respectively. Then, if this unit has 30 [Acceleration Potency+Count], remove all Acceleration, Pick Up 1 Pace, and gain 1 Overheat. This effect can occur 3 times\nIf this unit already has 6+ Pace, instead, remove 70% of Acceleration Potency and Acceleration Count each, then gain 2 Overheat.", "PASSIVE_ACCELERATION", 2, color="pale_turquoise1")
     m_p3 = Passive("Impediment - Severed Arm [障礙－斷臂]", "Deal -50% Final Damage with attacks\nTake 200% Final Damage from attacks", "PASSIVE_SEVERED_ARM", 3, color="grey74")
     k_miyu.passives.extend([m_p1, m_p2, m_p3])
@@ -1374,10 +1376,49 @@ def get_enemy_database():
     miyu.description = "miyudescription"
     miyu.unlock_stage_id = 62
     miyu.appendable_skills = {2: m_s3, 4: m_s4, 7: m_s5}
+
+    ############################
+    # --- MEI (ACT 4 BOSS) --- #
+    ############################
+    mei = Entity("Mei", is_player=False)
+    mei.max_hp = 114
+    mei.pace = 2
+    k_mei = Kata("Mei Arts", "Mei", 1, 14, [1.0, 1.1, 1.0, 1.0, 1.2, 1.0, 1.2])
+    # Skill I: Stab / Thrust [刺] (Ludus)
+    mei_s1_desc = "[On Use] Gain 8 Poise Potency\n       [On Use] Gain 8 Poise Count"
+    mei_s1 = Skill("Stab / Thrust [刺]", 1, EL_LUDUS, 6, mei_s1_desc, effect_type="GAIN_POISE_SPECIAL", effect_val=8)
+    # Skill II: White Crane [白鹤] ◈◈◈ (Storge)
+    mei_s2_c1 = Chip(base_damage=4, effect_type="MEI_SPECIAL_1")
+    mei_s2_c2 = Chip(base_damage=4, effect_type="MEI_SPECIAL_2")
+    mei_s2_c3 = Chip(base_damage=7, effect_type="MEI_SPECIAL_3")
+    mei_s2_desc = "[On Critical Hit] Inflict Rupture Potency\n       [On Critical Hit] Inflict Rupture Count\n       [On Critical Hit] Inflict Paralysis\n       [On Critical Hit] Gain Haste\n       [On Hit] Switches to a new random target"
+    mei_s2_insp = "◈ Base Damage: 4\n       [On Critical Hit] Gain 1 Haste next turn\n       [On Critical Hit] Inflict 2 Rupture Potency\n       [On Critical Hit] Inflict 2 Rupture Count\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 4\n       [On Critical Hit] Gain 1 Haste next turn\n       [On Critical Hit] Inflict 3 Paralysis\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 7\n       [On Critical Hit] Inflict 2 Rupture Potency\n       [On Critical Hit] Inflict 2 Rupture Count\n       [On Critical Hit] Inflict 3 Paralysis"
+    mei_s2 = ChipSkill("White Crane [白鹤] ◈◈◈", 2, EL_STORGE, [mei_s2_c1, mei_s2_c2, mei_s2_c3], description=mei_s2_desc, inspect_description=mei_s2_insp)
+    # Skill III: Sparrow Skims Over Water [燕子抄水] ◈◈◈◈ (Pragma)
+    mei_s3_c1 = Chip(base_damage=5, effect_type="MEI_SPECIAL_4")
+    mei_s3_c2 = Chip(base_damage=5, effect_type="MEI_SPECIAL_4")
+    mei_s3_c3 = Chip(base_damage=1, effect_type="MEI_SPECIAL_5")
+    mei_s3_c4 = Chip(base_damage=7, effect_type="APPLY_STATUS_CRITICAL")
+    mei_s3_c4.status_effect = scd.paralysis_7
+    mei_s3_desc = "[On Critical Hit] Gain Poise Potency\n       [On Critical Hit] Gain Poise Count\n       [On Critical Hit] Inflict Paralysis\n       [On Hit] Switches to a new random target (Prioritizes units without Paralysis)"
+    mei_s3_insp = "◈ Base Damage: 5\n       [On Critical Hit] Gain 4 Poise Potency\n       [On Critical Hit] Gain 4 Poise Count\n       [On Critical Hit] Inflict 2 Paralysis\n       [On Hit] Switches to a new random target (Prioritizes units without Paralysis)\n       ◈ Base Damage: 5\n       [On Critical Hit] Gain 4 Poise Potency\n       [On Critical Hit] Gain 4 Poise Count\n       [On Critical Hit] Inflict 2 Paralysis\n       [On Hit] Switches to a new random target (Prioritizes units without Paralysis)\n       ◈ Base Damage: 1\n       [On Critical Hit] Gain 8 Poise Potency\n       [On Critical Hit] Inflict 3 Paralysis\n       [On Hit] Switches to a new random target (Prioritizes units without Paralysis)\n       ◈ Base Damage: 7\n       [On Critical Hit] Inflict 7 Paralysis"
+    mei_s3 = ChipSkill("Sparrow Skims Over Water [燕子抄水] ◈◈◈◈", 3, EL_PRAGMA, [mei_s3_c1, mei_s3_c2, mei_s3_c3, mei_s3_c4], description=mei_s3_desc, inspect_description=mei_s3_insp)
+    # Skill IV: Parting The Grass To Seek The Snake [拨草寻蛇] (Agape)
+    mei_s4 = Skill("Parting The Grass To Seek The Snake [拨草寻蛇]", 4, EL_AGAPE, 5, "[On Critical Hit] Gain 1 Cloud Sword [云]", effect_type="APPLY_STATUS_CRITICAL")
+    mei_s4.status_effect = scd.cloud_sword_1
+    k_mei.skill_pool_def = [(mei_s1, 8), (mei_s2, 2), (mei_s3, 2), (mei_s4, 4)]
+    # Passives
+    mei_p1 = Passive("Breathing Techniques", "This unit’s max Poise Potency and Count stack count are fixed at 30/30. At the start of turn, convert any Poise Potency and Count over 20 into healing each", "PASSIVE_BREATHING_TECHNIQUES", color="pale_turquoise1")
+    mei_p2 = Passive("Enforcement", "Tally amount of Critical Hits this unit performs throughout battle (Max 3). At the start of turn, reset the Tally\nEvery Critical Hit this unit lands grants one of the following buffs at random:\nDeal +(Current Tally) Final Damage next turn\nTake -(Current Tally) Final Damage from attacks next turn\nThis effect can occur 4 times per turn. Gained buffs can stack", "PASSIVE_ENFORCEMENT", color="light_salmon1")
+    mei_p3 = Passive("Ingrained Command", "This unit’s max Paralysis stack count is fixed at 1. At the start of every second turn, gain 1 Paralysis. If this unit has Paralysis, take -50% Final Damage from attacks", "PASSIVE_INGRAINED_COMMAND", color="sea_green1")
+    k_mei.passives.extend([mei_p1, mei_p2, mei_p3])
+    mei.equip_kata(k_mei)
+    mei.description = "meidescription"
+    mei.unlock_stage_id = 63
     
     ################################################
     # Append to existing return list in stages.py: #
     ################################################
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro, 
             sp_kiryoku, c_kiryoku, ayako, sumiko, inf_heiwa, inf_kiryoku, inf_kasa, inf_lead, hisayuki, inf_council, inf_disc, 
-            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student, natsume, gf_gangster, gf_leader, bw_gangster, bw_leader, tmg_gangster, tmg_leader, miyu]
+            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student, natsume, gf_gangster, gf_leader, bw_gangster, bw_leader, tmg_gangster, tmg_leader, miyu, mei]

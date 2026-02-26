@@ -330,6 +330,9 @@ def run_game():
                 time.sleep(2)
                 config.current_state = config.STATE_MAIN_MENU
                 continue
+    
+            if stage_id == 63:
+                party = [member for member in party if member.name in ["Yuri","Benikawa","Shigemura","Hana"]]
 
             # Story Pre-Battle Check
             should_play_story = True
