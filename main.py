@@ -21,7 +21,7 @@ if not hasattr(config, "current_state"):
     config.player_data = {}
     
 console = config.console
-
+    
 import stages
 import story_manager
 from ui_components import draw_title_screen, get_player_input, clear_screen, draw_stage_select_menu, draw_council_logs_menu, draw_bestiary_menu, draw_material_logs, draw_node_select_menu, draw_party_management_menu

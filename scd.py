@@ -26,9 +26,9 @@ rupturecount_3 = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_sprin
 fairylight_1 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 1, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
 fairylight_2 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
 fairylight_3 = StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 3, "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99", duration=1, type="UNIQUEDEBUFF")
-pierce_affinity_1 = StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1, type="DEBUFF")
-pierce_affinity_2 = StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2, type="DEBUFF")
-pierce_affinity_3 = StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3, type="DEBUFF")
+pierce_fragility_1 = StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1, type="DEBUFF")
+pierce_fragility_2 = StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2, type="DEBUFF")
+pierce_fragility_3 = StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3, type="DEBUFF")
 paralysis_1 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=1, type="DEBUFF")
 paralysis_5 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=5, type="DEBUFF")
 paralysis_7 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99", duration=7, type="DEBUFF")
@@ -54,7 +54,7 @@ KATA_ID_MAP = {
     14: "Kasakura High School Student Natsume",
     15: "Kasakura High School Student Hana",
     16: "Kasakura High School Student Kagaku",
-    17: "Kiryoku Gakuen Self-Defense Club President Yuri",
+    17: "Kiryoku Gakuen Self-Defense Club President Naganohara",
     18: "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
     19: "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
     20: "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
@@ -395,7 +395,26 @@ def get_kata_data_by_name(name):
             "description": desc
         }
 
-# --- NATSUME DEFAULT ---
+    # --- NAGANOHARA KIRYOKU ---
+    elif name == "Kiryoku Gakuen Self-Defense Club President Naganohara":
+        res = [0.8, 1.4, 1.1, 0.8, 1.0, 1.0, 1.3]
+        desc = (
+            "Naganohara Tsukimiyama here has enrolled in Kiryoku Gakuen and proudly stands as the President of its renowned Self-Defense Club. Her signature pink twintails are braided tightly into practical loops to stay out of the way during intense spars, and her large golden eyes shine with an unbreakable, almost terrifying level of optimism. She trades her usual Kasakura uniform for a pristine white martial arts gi worn over a Kiryoku athletic top, featuring a captain’s armband that commands instant, eager respect from her hundreds of club members.\n\n"
+            "As the club's president, she embodies Kiryoku's unique battle culture to its absolute peak: she experiences absolutely no frustration, hesitation, or fear in combat, only pure, adrenaline-fueled joy. She fights with a dynamic, highly acrobatic self-defense style—effortlessly redirecting her opponent’s momentum for devastating throws, sweeping trips, and precise joint locks—all while maintaining a beaming, radiant smile.\n\n"
+            "Her leadership relies on boundless enthusiasm rather than strict discipline. She constantly cheers on both her club members and her opponents mid-fight, offering loud praises and constructive tips even as she flips them onto the mats."
+        )
+        k = Kata("Kiryoku Gakuen Self-Defense Club President Naganohara", "Naganohara", 2, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Crosspunch", 1, EL_PHILIA, 4, "[On Hit] Inflict 2 Rupture Potency", effect_type="APPLY_STATUS")
+        s1.status_effect = rupture_2
+        s2 = Skill("Motivation!", 2, EL_LUDUS, 5, "[On Use] Deal 0 damage, then heal self and 2 other random allies by supposed final damage", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_RANDOM", effect_val=2)
+        desc_s3 = "[On Use] 2 Other random allies gain 1 Haste next turn\n       [On Hit] If target has Rupture, inflict 2 Rupture Count. Otherwise, inflict 3 Rupture Potency."
+        s3 = Skill("Feverish Strikes", 3, EL_AGAPE, 8, desc_s3, effect_type="NAGANOHARA_KIRYOKU_SPECIAL")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+
+        return {"kata_obj": k, "max_hp": 78, "description": desc}
+
+    # --- NATSUME DEFAULT ---
     elif name == "Kasakura High School Student Natsume":
         res = [1.2, 1.1, 1.2, 1.1, 0.7, 0.5, 0.9]
         desc = (
@@ -445,25 +464,6 @@ def get_kata_data_by_name(name):
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
         return {"kata_obj": k, "max_hp": 60, "description": desc}
-
-    # --- NAGANOHARA KIRYOKU ---
-    elif name == "Kiryoku Gakuen Self-Defense Club President Yuri":
-        res = [0.8, 1.4, 1.1, 0.8, 1.0, 1.0, 1.3]
-        desc = (
-            "Naganohara Tsukimiyama here has enrolled in Kiryoku Gakuen and proudly stands as the President of its renowned Self-Defense Club. Her signature pink twintails are braided tightly into practical loops to stay out of the way during intense spars, and her large golden eyes shine with an unbreakable, almost terrifying level of optimism. She trades her usual Kasakura uniform for a pristine white martial arts gi worn over a Kiryoku athletic top, featuring a captain’s armband that commands instant, eager respect from her hundreds of club members.\n\n"
-            "As the club's president, she embodies Kiryoku's unique battle culture to its absolute peak: she experiences absolutely no frustration, hesitation, or fear in combat, only pure, adrenaline-fueled joy. She fights with a dynamic, highly acrobatic self-defense style—effortlessly redirecting her opponent’s momentum for devastating throws, sweeping trips, and precise joint locks—all while maintaining a beaming, radiant smile.\n\n"
-            "Her leadership relies on boundless enthusiasm rather than strict discipline. She constantly cheers on both her club members and her opponents mid-fight, offering loud praises and constructive tips even as she flips them onto the mats."
-        )
-        k = Kata("Kiryoku Gakuen Self-Defense Club President Yuri", "Naganohara", 2, "I", res, desc)
-        k.source_key = name
-        s1 = Skill("Crosspunch", 1, EL_PHILIA, 4, "[On Hit] Inflict 2 Rupture Potency", effect_type="APPLY_STATUS")
-        s1.status_effect = rupture_2
-        s2 = Skill("Motivation!", 2, EL_LUDUS, 5, "[On Use] Deal 0 damage, then heal self and 2 other random allies by supposed final damage", effect_type="SPECIAL_CONVERT_DMG_TO_HEAL_RANDOM", effect_val=2)
-        desc_s3 = "[On Use] 2 Other random allies gain 1 Haste next turn\n       [On Hit] If target has Rupture, inflict 2 Rupture Count. Otherwise, inflict 3 Rupture Potency."
-        s3 = Skill("Feverish Strikes", 3, EL_AGAPE, 8, desc_s3, effect_type="NAGANOHARA_KIRYOKU_SPECIAL")
-        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
-
-        return {"kata_obj": k, "max_hp": 78, "description": desc}
 
     # --- YURI KIRYOKU ---
     elif name == "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri":
@@ -549,11 +549,11 @@ def get_kata_data_by_name(name):
         )
         k = Kata("Riposte Gang Squad Leader", "Naganohara", 4, "I", res, desc)
         k.source_key = name
-        desc_s1 = "[On Use] Gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Affinity"
+        desc_s1 = "[On Use] Gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Fragility"
         s1 = Skill("Appel", 1, EL_STORGE, 5, desc_s1, effect_type="NAGANOHARA_RIPOSTE_APPEL")
-        desc_s2 = "[On Use] Gain 10 Riposte\n       [On Hit] If this unit has 20+ Riposte, deal +40% damage, then take +50% more damage this turn.\n       [On Hit] Inflict 2 Pierce Affinity"
+        desc_s2 = "[On Use] Gain 10 Riposte\n       [On Hit] If this unit has 20+ Riposte, deal +40% damage, then take +50% more damage this turn.\n       [On Hit] Inflict 2 Pierce Fragility"
         s2 = Skill("Cede", 2, EL_LUDUS, 9, desc_s2, effect_type="NAGANOHARA_RIPOSTE_CEDE")
-        desc_s3 = "[On Use] If this unit has 25+ Riposte, fix Riposte stack count to 50. Otherwise, gain 20 Riposte\n       [On Hit] Inflict 3 Pierce Affinity"
+        desc_s3 = "[On Use] If this unit has 25+ Riposte, fix Riposte stack count to 50. Otherwise, gain 20 Riposte\n       [On Hit] Inflict 3 Pierce Fragility"
         s3 = Skill("Counter-Parry", 3, EL_PHILIA, 13, desc_s3, effect_type="NAGANOHARA_RIPOSTE_COUNTERPARRY")
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
@@ -569,11 +569,11 @@ def get_kata_data_by_name(name):
         )
         k = Kata("Riposte Gang Executive", "Akasuke", 4, "I", res, desc)
         k.source_key = name
-        desc_s1 = "[On Use] If this unit does not have Riposte, gain 10 Riposte. Otherwise, gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Affinity"
+        desc_s1 = "[On Use] If this unit does not have Riposte, gain 10 Riposte. Otherwise, gain 5 Riposte\n       [On Hit] Inflict 1 Pierce Fragility"
         s1 = Skill("En Garde", 1, EL_LUDUS, 7, desc_s1, effect_type="AKASUKE_RIPOSTE_ENGARDE")
-        desc_s2 = "[On Use] Gain 1 Haste next turn\n       [On Use] If this unit has 10+ Riposte, gain 1 Haste next turn\n       [On Hit] If target has Pierce Affinity, gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Affinity"
+        desc_s2 = "[On Use] Gain 1 Haste next turn\n       [On Use] If this unit has 10+ Riposte, gain 1 Haste next turn\n       [On Hit] If target has Pierce Fragility, gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Fragility"
         s2 = Skill("Feint", 2, EL_STORGE, 6, desc_s2, effect_type="AKASUKE_RIPOSTE_FEINT")
-        desc_s3 = "This skill deals +2% base damage for each stack of Riposte owned (Max +100%)\n       [On Use] Gain 10 Riposte\n       [On Hit] Inflict 3 Pierce Affinity"
+        desc_s3 = "This skill deals +2% base damage for each stack of Riposte owned (Max +100%)\n       [On Use] Gain 10 Riposte\n       [On Hit] Inflict 3 Pierce Fragility"
         s3 = Skill("Prise De Fer", 3, EL_LUDUS, 15, desc_s3, effect_type="AKASUKE_RIPOSTE_PRISEDEFER")
         # Custom Skill Pool setup based on prompt!
         k.skill_pool_def = [(s1, 4), (s2, 3), (s3, 2)]
@@ -613,13 +613,13 @@ def get_kata_data_by_name(name):
         k = Kata("Benikawa Ninja Clan", "Benikawa", 4, "I", res, desc)
         k.source_key = name
         
-        desc_s1 = "[Combat Start] This unit takes +30% damage this turn\n       [On Hit] Target takes +4 Final Damage from other attacks this turn\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 1 Pierce Affinity"
+        desc_s1 = "[Combat Start] This unit takes +30% damage this turn\n       [On Hit] Target takes +4 Final Damage from other attacks this turn\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 1 Pierce Fragility"
         s1 = Skill("Break Vitals", 1, EL_PHILAUTIA, 9, desc_s1, effect_type="BENIKAWA_CLAN_SPECIAL_1")
         
         desc_s2 = "[Combat Start] This unit takes -30% damage for this turn, then takes -50% damage in the next turn\n       [On Use] If this unit does not have Poise, gain 4 Poise Count\n       [On Use] Gain 3 Poise Potency\n       [On Use] Gain 2 Haste next turn"
         s2 = Skill("Focus – Painlessness", 2, EL_LUDUS, 0, desc_s2, effect_type="BENIKAWA_CLAN_SPECIAL_2")
         
-        desc_s3 = "[Combat Start] This unit takes +30% damage this turn\n       [On Hit] Target deals -15% damage this turn, then deals -25% damage next turn\n       [On Hit] If target has Bleed, inflict 3 Bleed Count and 3 Bleed Potency, then this unit gains 2 Haste next turn\n       [On Hit] If target has Pierce Affinity, inflict 2 Pierce Affinity, then this unit gains 3 Poise Potency and 2 Poise Count"
+        desc_s3 = "[Combat Start] This unit takes +30% damage this turn\n       [On Hit] Target deals -15% damage this turn, then deals -25% damage next turn\n       [On Hit] If target has Bleed, inflict 3 Bleed Count and 3 Bleed Potency, then this unit gains 2 Haste next turn\n       [On Hit] If target has Pierce Fragility, inflict 2 Pierce Fragility, then this unit gains 3 Poise Potency and 2 Poise Count"
         s3 = Skill("Specialty – Chaotic Nervous Redefinition", 3, EL_PHILAUTIA, 14, desc_s3, effect_type="BENIKAWA_CLAN_SPECIAL_3")
         
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]

@@ -10,7 +10,7 @@ import config
 from ui_components import clear_screen, get_player_input
 from entities import ELEMENT_NAMES, get_element_color, get_tier_roman, to_subscript, StatusEffect
 
-DURATION_ONLY_EFFECTS = ["Bind", "Haste", "Pierce Affinity", "Riposte", "Paralysis", "Overheat", "Cloud Sword [云]"]
+DURATION_ONLY_EFFECTS = ["Bind", "Haste", "Pierce Fragility", "Riposte", "Paralysis", "Overheat", "Cloud Sword [云]"]
 DUAL_STACK_EFFECTS =  ["Bleed", "Rupture", "Fairylight", "Poise", "Sinking", "Acceleration"]
 RUPTURE_LIST = ["Rupture", "Fairylight"]
 POISE_LIST = ["Poise", "Acceleration"]
@@ -847,13 +847,13 @@ class BattleManager:
                         base_dmg_val *= (1.0 + bonus_pct)
                         attacker.status_effects.remove(haste)
 
-                # PIERCE AFFINITY BASE DAMAGE MANIPULATION
-                pierce_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                # Pierce Fragility BASE DAMAGE MANIPULATION
+                pierce_eff = next((s for s in target.status_effects if s.name == "Pierce Fragility"), None)
                 if pierce_eff:
                     p_count = min(5, pierce_eff.duration)
                     # Support checking description of either the parent skill or the chip
                     desc_to_check = getattr(chip, "description", "") or skill.description
-                    if "Pierce Affinity" in desc_to_check:
+                    if "Pierce Fragility" in desc_to_check:
                         base_dmg_val += p_count
 
                 # RIPOSTE UNIQUE DAMAGE BUFFS
@@ -1293,8 +1293,8 @@ class BattleManager:
                         self.log(f"[spring_green1]Fairylight dealt {fairylight_eff.potency} damage to {target.name}![/spring_green1]")
                         if fairylight_eff.duration <= 0: target.status_effects.remove(fairylight_eff)
 
-                    # PIERCE AFFINITY TRIGGER
-                    pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                    # Pierce Fragility TRIGGER
+                    pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Fragility"), None)
                     if pierce_target_eff:
                         pierce_target_eff.duration -= 1
                         if pierce_target_eff.duration <= 0: target.status_effects.remove(pierce_target_eff)
@@ -1525,62 +1525,62 @@ class BattleManager:
 
             # Riposte Gang
             elif chip.effect_type == "RIPOSTE_GAIN_SPECIAL_1":
-                if any(s.name == "Pierce Affinity" for s in target.status_effects):
+                if any(s.name == "Pierce Fragility" for s in target.status_effects):
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-            elif chip.effect_type == "PIERCE_AFFINITY_INFLICT_SPECIAL_1":
-                if any(s.name == "Pierce Affinity" for s in target.status_effects): self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
-                else: self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+            elif chip.effect_type == "PIERCE_FRAGILITY_INFLICT_SPECIAL_1":
+                if any(s.name == "Pierce Fragility" for s in target.status_effects): self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                else: self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
             elif chip.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_1":
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
             elif chip.effect_type == "RIPOSTE_SQUAD_LEADER_SPECIAL_2":
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+                self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
             elif chip.effect_type == "ADAM_SPECIAL_1":
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
                 self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
             elif chip.effect_type == "ADAM_SPECIAL_2":
-                pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Fragility"), None)
                 if pierce_target_eff: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5 * pierce_target_eff.duration))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+                self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
             elif chip.effect_type == "ADAM_SPECIAL_3":
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=5))
+                self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=5))
                 riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
                 if riposte_eff: riposte_eff.duration = 50
                 else: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=50))
             
             # COUNTER SKILLS
             elif chip.effect_type == "COUNTER_SKILL_SPECIAL_TYPE1":
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
             elif chip.effect_type == "COUNTER_SKILL_SPECIAL_TYPE3":
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+                self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
 
             # RIPOSTE KATAS EFFECTS
             elif chip.effect_type in ["NAGANOHARA_RIPOSTE_APPEL", "NAGANOHARA_RIPOSTE_CEDE", "NAGANOHARA_RIPOSTE_COUNTERPARRY", "AKASUKE_RIPOSTE_ENGARDE", "AKASUKE_RIPOSTE_FEINT", "AKASUKE_RIPOSTE_PRISEDEFER"]:
                 riposte_eff = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
                 if chip.effect_type == "NAGANOHARA_RIPOSTE_APPEL":
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5))
-                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+                    self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
                 elif chip.effect_type == "NAGANOHARA_RIPOSTE_CEDE":
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                    self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
                 elif chip.effect_type == "NAGANOHARA_RIPOSTE_COUNTERPARRY":
                     if riposte_eff and riposte_eff.duration >= 25:
                         riposte_eff.duration = 50
                         self.log(f"[cyan1]{attacker.name} maxes out their Riposte Stance![/cyan1]")
                     else: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=20))
-                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+                    self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
                 elif chip.effect_type == "AKASUKE_RIPOSTE_ENGARDE":
                     if not riposte_eff or riposte_eff.duration <= 0: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
                     else: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=5))
-                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
+                    self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=1))
                 elif chip.effect_type == "AKASUKE_RIPOSTE_FEINT":
                     self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
                     if riposte_eff and riposte_eff.duration >= 10: self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5", duration=1))
-                    target_pierce = next((s for s in target.status_effects if s.name == "Pierce Affinity"), None)
+                    target_pierce = next((s for s in target.status_effects if s.name == "Pierce Fragility"), None)
                     if target_pierce and target_pierce.duration > 0: self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
+                    self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=2))
                 elif chip.effect_type == "AKASUKE_RIPOSTE_PRISEDEFER":
                     self.apply_status_logic(attacker, StatusEffect("Riposte", "[cyan1]➲[/cyan1]", 0, "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50", duration=10))
-                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Affinity based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
+                    self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]══▶[/light_yellow3]", 0, "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5", duration=3))
 
             # KIRYOKU FAIRY & INFILTRATOR
             elif chip.effect_type == "RUPTURE_SPECIAL1":
@@ -1613,7 +1613,7 @@ class BattleManager:
                 target.temp_modifiers["final_dmg_reduction"] -= 4
                 has_bleed = any(s.name == "Bleed" for s in target.status_effects)
                 if has_bleed: self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=1))
-                self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=1))
+                self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=1))
             elif chip.effect_type == "BENIKAWA_CLAN_SPECIAL_2":
                 has_poise = any(s.name in POISE_LIST for s in attacker.status_effects)
                 if not has_poise: self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 1, "", duration=4))
@@ -1626,9 +1626,9 @@ class BattleManager:
                 if has_bleed:
                     self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, "", duration=3))
                     self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=2))
-                has_pierce = any(s.name == "Pierce Affinity" for s in target.status_effects)
+                has_pierce = any(s.name == "Pierce Fragility" for s in target.status_effects)
                 if has_pierce:
-                    self.apply_status_logic(target, StatusEffect("Pierce Affinity", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=2))
+                    self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[light_yellow3]⇴[/light_yellow3]", 0, "", duration=2))
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, "", duration=2))
 
             # --- LUOXIA MARTIAL ARTS STUDENT ---
@@ -1797,7 +1797,7 @@ class BattleManager:
             target.pending_haste = min(5, target.pending_haste + new_status.duration)
             return
 
-        if new_status.name == "Pierce Affinity":
+        if new_status.name == "Pierce Fragility":
             new_status.duration = min(5, new_status.duration)
 
         # --- PRE-PROCESS: DUAL-STACK MINIMUM 1 RULE ---
@@ -1815,7 +1815,7 @@ class BattleManager:
             if new_status.name in DUAL_STACK_EFFECTS:
                 existing.duration = min(99, existing.duration + new_status.duration)
                 existing.potency = min(99, existing.potency + new_status.potency)
-            elif new_status.name in ["Bind", "Haste", "Pierce Affinity"]:
+            elif new_status.name in ["Bind", "Haste", "Pierce Fragility"]:
                 existing.duration = min(5, existing.duration + new_status.duration)
             elif new_status.name == "Riposte":
                 existing.duration = min(50, existing.duration + new_status.duration)

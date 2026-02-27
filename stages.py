@@ -4,7 +4,7 @@ from entities import EL_EROS, EL_PHILIA, EL_STORGE, EL_AGAPE, EL_LUDUS, EL_PRAGM
 import config
 import scd
 from player_state import player
-from scd import bleed_1, bleed_2, bleed_3, bind_1, rupture_1, rupture_2, rupture_3, rupturecount_2, bleedcount_2, bind_4, pierce_affinity_1
+from scd import bleed_1, bleed_2, bleed_3, bind_1, rupture_1, rupture_2, rupture_3, rupturecount_2, bleedcount_2, bind_4, pierce_fragility_1
 from entities import Chip, ChipSkill, Passive
 
 # --- PARTY MEMBER CREATION ---
@@ -1014,10 +1014,10 @@ def get_enemy_database():
     hench = Entity("Unknown Faction Henchman", is_player=False)
     hench.max_hp = 75
     k_hench = Kata("Rapier Guard", "Henchman", 1, 3, [1.3, 1.1, 1.1, 1.1, 0.8, 0.8, 1.0])
-    he1 = Skill("Pierce", 1, EL_LUDUS, 5, "[On Hit] Inflict 1 Pierce Affinity", effect_type="APPLY_STATUS")
-    he1.status_effect = pierce_affinity_1
+    he1 = Skill("Pierce", 1, EL_LUDUS, 5, "[On Hit] Inflict 1 Pierce Fragility", effect_type="APPLY_STATUS")
+    he1.status_effect = pierce_fragility_1
     he2 = Skill("Counter", 2, EL_EROS, 7, "[Combat Start] If this unit takes damage this turn, deal +20% damage next turn", effect_type="COUNTER_SKILL_TYPE1", effect_val=20)
-    he3 = Skill("Brutal Counter", 3, EL_EROS, 8, "[Combat Start] If this unit takes damage this turn, deal +40% damage next turn\n       [On Hit] Inflict 2 Pierce Affinity", effect_type="COUNTER_SKILL_SPECIAL_TYPE1")
+    he3 = Skill("Brutal Counter", 3, EL_EROS, 8, "[Combat Start] If this unit takes damage this turn, deal +40% damage next turn\n       [On Hit] Inflict 2 Pierce Fragility", effect_type="COUNTER_SKILL_SPECIAL_TYPE1")
     k_hench.skill_pool_def = [(he1, 4), (he2, 3), (he3, 2)]
     hench.equip_kata(k_hench)
     hench.description = "These well-dressed captors guard Kagaku Shamiko’s hotel room, armed with thin rapiers and clad in identical sandy-colored long coats. Operating under strict orders not to harm their VIP prisoner, they become complacent and easily panicked when she fakes a choking emergency. This fatal hesitation allows a Kata-empowered Kagaku to swiftly dismantle them using nothing but a heavy silver breakfast tray and a broken broomstick."
@@ -1041,10 +1041,10 @@ def get_enemy_database():
     rip_hench = Entity("Riposte Gang Henchman", is_player=False)
     rip_hench.max_hp = 55
     k_rip_hench = Kata("Gang Henchman Rapier", "Riposte Henchman", 1, 4, [1.2, 1.1, 1.1, 1.1, 0.9, 0.9, 1.1])
-    rh1 = Skill("Graceful Pierce", 1, EL_LUDUS, 7, "[On Hit] Inflict 1 Pierce Affinity", effect_type="APPLY_STATUS")
-    rh1.status_effect = pierce_affinity_1
-    rh2 = Skill("Elegant Counter", 2, EL_AGAPE, 6, "[Combat Start] If this unit takes damage this turn, deal +30% damage next turn\n       [On Hit] Inflict 3 Pierce Affinity", effect_type="COUNTER_SKILL_SPECIAL_TYPE3")
-    rh3 = Skill("Riposte", 3, EL_STORGE, 10, "[On Use] Gain 10 Riposte\n       [On Hit] If target has Pierce Affinity, gain 10 Riposte", effect_type="RIPOSTE_GAIN_SPECIAL_1")
+    rh1 = Skill("Graceful Pierce", 1, EL_LUDUS, 7, "[On Hit] Inflict 1 Pierce Fragility", effect_type="APPLY_STATUS")
+    rh1.status_effect = pierce_fragility_1
+    rh2 = Skill("Elegant Counter", 2, EL_AGAPE, 6, "[Combat Start] If this unit takes damage this turn, deal +30% damage next turn\n       [On Hit] Inflict 3 Pierce Fragility", effect_type="COUNTER_SKILL_SPECIAL_TYPE3")
+    rh3 = Skill("Riposte", 3, EL_STORGE, 10, "[On Use] Gain 10 Riposte\n       [On Hit] If target has Pierce Fragility, gain 10 Riposte", effect_type="RIPOSTE_GAIN_SPECIAL_1")
     k_rip_hench.skill_pool_def = [(rh1, 4), (rh2, 3), (rh3, 2)]
     rip_hench.equip_kata(k_rip_hench)
     rip_hench.description = "The standard foot soldiers of the notorious Absconder syndicate, these ruthless thugs flood the hotel corridors in their signature sandy coats. They fight using a highly dangerous, sacrificial counter-attacking style, willingly absorbing heavy blunt force trauma just to create a split-second opening for a lethal rapier thrust. Their unnatural toughness and sheer numbers make them incredibly dangerous to fight recklessly, forcing the Kasakura vanguard to rely on flawless, one-hit knockouts."
@@ -1053,9 +1053,9 @@ def get_enemy_database():
     rip_lead = Entity("Riposte Gang Squad Leader", is_player=False)
     rip_lead.max_hp = 75
     k_rip_lead = Kata("Veteran Henchman Rapier", "Riposte Leader", 1, 6, [1.1, 1.0, 1.0, 1.2, 0.9, 0.9, 1.0])
-    rl1 = Skill("Stylish Vital Pierce", 1, EL_EROS, 9, "[On Hit] If target has Pierce Affinity, inflict 2 Pierce Affinity. Otherwise, inflict 1 Pierce Affinity", effect_type="PIERCE_AFFINITY_INFLICT_SPECIAL_1")
-    rl2 = Skill("Breakthrough", 2, EL_AGAPE, 9, "[Combat Start] All of this unit’s allies deal +4 Final Damage this turn\n       [On Use] Gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Affinity", effect_type="RIPOSTE_SQUAD_LEADER_SPECIAL_1")
-    rl3 = Skill("Balestra Riposte", 3, EL_LUDUS, 12, "[On Use] Fix this unit’s Riposte stack to 30\n       [On Hit] Inflict 3 Pierce Affinity", effect_type="RIPOSTE_SQUAD_LEADER_SPECIAL_2")
+    rl1 = Skill("Stylish Vital Pierce", 1, EL_EROS, 9, "[On Hit] If target has Pierce Fragility, inflict 2 Pierce Fragility. Otherwise, inflict 1 Pierce Fragility", effect_type="PIERCE_FRAGILITY_INFLICT_SPECIAL_1")
+    rl2 = Skill("Breakthrough", 2, EL_AGAPE, 9, "[Combat Start] All of this unit’s allies deal +4 Final Damage this turn\n       [On Use] Gain 10 Riposte\n       [On Hit] Inflict 2 Pierce Fragility", effect_type="RIPOSTE_SQUAD_LEADER_SPECIAL_1")
+    rl3 = Skill("Balestra Riposte", 3, EL_LUDUS, 12, "[On Use] Fix this unit’s Riposte stack to 30\n       [On Hit] Inflict 3 Pierce Fragility", effect_type="RIPOSTE_SQUAD_LEADER_SPECIAL_2")
     k_rip_lead.skill_pool_def = [(rl1, 3), (rl2, 3), (rl3, 3)]
     rip_lead.equip_kata(k_rip_lead)
     rip_lead.description = "Seasoned veteran criminals of the underworld, these dark-coated enforcers lead the syndicate's defensive lines during the grueling hotel siege. Their rapier stances are significantly lower and more refined than the standard henchmen, allowing them to effortlessly parry and deliver devastating counter-strikes to vital points. Their overwhelming proficiency stalled the Kasakura strike team completely, forcing Akasuke to temporarily borrow their exact Kata just to beat them at their own ruthless game."
@@ -1064,9 +1064,9 @@ def get_enemy_database():
     adam = Entity("Adam", is_player=False)
     adam.max_hp = 295
     k_adam = Kata("Executive Rapier", "Adam", 1, 9, [1.0, 1.0, 1.0, 1.15, 1.15, 1.0, 1.15])
-    ad1 = Skill("En Garde", 1, EL_PRAGMA, 6, "[On Use] If this unit does not have Haste, gain 2 Haste next turn\n       [On Hit] Inflict 2 Pierce Affinity\n       [On Hit] Gain 10 Riposte", effect_type="ADAM_SPECIAL_1")
-    ad2 = Skill("Advance-Lunge", 2, EL_LUDUS, 10, "[Combat Start] All of this unit’s allies deal +3 Final Damage this turn\n       [Combat Start] All of this unit’s allies take -2 Final Damage this turn\n       [On Hit] Gain 5 Riposte for every stack of Pierce Affinity the target has\n       [On Hit] Inflict 3 Pierce Affinity", effect_type="ADAM_SPECIAL_2")
-    ad3 = Skill("Fleche Riposte (Incomplete)", 3, EL_LUDUS, 35, "[Combat Start] This unit takes +3 Final Damage this turn\n       [Combat Start] This unit deals -20 Base Damage this turn\n       [On Hit] Inflict 5 Pierce Affinity\n       [On Hit] Fix this unit’s Riposte stack to 50", effect_type="ADAM_SPECIAL_3")
+    ad1 = Skill("En Garde", 1, EL_PRAGMA, 6, "[On Use] If this unit does not have Haste, gain 2 Haste next turn\n       [On Hit] Inflict 2 Pierce Fragility\n       [On Hit] Gain 10 Riposte", effect_type="ADAM_SPECIAL_1")
+    ad2 = Skill("Advance-Lunge", 2, EL_LUDUS, 10, "[Combat Start] All of this unit’s allies deal +3 Final Damage this turn\n       [Combat Start] All of this unit’s allies take -2 Final Damage this turn\n       [On Hit] Gain 5 Riposte for every stack of Pierce Fragility the target has\n       [On Hit] Inflict 3 Pierce Fragility", effect_type="ADAM_SPECIAL_2")
+    ad3 = Skill("Fleche Riposte (Incomplete)", 3, EL_LUDUS, 35, "[Combat Start] This unit takes +3 Final Damage this turn\n       [Combat Start] This unit deals -20 Base Damage this turn\n       [On Hit] Inflict 5 Pierce Fragility\n       [On Hit] Fix this unit’s Riposte stack to 50", effect_type="ADAM_SPECIAL_3")
     k_adam.skill_pool_def = [(ad1, 4), (ad2, 3), (ad3, 2)]
     adam.equip_kata(k_adam)
     adam.description = "A remarkably young and immensely talented Executive of the Riposte Gang, Adam flawlessly blends the grace of a high-class chef with the lethal precision of a master swordsman. He wields his rapier with terrifying perfection, capable of holding off six Kata-enhanced fighters simultaneously through sheer battle IQ and unnatural physical toughness before finally reaching his limit. Despite his criminal allegiance and composed demeanor, he possesses a surprisingly naive loyalty to his terrifying Boss and showed genuine, polite hospitality toward his captive."

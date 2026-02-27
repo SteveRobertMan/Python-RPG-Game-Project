@@ -4590,7 +4590,6 @@ def play_stage_3_11_start():
     show_story_box("Shigemura", "Then we have to stop him. Now.", affiliation="Kasakura High School Student")
     show_story_box("", "Hisayuki’s footsteps were already getting louder again.\nHe was coming back.", is_narrator=True)
 
-
 def play_stage_3_11_end():
     # --- SCENE 4: AKASUKE'S POV (THE BATTLE AGAINST HISAYUKI) ---
     show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
