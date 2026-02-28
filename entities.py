@@ -75,6 +75,29 @@ class StatusEffect:
         self.description = description
         self.duration = duration
         self.type = type # "DEBUFF", "BUFF", "UNIQUEDEBUFF", "UNIQUEBUFF"
+# --- MASTER STATUS EFFECT DESCRIPTIONS ---
+STATUS_DESCS = {
+    # DUAL STACK EFFECTS
+    "Bleed": "Upon dealing damage, Take fixed damage equal to Potency, then reduce count by 1. Max Potency or Count: 99",
+    "Rupture": "Upon getting hit by a skill, Take extra fixed damage equal to the amount of Potency, then reduce count by 1. Max Potency or Count: 99",
+    "Fairylight": "Unique Rupture (Counts As Rupture)\nUpon getting hit by a skill, Take extra fixed damage equal to the amount of Potency. On turn end, reduce Count by half, and if this unit has Rupture, gain Rupture Potency based on Count lost this way. Max Potency or Count: 99",
+    "Poise": "Boost Critical Hit chance by (Potency*5)% for the next 'Count' amount of hits. Max potency or count: 99",
+    "Sinking": "Upon getting hit by a skill, add Potency to an 'LS' (Low Sanity) tally and reduce Count by 1. Next turn, before attacking, each hit has an LS% chance to deal -(LS/2)% Final Damage. LS resets to 0 at turn end. Max LS: 90. Max Potency or Count: 99",
+    "Acceleration": "Unique Poise (Counts As Poise)\nBoost Critical Hit chance by (Potency*5)%. When taking damage, reduce Final Damage by 1-3, then also reduce Count (max 2 times per turn) by the same amount. Count cannot go below 1 this way. Max potency or count: 99",
+    # DURATION ONLY EFFECTS
+    "Bind": "Deal -(10*Count)% base damage with skills. Lose 1 count every new turn. Max Count: 5",
+    "Haste": "Deal +(10*Count)% base damage with skills. Lose 1 count every new turn. Max count: 5",
+    "Pierce Fragility": "Take +Base Damage from any skill related to Pierce Fragility based on stack amount. Upon getting hit by a skill, reduce count by 1. Max Count: 5",
+    "Riposte": "Take -5% damage for every 10 stacks owned (max -25%). When taking damage, reduce stack count by 1-4 stacks. For every 10 cumulative stacks reduced this way, gain 1 Haste next turn, then reset the count. At end of turn, reduce stack count by 25%. Max Count: 50",
+    "Paralysis": "When attacking, decrease the Tier for Comparative Defense of target by exactly 1. Reduce count by 1 at end of skill usage. Max count: 99",
+    "Overheat": "Apply the following effects when owning at least 1 Count:\nDeal -25% Base Damage with attacks, and take +30% Base Damage from attacks. When attacking, fix Critical Strike chance to 0%. At turn end, reduce count by 1. Max count: 3",
+    "Cloud Sword [云]": "Apply the following effects when owning at least 1 Count:\nCritical Hit damage +20%, tally amount of Critical Hits this unit performs throughout battle (Max 9). On next Critical Hit with an Agape element skill, does not count towards Tally; instead multiplies Final Damage by ×(Tally+1), resets the Tally, then removes this status effect. Max Count: 1",
+    "Invisibility": "Turn Start and End: Fix this unit’s Poise Count exactly to Invisibility Count if Poise Count is lower. Max Count: 5",
+    "Blossom": "Upon taking damage, gain (Count/3) Rupture Potency, then take fixed damage according to gained amount (Max 5 Damage), then reduce count by 1. Max Count: 99",
+    "Malice": "Upon taking damage, gain (Count/3) Sinking Potency, then take fixed damage according to gained amount (Max 5 Damage), then reduce count by 1. Max Count: 99",
+    "Flickering Invisibility": "Takes -Count Base Damage from skills (max -5). Apply the following effects when owning at least 1 Count:\nTurn Start and End: Fix this unit’s Poise Count to exactly 1. Max Count: 5",
+    "Leaking Bloodlust": "Deal and take +(Count/11) Final Damage (Max +/- 5). Take +(Count/33)x more damage from the effects of Bleed (min +1x, max +3x). At 99 Count, deal and take +30% Final Damage from Critical Hits. Max Count: 99"
+}
 
 class Skill:
     def __init__(self, name, tier, element_idx, base_damage, description="", effect_type=None, effect_val=0):
@@ -221,34 +244,21 @@ class Entity:
         existing = next((e for e in self.status_effects if e.name == new_effect.name), None)
         
         if existing:
-            if new_effect.name in ["Bleed", "Rupture", "Fairylight"]:
-                existing.potency = min(99, max(existing.potency, new_effect.potency))
-                existing.duration = min(99, existing.duration + new_effect.duration)
-            elif new_effect.name in ["Bind", "Haste", "Pierce Affinity"]:
-                existing.duration = min(5, existing.duration + new_effect.duration)
-            elif new_effect.name == "Riposte":
-                existing.duration = min(50, existing.duration + new_effect.duration)
-            elif existing.name == "Poise":
-                # ... existing poise logic ...
-                if existing.potency > 0 and existing.duration <= 0:
-                    existing.duration = 1
-                if existing.duration > 0 and existing.potency <= 0:
-                    existing.potency = 1
-                existing.duration = max(existing.duration, new_effect.duration)
-            else:
-                existing.duration = max(existing.duration, new_effect.duration)
-        else:
-            if new_effect.name in ["Bleed", "Rupture", "Fairylight", "Poise"]:
+            if new_effect.name in ["Bleed", "Rupture", "Fairylight", "Poise", "Sinking", "Acceleration"]:
                 if new_effect.potency > 0 and new_effect.duration <= 0:
                     new_effect.duration = 1
                 elif new_effect.duration > 0 and new_effect.potency <= 0:
                     new_effect.potency = 1
                 new_effect.potency = min(99, new_effect.potency)
                 new_effect.duration = min(99, new_effect.duration)
-            elif new_effect.name in ["Bind", "Haste", "Pierce Affinity"]:
+            elif new_effect.name in ["Bind", "Haste", "Pierce Fragility"]:
                 new_effect.duration = min(5, new_effect.duration)
             elif new_effect.name == "Riposte":
                 new_effect.duration = min(50, new_effect.duration)
+            elif new_effect.name in ["Overheat"]:
+                new_effect.duration = min(3, new_effect.duration)
+            elif new_effect.name in ["Cloud Sword [云]"]:
+                new_effect.duration = min(1, new_effect.duration)
                 
             self.status_effects.append(new_effect)
 

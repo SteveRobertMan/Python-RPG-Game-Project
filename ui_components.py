@@ -205,7 +205,7 @@ def draw_stage_select_menu(unlocked_stage):
                 ("4-21", "The Outcast ♖", 65),
                 ("4-22", "Xiangyun’s Farewell 🕮", 66),
                 ("4-23", "A Senior’s Morale ♗", 67),
-                ("4-24", "The Thousand Blossom Brotherhood ♗", 68),
+                ("4-24", "The Ten Thousand Blossom Brotherhood ♗", 68),
                 ("4-25", "Vanguard Of The Past ♕", 69),
                 ("4-26", "The Last Obstacle ♕", 70),
                 ("4-27", "Send-offs 🕮", 71),
@@ -369,6 +369,21 @@ def draw_node_select_menu(stage_name, cleared_indices):
             ("Node 1", "Golden Fist Union Gangster(s) (Mixed Group)"),
             ("Node 2", "Black Water Dock Gangster(s) (Mixed Group)"),
             ("Node 3", "Twin Mountain Gate Gangster (Mixed Group)")
+        ]
+    # Stage 4-23: A Senior's Morale
+    elif stage_name == "4-23: A Senior's Morale":
+        nodes = [
+            ("Node 1", "Blood-Broken Guard Footsoldier(s)"),
+            ("Node 2", "Jade Rain Monastery Footsoldier(s)"),
+            ("Node 3", "Blood-Broken Guard Footsoldier(s) (Mixed Group)"),
+            ("Node 4", "Jade Rain Monastery Footsoldier(s) (Mixed Group)")
+        ]
+    # Stage 4-24: The Ten Thousand Blossom Brotherhood
+    elif stage_name == "4-24: The Ten Thousand Blossom Brotherhood":
+        nodes = [
+            ("Node 1", "Ten Thousand Blossom Linebreaker(s)"),
+            ("Node 2", "Ten Thousand Blossom Defender(s)"),
+            ("Node 3", "Ten Thousand Blossom Linebreaker(s) (Mixed Group)")
         ]
 
     # Render the selected list

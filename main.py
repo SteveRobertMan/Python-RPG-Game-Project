@@ -331,8 +331,10 @@ def run_game():
                 config.current_state = config.STATE_MAIN_MENU
                 continue
     
-            if stage_id == 63:
-                party = [member for member in party if member.name in ["Yuri","Benikawa","Shigemura","Hana"]]
+            if stage_id in [63,65]:
+                party = [member for member in party if member.name in ["Yuri","Benikawa","Shigemura","Hana"]]   
+            if stage_id == 64:
+                party = [member for member in party if member.name in ["Akasuke","Naganohara","Natsume","Kagaku"]]
 
             # Story Pre-Battle Check
             should_play_story = True
@@ -885,7 +887,7 @@ def run_game():
                 valid_indices = ["1", "2", "3", "4"]
                 start_id = 68001
             elif stage_num == 69:
-                draw_node_select_menu("4-24: The Thousand Blossom Brotherhood", np["cleared_indices"])
+                draw_node_select_menu("4-24: The Ten Thousand Blossom Brotherhood", np["cleared_indices"])
                 valid_indices = ["1", "2", "3"]
                 start_id = 69001
             else:

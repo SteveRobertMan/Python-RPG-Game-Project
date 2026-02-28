@@ -4,7 +4,7 @@ from entities import EL_EROS, EL_PHILIA, EL_STORGE, EL_AGAPE, EL_LUDUS, EL_PRAGM
 import config
 import scd
 from player_state import player
-from scd import bleed_1, bleed_2, bleed_3, bind_1, rupture_1, rupture_2, rupture_3, rupturecount_2, bleedcount_2, bind_4, pierce_fragility_1
+from scd import bleed_1, bleed_2, bleed_3, bleed_8, bind_1, rupture_1, rupture_2, rupture_3, rupture_6, rupturecount_2, bleedcount_2, bind_4, pierce_fragility_1, paralysis_2, blossom_1, malice_1
 from entities import Chip, ChipSkill, Passive
 
 # --- PARTY MEMBER CREATION ---
@@ -605,6 +605,61 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Miyu"))
     elif stage_id == 63:
         enemies.append(spawn("Mei"))
+    elif stage_id == 64:
+        bbguard_a = spawn("Blood-Broken Guard Footsoldier", "A")
+        bbguard_a.hp = 33
+        enemies.append(bbguard_a)
+        bbguard_b = spawn("Blood-Broken Guard Footsoldier", "B")
+        bbguard_b.hp = 29
+        enemies.append(bbguard_b)
+        bbguard_c = spawn("Blood-Broken Guard Footsoldier", "C")
+        bbguard_c.hp = 31
+        enemies.append(bbguard_c)
+    elif stage_id == 65:
+        jrmons_a = spawn("Jade Rain Monastery Footsoldier", "A")
+        jrmons_a.hp = 30
+        enemies.append(jrmons_a)
+        jrmons_b = spawn("Jade Rain Monastery Footsoldier", "B")
+        jrmons_b.hp = 28
+        enemies.append(jrmons_b)
+        jrmons_c = spawn("Jade Rain Monastery Footsoldier", "C")
+        jrmons_c.hp = 24
+        enemies.append(jrmons_c)
+    elif stage_id == 66:
+        enemies.append(spawn("Ibara Ninja"))
+    elif stage_id == 68001:
+        enemies.append(spawn("Blood-Broken Guard Footsoldier", "A"))
+        enemies.append(spawn("Blood-Broken Guard Footsoldier", "B"))
+        enemies.append(spawn("Blood-Broken Guard Footsoldier", "C"))
+    elif stage_id == 68002:
+        enemies.append(spawn("Jade Rain Monastery Footsoldier", "A"))
+        enemies.append(spawn("Jade Rain Monastery Footsoldier", "B"))
+        enemies.append(spawn("Jade Rain Monastery Footsoldier", "C"))
+    elif stage_id == 68003:
+        enemies.append(spawn("Blood-Broken Guard Footsoldier", "A"))
+        enemies.append(spawn("Blood-Broken Guard Footsoldier", "B"))
+        enemies.append(spawn("Jade Rain Monastery Footsoldier"))
+    elif stage_id == 68004:
+        enemies.append(spawn("Blood-Broken Guard Footsoldier"))
+        enemies.append(spawn("Jade Rain Monastery Footsoldier", "A"))
+        enemies.append(spawn("Jade Rain Monastery Footsoldier", "B"))
+    elif stage_id == 69001:
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Linebreaker", "A"))
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Linebreaker", "B"))
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Linebreaker", "C"))
+    elif stage_id == 69002:
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Defender", "A"))
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Defender", "B"))
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Defender", "C"))
+    elif stage_id == 69003:
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Linebreaker", "A"))
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Linebreaker", "B"))
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Defender", "A"))
+        enemies.append(spawn("Ten Thousand Blossom Brotherhood Defender", "B"))
+    elif stage_id == 70:
+        enemies.append(spawn("Zhao Feng"))
+    elif stage_id == 71:
+        enemies.append(spawn("Ibara Ninja - 'Kagerou The Untouchable'"))
 
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
@@ -1346,7 +1401,7 @@ def get_enemy_database():
     # === APPENDABLE TEMPORARY SKILLS ===
     # S3: Tan Sau [攤手]
     m_s3_desc = "[On Use] Gain 4 Poise Potency\n       [On Use] Gain 4 Poise Count\n       [On Hit] Inflict 4 Rupture Potency"
-    m_s3 = Skill("Tan Sau [攤手]", 1, EL_EROS, 22, m_s3_desc, effect_type="POISE_RUPTURE_SPECIAL_TYPE2", effect_val=4)
+    m_s3 = Skill("Tan Sau [攤手]", 1, EL_EROS, 22, m_s3_desc, effect_type="POISE_RUPTURE_SPECIAL_TYPE1", effect_val=4)
     m_s3.is_temporary = True
     # S4: Lifting Hand [問手] ◈◈◈
     m_s4_c1 = Chip(base_damage=8, effect_type="GAIN_POISE_SPECIAL_3")
@@ -1415,10 +1470,267 @@ def get_enemy_database():
     mei.equip_kata(k_mei)
     mei.description = "meidescription"
     mei.unlock_stage_id = 63
+
+    ################################################
+    # --- BLOOD-BROKEN GUARD FOOTSOLDIER (ACT 4) ---
+    ################################################
+    bb_foot = Entity("Blood-Broken Guard Footsoldier", is_player=False)
+    bb_foot.max_hp = 37
+    bb_foot.pace = 1
+    k_bb = Kata("Blood-Broken Kata", "Guard Footsoldier", 1, 8, [0.4, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2])
+    # Skill I: Polearm Thrust ◈◈ (Eros)
+    bb_s1_c1 = Chip(base_damage=4, effect_type="POISE_BLEED_SPECIAL_TYPE1", effect_val=2)
+    bb_s1_c2 = Chip(base_damage=4, effect_type="POISE_BLEED_SPECIAL_TYPE1", effect_val=2)
+    bb_s1_desc = "[On Hit] Inflict Bleed Potency\n       [On Hit] Gain Poise Potency\n       [On Hit] Gain Poise Count"
+    bb_s1_insp = "◈ Base Damage: 4\n       [On Hit] Inflict 2 Bleed Potency\n       [On Hit] Gain 2 Poise Potency\n       [On Hit] Gain 2 Poise Count\n       ◈ Base Damage: 4\n       [On Hit] Inflict 2 Bleed Potency\n       [On Hit] Gain 2 Poise Potency\n       [On Hit] Gain 2 Poise Count"
+    bb_s1 = ChipSkill("Polearm Thrust ◈◈", 1, EL_EROS, [bb_s1_c1, bb_s1_c2], description=bb_s1_desc, inspect_description=bb_s1_insp)
+    # Skill II: Wide Sweep ◈◈ (Eros)
+    bb_s2_c1 = Chip(base_damage=5, effect_type="POISE_BLEED_SPECIAL_TYPE1", effect_val=3)
+    bb_s2_c2 = Chip(base_damage=7, effect_type="POISE_BLEED_SPECIAL_TYPE2", effect_val=2)
+    bb_s2_desc = "[On Hit] Inflict Bleed Potency\n       [On Hit] Inflict Bleed Count\n       [On Hit] Gain Poise Potency\n       [On Hit] Gain Poise Count"
+    bb_s2_insp = "◈ Base Damage: 5\n       [On Hit] Inflict 3 Bleed Potency\n       [On Hit] Gain 3 Poise Potency\n       [On Hit] Gain 3 Poise Count\n       ◈ Base Damage: 7\n       [On Hit] Inflict 2 Bleed Count\n       [On Hit] Gain 2 Poise Potency\n       [On Hit] Gain 2 Poise Count"
+    bb_s2 = ChipSkill("Wide Sweep ◈◈", 2, EL_EROS, [bb_s2_c1, bb_s2_c2], description=bb_s2_desc, inspect_description=bb_s2_insp)
+    # Skill III: Cleave ◈◈◈ (Philia)
+    bb_s3_c1 = Chip(base_damage=4, effect_type="SWITCH_RANDOM_TYPE1")
+    bb_s3_c2 = Chip(base_damage=4, effect_type="SWITCH_RANDOM_TYPE1")
+    bb_s3_c3 = Chip(base_damage=12, effect_type="APPLY_STATUS_CRITICAL")
+    bb_s3_c3.status_effect = scd.bleed_8
+    bb_s3_desc = "[On Critical Hit] Inflict Bleed Potency\n       [On Hit] Switches to a new random target"
+    bb_s3_insp = "◈ Base Damage: 4\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 4\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 12\n       [On Critical Hit] Inflict 8 Bleed Potency"
+    bb_s3 = ChipSkill("Cleave ◈◈◈", 3, EL_PHILIA, [bb_s3_c1, bb_s3_c2, bb_s3_c3], description=bb_s3_desc, inspect_description=bb_s3_insp)
+    k_bb.skill_pool_def = [(bb_s1, 4), (bb_s2, 3), (bb_s3, 2)]
+    # Passives
+    bb_p1 = Passive("Intangible Form", "Take -50% Base Damage from skills. Take 200% Damage from the Status Effects Bleed and Rupture (counts Unique Effects)", "PASSIVE_INTANGIBLE_FORM", color="grey74")
+    bb_p2 = Passive("Frontline Fighter", "If this unit is the first of their team to take damage this turn, this unit deals +5 Final Damage this turn.\nAt the start of turn, gain 1 Haste for the next turn. After activating, this effect can occur once again every 2 turns", "PASSIVE_FRONTLINE_FIGHTER", color="red")
+    k_bb.passives.extend([bb_p1, bb_p2])
+    bb_foot.equip_kata(k_bb)
+    bb_foot.description = "bloodbrokenguardfootsoldier"
+    bb_foot.unlock_stage_id = 64
+
+    #################################################
+    # --- JADE RAIN MONASTERY FOOTSOLDIER (ACT 4) ---
+    #################################################
+    jr_foot = Entity("Jade Rain Monastery Footsoldier", is_player=False)
+    jr_foot.max_hp = 33
+    jr_foot.pace = 1
+    k_jr = Kata("Monastery Arts", "Jade Rain Footsoldier", 1, 8, [1.2, 1.2, 1.2, 0.4, 1.2, 1.2, 1.2])
+    # Skill I: Double Cut ◈◈ (Agape)
+    jr_s1_c1 = Chip(base_damage=4, effect_type="APPLY_STATUS")
+    jr_s1_c1.status_effect = scd.rupture_3
+    jr_s1_c2 = Chip(base_damage=2, effect_type="APPLY_STATUS")
+    jr_s1_c2.status_effect = scd.paralysis_2
+    jr_s1_desc = "[Combat Start] This unit takes -2 Final Damage this turn\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Paralysis"
+    jr_s1_insp = "◈ Base Damage: 4\n       [On Hit] Inflict 3 Rupture Potency\n       ◈ Base Damage: 2\n       [On Hit] Inflict 2 Paralysis"
+    jr_s1 = ChipSkill("Double Cut ◈◈", 1, EL_AGAPE, [jr_s1_c1, jr_s1_c2], description=jr_s1_desc, inspect_description=jr_s1_insp, effect_type="BUFF_DEF_FLAT", effect_val=2)
+    # Skill II: Break Down ◈◈◈◈ (Agape)
+    jr_s2_c1 = Chip(base_damage=3, effect_type="APPLY_STATUS")
+    jr_s2_c1.status_effect = scd.bind_1
+    jr_s2_c2 = Chip(base_damage=3, effect_type="APPLY_RUPTURE_HEAVY_STACKS")
+    jr_s2_c3 = Chip(base_damage=3, effect_type="APPLY_RUPTURE_HEAVY_STACKS")
+    jr_s2_c4 = Chip(base_damage=3, effect_type="APPLY_STATUS")
+    jr_s2_c4.status_effect = scd.bind_1
+    jr_s2_desc = "[On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count\n       [On Hit] Inflict Bind next turn"
+    jr_s2_insp = "◈ Base Damage: 3\n       [On Hit] Inflict 1 Bind next turn\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 3\n       [On Hit] Inflict 1 Bind next turn"
+    jr_s2 = ChipSkill("Break Down ◈◈◈◈", 2, EL_AGAPE, [jr_s2_c1, jr_s2_c2, jr_s2_c3, jr_s2_c4], description=jr_s2_desc, inspect_description=jr_s2_insp)
+    # Skill III: Retreating Fog Step ◈◈◈◈◈ (Pragma)
+    jr_s3_c1 = Chip(base_damage=1, effect_type="FOG_STEP_SPECIAL", effect_val=20)
+    jr_s3_c2 = Chip(base_damage=1, effect_type="APPLY_STATUS")
+    jr_s3_c2.status_effect = scd.paralysis_2
+    jr_s3_c3 = Chip(base_damage=1, effect_type="FOG_STEP_SPECIAL", effect_val=20)
+    jr_s3_c4 = Chip(base_damage=1, effect_type="APPLY_STATUS")
+    jr_s3_c4.status_effect = scd.paralysis_2
+    jr_s3_c5 = Chip(base_damage=1, effect_type="FOG_STEP_SPECIAL", effect_val=20)
+    jr_s3_desc = "[On Hit] If target has Rupture, this unit takes -20% Final Damage text turn\n       [On Hit] Inflict Paralysis\n       [On Hit] Switches to a new random target (Prioritizes units with Rupture)"
+    jr_s3_insp = "◈ Base Damage: 1\n       [On Hit] If target has Rupture, this unit takes -20% Final Damage text turn\n       [On Hit] Switches to a new random target (Prioritizes units with Rupture)\n       ◈ Base Damage: 1\n       [On Hit] Inflict 2 Paralysis\n       ◈ Base Damage: 1\n       [On Hit] If target has Rupture, this unit takes -20% Final Damage text turn\n       [On Hit] Switches to a new random target (Prioritizes units with Rupture)\n       ◈ Base Damage: 1\n       [On Hit] Inflict 2 Paralysis\n       ◈ Base Damage: 1\n       [On Hit] If target has Rupture, this unit takes -20% Final Damage text turn\n       [On Hit] Switches to a new random target (Prioritizes units with Rupture)"
+    jr_s3 = ChipSkill("Retreating Fog Step ◈◈◈◈◈", 3, EL_PRAGMA, [jr_s3_c1, jr_s3_c2, jr_s3_c3, jr_s3_c4, jr_s3_c5], description=jr_s3_desc, inspect_description=jr_s3_insp)
+    k_jr.skill_pool_def = [(jr_s1, 4), (jr_s2, 3), (jr_s3, 2)]
+    # Passives
+    jr_p1 = Passive("Intangible Form", "Take -50% Base Damage from skills. Take 200% Damage from the Status Effects Bleed and Rupture (counts Unique Effects)", "PASSIVE_INTANGIBLE_FORM", color="grey74")
+    jr_p2 = Passive("Blind Spots", "If this unit is the first of their team to take damage this turn, this unit takes -5 Final Damage next turn.\nWhen there is at least one unit with this passive, at the start of turn, all allied units with Bind gain 2 Bind next turn. After activating, this effect can occur once again every 2 turns", "PASSIVE_BLIND_SPOTS", color="green")
+    k_jr.passives.extend([jr_p1, jr_p2])
+    jr_foot.equip_kata(k_jr)
+    jr_foot.description = "jaderainmonasteryfootsoldier"
+    jr_foot.unlock_stage_id = 65
+
+    ####################################
+    # --- IBARA NINJA (ACT 4 BOSS) --- #
+    ####################################
+    ibara = Entity("Ibara Ninja", is_player=False)
+    ibara.max_hp = 800
+    ibara.pace = 2
+    k_ibara = Kata("Ibara Arts", "Ibara Ninja", 1, 14, [1.3, 1.0, 1.0, 1.0, 1.1, 0.9, 0.4])
+    # Skill I: Artery Slit (Philautia)
+    ib_s1_desc = "[On Hit] If this unit has 3+ Invisibility and target has Bleed, Inflict 2 Bleed Count\n       [On Hit] If this unit has 3+ Invisibility, Inflict 5 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count"
+    ib_s1 = Skill("Artery Slit", 1, EL_PHILAUTIA, 4, ib_s1_desc, effect_type="IBARA_ACT4_SPECIAL1")
+    # Skill II: Assassination Technique (Eros)
+    ib_s2_desc = "Prioritizes targeting units who are not “Benikawa” or “Shigemura”\n       [On Use] If this unit does not have 2+ Invisibility, lose all Invisibility, then this unit takes +5 Final Damage this turn and the next turn (this effect cannot stack)\n       [On Hit] Gain 8 Poise Potency"
+    ib_s2 = Skill("Assassination Technique", 2, EL_EROS, 15, ib_s2_desc, effect_type="IBARA_ACT4_SPECIAL2")
+    ib_s2.target_priority = "NOT_BENI_SHIGE"
+    # Skill III: Trail Of Bloodlust (Eros)
+    ib_s3_desc = "Prioritizes targeting units who are “Benikawa” or “Shigemura”\n       [Combat Start] If this unit has 2+ Invisibility, gain 1 Invisibility (this effect can stack)\n       [On Critical Hit] Inflict 4 Bleed Potency\n       [On Critical Hit] Inflict 4 Bleed Count\n       [On Critical Hit] Gain 1 Invisibility"
+    ib_s3 = Skill("Trail Of Bloodlust", 3, EL_EROS, 15, ib_s3_desc, effect_type="IBARA_ACT4_SPECIAL3")
+    ib_s3.target_priority = "IS_BENI_SHIGE"
+    # Skill IV: ??? (Philautia)
+    ib_s4_desc = "[Combat Start] When hit, reflect [(Invisibility Count*50%)*Final Received Damage] back to the attacker (this effect cannot stack)\n       [Combat Start] This unit does not take any damage\n       [On Use] Gain 12 Poise Potency"
+    ib_s4 = Skill("???", 4, EL_PHILAUTIA, 0, ib_s4_desc, effect_type="IBARA_ACT4_SPECIAL4")
+    k_ibara.skill_pool_def = [(ib_s1, 4), (ib_s2, 1), (ib_s3, 1), (ib_s4, 1)]
+    # Passives
+    ib_p1 = Passive("Thorn / Outcast", "When this unit’s HP reaches 500, ends the battle. Deals +30% Base Damage against units who are not “Benikawa” or “Shigemura”. Deals -50% Base Damage and takes +50% Base Damage from units who are “Benikawa” or “Shigemura”", "PASSIVE_IBARA_THORN", color="purple4")
+    ib_p2 = Passive("Invisibility", "Battle Start: Gain 4 Invisibility, then gain 1 Invisibility at turn start from then on\nWhen this unit is hit by a unit who is not “Benikawa” or “Shigemura”, inflict 4 Rupture Potency to the attacker (once per skill / activates only for one chip per skill).\nWhen this unit is hit by a unit who is “Benikawa” or “Shigemura”, there is a 50% chance to lose 1 Invisibility. If the chance fails, the next hit received by the aforementioned units will have a 100% chance instead\nWhenever this unit’s Invisibility reaches 0, instantly gain 5 Bind and 4 Invisibility", "PASSIVE_IBARA_INVISIBILITY", color="purple4")
+    k_ibara.passives.extend([ib_p1, ib_p2])
+    ibara.equip_kata(k_ibara)
+    ibara.description = "ibaraninjadescription"
+    ibara.unlock_stage_id = 66
+
+    ##############################################################
+    # --- TEN THOUSAND BLOSSOM BROTHERHOOD LINEBREAKER (ACT 4) ---
+    ##############################################################
+    ttbb_lb = Entity("Ten Thousand Blossom Brotherhood Linebreaker", is_player=False)
+    ttbb_lb.max_hp = 40
+    ttbb_lb.pace = 2
+    k_ttbb_lb = Kata("Brotherhood Arts", "Brotherhood Linebreaker", 1, 7, [1.0, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4])
+    # Skill I: Ancient Bladework (Pragma)
+    lb_s1_c1 = Chip(base_damage=8, effect_type="POISE_RUPTURE_SINKING_SPECIAL1", effect_val=3)
+    lb_s1_desc = "[On Use] Gain 2 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Sinking Potency"
+    lb_s1_insp = "◈ Base Damage: 8\n       [On Use] Gain 3 Poise Potency\n       [On Use] Gain 3 Poise Count\n       [On Hit] Inflict 3 Rupture Potency\n       [On Hit] Inflict 3 Sinking Potency"
+    lb_s1 = ChipSkill("Ancient Bladework", 1, EL_PRAGMA, [lb_s1_c1], description=lb_s1_desc, inspect_description=lb_s1_insp, effect_type="POISE_RUPTURE_SINKING_SPECIAL1", effect_val=2)
+    # Skill II: Flying Slashes ◈◈◈ (Agape)
+    lb_s2_c1 = Chip(base_damage=5, effect_type="POISE_PARALYSIS_SPECIAL1", effect_val=3)
+    lb_s2_c2 = Chip(base_damage=5, effect_type="POISE_PARALYSIS_SPECIAL1", effect_val=3)
+    lb_s2_c3 = Chip(base_damage=5, effect_type="BIND_HASTE_SPECIAL_TYPE1", effect_val=4)
+    lb_s2_desc = "[On Use] Gain Poise Count\n       [On Critical Hit] Inflict Paralysis\n       [On Critical Hit] Inflict Bind next turn\n       [On Critical Hit] Gain Haste next turn\n       [On Critical Hit] Switches to a new random target"
+    lb_s2_insp = "◈ Base Damage: 5\n       [On Use] Gain 3 Poise Count\n       [On Critical Hit] Inflict 3 Paralysis\n       [On Critical Hit] Switches to a new random target\n       ◈ Base Damage: 5\n       [On Use] Gain 3 Poise Count\n       [On Critical Hit] Inflict 3 Paralysis\n       [On Critical Hit] Switches to a new random target\n       ◈ Base Damage: 5\n       [On Critical Hit] Inflict 4 Bind next turn\n       [On Critical Hit] Gain 4 Haste next turn"
+    lb_s2 = ChipSkill("Flying Slashes ◈◈◈", 2, EL_AGAPE, [lb_s2_c1, lb_s2_c2, lb_s2_c3], description=lb_s2_desc, inspect_description=lb_s2_insp, effect_type="POISE_PARALYSIS_SPECIAL1")
+    # Skill III: Break The Enemy ◈◈ (Ludus)
+    lb_s3_c1 = Chip(base_damage=3, effect_type="APPLY_STATUS")
+    lb_s3_c1.status_effect = scd.rupture_6
+    lb_s3_c2 = Chip(base_damage=12, effect_type="BREAKTHEENEMY_SPECIAL")
+    lb_s3_desc = "[On Use] Take +5 Final Damage this turn\n       [On Hit] Inflict Bind next turn\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
+    lb_s3_insp = "◈ Base Damage: 3\n       [On Hit] Inflict 6 Rupture Potency\n       ◈ Base Damage: 12\n       [On Hit] Inflict 4 Rupture Count\n       [On Hit] Inflict 4 Bind next turn\n       [On Use] Take +5 Final Damage this turn"
+    lb_s3 = ChipSkill("Break The Enemy ◈◈", 3, EL_LUDUS, [lb_s3_c1, lb_s3_c2], description=lb_s3_desc, inspect_description=lb_s3_insp, effect_type="BREAKTHEENEMY_SPECIAL")
+    k_ttbb_lb.skill_pool_def = [(lb_s1, 3), (lb_s2, 2), (lb_s3, 2)]
+    lb_p1 = Passive("Fading Form", "Take -50% Base Damage from skills. Take 300% Damage from the Status Effects Bleed and Rupture (counts Unique Effects). When taking damage from a skill that is not the element Eros or Agape, take -1 Final Damage next turn (this effect can stack up to 3 times, max -3 Final Damage)", "PASSIVE_FADING_FORM", color="grey74")
+    lb_p2 = Passive("Nostalgia Of A Brotherhood", "The first 3 allied units to hit any unit from “Ten Thousand Blossom Brotherhood” instantly gains (6-Order of attacker) Rupture Potency", "PASSIVE_BROTHERHOOD", color="hot_pink")
+    k_ttbb_lb.passives.extend([lb_p1, lb_p2])
+    ttbb_lb.equip_kata(k_ttbb_lb)
+    ttbb_lb.description = "tenthousandblossombrotherhoodlinebreaker"
+    ttbb_lb.unlock_stage_id = 68
+
+    ###########################################################
+    # --- TEN THOUSAND BLOSSOM BROTHERHOOD DEFENDER (ACT 4) ---
+    ###########################################################
+    ttbb_df = Entity("Ten Thousand Blossom Brotherhood Defender", is_player=False)
+    ttbb_df.max_hp = 60
+    ttbb_df.pace = 2
+    k_ttbb_df = Kata("Brotherhood Arts", "Brotherhood Defender", 1, 7, [1.0, 1.4, 1.4, 1.0, 1.4, 1.4, 1.4])
+    # Skill I: Dreadful Bash (Ludus)
+    df_s1_c1 = Chip(base_damage=11, effect_type="RUPTURE_SINKING_SPECIAL_TYPE1", effect_val=6)
+    df_s1_desc = "[On Hit] Inflict 6 Rupture Potency\n       [On Hit] Inflict 6 Sinking Potency"
+    df_s1_insp = "◈ Base Damage: 11\n       [On Hit] Inflict 6 Rupture Potency\n       [On Hit] Inflict 6 Sinking Potency"
+    df_s1 = ChipSkill("Dreadful Bash", 1, EL_LUDUS, [df_s1_c1], description=df_s1_desc, inspect_description=df_s1_insp)
+    # Skill II: Form a Line (Philautia)
+    df_s2_c1 = Chip(base_damage=5, effect_type="FORMALINE_SPECIAL")
+    df_s2_desc = "Let X = Amount of this unit’s allies from “Ten Thousand Blossom Brotherhood”\n       [On Use] All units from X gain X Poise Potency\n       [On Use] All units from X gain 2 Poise Count\n       [On Use] All units from X deal +X Final Damage this turn (Max +4 Final Damage)\n       [On Hit] Target deals -X Final Damage this turn and the next turn"
+    df_s2 = ChipSkill("Form a Line", 2, EL_PHILAUTIA, [df_s2_c1], description=df_s2_desc, inspect_description=df_s2_desc, effect_type="FORMALINE_SPECIAL")
+    # Skill III: Isolate The Enemy ◈◈◈ (Ludus)
+    df_s3_c1 = Chip(base_damage=4, effect_type="ISOLATETHEENEMY_SPECIAL_TYPE1")
+    df_s3_c2 = Chip(base_damage=4, effect_type="ISOLATETHEENEMY_SPECIAL_TYPE2")
+    df_s3_c3 = Chip(base_damage=7, effect_type="ISOLATETHEENEMY_SPECIAL_TYPE3")
+    df_s3_desc = "[On Hit] If target has Bind, deal +Base Damage\n       [On Hit] If target has Paralysis, deal +Base Damage\n       [On Hit] If target has Rupture, deal +Base Damage\n       [On Hit] Inflict Sinking Count\n       [On Hit] Switches to a new random target"
+    df_s3_insp = "◈ Base Damage: 4\n       [On Hit] If target has Bind, deal +3 Base Damage\n       [On Hit] If target has Paralysis, deal +3 Base Damage\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 4\n       [On Hit] If target has Rupture, deal +2 Base Damage\n       [On Hit] If target has Bind, deal +2 Base Damage\n       [On Hit] If target has Paralysis, deal +2 Base Damage\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 7\n       [On Hit] If target has Rupture, deal +3 Base Damage\n       [On Hit] Inflict 5 Sinking Count"
+    df_s3 = ChipSkill("Isolate The Enemy ◈◈◈", 3, EL_LUDUS, [df_s3_c1, df_s3_c2, df_s3_c3], description=df_s3_desc, inspect_description=df_s3_insp)
+    k_ttbb_df.skill_pool_def = [(df_s1, 4), (df_s2, 2), (df_s3, 2)]
+    df_p1 = Passive("Fading Form", "Take -70% Base Damage from skills. Take 300% Damage from the Status Effects Bleed and Rupture (counts Unique Effects). When taking damage from a skill that is not the element Eros or Agape, take -2 Final Damage next turn (this effect can stack up to 5 times, max -10 Final Damage)", "PASSIVE_FADING_FORM", color="grey74")
+    df_p2 = Passive("Nostalgia Of A Camaraderie", "On the first 3 times an ally of this unit from “Ten Thousand Blossom Brotherhood” takes damage from a skill, instantly heals (6-Order of allied unit attacker, minimum 0) HP (counts self, but does not heal self, this effect cannot stack)", "PASSIVE_CAMARADERIE", color="hot_pink")
+    k_ttbb_df.passives.extend([df_p1, df_p2])
+    ttbb_df.equip_kata(k_ttbb_df)
+    ttbb_df.description = "tenthousandblossombrotherhooddefender"
+    ttbb_df.unlock_stage_id = 69
+
+    ######################################
+    # --- ZHAO FENG (ACT 4 FINAL BOSS) ---
+    ######################################
+    zhao = Entity("Zhao Feng", is_player=False)
+    zhao.max_hp = 578
+    zhao.pace = 4
+    k_zhao = Kata("General's Arts", "Zhao Feng", 1, -20, [1.1, 1.0, 1.0, 1.1, 1.0, 1.0, 1.0])
+    # Skill I: Leading The Vanguard Upward (I)
+    zhao_s1_desc = "[Combat Start] All units in the field with Rupture gain [(Rupture Count+Potency)/3] Blossom (Max +3, this effect occurrence does not stack)\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Sinking Potency"
+    zhao_s1 = Skill("Leading The Vanguard Upward (I)", 1, EL_PRAGMA, 5, zhao_s1_desc, effect_type="ZHAOFENG_SPECIAL_1")
+    # Skill II: Hanging / Deflecting [挂] (II)
+    zhao_s2_desc = "[Combat Start] All units in the field with Rupture gain [(Rupture Count+Potency)/3] Malice (Max +3, this effect occurrence does not stack)\n       [On Hit] Inflict 2 Rupture Count\n       [On Hit] Inflict 2 Sinking Count"
+    zhao_s2 = Skill("Hanging / Deflecting [挂] (II)", 2, EL_LUDUS, 5, zhao_s2_desc, effect_type="ZHAOFENG_SPECIAL_2")
+    # Skill III: “Liao” [撩] ◈◈ (III)
+    zh_s3_c1 = Chip(base_damage=4, effect_type="ZHAOFENG_SPECIAL_3")
+    zh_s3_c2 = Chip(base_damage=4, effect_type="ZHAOFENG_SPECIAL_4")
+    zh_s3_desc = "[On Hit] If target has 5+ (Rupture Potency+Count), deal +10% Base Damage\n       [On Hit] If target has 5+ (Blossom+Malice), deal +10% Base Damage\n       [On Hit] Inflict Rupture Potency"
+    zh_s3_insp = "◈ Base Damage: 4\n       [On Hit] If target has 5+ (Rupture Potency+Count), deal +10%Base Damage\n       [On Hit] Inflict 4 Rupture Potency\n       ◈ Base Damage: 4\n       [On Hit] If target has 5+ (Blossom+Malice), deal +10%Base Damage\n       [On Hit] Inflict 4 Rupture Potency"
+    zhao_s3 = ChipSkill("“Liao” [撩] ◈◈", 3, EL_EROS, [zh_s3_c1, zh_s3_c2], description=zh_s3_desc, inspect_description=zh_s3_insp)
+    # EX 1: Encroaching Malice ◈◈ (II)
+    zh_ex1_c1 = Chip(base_damage=5, effect_type="ZHAOFENG_SPECIAL_5")
+    zh_ex1_c2 = Chip(base_damage=5, effect_type="ZHAOFENG_SPECIAL_6")
+    zh_ex1_desc = "[On Hit] Heal for (Malice on target)*2 (max 20 HP)\n       [On Hit] If target has 5+ (Rupture Potency+Count), deal +20% Base Damage\n       [On Hit] Inflict Malice\n       [On Hit] Switches to a new random target (Prioritizes units with Malice)"
+    zh_ex1_insp = "◈ Base Damage: 5\n       [On Hit] Heal for (Malice on target)*2 (max 20 HP)\n       [On Hit] If target has 5+ (Rupture Potency+Count), deal +%20Base Damage\n       [On Hit] Switches to a new random target (Prioritizes units with Malice)\n       ◈ Base Damage: 5\n       [On Hit] Heal for (Malice on target)*2 (max 20 HP)\n       [On Hit] Inflict 3 Malice"
+    zhao_ex1 = ChipSkill("Encroaching Malice ◈◈", 2, EL_EROS, [zh_ex1_c1, zh_ex1_c2], description=zh_ex1_desc, inspect_description=zh_ex1_insp)
+    # EX 2: Embrace The Moon [怀中抱月] ◈◈◈◈ (III)
+    zh_ex2_c1 = Chip(base_damage=4, effect_type="ZHAOFENG_SPECIAL_8")
+    zh_ex2_c2 = Chip(base_damage=3, effect_type="ZHAOFENG_SPECIAL_9")
+    zh_ex2_c3 = Chip(base_damage=3, effect_type="ZHAOFENG_SPECIAL_9")
+    zh_ex2_c4 = Chip(base_damage=10, effect_type="ZHAOFENG_SPECIAL_10")
+    zh_ex2_desc = "[Combat Start] All units in the field with Blossom gain 3 Bind instantly\n       [Combat Start] All units in the field with Rupture gain [(Rupture Count+Potency)/3] Blossom (Max 5)\n       [On Hit] Inflict Blossom\n       [On Hit] Switches to a new random target (Prioritizes units without Blossom)"
+    zh_ex2_insp = "[Combat Start] All units in the field with Blossom gain 3 Bind instantly\n       [Combat Start] All units in the field with Rupture gain [(Rupture Count+Potency)/3] Blossom (Max 5)\n       ◈ Base Damage: 4\n       [On Hit] Inflict 2 Blossom\n       [On Hit] Switches to a new random target (Prioritizes units without Blossom)\n       ◈ Base Damage: 3\n       [On Hit] Inflict 3 Blossom\n       [On Hit] Switches to a new random target (Prioritizes units without Blossom)\n       ◈ Base Damage: 3\n       [On Hit] Inflict 3 Blossom\n       [On Hit] Switches to a new random target (Prioritizes units without Blossom)\n       ◈ Base Damage: 10\n       [On Hit] Inflict 4 Blossom\n       [On Hit] Switches to a new random target (Prioritizes units without Blossom)"
+    zhao_ex2 = ChipSkill("Embrace The Moon [怀中抱月] ◈◈◈◈", 3, EL_PRAGMA, [zh_ex2_c1, zh_ex2_c2, zh_ex2_c3, zh_ex2_c4], description=zh_ex2_desc, inspect_description=zh_ex2_insp, effect_type="ZHAOFENG_SPECIAL_7")
+    k_zhao.skill_pool_def = [(zhao_s1, 5), (zhao_s2, 5), (zhao_s3, 3)]
+    # Store EX skills so the engine can append them cleanly
+    zhao.appendable_skills = {"EX1": zhao_s3, "EX2": zhao_ex1, "EX3": zhao_ex2}
+    zh_p1 = Passive("Crumbling Form Of A General", "Take -30% Base Damage from skills. Take 150% Damage from the Status Effects Bleed and Rupture (counts Unique Effects). This unit is immune to Paralysis and Bind. When this unit is present, all allied units cannot suffer from the effects of Rupture, and their Rupture Count cannot be decreased by normal means.", "PASSIVE_CRUMBLING_FORM", color="hot_pink")
+    zh_p2 = Passive("Zhao Feng [赵锋]", "Rift Aptitude -20\nAkasuke’s HP cannot go below 1 until all other allied units have been defeated\nCombat Start: All units in the field (including self) Rupture Potency and Count / 2", "PASSIVE_ZHAOFENG_CORE", color="hot_pink")
+    zh_p3 = Passive("The Vanguard Who Breaks Through Enemy Lines", "At turn 3, if there are none of this unit’s allies, summon a “Ten Thousand Blossom Brotherhood Linebreaker” or “Ten Thousand Blossom Brotherhood Defender” with 50 fixed Max HP. When there are none of this unit's allies, this unit can summon again 2 turns after the ally dies\nTally the amount of turns passed and this unit is able to append skills based on:\nAfter two turns, if this unit has never reached 280 or less HP, draw the skill “Liao” [撩] into deck. Otherwise, draw the skill Encroaching Malice instead\nAfter four turns, if this unit has never reached 280 or less HP, draw the skill “Liao” [撩] into deck. Otherwise, draw the skill Embrace The Moon [怀中抱月] instead\nAfter four turns, reset the Tally", "PASSIVE_ZHAOFENG_VANGUARD", color="hot_pink")
+    k_zhao.passives.extend([zh_p1, zh_p2, zh_p3])
+    zhao.equip_kata(k_zhao)
+    zhao.description = "zhaofengdescription"
+    zhao.unlock_stage_id = 70
+
+    ######################################################
+    # --- IBARA NINJA - 'KAGEROU THE UNTOUCHABLE' (EPILOGUE)
+    ######################################################
+    kagerou = Entity("Ibara Ninja - 'Kagerou The Untouchable'", is_player=False)
+    kagerou.max_hp = 325
+    kagerou.pace = 2
+    k_kag = Kata("Untouchable Arts", "Kagerou", 1, 12, [1.4, 1.2, 1.2, 1.2, 1.4, 1.2, 0.5])
+    # Skill I: Vital Artery Slit ◈◈ (Eros)
+    kag_s1_c1 = Chip(base_damage=4, effect_type="KAGEROU_SPECIAL_1")
+    kag_s1_c2 = Chip(base_damage=4, effect_type="KAGEROU_SPECIAL_2")
+    kag_s1_desc = "[On Use] Gain Flickering Invisibility\n       [On Use] Gain Leaking Bloodlust\n       [On Hit] If target has Bleed, Inflict Bleed Potency\n       [On Hit] Inflict Bleed Count\n       [On Hit] Switches to a new random target"
+    kag_s1_insp = "◈ Base Damage: 4\n       [On Use] Gain 1 Flickering Invisibility\n       [On Hit] If target has Bleed, Inflict Bleed 5 Potency\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 4\n       [On Use] Gain 5 Leaking Bloodlust\n       [On Hit] Inflict 3 Bleed Count"
+    kag_s1 = ChipSkill("Vital Artery Slit ◈◈", 1, EL_EROS, [kag_s1_c1, kag_s1_c2], description=kag_s1_desc, inspect_description=kag_s1_insp)
+    # Skill II: Desperate Assassination Technique (Eros)
+    kag_s2_desc = "Prioritizes targeting units who are “Benikawa” or “Shigemura”\n       [Combat Start] Gain 10 Poise Potency\n       [On Hit] Gain 10 Poise Potency"
+    kag_s2 = Skill("Desperate Assassination Technique", 2, EL_EROS, 13, kag_s2_desc, effect_type="KAGEROU_SPECIAL_3")
+    kag_s2.target_priority = "IS_BENI_SHIGE"
+    # Skill III: Leaking Bloodlust ◈◈◈◈ (Philautia)
+    kag_s3_c1 = Chip(base_damage=4, effect_type="KAGEROU_SPECIAL_4")
+    kag_s3_c2 = Chip(base_damage=4, effect_type="KAGEROU_SPECIAL_4")
+    kag_s3_c3 = Chip(base_damage=4, effect_type="KAGEROU_SPECIAL_5")
+    kag_s3_c4 = Chip(base_damage=8, effect_type="KAGEROU_SPECIAL_6")
+    kag_s3_desc = "[Combat Start] Gain 1 Flickering Invisibility (this skill effect occurrence cannot stack)\n       [On Use] Gain Leaking Bloodlust\n       [On Critical Hit] Inflict Bleed Potency\n       [On Critical Hit] Gain Leaking Bloodlust\n       [On Hit] Switches to a new random target"
+    kag_s3_insp = "[Combat Start] Gain 1 Flickering Invisibility (this skill effect occurrence cannot stack)\n       ◈ Base Damage: 4\n       [On Use] Gain 3 Leaking Bloodlust\n       [On Critical Hit] Inflict Bleed 6 Potency\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 4\n       [On Use] Gain 3 Leaking Bloodlust\n       [On Critical Hit] Inflict Bleed 6 Potency\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 4\n       [On Critical Hit] Gain 6 Leaking Bloodlust\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 8\n       [On Critical Hit] Inflict Bleed 6 Potency\n       [On Critical Hit] Gain 6 Leaking Bloodlust"
+    kag_s3 = ChipSkill("Leaking Bloodlust ◈◈◈◈", 3, EL_PHILAUTIA, [kag_s3_c1, kag_s3_c2, kag_s3_c3, kag_s3_c4], description=kag_s3_desc, inspect_description=kag_s3_insp, effect_type="KAGEROU_SPECIAL_CS")
+    # Skill IV: Specialty: Heat Haze (Philautia)
+    kag_s4_desc = "[Combat Start] When hit, reflect (Flickering Invisibility Count*50)% Final Received Damage back to the attacker (max 250% Final Damage per hit, this effect cannot stack)\n       [On Use] Gain 1 Flickering Invisibility\n       [On Use] Gain 10 Leaking Bloodlust\n       [On Use] Gain 20 Poise Potency"
+    kag_s4 = Skill("Specialty: Heat Haze", 4, EL_PHILAUTIA, 0, kag_s4_desc, effect_type="KAGEROU_SPECIAL_7")
+    k_kag.skill_pool_def = [(kag_s1, 2), (kag_s2, 5), (kag_s3, 2), (kag_s4, 1)]
+    # Passives
+    kag_p1 = Passive("Cornered Thorn / Outcast", "This unit’s HP does not go below 1 until it has 99 Leaking Bloodlust\nDeals +30% Base Damage against units who are not “Benikawa” or “Shigemura”. Deals -50% Base Damage and takes +50% Base Damage from units who are “Benikawa” or “Shigemura”\nWhen units who are “Benikawa” or “Shigemura” hit this unit, this unit takes +5 Base Damage from the next Eros element attack from a unit who is not “Benikawa” or “Shigemura” (this effect does not stack)", "PASSIVE_KAGEROU_THORN", color="thistle3")
+    kag_p2 = Passive("Flickering Invisibility", "Battle Start: Gain 5 Flickering Invisibility\nWhen this unit is hit by a unit who is not “Benikawa” or “Shigemura”, inflict (Flickering Invisibility Count) Rupture Potency to the attacker (max 5, once per skill / activates only for one chip per skill).\nWhen this unit is hit by a unit who is “Benikawa” or “Shigemura”, there is a 50% chance to lose 1 Flickering Invisibility if the very next unit to hit this hit is not “Benikawa” or “Shigemura”. If the chance fails, the next hit received by any unit will have a 100% chance instead\nWhenever this unit’s Flickering Invisibility reaches 0, instantly gain 5 Bind, 30 Leaking Bloodlust, and 5 Flickering Invisibility", "PASSIVE_KAGEROU_INVISIBILITY", color="thistle3")
+    k_kag.passives.extend([kag_p1, kag_p2])
+    kagerou.equip_kata(k_kag)
+    kagerou.description = "ibaraninjadescription"
+    kagerou.unlock_stage_id = 66
     
     ################################################
     # Append to existing return list in stages.py: #
     ################################################
     return [thief, fresh, hool, lead, benikawa, ninja, double, slender, bulky, spike, chain, h_lead, upper, kuro, 
             sp_kiryoku, c_kiryoku, ayako, sumiko, inf_heiwa, inf_kiryoku, inf_kasa, inf_lead, hisayuki, inf_council, inf_disc, 
-            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student, natsume, gf_gangster, gf_leader, bw_gangster, bw_leader, tmg_gangster, tmg_leader, miyu, mei]
+            raven, falcon, eagle, raven_inj, falcon_inj, hench, mascot, rip_hench, rip_lead, adam, guard, guard_leader, luoxia_student, natsume, gf_gangster, gf_leader, bw_gangster, bw_leader, tmg_gangster, tmg_leader, miyu, mei, bb_foot, jr_foot, ibara, ttbb_lb, ttbb_df, zhao, kagerou]
