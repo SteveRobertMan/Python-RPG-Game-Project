@@ -78,6 +78,7 @@ Below is a breakdown of the essential properties and new Act 4 mechanics used du
      `temp_modifiers["outgoing_dmg_flat"]` flag.
    - Check `effect_type` strings closely. If it ends in `_FLAT`, it applies to Final Damage. 
    - `base_dmg_val` is modified BEFORE resistances. `final_dmg` is modified AFTER resistances.
+   - Extremely specific + important terminology: When a skill description mentions "all_allies" in this game, it ONLY refers to the player's allies. When a skill description mentions "this unit's allies / all of this unit's allies / an ally of this unit", it refers to the team / allies of the effect's owner. Both enemies and allies can use the latter wording, but only enemies can use "this unit's allies (etc.)" when referring to THEIR OWN allies / team!!
 --------------------------------------------------------------------------------
 """
 
@@ -1008,8 +1009,8 @@ class BattleManager:
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=2))
                 self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, STATUS_DESCS["Haste"], duration=2))
             elif skill.effect_type == "RUPTURE_PARALYSIS_SPECIAL_TYPE2":
-                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, STATUS_DESCS["Rupture"], duration=2))
-                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF"))
+                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", skill.effect_val, STATUS_DESCS["Rupture"], duration=skill.effect_val))
+                self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=skill.effect_val, type="DEBUFF"))
             elif skill.effect_type == "POISE_RUPTURE_SPECIAL_TYPE2":
                 if any(s.name in POISE_LIST for s in attacker.status_effects):
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", skill.effect_val, STATUS_DESCS["Poise"], duration=0))
@@ -1241,7 +1242,7 @@ class BattleManager:
                 if any(p.effect_type == "PASSIVE_KAGEROU_THORN" for p in active_tgt_passives):
                     is_beni_shige = "Benikawa" in attacker.name or "Shigemura" in attacker.name
                     if is_beni_shige: base_dmg_val *= 1.50
-                    elif skill.element == 1 and getattr(target, "kagerou_eros_vuln", False):
+                    elif skill.element == 0 and getattr(target, "kagerou_eros_vuln", False):
                         base_dmg_val += 5
                         target.kagerou_eros_vuln = False
                 if any(p.effect_type == "PASSIVE_KAGEROU_INVISIBILITY" for p in active_tgt_passives):
@@ -1546,6 +1547,8 @@ class BattleManager:
                                 recoil *= 2
                             if any(p.effect_type == "PASSIVE_FADING_FORM" for p in active_atk_passives_bleed):
                                 recoil *= 3
+                            if any(p.effect_type == "PASSIVE_CRUMBLING_FORM" for p in active_atk_passives_bleed):
+                                recoil *= 1.5
                             if lb_tgt: recoil *= min(3.0, 1.0 + (lb_tgt.duration // 33)) # Bleed Multiplier Math
                             recoil = int(recoil)
                             attacker.hp -= recoil
