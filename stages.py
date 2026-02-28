@@ -1263,7 +1263,7 @@ def get_enemy_database():
     k_gfl = Kata("Golden Fist Leader", "Golden Fist Leader", 1, 2, [1.7, 1.0, 0.9, 1.4, 1.4, 1.4, 1.7])
     gfl_s1 = Skill("Gilded Grapple", 1, EL_STORGE, 8, "[On Hit] Inflict 2 Bleed Potency\n       [On Hit] Inflict 2 Bleed Count\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count", effect_type="APPLY_BLEED_RUPTURE_HEAVY_STACKS")
     gfl_s2 = Skill("Heavy Beatdown", 2, EL_EROS, 10, "[On Hit] If target has Rupture, deal +3 Final Damage\n       [On Hit] Inflict 3 Rupture Count", effect_type="RUPTURE_BUFF_AND_COUNT_SPECIAL", effect_val=3)
-    gfl_s3 = Skill("Flashy Gear", 3, EL_STORGE, 0, "[Combat Start] This unit takes -8 Final Damage this turn\n       [Combat Start] All of this unit’s allies from “Golden Fist Union” deal +4 Final Damage this turn\n       [On Use] Gain 5 Bind next turn", effect_type="GOLDEN_FIST_SPECIAL")
+    gfl_s3 = Skill("Flashy Gear", 3, EL_STORGE, 0, "[Combat Start] This unit takes -8 Final Damage this turn\n       [Combat Start] All of this unit’s allies from “Golden Fist Union” deal +4 Final Damage this turn (this effect cannot stack)\n       [On Use] Gain 5 Bind next turn", effect_type="GOLDEN_FIST_SPECIAL")
     k_gfl.skill_pool_def = [(gfl_s1, 3), (gfl_s2, 3), (gfl_s3, 2)]
     # Assign Passives
     gfl_p1 = Passive("For The Golden Fist", "When attacking, if target has Bleed, deal +2 Final Damage", "PASSIVE_GOLDEN_FIST", 2, color="yellow")
@@ -1276,7 +1276,6 @@ def get_enemy_database():
     ####################################
     # --- BLACK WATER DOCK (ACT 4) --- #
     ####################################
-
     bw_gangster = Entity("Black Water Dock Gangster", is_player=False)
     bw_gangster.max_hp = 45
     bw_gangster.pace = 1
@@ -1285,7 +1284,7 @@ def get_enemy_database():
     bw_s1_desc = "[On Use] If this unit has Poise, gain 3 Poise Potency\n       [On Hit] Gain 3 Poise Count\n       [On Hit] Inflict 3 Rupture Potency"
     bw_s1 = Skill("Close Quarters Combat", 1, EL_PRAGMA, 5, bw_s1_desc, effect_type="POISE_RUPTURE_SPECIAL_TYPE2", effect_val=3)
     # Skill II
-    bw_s2_desc = "[On Hit] Inflict 1 Rupture Count\n       [On Hit] If this unit has Poise, inflict 1 Paralysis\n       [On Hit] Inflict 1 Paralysis"
+    bw_s2_desc = "[On Hit] Inflict 1 Rupture Potency\n       [On Hit] If this unit has Poise, inflict 1 Paralysis\n       [On Hit] Inflict 1 Paralysis"
     bw_s2 = Skill("Shocking Spearplay", 2, EL_LUDUS, 10, bw_s2_desc, effect_type="RUPTURE_PARALYSIS_SPECIAL_TYPE1", effect_val=1)
     k_bw.skill_pool_def = [(bw_s1, 4), (bw_s2, 4)]
     # Passive
@@ -1717,7 +1716,7 @@ def get_enemy_database():
     kag_s3_insp = "[Combat Start] Gain 1 Flickering Invisibility (this skill effect occurrence cannot stack)\n       ◈ Base Damage: 4\n       [On Use] Gain 3 Leaking Bloodlust\n       [On Critical Hit] Inflict Bleed 6 Potency\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 4\n       [On Use] Gain 3 Leaking Bloodlust\n       [On Critical Hit] Inflict Bleed 6 Potency\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 4\n       [On Critical Hit] Gain 6 Leaking Bloodlust\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 8\n       [On Critical Hit] Inflict Bleed 6 Potency\n       [On Critical Hit] Gain 6 Leaking Bloodlust"
     kag_s3 = ChipSkill("Leaking Bloodlust ◈◈◈◈", 3, EL_PHILAUTIA, [kag_s3_c1, kag_s3_c2, kag_s3_c3, kag_s3_c4], description=kag_s3_desc, inspect_description=kag_s3_insp, effect_type="KAGEROU_SPECIAL_CS")
     # Skill IV: Specialty: Heat Haze (Philautia)
-    kag_s4_desc = "[Combat Start] When hit, reflect (Flickering Invisibility Count*50)% Final Received Damage back to the attacker (max 250% Final Damage per hit, this effect cannot stack)\n       [On Use] Gain 1 Flickering Invisibility\n       [On Use] Gain 10 Leaking Bloodlust\n       [On Use] Gain 20 Poise Potency"
+    kag_s4_desc = "[Combat Start] When hit, reflect (Flickering Invisibility Count*75)% Final Received Damage back to the attacker (max 375% Final Damage per hit, this effect cannot stack)\n       [On Use] Gain 1 Flickering Invisibility\n       [On Use] Gain 10 Leaking Bloodlust\n       [On Use] Gain 20 Poise Potency"
     kag_s4 = Skill("Specialty: Heat Haze", 4, EL_PHILAUTIA, 0, kag_s4_desc, effect_type="KAGEROU_SPECIAL_7")
     k_kag.skill_pool_def = [(kag_s1, 2), (kag_s2, 5), (kag_s3, 2), (kag_s4, 1)]
     # Passives
