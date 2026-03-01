@@ -78,7 +78,10 @@ KATA_ID_MAP = {
     29: "Luoxia Gardening School Student Hana",
     30: "Black Water Dock Gang Squad Leader Shigemura",
     31: "Black Water Dock Master Natsume",
-    32: "Yunhai Association Enforcer Captain Inami Yuri"
+    32: "Yunhai Association Enforcer Captain Inami Yuri",
+    33: "Yunhai Association Enforcer Captain Kagaku Shamiko",
+    34: "Ibara Ninja | ‘Naganohara Tsukimiyama The Untouchable’",
+    35: "Yunhai Association Xiangyun | Yokubukai Natsume"
 }
 
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
@@ -778,3 +781,76 @@ def get_kata_data_by_name(name):
         s3 = ChipSkill("Phoenix Nods Its Head [凤凰点头] ◈◈◈", 3, EL_AGAPE, [s3_c1, s3_c2, s3_c3], description=s3_desc, inspect_description=s3_insp)
         k.skill_pool_def = [(s1, 5), (s2, 2), (s3, 2)]
         return {"kata_obj": k, "max_hp": 83, "description": desc}
+
+    # --- KAGAKU YUNHAI ASSOCIATION CAPTAIN ---
+    elif name == "Yunhai Association Enforcer Captain Kagaku Shamiko":
+        res = [0.8, 1.0, 0.9, 0.8, 1.0, 1.3, 1.1]
+        desc = "Descriptionhere"
+        k = Kata("Yunhai Association Enforcer Captain", "Kagaku", 4, "I", res, desc)
+        k.source_key = name
+        
+        s1 = Skill("Threading [穿]", 1, EL_EROS, 10, "[On Hit] Inflict 3 Rupture Count\n       [On Hit] Gain 4 Poise Count\n       [On Critical Hit] Applies to the very next ally of this unit to deal damage within this turn: if this unit is from “Yunhai Association”, deal +2 Base Damage. If this unit is a “Yunhai Association Enforcer Captain”, deal +4 Base Damage instead", effect_type="YUNHAI_KAGAKU_SPECIAL1")
+        
+        s2_c1 = Chip(base_damage=2, effect_type="YUNHAI_KAGAKU_SPECIAL2")
+        s2_c2 = Chip(base_damage=2, effect_type="YUNHAI_KAGAKU_SPECIAL3")
+        s2_c3 = Chip(base_damage=4, effect_type="YUNHAI_KAGAKU_SPECIAL2")
+        s2_c4 = Chip(base_damage=4, effect_type="YUNHAI_KAGAKU_SPECIAL3")
+        s2_desc = "[Combat Start] This unit and all of this unit’s allies with Poise from “Yunhai Association”, gain 5 Poise Potency\n       [On Critical Hit] Heals this unit and all of this unit’s allies with Poise from “Yunhai Association” by Final Damage dealt\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Paralysis"
+        s2_insp = "[Combat Start] This unit and all of this unit’s allies with Poise from “Yunhai Association”, gain 5 Poise Potency\n       ◈ Base Damage: 2\n       [On Critical Hit] Heals this unit and all of this unit’s allies with Poise from “Yunhai Association” by (Final Damage dealt*2)\n       [On Hit] Inflict 3 Rupture Potency\n       ◈ Base Damage: 2\n       [On Critical Hit] Heals this unit and all of this unit’s allies with Poise from “Yunhai Association” by (Final Damage dealt*2)\n       [On Hit] Inflict 1 Paralysis\n       ◈ Base Damage: 4\n       [On Critical Hit] Heals this unit and all of this unit’s allies with Poise from “Yunhai Association” by (Final Damage dealt*2)\n       [On Hit] Inflict 3 Rupture Potency\n       ◈ Base Damage: 4\n       [On Critical Hit] Heals this unit and all of this unit’s allies with Poise from “Yunhai Association” by (Final Damage dealt*2)\n       [On Hit] Inflict 1 Paralysis"
+        s2 = ChipSkill("Show Off A Little ◈◈◈◈", 2, EL_AGAPE, [s2_c1, s2_c2, s2_c3, s2_c4], description=s2_desc, inspect_description=s2_insp, effect_type="YUNHAI_KAGAKU_CS1")
+        
+        s3 = Skill("Empty Stance [空站姿]", 3, EL_EROS, 0, "[Combat Start] This unit takes -40% Final Damage for this turn\n       [Combat Start] This unit does not suffer from the effects of Rupture this turn\n       [Combat Start] Gain 4 Haste next turn\n       [Combat Start] This unit and all of this unit’s allies from “Yunhai Association” gain 1 Cloud Sword [云]\n       [On Use] Applies to the very next ally of this unit to deal damage within this turn: if this unit is from “Yunhai Association”, deal +5 Base Damage. If this unit is a “Yunhai Association Enforcer Captain”, deal +7 Base Damage instead", effect_type="YUNHAI_KAGAKU_SPECIAL4")
+        
+        k.skill_pool_def = [(s1, 3), (s2, 3), (s3, 3)]
+        return {"kata_obj": k, "max_hp": 90, "description": desc}
+
+    # --- NAGANOHARA TSUKIMIYAMA THE UNTOUCHABLE ---
+    elif name == "Ibara Ninja | ‘Naganohara Tsukimiyama The Untouchable’":
+        res = [1.1, 1.2, 1.0, 1.0, 0.9, 0.7, 0.7]
+        desc = "Descriptionhere"
+        k = Kata("Ibara Ninja | ‘The Untouchable’", "Naganohara", 4, "I", res, desc)
+        k.source_key = name
+        
+        v_invis_desc = "Critical Hit damage +(Count*8%, max 40%)\nApply the following effects when owning at least 1 Count:\nTurn Start and End: Heal by (Poise Count-1, max 7), then fix this unit’s Poise Count to exactly 1. Max Count: 5"
+        
+        s1_c1 = Chip(base_damage=5, effect_type="KAGEROU_NAGANOHARA_SPECIAL1")
+        s1_c2 = Chip(base_damage=7, effect_type="KAGEROU_NAGANOHARA_SPECIAL1")
+        s1_desc = "[On Hit] If target has Bleed, Inflict Bleed Potency\n       [On Hit] Inflict Bleed Count\n       [On Hit] Gain Poise Potency\n       [On Critical Hit] It this unit has Vibrant Invisibility, gain Poise Potency"
+        s1_insp = "◈ Damage: 5\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 3 Bleed Count\n       [On Hit] Gain 3 Poise Potency\n       [On Critical Hit] It this unit has Vibrant Invisibility, gain 5 Poise Potency\n       ◈ Damage: 7\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 3 Bleed Count\n       [On Hit] Gain 3 Poise Potency\n       [On Critical Hit] It this unit has Vibrant Invisibility, gain 5 Poise Potency"
+        s1 = ChipSkill("Cutthroat Arm ◈◈", 1, EL_EROS, [s1_c1, s1_c2], description=s1_desc, inspect_description=s1_insp)
+        
+        s2_c1 = Chip(base_damage=8, effect_type="KAGEROU_NAGANOHARA_SPECIAL2")
+        s2_c2 = Chip(base_damage=6, effect_type="KAGEROU_NAGANOHARA_SPECIAL2")
+        s2_desc = "[Combat Start] Gain (Vibrant Invisibility Count*2) Poise Potency\n       [Combat Start] Take +(6-Vibrant Invisibility Count) Final Damage this turn\n       [On Critical Hit] If target has Bleed, deal +Final Damage\n       [On Critical Hit] Target deals -Final Damage this turn (this effect can stack)\n       [On Critical Hit] Gain Vibrant Invisibility"
+        s2_insp = "[Combat Start] Gain (Vibrant Invisibility Count*2) Poise Potency\n       [Combat Start] Take +(6-Vibrant Invisibility Count) Final Damage this turn\n       ◈ Base Damage: 8\n       [On Critical Hit] Target deals -3 Final Damage this turn (this effect can stack)\n       [On Critical Hit] If target has Bleed, deal +3 Final Damage\n       [On Critical Hit] Gain 1 Vibrant Invisibility\n       ◈ Base Damage: 6\n       [On Critical Hit] Target deals -3 Final Damage this turn (this effect can stack)\n       [On Critical Hit] If target has Bleed, deal +3 Final Damage\n       [On Critical Hit] Gain 1 Vibrant Invisibility"
+        s2 = ChipSkill("Breaker Blade ◈◈", 2, EL_EROS, [s2_c1, s2_c2], description=s2_desc, inspect_description=s2_insp, effect_type="KAGEROU_NAGANOHARA_CS1")
+        
+        s3 = Skill("Unrivaled Under Heavens Is A Heat Haze", 3, EL_PHILAUTIA, 0, "[Combat Start] Take +2 Final Damage this turn\n       [Combat Start] When hit, reflect (Vibrant Invisibility Count*60)% Final Received Damage back to the attacker (max 300% Final Damage per hit, this skill effect occurrence cannot stack), then inflict (Vibrant Invisibility Count) Bleed Potency back to the attacker (max 3 Bleed Potency per hit, this skill effect occurrence cannot stack)\n       [On Use] If this is the first ever skill usage during battle, gain 4 Vibrant Invisibility. Otherwise, gain 2 Vibrant Invisibility\n       [On Use] Gain 13 Poise Potency", effect_type="KAGEROU_NAGANOHARA_SPECIAL3")
+        
+        k.skill_pool_def = [(s1, 3), (s2, 3), (s3, 3)]
+        return {"kata_obj": k, "max_hp": 52, "description": desc}
+
+    # --- NATSUME YOKUBUKAI ---
+    elif name == "Yunhai Association Xiangyun | Yokubukai Natsume":
+        res = [1.0, 1.0, 1.1, 1.1, 0.7, 0.9, 1.1]
+        desc = "Descriptionhere"
+        k = Kata("Yunhai Association Xiangyun", "Natsume", 4, "I", res, desc)
+        k.source_key = name
+        
+        ink_desc = "Let X = Sinking Potency OR Count (random)\nLet Y = ‘Yunhai Association Xiangyun | Yokubukai Natsume’\nStart of turn, if the owning unit is not Y, convert this effect to (Count*3)X, apply to self, then copy and redistribute to another random unit in the field who is not Y. Start of turn, if the owning unit is Y, deal +(Count/2) Base Damage (Max +3) this turn. Max Count: 6"
+        STATUS_DESCS["Ink [墨]"] = ink_desc  # Cache description
+        
+        ex1 = Skill("Paint [畫]", 1, EL_LUDUS, 7, "[Combat Start] Add up all Sinking Potency + Count owned by all units in the field (excludes self), then gain (amount/10) Ink [墨] (max +4)\n       [On Hit] If this unit has Ink [墨], inflict 1 Ink [墨], then copy and distribute this unit’s owned Ink [墨] stacks between random units on the field (Prioritizes units with Sinking)", effect_type="YUNHAI_ADMIN_NATSUME_EX_HIT")
+        k.appendable_skills = {"EX1": ex1}
+        
+        s1_c1 = Chip(base_damage=8, effect_type="YUNHAI_ADMIN_NATSUME_SPECIAL1")
+        s1 = ChipSkill("Coldness [寒冷]", 1, EL_LUDUS, [s1_c1], description="[On Use] Gain 6 Poise Potency\n       [On Hit] Inflict 5 Sinking Potency\n       [On Hit] Inflict 2 Sinking Count\n       [On Critical Hit] If this unit has 3+ Ink [墨], gain 1 Ink [墨]. Otherwise, gain 2 Ink [墨]", inspect_description="Base Damage: 8\n       [On Use] Gain 6 Poise Potency\n       [On Hit] Inflict 5 Sinking Potency\n       [On Hit] Inflict 2 Sinking Count\n       [On Critical Hit] If this unit has 3+ Ink [墨], gain 1 Ink [墨]. Otherwise, gain 2 Ink [墨]")
+        
+        s2_c1 = Chip(base_damage=6, effect_type="YUNHAI_ADMIN_NATSUME_SPECIAL2")
+        s2 = ChipSkill("Hidden Lotus Beneath Snow [雪下藏蓮] ◈", 2, EL_PRAGMA, [s2_c1], description="[Combat Start] If this unit has Ink [墨], append the skill Paint [畫]\n       [On Use] Gain 1 Ink [墨]\n       [On Use] Gain 5 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 4 Rupture Potency\n       [On Critical Hit] Consume 1 Ink [墨] to Retoss (max 3) this chip, then switches to a new random target (Prioritizes units with Sinking)", inspect_description="[Combat Start] If this unit has Ink [墨], append the skill Paint [畫]\n       ◈ Base Damage: 6\n       [On Use] Gain 1 Ink [墨]\n       [On Use] Gain 5 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] Inflict 4 Rupture Potency\n       [On Critical Hit] Consume 1 Ink [墨] to Retoss (max 3) this chip, then switches to a new random target (Prioritizes units with Sinking)", effect_type="YUNHAI_ADMIN_NATSUME_CS1")
+        
+        s3_c1 = Chip(base_damage=9, effect_type="YUNHAI_ADMIN_NATSUME_SPECIAL3")
+        s3 = ChipSkill("Echo of the Empty Valley [空谷迴響] ◈", 3, EL_AGAPE, [s3_c1], description="[Combat Start] If this unit has Ink [墨], append the skill Paint [畫]\n       [On Critical Hit] Deal +(Target’s Sinking Potency+Count/4) Final Damage (Max +6)\n       [On Critical Hit] Inflict 4 Sinking Potency\n       [On Critical Hit] Inflict 3 Sinking Count\n       [On Critical Hit] Consume 1 Ink [墨] to Retoss (max 3) this chip, then switches to a new random target (Prioritizes units with Sinking)", inspect_description="[Combat Start] If this unit has Ink [墨], append the skill Paint [畫]\n       ◈ Base Damage: 9\n       [On Critical Hit] Deal +(Target’s Sinking Potency+Count/4) Final Damage (Max +6)\n       [On Critical Hit] Inflict 4 Sinking Potency\n       [On Critical Hit] Inflict 3 Sinking Count\n       [On Critical Hit] Consume 1 Ink [墨] to Retoss (max 3) this chip, then switches to a new random target (Prioritizes units with Sinking)", effect_type="YUNHAI_ADMIN_NATSUME_CS1")
+        
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+        return {"kata_obj": k, "max_hp": 76, "description": desc}

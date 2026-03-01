@@ -183,19 +183,18 @@ class Entity:
             "outgoing_dmg_mult": 1.0,
             "incoming_dmg_mult": 1.0,
             "incoming_dmg_flat": 0,
-            "outgoing_dmg_flat": 0
+            "outgoing_dmg_flat": 0,
+            "rupture_immunity": False
         }
-        
         self.next_hit_taken_flat_bonus = 0
         self.next_hit_deal_flat_bonus = 0
-        
         self.nerve_disruption_turns = 0
         self.next_turn_modifiers = {}
         self.status_effects = []
         self.riposte_loss_tracker = 0
-
         self.pending_bind = 0
         self.pending_haste = 0
+        self.reflect_vibrant_invis_active = False
 
     def equip_kata(self, kata_obj):
         self.kata = kata_obj
@@ -229,7 +228,8 @@ class Entity:
             "outgoing_dmg_mult": 1.0,
             "incoming_dmg_mult": 1.0,
             "incoming_dmg_flat": 0,
-            "outgoing_dmg_flat": 0
+            "outgoing_dmg_flat": 0,
+            "rupture_immunity": False
         }
         self.next_hit_taken_flat_bonus = 0
         self.next_hit_deal_flat_bonus = 0

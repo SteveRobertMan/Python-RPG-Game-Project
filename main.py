@@ -36,6 +36,7 @@ def sync_currencies():
         mats = config.player_data["materials"]
         player.currencies["microchips"] = mats.get("Microchip", 0)
         player.currencies["microprocessors"] = mats.get("Microprocessor", 0)
+        player.currencies["jade microchips"] = mats.get("Jade Microchip", 0)
 
 def handle_title_screen():
     draw_title_screen()
@@ -43,7 +44,7 @@ def handle_title_screen():
     if choice == "1":
         config.player_data = save_manager.data.copy()
         config.player_data["latest_stage"] = -1 
-        config.player_data["materials"] = {"Microchip": 50, "Microprocessor": 10}
+        #FOR TESTING: config.player_data["materials"] = {"Microchip": 50, "Microprocessor": 10}
         config.player_data["cleared_stages"] = [] 
         config.player_data["node_progress"] = None 
         sync_currencies() 
@@ -323,6 +324,9 @@ def run_game():
                 guest_loadout = scd.get_kata_data_by_name("Kasakura High School Student Natsume")
                 guest_natsume = stages.create_natsume(guest_loadout)
                 party.insert(5, guest_natsume)
+
+            if stage_id in [58001, 58002, 58003, 58004, 58005, 60001, 60002, 60003, 60004, 60005]:
+                party = [p for p in party if p.name != "Akasuke"]
 
             enemies = stages.load_stage_enemies(stage_id)
             if not enemies:
@@ -686,6 +690,7 @@ def run_game():
                 gacha_system.run_gacha_menu()
                 config.player_data["materials"]["Microchip"] = player.currencies["microchips"]
                 config.player_data["materials"]["Microprocessor"] = player.currencies["microprocessors"]
+                config.player_data["materials"]["Jade Microchip"] = player.currencies["jade microchips"]
             elif choice == "3": config.current_state = config.STATE_COUNCIL_LOGS
             elif choice == "4": 
                 config.current_state = config.STATE_PARTY_MANAGEMENT

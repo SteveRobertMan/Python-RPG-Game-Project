@@ -9227,7 +9227,7 @@ def play_stage_4_12_start():
     
     show_story_box("", "My grip on the hilt trembled slightly. My voice betrayed my nervousness.", is_narrator=True)
     
-    show_story_box("Mei", "“Liwei… whatever you are dealing with, you should share the burden with me and my unit too. Am I not your colleague? Your junior? Did you not tell the Vanguard just today ago that I am ‘stronger than you’?”", affiliation="Yunhai Association Enforcer Captain")
+    show_story_box("Mei", "“Liwei… whatever you are dealing with, you should share the burden with me and my unit too. Am I not your colleague? Your junior? Did you not tell the Vanguard just today that I am ‘stronger than you’?”", affiliation="Yunhai Association Enforcer Captain")
     
     show_story_box("", "The air in the room instantly dropped in temperature.", is_narrator=True)
     show_story_box("", "Liwei’s playful smile vanished completely.", is_narrator=True)
@@ -9797,13 +9797,13 @@ def play_stage_4_14_story():
     
     show_story_box("Akasuke", "“I’m not done!”", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("", "Miyu stopped.", is_narrator=True)
+    show_story_box("", "She stopped.", is_narrator=True)
     show_story_box("", "She turned around, her expression perfectly stoic, ready to receive my useless attack again.", is_narrator=True)
     show_story_box("", "But I didn't swing. I glared at her, breathing heavily.", is_narrator=True)
     
     show_story_box("Akasuke", "“Who are you?! What is your goal in Yunhai?! And why…why go through all this trouble to OBSERVE Kasakura High?! We aren't even the strongest people around here!”", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("", "Miyu stared at me. Her upper lip curled into a look of absolute, logical disgust.", is_narrator=True)
+    show_story_box("", "The girl stared at me. Her upper lip curled into a look of absolute, logical disgust.", is_narrator=True)
     
     show_story_box("Miyu", "“You are an enemy. By what lapse in logic do you assume I would voluntarily disclose our operational objectives to you?”", affiliation="Kasakura High School Student Council")
     
@@ -9813,7 +9813,7 @@ def play_stage_4_14_story():
     show_story_box("Midori", "“MIIIYUUU-CHAAAN! ARE YOU THERE?!”", affiliation="Kiryoku Gakuen Student?")
     
     show_story_box("", "It was Midori from Kiryoku Gakuen.", is_narrator=True)
-    show_story_box("", "Miyu flinched, completely losing her cool, professional demeanor. She fumbled with the radio, desperately trying to lower the volume.", is_narrator=True)
+    show_story_box("", "Mimi-tan flinched, completely losing her cool, professional demeanor. She fumbled with the radio, desperately trying to lower the volume.", is_narrator=True)
     
     show_story_box("Miyu", "“Mi-, Ch-Chloe! Protocol! I told you to—”", affiliation="Kasakura High School Student Council")
     
@@ -9826,7 +9826,7 @@ def play_stage_4_14_story():
     show_story_box("Midori", "“I just wanna head to the Hoshizuradani Region already! The Boss gave us the green light! Are you coming or not? Oh, and by the way, I’m using the radio because you wouldn't answer my calls!”", affiliation="Kiryoku Gakuen Student?")
     
     show_story_box("", "I stood there, clutching my shattered shoulder, blinking in absolute disbelief as Midori casually leaked their next destination, their operational status, and the existence of the \"Boss's\" orders on an open, booming speaker.", is_narrator=True)
-    show_story_box("", "Miyu stared at the radio in her hand. Her hands were shaking.", is_narrator=True)
+    show_story_box("", "She stared at the radio in her hand. Her hands were shaking.", is_narrator=True)
     show_story_box("", "She had completely given up.", is_narrator=True)
     
     show_story_box("Miyu", "“...I will contact you later.”", affiliation="Kasakura High School Student Council")
@@ -9838,13 +9838,13 @@ def play_stage_4_14_story():
     
     show_story_box("Akasuke", "“Um...”", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("", "Miyu slowly looked up at me.", is_narrator=True)
+    show_story_box("", "Mimi-tan slowly looked up at me.", is_narrator=True)
     show_story_box("", "Her cheeks were puffed out in a furious pout. Literal tears of sheer frustration and embarrassment were welling up in the corners of her eyes behind her obsidian glasses.", is_narrator=True)
     show_story_box("", "I let out a weak, sympathetic sigh.", is_narrator=True)
     
     show_story_box("Akasuke", "“...Look. I kind of understand. Having that one friend who absolutely cannot read the room and ruins everything unintentionally? Yeah. I get it.”", affiliation="Kasakura High School Student / Seven Wonders")
     
-    show_story_box("", "Miyu sniffled once, aggressively adjusting her glasses to hide her eyes. She took a deep breath, instantly snapping her cold, professional composure back into place.", is_narrator=True)
+    show_story_box("", "She sniffled once, aggressively adjusting her glasses to hide her eyes. She took a deep breath, instantly snapping her cold, professional composure back into place.", is_narrator=True)
     
     show_story_box("Miyu", "“Be quiet.”", affiliation="Kasakura High School Student Council")
     
@@ -10945,7 +10945,7 @@ def play_stage_4_18_end():
     show_story_box("", "There was no wind-up. No warning.", is_narrator=True)
     show_story_box("", "The Starguard unleashed a lazy front kick.", is_narrator=True)
     show_story_box("", "It moved so fast the air itself tore apart. The kick punched straight through the ancient Scroll, ripping the legendary paper to shreds, and continued right through Yu’s entire torso, leaving a massive, gaping hole in the Administrator's chest.", is_narrator=True)
-    show_story_box("", "Elysium’s leg slid further past the body, stopping just an inch in front of my face.", is_narrator=True)
+    show_story_box("", "The Starguard’s leg slid further past the body, stopping just an inch in front of my face.", is_narrator=True)
     show_story_box("", "BOOOM!", is_narrator=True)
     show_story_box("", "An impact so loud it sounded like a bomb detonating blessed my eardrums.", is_narrator=True)
     show_story_box("", "I stared at the leg hovering perfectly still in front of me. Uncontrollable, thick light-blue smoke was spewing off the Starguard’s limb, accompanied by violently glowing cyan sparks that crackled with raw Phenomena energy.", is_narrator=True)

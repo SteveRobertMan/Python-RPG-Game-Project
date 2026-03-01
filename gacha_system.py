@@ -12,61 +12,115 @@ from player_state import player
 console = config.console
 
 # Constants
-RARITY_1 = 1 
-RARITY_2 = 2 
-RARITY_3 = 3 
-RARITY_4 = 4 
+RARITY_1 = 1
+RARITY_2 = 2
+RARITY_3 = 3
+RARITY_4 = 4
 
 class GachaSystem:
     def __init__(self):
-        self.pool = {
-            RARITY_4: [
-                "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’ Shigemura",
-                "Kasakura High School Disciplinary Committee President Yuri",
-                "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
-                "Riposte Gang Squad Leader Naganohara",
-                "Riposte Gang Executive Hanefuji Akasuke",
-                "Benikawa Ninja Clan – Ayame Benikawa",
-                "Black Water Dock Master Natsume",
-                "Yunhai Association Enforcer Captain Inami Yuri"
-            ],
-            RARITY_3: [
-                "Heiwa Seiritsu’s Upperclassman | ‘Crusher’ Benikawa",
-                "Kasakura High School Disciplinary Committee Vice President Shigemura",
-                "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
-                "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura",
-                "Black Water Dock Gang Squad Leader Shigemura"
-            ],
-            RARITY_2: [
-                "‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke",
-                "Kasakura High School Disciplinary Committee Member Benikawa",
-                "Kiryoku Gakuen Self-Defense Club President Yuri",
-                "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
-                "Kasakura High School Disciplinary Committee Member Kagaku",
-                "Yunhai Association Enforcer Akasuke",
-                "Yunhai Association Enforcer Naganohara",
-                "Luoxia Gardening School Student Kagaku",
-                "Luoxia Gardening School Student Hana"
-            ],
-            RARITY_1: [
-                "Kasakura High School Student Akasuke",
-                "Kasakura High School Student Yuri",
-                "Kasakura High School Student Benikawa",
-                "Kasakura High School Student Shigemura",
-                "Kasakura High School Student Naganohara",
-                "Kasakura High School Student Natsume",
-                "Kasakura High School Student Hana",
-                "Kasakura High School Student Kagaku",
-                "Heiwa Seiritsu High School Student Yuri",
-                "Heiwa Seiritsu High School Student Naganohara"
-            ]
+        # Nested dictionary handling separate pools per banner
+        self.pools = {
+            "RATE UP: Act 4 PART 2: Steadfastness [勇往直前] || 『NeverTurnBack』": {
+                RARITY_4: [
+                    "Benikawa Ninja Clan – Ayame Benikawa",
+                    "Black Water Dock Master Natsume",
+                    "Yunhai Association Enforcer Captain Kagaku Shamiko",
+                    "Ibara Ninja | ‘Naganohara Tsukimiyama The Untouchable’"
+                ],
+                RARITY_3: [
+                    "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
+                    "Black Water Dock Gang Squad Leader Shigemura"
+                ],
+                RARITY_2: [
+                    "Kasakura High School Disciplinary Committee Member Benikawa",
+                    "Kiryoku Gakuen Self-Defense Club President Naganohara",
+                    "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
+                    "Kasakura High School Disciplinary Committee Member Kagaku"
+                ],
+                RARITY_1: [
+                    "Kasakura High School Student Akasuke",
+                    "Kasakura High School Student Yuri",
+                    "Kasakura High School Student Benikawa",
+                    "Kasakura High School Student Shigemura",
+                    "Kasakura High School Student Naganohara",
+                    "Kasakura High School Student Natsume",
+                    "Kasakura High School Student Hana",
+                    "Kasakura High School Student Kagaku"
+                ]
+            },
+            "RATE UP: Act 4 PART 1: Steadfastness [勇往直前] || 『NeverTurnBack』": {
+                RARITY_4: [
+                    "Riposte Gang Executive Hanefuji Akasuke",
+                    "Benikawa Ninja Clan – Ayame Benikawa",
+                    "Black Water Dock Master Natsume",
+                    "Yunhai Association Enforcer Captain Inami Yuri"
+                ],
+                RARITY_3: [
+                    "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
+                    "Black Water Dock Gang Squad Leader Shigemura"
+                ],
+                RARITY_2: [
+                    "Kasakura High School Disciplinary Committee Member Benikawa",
+                    "Kiryoku Gakuen Self-Defense Club President Naganohara",
+                    "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
+                    "Kasakura High School Disciplinary Committee Member Kagaku",
+                    "Yunhai Association Enforcer Akasuke",
+                    "Yunhai Association Enforcer Naganohara",
+                    "Luoxia Gardening School Student Kagaku",
+                    "Luoxia Gardening School Student Hana"
+                ],
+                RARITY_1: [
+                    "Kasakura High School Student Akasuke",
+                    "Kasakura High School Student Yuri",
+                    "Kasakura High School Student Benikawa",
+                    "Kasakura High School Student Shigemura",
+                    "Kasakura High School Student Naganohara",
+                    "Kasakura High School Student Natsume",
+                    "Kasakura High School Student Hana",
+                    "Kasakura High School Student Kagaku"
+                ]
+            },
+            "Shamiko Labs": {
+                RARITY_4: [
+                    "Heiwa Seiritsu’s Upperclassman | ‘Chain Reaper Of Heiwa’ Shigemura",
+                    "Kasakura High School Disciplinary Committee President Yuri",
+                    "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
+                    "Benikawa Ninja Clan – Ayame Benikawa"
+                ],
+                RARITY_3: [
+                    "Heiwa Seiritsu’s Upperclassman | ‘Crusher’ Benikawa",
+                    "Kasakura High School Disciplinary Committee Vice President Shigemura",
+                    "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
+                    "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura"
+                ],
+                RARITY_2: [
+                    "‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke",
+                    "Kasakura High School Disciplinary Committee Member Benikawa",
+                    "Kiryoku Gakuen Self-Defense Club President Naganohara",
+                    "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
+                    "Kasakura High School Disciplinary Committee Member Kagaku"
+                ],
+                RARITY_1: [
+                    "Kasakura High School Student Akasuke",
+                    "Kasakura High School Student Yuri",
+                    "Kasakura High School Student Benikawa",
+                    "Kasakura High School Student Shigemura",
+                    "Kasakura High School Student Naganohara",
+                    "Kasakura High School Student Natsume",
+                    "Kasakura High School Student Hana",
+                    "Kasakura High School Student Kagaku",
+                    "Heiwa Seiritsu High School Student Yuri",
+                    "Heiwa Seiritsu High School Student Naganohara"
+                ]
+            }
         }
         
         # Standard Rates
         self.rates = {
-            RARITY_4: 0.03,  # 3%
-            RARITY_3: 0.12,  # 12%
-            RARITY_2: 0.35,  # 35%
+            RARITY_4: 0.05,  # 5%
+            RARITY_3: 0.15,  # 15%
+            RARITY_2: 0.30,  # 30%
             RARITY_1: 0.50   # 50%
         }
 
@@ -107,7 +161,7 @@ class GachaSystem:
         # Deduct Cost
         player.currencies[currency_key] = current_funds - cost
         
-        console.print(f"\n[bold white]Initiating {count}x Extraction...[/bold white]\n")
+        console.print(f"\n[bold white]Initiating {count}x Extraction from {banner_name}...[/bold white]\n")
         time.sleep(0.5)
 
         first_new_4star = None
@@ -126,8 +180,8 @@ class GachaSystem:
             elif result_rarity == RARITY_3:
                 counters["pity_3"] = 0
                 
-            # Pick Item
-            item_name = random.choice(self.pool[result_rarity])
+            # Pick Item using the specific banner's pool
+            item_name = random.choice(self.pools[banner_name][result_rarity])
             is_new = self.check_if_new(item_name)
             
             # Track for Fanfare
@@ -229,12 +283,14 @@ class GachaSystem:
             
             m_chips = player.currencies.get("microchips", 0)
             m_procs = player.currencies.get("microprocessors", 0)
-            console.print(f"Funds: [cyan]{m_chips} Microchips[/cyan] | [green]{m_procs} Microprocessors[/green]")
+            j_chips = player.currencies.get("jade microchips", 0)
+            console.print(f"Funds: [yellow]{m_chips} Microchips[/yellow] | [green]{m_procs} Microprocessors[/green] | [sea_green1]{j_chips} Jade Microchips[/sea_green1]")
             
             console.print("\nSelect Banner:")
-            console.print(f"[sea_green1][1] RATE UP: Act 4: Steadfastness [勇往直前] || 『NeverTurnBack』 (Uses Microchips)[sea_green1]")
-            console.print("[2] Shamiko Labs (Uses Microprocessors)")
-            console.print("[3] View Pity Counters")
+            console.print("[sea_green1][1] RATE UP: Act 4 PART 2: Steadfastness [勇往直前] || 『NeverTurnBack』 (Uses Jade Microchips)[/sea_green1]")
+            console.print("[sea_green1][2] RATE UP: Act 4 PART 1: Steadfastness [勇往直前] || 『NeverTurnBack』 (Uses Microchips)[/sea_green1]")
+            console.print("[green][3] Shamiko Labs (Uses Microprocessors)[/green]")
+            console.print("[4] View Pity Counters")
             console.print("[0] Back to Menu")
             
             choice = get_player_input()
@@ -242,10 +298,12 @@ class GachaSystem:
             if choice == "0":
                 break
             elif choice == "1":
-                self.prompt_pull_options("RATE UP: Act 4: Steadfastness [勇往直前] || 『NeverTurnBack』", "Microchip")
+                self.prompt_pull_options("RATE UP: Act 4 PART 2: Steadfastness [勇往直前] || 『NeverTurnBack』", "Jade Microchip")
             elif choice == "2":
-                self.prompt_pull_options("Shamiko Labs", "Microprocessor")
+                self.prompt_pull_options("RATE UP: Act 4 PART 1: Steadfastness [勇往直前] || 『NeverTurnBack』", "Microchip")
             elif choice == "3":
+                self.prompt_pull_options("Shamiko Labs", "Microprocessor")
+            elif choice == "4":
                 p = getattr(player, "pity", {})
                 console.print(p)
                 get_player_input("Press Enter...")
