@@ -1652,7 +1652,7 @@ def get_enemy_database():
     zhao = Entity("Zhao Feng", is_player=False)
     zhao.max_hp = 578
     zhao.pace = 4
-    k_zhao = Kata("General's Arts", "Zhao Feng", 1, -20, [1.1, 1.0, 1.0, 1.1, 1.0, 1.0, 1.0])
+    k_zhao = Kata("General's Arts", "Zhao Feng", 1, 42, [1.1, 1.0, 1.0, 1.1, 1.0, 1.0, 1.0])
     # Skill I: Leading The Vanguard Upward (I)
     zhao_s1_desc = "[Combat Start] All units in the field with Rupture gain [(Rupture Count+Potency)/3] Blossom (Max +3, this effect occurrence does not stack)\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Sinking Potency"
     zhao_s1 = Skill("Leading The Vanguard Upward (I)", 1, EL_PRAGMA, 5, zhao_s1_desc, effect_type="ZHAOFENG_SPECIAL_1")

@@ -173,7 +173,7 @@ def draw_stage_select_menu(unlocked_stage):
 
         elif current_page == 4:
             # --- ACT 4: STEADFASTNESS [勇往直前] || 『NeverTurnBack』 ---
-            table = Table(title="Act 4: Steadfastness [勇往直前] || 『NeverTurnBack』", expand=True, style="bold green3", border_style="green3")
+            table = Table(title="Act 4: Steadfastness [勇往直前] || 『NeverTurnBack』", expand=True, style="bold sea_green1", border_style="sea_green1")
             table.add_column("Stage", justify="center", style="cyan")
             table.add_column("Title", justify="left", style="white")
             table.add_column("Status", justify="center")

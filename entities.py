@@ -236,9 +236,12 @@ class Entity:
         self.nerve_disruption_turns = 0
 
     def apply_next_turn_modifiers(self):
-        if "outgoing_dmg_mult" in self.next_turn_modifiers:
-            self.temp_modifiers["outgoing_dmg_mult"] *= self.next_turn_modifiers["outgoing_dmg_mult"]
-            del self.next_turn_modifiers["outgoing_dmg_mult"]
+        for k, v in self.next_turn_modifiers.items():
+                    if "mult" in k:
+                        self.temp_modifiers[k] = self.temp_modifiers.get(k, 1.0) * v
+                    else:
+                        self.temp_modifiers[k] = self.temp_modifiers.get(k, 0) + v
+        self.next_turn_modifiers = {}
 
     def apply_status_effect(self, new_effect):
         existing = next((e for e in self.status_effects if e.name == new_effect.name), None)

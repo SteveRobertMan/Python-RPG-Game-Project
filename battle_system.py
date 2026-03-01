@@ -417,6 +417,12 @@ class BattleManager:
             self.render_battle_screen()
             time.sleep(0.8)
 
+    # Faction Check
+    def check_black_water_dock_req(self, unit):
+        team = self.allies if unit in self.allies else self.enemies
+        count = sum(1 for u in team if "Black Water Dock" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name))
+        return count >= 2
+
     def apply_combat_start_logic(self, unit, skill):
         # Existing Buff
         if skill.effect_type == "BUFF_DEF_FLAT":
@@ -523,6 +529,70 @@ class BattleManager:
             self.apply_status_logic(unit, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 10, STATUS_DESCS["Poise"], duration=0, type="BUFF"))
         elif skill.effect_type == "KAGEROU_SPECIAL_7":
             unit.reflect_flickering_damage = True
+
+        elif skill.effect_type == "YUNHAI_AKASUKE_SPECIAL1":
+            team = self.allies if unit in self.allies else self.enemies
+            for member in team:
+                if member.hp > 0:
+                    name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                    if "Yunhai Association" in name_check:
+                        member.temp_modifiers["final_dmg_reduction"] += 2
+        elif skill.effect_type == "YUNHAI_AKASUKE_SPECIAL2":
+            team = self.allies if unit in self.allies else self.enemies
+            for member in team:
+                if member.hp > 0:
+                    name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                    if "Yunhai Association" in name_check:
+                        member.temp_modifiers["outgoing_base_dmg_flat"] = member.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 2
+        elif skill.effect_type == "YUNHAI_NAGANOHARA_SPECIAL2":
+            team = self.allies if unit in self.allies else self.enemies
+            for member in team:
+                if member.hp > 0:
+                    name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                    if "Yunhai Association" in name_check:
+                        self.apply_status_logic(member, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=0))
+            self.apply_status_logic(unit, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=3))
+        elif skill.effect_type == "YUNHAI_NAGANOHARA_SPECIAL3":
+            team = self.allies if unit in self.allies else self.enemies
+            for member in team:
+                if member.hp > 0:
+                    name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                    if "Yunhai Association" in name_check:
+                        member.temp_modifiers["outgoing_base_dmg_flat"] = member.temp_modifiers.get("outgoing_base_dmg_flat", 0) - 3
+                        if not hasattr(member, "next_turn_modifiers"): member.next_turn_modifiers = {}
+                        member.next_turn_modifiers["outgoing_base_dmg_flat"] = member.next_turn_modifiers.get("outgoing_base_dmg_flat", 0) + 3
+        elif skill.effect_type == "BLACKWATER_SHIGEMURA_TYPE2":
+            team = self.allies if unit in self.allies else self.enemies
+            valid_allies = [u for u in team if u.hp > 0 and u != unit]
+            bwd_allies = [u for u in valid_allies if "Black Water Dock" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+            non_bwd_allies = [u for u in valid_allies if u not in bwd_allies]
+            pool = bwd_allies + non_bwd_allies
+            chosen = [unit] + pool[:2]
+            for c in chosen:
+                name_check = c.kata.name if hasattr(c, "kata") and c.kata else c.name
+                if "Black Water Dock" in name_check:
+                    c.temp_modifiers["outgoing_dmg_flat"] = c.temp_modifiers.get("outgoing_dmg_flat", 0) + 3
+                else:
+                    c.temp_modifiers["outgoing_dmg_flat"] = c.temp_modifiers.get("outgoing_dmg_flat", 0) + 1
+            for member in team:
+                if member.hp > 0:
+                    name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                    if "Black Water Dock" in name_check or member == unit:
+                        self.apply_status_logic(member, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=3))
+        elif skill.effect_type == "YUNHAI_YURI_SPECIAL1":
+            team = self.allies if unit in self.allies else self.enemies
+            for member in team:
+                if member.hp > 0 and any(s.name in POISE_LIST for s in member.status_effects):
+                    name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                    amt = 3 if "Yunhai Association" in name_check else 2
+                    self.apply_status_logic(member, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=amt))
+        elif skill.effect_type == "YUNHAI_YURI_CS1":
+            team = self.allies if unit in self.allies else self.enemies
+            for member in team:
+                if member.hp > 0 and any(s.name in POISE_LIST for s in member.status_effects):
+                    name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                    amt = 4 if "Yunhai Association" in name_check else 2
+                    self.apply_status_logic(member, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", amt, STATUS_DESCS["Poise"], duration=0))
 
     def process_turn_end_effects(self):
         effects_triggered = False
@@ -1060,6 +1130,28 @@ class BattleManager:
                 self.apply_status_logic(attacker, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 0, "Deal and take +(Count/11) Final Damage.", duration=10, type="BUFF"))
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 20, "Boost Critical Hit chance.", duration=0))
 
+            # ACT 4 KATAS (FIRST HALF UPDATE)
+            elif skill.effect_type == "YUNHAI_AKASUKE_SPECIAL1":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=3))
+            elif skill.effect_type == "YUNHAI_NAGANOHARA_SPECIAL3":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=3))
+            elif skill.effect_type == "LUOXIA_KAGAKU_SPECIAL1":
+                team = self.allies if attacker in self.allies else self.enemies
+                valid = [u for u in team if u.hp > 0]
+                if valid:
+                    yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                    others = [u for u in valid if u not in yh]
+                    pool = sorted(yh, key=lambda x: x.hp/x.max_hp) + sorted(others, key=lambda x: x.hp/x.max_hp)
+                    target_to_heal = pool[0]
+                    heal_amt = int(attacker.max_hp * 0.10)
+                    target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + heal_amt)
+                    self.log(f"[light_green]-> {attacker.name} Heals {target_to_heal.name} for {heal_amt}.[/light_green]")
+            elif skill.effect_type == "GAIN_POISE_SPECIAL_4":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=2))
+            elif skill.effect_type == "BLACKWATER_NATSUME_TYPE1":
+                if self.check_black_water_dock_req(attacker):
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=2))
+
         # --- PREPARE MULTI-HIT LOGIC ---
         chips_to_execute = getattr(skill, "chips", [skill])
 
@@ -1146,7 +1238,7 @@ class BattleManager:
                     if any(s.name in RUPTURE_LIST for s in target.status_effects):
                         base_dmg_val += chip.effect_val
 
-                # --- NATSUME STRANGE KATA (ON USE) ---
+                # --- NATSUME STRANGE KATA ---
                 if chip.effect_type in ["NATSUME_STRANGE_SPECIAL_1", "NATSUME_STRANGE_SPECIAL_2", "NATSUME_STRANGE_SPECIAL_3", "NATSUME_STRANGE_SPECIAL_4"]:
                     base_dmg_val *= 0.20
                 elif chip.effect_type in ["NATSUME_STRANGE_SPECIAL_5", "NATSUME_STRANGE_SPECIAL_6"]:
@@ -1164,12 +1256,14 @@ class BattleManager:
                 elif chip.effect_type == "NATSUME_STRANGE_SPECIAL_6":
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=2))
 
+                # --- COMMON ACT 4 ENEMIES ---
                 if chip.effect_type == "PARALYSIS_SPECIAL_TYPE1":
                     para = next((s for s in target.status_effects if s.name == "Paralysis"), None)
                     if para:
                         bonus = min(15, 3 * para.duration)
                         base_dmg_val += bonus
 
+                # --- ZHAO FENG ---
                 if chip.effect_type == "ZHAOFENG_SPECIAL_3":
                     rup = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
                     if rup and (rup.potency + rup.duration) >= 5: base_dmg_val *= 1.10
@@ -1180,10 +1274,14 @@ class BattleManager:
                 elif chip.effect_type == "ZHAOFENG_SPECIAL_5":
                     rup = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
                     if rup and (rup.potency + rup.duration) >= 5: base_dmg_val *= 1.20
-                    
                 active_tgt_passives = getattr(target, "passives", []) or (getattr(target.kata, "passives", []) if getattr(target, "kata", None) else [])
                 if any(p.effect_type == "PASSIVE_CRUMBLING_FORM" for p in active_tgt_passives):
                     base_dmg_val *= 0.70
+
+                # --- ACT 4 KATAS (FIRST HALF UPDATE) ---
+                if chip.effect_type in ["BLACKWATER_NATSUME_TYPE4", "BLACKWATER_NATSUME_TYPE5", "BLACKWATER_NATSUME_TYPE6"]:
+                    if self.check_black_water_dock_req(attacker):
+                        base_dmg_val += 3
 
                 # --- SOME BASIC PASSIVE LOOPS ---
                 active_passives = getattr(attacker, "passives", [])
@@ -1263,6 +1361,19 @@ class BattleManager:
                     self.apply_status_logic(attacker, copy.deepcopy(chip.status_effect))
                 elif chip.effect_type == "GAIN_POISE_SPECIAL_1":
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=0))
+                elif chip.effect_type == "BLACKWATER_NATSUME_TYPE4":
+                    if self.check_black_water_dock_req(attacker):
+                        self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=0))
+                elif chip.effect_type == "BLACKWATER_NATSUME_TYPE5":
+                    if self.check_black_water_dock_req(attacker):
+                        self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=3))
+                elif chip.effect_type == "LUOXIA_HANA_SPECIAL1":
+                    team = self.allies if attacker in self.allies else self.enemies
+                    for member in team:
+                        if member.hp > 0:
+                            name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                            if "Yunhai Region" in name_check:
+                                member.temp_modifiers["outgoing_dmg_flat"] = member.temp_modifiers.get("outgoing_dmg_flat", 0) + 1
 
                 # 5. Critical Hit Roll (POISE & ACCELERATION)
                 poise_eff = next((se for se in attacker.status_effects if se.name == "Poise"), None)
@@ -1281,11 +1392,6 @@ class BattleManager:
                         is_crit = True
                         dmg *= 1.2
                         
-                        # Consume Poise Count (But not Acceleration count for crits)
-                        if poise_eff and poise_eff.duration > 0:
-                            poise_eff.duration -= 1
-                            if poise_eff.duration <= 0: attacker.status_effects.remove(poise_eff)
-                            
                         # --- WING CHUN CRIT TALLY ---
                         active_atk_passives = getattr(attacker, "passives", [])
                         if not active_atk_passives and getattr(attacker, "kata", None): 
@@ -1300,7 +1406,6 @@ class BattleManager:
                                 self.log(f"[bold grey74]Wing Chun appended '{app_skill.name}' to {attacker.name}'s deck![/bold grey74]")
                             if tally >= 7:
                                 attacker.crit_tally = 0
-
                         # --- CLOUD SWORD [云] ---
                         cloud_sword = next((se for se in attacker.status_effects if se.name == "Cloud Sword [云]"), None)
                         if cloud_sword:
@@ -1311,7 +1416,6 @@ class BattleManager:
                                 attacker.status_effects.remove(cloud_sword)
                             else:
                                 attacker.cloud_sword_tally = min(9, getattr(attacker, "cloud_sword_tally", 0) + 1)
-                                
                         # --- ENFORCEMENT PASSIVE ---
                         if any(p.effect_type == "PASSIVE_ENFORCEMENT" for p in active_atk_passives):
                             if getattr(attacker, "enforcement_activations", 0) < 4:
@@ -1322,10 +1426,11 @@ class BattleManager:
                                 else:
                                     attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) + tally
                                 attacker.enforcement_activations += 1
-
-                        # --- CRITICAL HIT CHIP EFFECTS (APPLY_STATUS_CRITICAL HERE) ---
+                        # --- APPLY_STATUS_CRITICAL HERE (IMPORTANT / COMMON) ---
                         if chip.effect_type == "APPLY_STATUS_CRITICAL" and hasattr(chip, "status_effect"):
                             self.apply_status_logic(target if chip.status_effect.type == "DEBUFF" else attacker, copy.deepcopy(chip.status_effect))
+
+                        # --- MEI EFFECTS ---
                         elif chip.effect_type == "MEI_SPECIAL_1":
                             self.apply_status_logic(attacker, StatusEffect("Haste", "[yellow1]🢙[/yellow1]", 0, "", duration=1))
                             self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, "", duration=2))
@@ -1344,6 +1449,26 @@ class BattleManager:
                         elif chip.effect_type == "IBARA_ACT4_SPECIAL3":
                             self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 4, STATUS_DESCS["Bleed"], duration=4, type="DEBUFF"))
                             self.apply_status_logic(attacker, StatusEffect("Invisibility", "[purple4]⛆[/purple4]", 0, STATUS_DESCS["Invisibility"], duration=1, type="BUFF"))
+                        # --- ACT 4 KATAS (FIRST HALF UPDATE) ---
+                        elif chip.effect_type == "GAIN_POISE_SPECIAL_4":
+                            self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=0))
+                        elif chip.effect_type == "YUNHAI_YURI_SPECIAL1":
+                            self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=0))
+                        elif chip.effect_type == "YUNHAI_YURI_SPECIAL2":
+                            team = self.allies if attacker in self.allies else self.enemies
+                            for u in team:
+                                if "Yunhai Association" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name):
+                                    u.temp_modifiers["outgoing_dmg_mult"] *= 1.10
+                            self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF"))
+                        elif chip.effect_type == "YUNHAI_YURI_SPECIAL3":
+                            heal_amt = damage
+                            team = self.allies if attacker in self.allies else self.enemies
+                            for u in team:
+                                if "Yunhai Association" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name):
+                                    u.hp = min(u.max_hp, u.hp + heal_amt)
+                                    self.log(f"[light_green]-> {attacker.name} Heals {u.name} for {heal_amt}.[/light_green]")
+                            self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF"))
+                        
                         # Consume Poise Count (But not Acceleration count for crits)
                         if poise_eff and poise_eff.duration > 0:
                             poise_eff.duration -= 1
@@ -1619,7 +1744,7 @@ class BattleManager:
                             self.log(f"[spring_green1]Fairylight dealt {fairylight_eff.potency} damage to {target.name}![/spring_green1]")
                             if fairylight_eff.duration <= 0: target.status_effects.remove(fairylight_eff)
 
-                    # Pierce Fragility TRIGGER
+                    # PIERCE FRAGILITY TRIGGER
                     pierce_target_eff = next((s for s in target.status_effects if s.name == "Pierce Fragility"), None)
                     if pierce_target_eff:
                         pierce_target_eff.duration -= 1
@@ -1855,7 +1980,6 @@ class BattleManager:
                                     self.apply_status_logic(attacker, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", rup, STATUS_DESCS["Rupture"], duration=1))
                                     self.current_skill_flickering_rupture_applied = True
                                     self.log(f"[medium_spring_green]Striking the flickering shadows ruptured {attacker.name}![/medium_spring_green]")
-                        
                         # Invisibility Break Trigger
                         f_invis = next((s for s in target.status_effects if s.name == "Flickering Invisibility"), None)
                         if not f_invis:
@@ -1864,6 +1988,128 @@ class BattleManager:
                             self.apply_status_logic(target, StatusEffect("Flickering Invisibility", "[thistle3]⛆[/thistle3]", 1, STATUS_DESCS["Flickering Invisibility"], duration=5, type="BUFF"))
                             self.log(f"[bold red3]Invisibility broken! {target.name} leaks bloodlust![/bold red3]")
 
+                    # --- ACT 4 KATAS (FIRST HALF UPDATE) ---
+                    if chip.effect_type == "YUNHAI_AKASUKE_SPECIAL1":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        valid = [u for u in team if u.hp > 0 and u != attacker]
+                        yh = [u for u in valid if "Yunhai Association" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                        others = [u for u in valid if u not in yh]
+                        for a in (yh + others)[:2]:
+                            self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=2))
+                    elif chip.effect_type == "YUNHAI_AKASUKE_SPECIAL2":
+                        self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, STATUS_DESCS["Rupture"], duration=2))
+                        team = self.allies if attacker in self.allies else self.enemies
+                        valid = [u for u in team if u.hp > 0 and u != attacker]
+                        yh = [u for u in valid if "Yunhai Association" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                        others = [u for u in valid if u not in yh]
+                        for a in (yh + others)[:2]:
+                            self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=0))
+                    elif chip.effect_type == "YUNHAI_NAGANOHARA_SPECIAL1":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        for member in team:
+                            if member.hp > 0:
+                                name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
+                                if "Yunhai Association" in name_check:
+                                    member.temp_modifiers["outgoing_dmg_flat"] = member.temp_modifiers.get("outgoing_dmg_flat", 0) + 2
+                        self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, STATUS_DESCS["Rupture"], duration=1))
+                    elif chip.effect_type == "LUOXIA_KAGAKU_SPECIAL2":
+                        self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, STATUS_DESCS["Rupture"], duration=0))
+                        attacker.hp = min(attacker.max_hp, attacker.hp + damage)
+                        self.log(f"[light_green]-> {attacker.name} Heals self for {damage}.[/light_green]")
+                        team = self.allies if attacker in self.allies else self.enemies
+                        valid = [u for u in team if u.hp > 0 and u != attacker]
+                        if valid:
+                            yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                            others = [u for u in valid if u not in yh]
+                            target_to_heal = (sorted(yh, key=lambda x: x.hp/x.max_hp) + sorted(others, key=lambda x: x.hp/x.max_hp))[0]
+                            target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + damage)
+                            self.log(f"[light_green]-> {attacker.name} Heals {target_to_heal.name} for {damage}.[/light_green]")
+                    elif chip.effect_type == "LUOXIA_KAGAKU_SPECIAL3":
+                        self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, STATUS_DESCS["Rupture"], duration=2))
+                        attacker.hp = min(attacker.max_hp, attacker.hp + damage)
+                        self.log(f"[light_green]-> {attacker.name} Heals self for {damage}.[/light_green]")
+                        team = self.allies if attacker in self.allies else self.enemies
+                        valid = [u for u in team if u.hp > 0 and u != attacker]
+                        if valid:
+                            yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                            others = [u for u in valid if u not in yh]
+                            target_to_heal = (sorted(yh, key=lambda x: x.hp/x.max_hp) + sorted(others, key=lambda x: x.hp/x.max_hp))[0]
+                            target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + damage)
+                            self.log(f"[light_green]-> {attacker.name} Heals {target_to_heal.name} for {damage}.[/light_green]")
+                    elif chip.effect_type == "LUOXIA_HEAL_TYPE1":
+                        team = self.allies if attacker in self.allies else self.enemies
+                        valid = [u for u in team if u.hp > 0]
+                        if valid:
+                            yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                            others = [u for u in valid if u not in yh]
+                            target_to_heal = (yh + others)[0]
+                            target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + damage)
+                            self.log(f"[light_green]-> {attacker.name} Heals {target_to_heal.name} for {damage}.[/light_green]")
+                    elif chip.effect_type == "LUOXIA_HEAL_TYPE2":
+                        if any(s.name in RUPTURE_LIST for s in target.status_effects):
+                            team = self.allies if attacker in self.allies else self.enemies
+                            valid = [u for u in team if u.hp > 0]
+                            if valid:
+                                yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                                others = [u for u in valid if u not in yh]
+                                target_to_heal = (yh + others)[0]
+                                target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + damage)
+                                self.log(f"[light_green]-> {attacker.name} Heals {target_to_heal.name} for {damage}.[/light_green]")
+                    elif chip.effect_type == "LUOXIA_HANA_SPECIAL1":
+                        if any(s.name in POISE_LIST for s in attacker.status_effects):
+                            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, STATUS_DESCS["Rupture"], duration=2))
+                    elif chip.effect_type == "LUOXIA_HANA_SPECIAL2":
+                        self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, STATUS_DESCS["Rupture"], duration=0))
+                        if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
+                        target.temp_modifiers["outgoing_dmg_mult"] *= 0.90
+                    elif chip.effect_type == "BLACKWATER_SHIGEMURA_TYPE1":
+                        self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, STATUS_DESCS["Poise"], duration=0))
+                        attacker.temp_modifiers["incoming_dmg_mult"] *= 0.80
+                        team = self.allies if attacker in self.allies else self.enemies
+                        valid = [u for u in team if u.hp > 0 and u != attacker]
+                        if valid:
+                            bwd = [u for u in valid if "Black Water Dock" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                            others = [u for u in valid if u not in bwd]
+                            pool = bwd + others
+                            a = pool[0]
+                            a.temp_modifiers["incoming_dmg_mult"] *= 0.80
+                    elif chip.effect_type == "BLACKWATER_SHIGEMURA_TYPE2":
+                        self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF"))
+                    elif chip.effect_type == "BLACKWATER_NATSUME_TYPE1":
+                        if self.check_black_water_dock_req(attacker):
+                            team = self.allies if attacker in self.allies else self.enemies
+                            for u in team:
+                                if "Black Water Dock" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name):
+                                    if not hasattr(u, "next_turn_modifiers"): u.next_turn_modifiers = {}
+                                    u.next_turn_modifiers["final_dmg_reduction"] = u.next_turn_modifiers.get("final_dmg_reduction", 0) + 2
+                    elif chip.effect_type == "BLACKWATER_NATSUME_TYPE2":
+                        if self.check_black_water_dock_req(attacker):
+                            self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, STATUS_DESCS["Rupture"], duration=3))
+                    elif chip.effect_type == "BLACKWATER_NATSUME_TYPE3":
+                        if self.check_black_water_dock_req(attacker):
+                            self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF"))
+                            team = self.allies if attacker in self.allies else self.enemies
+                            for u in team:
+                                if "Black Water Dock" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name):
+                                    u.temp_modifiers["incoming_dmg_mult"] *= 0.90
+                    elif chip.effect_type in ["BLACKWATER_NATSUME_TYPE4", "YUNHAI_YURI_SPECIAL2", "YUNHAI_YURI_SPECIAL3"]:
+                        if chip.effect_type == "BLACKWATER_NATSUME_TYPE4" and self.check_black_water_dock_req(attacker):
+                            self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=1, type="DEBUFF"))
+                        team = self.enemies if target in self.enemies else self.allies
+                        living = [u for u in team if u.hp > 0 and u != target]
+                        if living:
+                            target = random.choice(living)
+                            self.log(f"[bold magenta]-> {attacker.name} switches focus to {target.name}![/bold magenta]")
+                    elif chip.effect_type == "BLACKWATER_NATSUME_TYPE5":
+                        if self.check_black_water_dock_req(attacker):
+                            self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=1, type="DEBUFF"))
+                    elif chip.effect_type == "BLACKWATER_NATSUME_TYPE6":
+                        if self.check_black_water_dock_req(attacker):
+                            self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF"))
+                    elif chip.effect_type == "YUNHAI_YURI_SPECIAL1":
+                        self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=0))
+
+                    # PUT YOUR [On Hit] CHECK LOGICS ABOVE THIS
                     # NEXT HIT BONUSES
                     if chip.effect_type == "ON_HIT_NEXT_TAKEN_FLAT": target.next_hit_taken_flat_bonus += chip.effect_val
                     if chip.effect_type == "ON_HIT_NEXT_DEAL_FLAT": attacker.next_hit_deal_flat_bonus += chip.effect_val
@@ -2388,6 +2634,7 @@ class BattleManager:
             # HP CLAMP FOR AKASUKE DURING 4-25
             self.clamp_akasuke1()
             # HP CLAMP FOR KAGEROU DURING 4-26
+            active_tgt_passives = getattr(target, "passives", []) or (getattr(target.kata, "passives", []) if getattr(target, "kata", None) else [])
             if any(p.effect_type == "PASSIVE_KAGEROU_THORN" for p in active_tgt_passives):
                 lb = next((s for s in target.status_effects if s.name == "Leaking Bloodlust"), None)
                 if (not lb or lb.duration < 99) and target.hp < 1:

@@ -26,20 +26,27 @@ class GachaSystem:
                 "Kiryoku Gakuen Student Council Fairy | ‘Forest Guardian’ Benikawa",
                 "Riposte Gang Squad Leader Naganohara",
                 "Riposte Gang Executive Hanefuji Akasuke",
-                "Benikawa Ninja Clan – Ayame Benikawa"
+                "Benikawa Ninja Clan – Ayame Benikawa",
+                "Black Water Dock Master Natsume",
+                "Yunhai Association Enforcer Captain Inami Yuri"
             ],
             RARITY_3: [
                 "Heiwa Seiritsu’s Upperclassman | ‘Crusher’ Benikawa",
                 "Kasakura High School Disciplinary Committee Vice President Shigemura",
                 "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",
-                "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura"
+                "Heiwa Seiritsu Student – Goodwill Infiltrator Shigemura",
+                "Black Water Dock Gang Squad Leader Shigemura"
             ],
             RARITY_2: [
                 "‘Iron Fist Of Heiwa’ Delinquent Leader Akasuke",
                 "Kasakura High School Disciplinary Committee Member Benikawa",
                 "Kiryoku Gakuen Self-Defense Club President Yuri",
                 "Kiryoku Gakuen Student Council ‘Lesser Fairy’ Yuri",
-                "Kasakura High School Disciplinary Committee Member Kagaku"
+                "Kasakura High School Disciplinary Committee Member Kagaku",
+                "Yunhai Association Enforcer Akasuke",
+                "Yunhai Association Enforcer Naganohara",
+                "Luoxia Gardening School Student Kagaku",
+                "Luoxia Gardening School Student Hana"
             ],
             RARITY_1: [
                 "Kasakura High School Student Akasuke",
@@ -225,7 +232,7 @@ class GachaSystem:
             console.print(f"Funds: [cyan]{m_chips} Microchips[/cyan] | [green]{m_procs} Microprocessors[/green]")
             
             console.print("\nSelect Banner:")
-            console.print("[1] RATE UP: 'Retake Under Progress' (Uses Microchips)")
+            console.print(f"[sea_green1][1] RATE UP: Act 4: Steadfastness [勇往直前] || 『NeverTurnBack』 (Uses Microchips)[sea_green1]")
             console.print("[2] Shamiko Labs (Uses Microprocessors)")
             console.print("[3] View Pity Counters")
             console.print("[0] Back to Menu")
@@ -235,7 +242,7 @@ class GachaSystem:
             if choice == "0":
                 break
             elif choice == "1":
-                self.prompt_pull_options("RATE UP: 'Retake Under Progress'", "Microchip")
+                self.prompt_pull_options("RATE UP: Act 4: Steadfastness [勇往直前] || 『NeverTurnBack』", "Microchip")
             elif choice == "2":
                 self.prompt_pull_options("Shamiko Labs", "Microprocessor")
             elif choice == "3":

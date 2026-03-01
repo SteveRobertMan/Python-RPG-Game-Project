@@ -1,4 +1,4 @@
-from entities import Kata, Skill, ELEMENT_NAMES, STATUS_DESCS, EL_EROS, EL_PHILIA, EL_STORGE, EL_AGAPE, EL_LUDUS, EL_PRAGMA, EL_PHILAUTIA, StatusEffect
+from entities import Kata, Skill, ELEMENT_NAMES, STATUS_DESCS, EL_EROS, EL_PHILIA, EL_STORGE, EL_AGAPE, EL_LUDUS, EL_PRAGMA, EL_PHILAUTIA, StatusEffect, Chip, ChipSkill
 # Common Status Effects Definitions for easy reuse
 bleed_1 = StatusEffect("Bleed", "[red]💧︎[/red]", 1, STATUS_DESCS["Bleed"], duration=1, type="DEBUFF")
 bleed_2 = StatusEffect("Bleed", "[red]💧︎[/red]", 2, STATUS_DESCS["Bleed"], duration=1, type="DEBUFF")
@@ -33,7 +33,7 @@ pierce_fragility_1 = StatusEffect("Pierce Fragility", "[light_yellow3]▶[/light
 pierce_fragility_2 = StatusEffect("Pierce Fragility", "[light_yellow3]▶[/light_yellow3]", 0, STATUS_DESCS["Pierce Fragility"], duration=2, type="DEBUFF")
 pierce_fragility_3 = StatusEffect("Pierce Fragility", "[light_yellow3]▶[/light_yellow3]", 0, STATUS_DESCS["Pierce Fragility"], duration=3, type="DEBUFF")
 paralysis_1 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=1, type="DEBUFF")
-paralysis_2 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=1, type="DEBUFF")
+paralysis_2 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF")
 paralysis_5 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=5, type="DEBUFF")
 paralysis_7 = StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=7, type="DEBUFF")
 acceleration_1 = StatusEffect("Acceleration", "[bold pale_turquoise1]>>[/bold pale_turquoise1]", 1, STATUS_DESCS["Acceleration"], duration=1, type="UNIQUEBUFF")
@@ -71,7 +71,14 @@ KATA_ID_MAP = {
     22: "Riposte Gang Squad Leader Naganohara",
     23: "Riposte Gang Executive Hanefuji Akasuke",
     24: "Kasakura High School Disciplinary Committee Member Kagaku",
-    25: "Benikawa Ninja Clan – Ayame Benikawa"
+    25: "Benikawa Ninja Clan – Ayame Benikawa",
+    26: "Yunhai Association Enforcer Akasuke",
+    27: "Yunhai Association Enforcer Naganohara",
+    28: "Luoxia Gardening School Student Kagaku",
+    29: "Luoxia Gardening School Student Hana",
+    30: "Black Water Dock Gang Squad Leader Shigemura",
+    31: "Black Water Dock Master Natsume",
+    32: "Yunhai Association Enforcer Captain Inami Yuri"
 }
 
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
@@ -634,3 +641,140 @@ def get_kata_data_by_name(name):
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
 
         return {"kata_obj": k, "max_hp": 58, "description": desc}
+
+    # --- AKASUKE YUNHAI ASSOCIATION ---
+    elif name == "Yunhai Association Enforcer Akasuke":
+        res = [1.2, 0.8, 0.8, 1.0, 1.2, 1.0, 0.9]
+        desc = "Descriptionhere"
+        k = Kata("Yunhai Association Enforcer", "Akasuke", 2, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Slicing", 1, EL_LUDUS, 7, "[On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count", effect_type="APPLY_RUPTURE_HEAVY_STACKS")
+        s2 = Skill("Defensive", 2, EL_AGAPE, 5, "[Combat Start] All of this unit’s allies (including self) from “Yunhai Association” take -2 Final Damage this turn\n       [On Use] Gain 3 Poise Count\n       [On Hit] 2 Other random allies of this unit gains 2 Poise Count (Prioritizes units from “Yunhai Association”)", effect_type="YUNHAI_AKASUKE_SPECIAL1")
+        s3 = Skill("Following The Shape", 3, EL_EROS, 10, "[Combat Start] All of this unit’s allies (including self) from “Yunhai Association” deal +2 Base Damage this turn\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       [On Hit] 2 Other random allies of this unit gains 3 Poise Potency (Prioritizes units from “Yunhai Association”)", effect_type="YUNHAI_AKASUKE_SPECIAL2")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+        return {"kata_obj": k, "max_hp": 72, "description": desc}
+
+    # --- NAGANOHARA YUNHAI ASSOCIATION ---
+    elif name == "Yunhai Association Enforcer Naganohara":
+        res = [0.9, 0.8, 0.8, 1.1, 1.1, 1.0, 1.2]
+        desc = "Descriptionhere"
+        k = Kata("Yunhai Association Enforcer", "Naganohara", 2, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Pointing", 1, EL_AGAPE, 6, "[On Hit] All of this unit’s allies from “Yunhai Association” deal +2 Final Damage\n       [On Hit] Inflict 2 Rupture Potency", effect_type="YUNHAI_NAGANOHARA_SPECIAL1")
+        s2 = Skill("Offensive!", 2, EL_STORGE, 9, "[Combat Start] All of this unit’s allies from “Yunhai Association” gain 3 Poise Potency\n       [Combat Start] Gain 3 Poise Count", effect_type="YUNHAI_NAGANOHARA_SPECIAL2")
+        s3 = Skill("Sensing Power", 3, EL_AGAPE, 0, "[Combat Start] All of this unit’s allies (including self) from “Yunhai Association” deal -3 Base Damage this turn, then deal +3 Base Damage next turn\n       [On Use] Gain 3 Poise Count", effect_type="YUNHAI_NAGANOHARA_SPECIAL3")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+        return {"kata_obj": k, "max_hp": 66, "description": desc}
+
+    # --- KAGAKU LUOXIA GARDENING SCHOOL ---
+    elif name == "Luoxia Gardening School Student Kagaku":
+        res = [1.0, 1.0, 1.0, 0.8, 1.1, 1.2, 1.1]
+        desc = "Descriptionhere"
+        k = Kata("Luoxia Gardening School Student", "Kagaku", 2, "I", res, desc)
+        k.source_key = name
+        s1_c1 = Chip(base_damage=2, effect_type="APPLY_STATUS")
+        s1_c1.status_effect = rupture_2
+        s1_c2 = Chip(base_damage=2, effect_type="APPLY_STATUS")
+        s1_c2.status_effect = rupturecount_2
+        s1_desc = "[On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
+        s1_insp = "◈ Base Damage: 2\n       [On Hit] Inflict 2 Rupture Potency\n       ◈ Base Damage: 2\n       [On Hit] Inflict 2 Rupture Count"
+        s1 = ChipSkill("Basic Strikes ◈◈", 1, EL_PHILIA, [s1_c1, s1_c2], description=s1_desc, inspect_description=s1_insp)
+        
+        s2 = Skill("Energy Serum [能量精華液]", 2, EL_AGAPE, 0, "[On Use] Heals an ally of this unit with the least HP% (Prioritizes units from “Yunhai Region”)", effect_type="LUOXIA_KAGAKU_SPECIAL1")
+        s2.inspect_description = "[On Use] Heals an ally of this unit with the least HP% (Prioritizes units from “Yunhai Region”) for 10% of this unit’s Max HP"
+        
+        s3_c1 = Chip(base_damage=3, effect_type="LUOXIA_KAGAKU_SPECIAL2")
+        s3_c2 = Chip(base_damage=5, effect_type="LUOXIA_KAGAKU_SPECIAL3")
+        s3_desc = "[On Hit] Heals self, then another ally of this unit with the least HP% (Prioritizes units from “Yunhai Region”)\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count"
+        s3_insp = "◈ Base Damage: 3\n       [On Hit] Heals self, then another ally of this unit with the least HP% (Prioritizes units from “Yunhai Region”) for final damage dealt\n       [On Hit] Inflict Rupture 3 Potency\n       ◈ Base Damage: 5\n       [On Hit] Heals self, then another ally of this unit with the least HP% (Prioritizes units from “Yunhai Region”) for final damage dealt\n       [On Hit] Inflict Rupture 2 Count"
+        s3 = ChipSkill("Steadfast Form ◈◈", 3, EL_PHILIA, [s3_c1, s3_c2], description=s3_desc, inspect_description=s3_insp)
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+        return {"kata_obj": k, "max_hp": 61, "description": desc}
+
+    # --- HANA LUOXIA GARDENING SCHOOL ---
+    elif name == "Luoxia Gardening School Student Hana":
+        res = [1.0, 1.2, 1.1, 0.9, 1.0, 1.0, 1.0]
+        desc = "Descriptionhere"
+        k = Kata("Luoxia Gardening School Student", "Hana", 2, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Tend Soil", 1, EL_STORGE, 7, "[On Use] Gain 2 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Critical Hit] Gain 2 Poise Potency", effect_type="GAIN_POISE_SPECIAL_4", effect_val=2)
+        
+        s2_c1 = Chip(base_damage=2, effect_type="LUOXIA_HEAL_TYPE1")
+        s2_c2 = Chip(base_damage=3, effect_type="LUOXIA_HEAL_TYPE2")
+        s2_c3 = Chip(base_damage=2, effect_type="LUOXIA_HEAL_TYPE2")
+        s2_desc = "[On Hit] Heals a random ally of this unit (Can include self, Prioritizes units from “Yunhai Region”)\n       [On Hit] If target has Rupture, Heals a random ally of this unit (Can include self, Prioritizes units from “Yunhai Region”)"
+        s2_insp = "◈ Base Damage: 2\n       [On Hit] Heals a random ally of this unit (Can include self, Prioritizes units from “Yunhai Region”) for Final Damage dealt\n       ◈ Base Damage: 3\n       [On Hit] If target has Rupture, Heals a random ally of this unit (Can include self, Prioritizes units from “Yunhai Region”) for Final Damage dealt\n       ◈ Base Damage: 2\n       [On Hit] If target has Rupture, Heals a random ally of this unit (Can include self, Prioritizes units from “Yunhai Region”) for Final Damage dealt"
+        s2 = ChipSkill("Linked Punches ◈◈◈", 2, EL_AGAPE, [s2_c1, s2_c2, s2_c3], description=s2_desc, inspect_description=s2_insp)
+        
+        s3_c1 = Chip(base_damage=3, effect_type="LUOXIA_HANA_SPECIAL1")
+        s3_c2 = Chip(base_damage=3, effect_type="LUOXIA_HANA_SPECIAL1")
+        s3_c3 = Chip(base_damage=6, effect_type="LUOXIA_HANA_SPECIAL2")
+        s3_desc = "[On Use] All of this unit’s allies (including self) from “Yunhai Region” deal +1 Final Damage this turn\n       [On Hit] Inflict Rupture Potency\n       [On Hit] If this unit has Poise, inflict Rupture Count\n       [On Hit] Target deals -10% Final Damage this turn"
+        s3_insp = "◈ Base Damage: 3\n       [On Use] All of this unit’s allies (including self) from “Yunhai Region” deal +1 Final Damage this turn\n       [On Hit] If this unit has Poise, inflict 2 Rupture Count\n       ◈ Base Damage: 3\n       [On Use] All of this unit’s allies (including self) from “Yunhai Region” deal +1 Final Damage this turn\n       [On Hit] If this unit has Poise, inflict 2 Rupture Count\n       ◈ Base Damage: 6\n       [On Hit] Inflict 3 Rupture Potency\n       [On Hit] Target deals -10% Final Damage this turn"
+        s3 = ChipSkill("Yank Out Intruding Weeds! ◈◈◈", 3, EL_EROS, [s3_c1, s3_c2, s3_c3], description=s3_desc, inspect_description=s3_insp)
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+        return {"kata_obj": k, "max_hp": 81, "description": desc}
+
+    # --- SHIGEMURA BLACK WATER DOCK ---
+    elif name == "Black Water Dock Gang Squad Leader Shigemura":
+        res = [0.9, 0.9, 0.9, 1.1, 1.2, 1.1, 1.3]
+        desc = "Descriptionhere"
+        k = Kata("Black Water Dock Gang Squad Leader", "Shigemura", 3, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Inward Parry [拿]", 1, EL_LUDUS, 4, "[On Hit] Gain 4 Poise Potency\n       [On Hit] This unit and a random ally of this unit (Prioritizes units from “Black Water Dock”) takes -20% Base Damage this turn", effect_type="BLACKWATER_SHIGEMURA_TYPE1")
+        s2 = Skill("Thrust – Core Attack", 2, EL_PRAGMA, 10, "[On Hit] Inflict 4 Rupture Potency", effect_type="APPLY_STATUS")
+        s2.status_effect = rupture_4
+        s3 = Skill("Showoff The Dock’s Spearplay", 3, EL_PRAGMA, 13, "[Combat Start] This unit and two random allies of this unit (Prioritizes units from “Black Water Dock”) deal +1 Final Damage this turn. If the selected ally(s) is from “Black Water Dock”, they deal +3 Final Damage instead\n       [Combat Start] This unit and all allies from “Black Water Dock” gain 3 Poise Count\n       [On Hit] Inflict 2 Paralysis", effect_type="BLACKWATER_SHIGEMURA_TYPE2")
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+        return {"kata_obj": k, "max_hp": 70, "description": desc}
+
+    # --- NATSUME BLACK WATER DOCK ---
+    elif name == "Black Water Dock Master Natsume":
+        res = [1.2, 0.9, 0.9, 1.1, 1.1, 1.0, 1.1]
+        desc = "Descriptionhere"
+        k = Kata("Black Water Dock Master", "Natsume", 4, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Outward Parry [拦]", 1, EL_PRAGMA, 6, "[Combat Start] This skill’s effects only activate if there are at least 2 units from “Black Water Dock” in the team (counts self and defeated allies):\n       [On Use] Gain 3 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] All units from “Black Water Dock” take -2 Final Damage next turn", effect_type="BLACKWATER_NATSUME_TYPE1")
+        
+        s2_c1 = Chip(base_damage=8, effect_type="BLACKWATER_NATSUME_TYPE2")
+        s2_c2 = Chip(base_damage=2, effect_type="BLACKWATER_NATSUME_TYPE3")
+        s2_desc = "[Combat Start] This skill’s effects only activate if there are at least 2 units from “Black Water Dock” in the team (counts self and defeated allies):\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count\n       [On Hit] Inflict Paralysis\n       [On Hit] All units from “Black Water Dock” take -10% Final Damage this turn"
+        s2_insp = "[Combat Start] This skill’s effects only activate if there are at least 2 units from “Black Water Dock” in the team (counts self and defeated allies):\n       ◈ Base Damage: 8\n       [On Hit] Inflict 3 Rupture Potency\n       [On Hit] Inflict 3 Rupture Count\n       ◈ Base Damage: 2\n       [On Hit] Inflict 2 Paralysis\n       [On Hit] All units from “Black Water Dock” take -10% Final Damage this turn"
+        s2 = ChipSkill("Protect Your Master ◈◈", 2, EL_AGAPE, [s2_c1, s2_c2], description=s2_desc, inspect_description=s2_insp)
+        
+        s3_c1 = Chip(base_damage=1, effect_type="BLACKWATER_NATSUME_TYPE4")
+        s3_c2 = Chip(base_damage=1, effect_type="BLACKWATER_NATSUME_TYPE5")
+        s3_c3 = Chip(base_damage=1, effect_type="BLACKWATER_NATSUME_TYPE4")
+        s3_c4 = Chip(base_damage=1, effect_type="BLACKWATER_NATSUME_TYPE6")
+        s3_desc = "[Combat Start] This skill’s effects only activate if there are at least 2 units from “Black Water Dock” in the team (counts self and defeated allies):\n       [On Hit] Deals +Base Damage\n       [On Use] Gain Poise Potency\n       [On Use] Gain Poise Count\n       [On Critical Hit] Inflict Paralysis\n       [On Hit] Switches to a new random target"
+        s3_insp = "[Combat Start] This skill’s effects only activate if there are at least 2 units from “Black Water Dock” in the team (counts self and defeated allies):\n       ◈ Base Damage: 1\n       [On Use] Gain 3 Poise Potency\n       [On Use] This chip deals +3 Base Damage\n       [On Hit] Inflict 1 Paralysis\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 1\n       [On Use] Gain 3 Poise Count\n       [On Use] This chip deals +3 Base Damage\n       [On Hit] Inflict 1 Paralysis\n       ◈ Base Damage: 1\n       [On Use] Gain 3 Poise Potency\n       [On Use] This chip deals +3 Base Damage\n       [On Hit] Inflict 1 Paralysis\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 1\n       [On Use] This chip deals +3 Base Damage\n       [On Hit] Inflict 2 Paralysis"
+        s3 = ChipSkill("Twining Fools ◈◈◈◈", 3, EL_EROS, [s3_c1, s3_c2, s3_c3, s3_c4], description=s3_desc, inspect_description=s3_insp)
+        k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
+        return {"kata_obj": k, "max_hp": 76, "description": desc}
+
+    # --- YURI YUNHAI ASSOCIATION ---
+    elif name == "Yunhai Association Enforcer Captain Inami Yuri":
+        res = [0.9, 1.2, 1.2, 0.9, 1.0, 1.0, 1.2]
+        desc = "Descriptionhere"
+        k = Kata("Yunhai Association Enforcer Captain", "Yuri", 4, "I", res, desc)
+        k.source_key = name
+        s1 = Skill("Collapse / Snap [崩]", 1, EL_STORGE, 9, "[Combat Start] All of this unit’s allies with Poise gain 2 Poise Count. If affected units are from “Yunhai Association”, gain 3 Poise Count instead\n       [On Hit] Gain 3 Poise Potency\n       [On Critical Hit] Gain 3 Poise Potency", effect_type="YUNHAI_YURI_SPECIAL1")
+        
+        s2_c1 = Chip(base_damage=3, effect_type="APPLY_STATUS")
+        s2_c1.status_effect = rupture_2
+        s2_c2 = Chip(base_damage=4, effect_type="APPLY_STATUS")
+        s2_c2.status_effect = rupturecount_2
+        s2_c3 = Chip(base_damage=5, effect_type="RUPTURE_PARALYSIS_SPECIAL_TYPE2", effect_val=2)
+        s2_desc = "[Combat Start] All of this unit’s allies with Poise gain 2 Poise Potency. If affected units are from “Yunhai Association”, gain 4 Poise Potency instead\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count\n       [On Hit] Inflict Paralysis"
+        s2_insp = "[Combat Start] All of this unit’s allies with Poise gain 2 Poise Potency. If affected units are from “Yunhai Association”, gain 4 Poise Potency instead\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       ◈ Base Damage: 4\n       [On Hit] Inflict 2 Rupture Count\n       ◈ Base Damage: 5\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       [On Hit] Inflict 2 Paralysis"
+        s2 = ChipSkill("White snake [白蛇] ◈◈◈", 2, EL_PHILAUTIA, [s2_c1, s2_c2, s2_c3], description=s2_desc, inspect_description=s2_insp, effect_type="YUNHAI_YURI_CS1")
+        
+        s3_c1 = Chip(base_damage=2, effect_type="YUNHAI_YURI_SPECIAL2")
+        s3_c2 = Chip(base_damage=3, effect_type="YUNHAI_YURI_SPECIAL3")
+        s3_c3 = Chip(base_damage=6, effect_type="APPLY_STATUS_CRITICAL")
+        s3_c3.status_effect = cloud_sword_1
+        s3_desc = "[On Critical Hit] All of this unit’s allies from “Yunhai Association” deal +10% Final Damage this turn\n       [On Critical Hit] Heal self and all of this unit’s allies from “Yunhai Association”\n       [On Critical Hit] Inflict Paralysis\n       [On Critical Hit] Gain Cloud Sword [云]\n       [On Hit] Switches to a new random target"
+        s3_insp = "◈ Base Damage: 2\n       [On Critical Hit] All of this unit’s allies from “Yunhai Association” deal +10% Final Damage this turn\n       [On Critical Hit] Inflict 2 Paralysis\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 3\n       [On Critical Hit] Heal self and all of this unit’s allies from “Yunhai Association” for Final Damage dealt\n       [On Critical Hit] Inflict 2 Paralysis\n       [On Hit] Switches to a new random target\n       ◈ Base Damage: 6\n       [On Critical Hit] Gain 1 Cloud Sword [云]"
+        s3 = ChipSkill("Phoenix Nods Its Head [凤凰点头] ◈◈◈", 3, EL_AGAPE, [s3_c1, s3_c2, s3_c3], description=s3_desc, inspect_description=s3_insp)
+        k.skill_pool_def = [(s1, 5), (s2, 2), (s3, 2)]
+        return {"kata_obj": k, "max_hp": 83, "description": desc}
