@@ -448,7 +448,7 @@ class BattleManager:
             if getattr(unit, "reflect_flickering_damage", False): 
                 unit.reflect_flickering_damage = False
             if self.turn_count == 1:
-                self.apply_status_logic(unit, StatusEffect("Flickering Invisibility", "[thistle3]⛆[/thistle3]", 1, STATUS_DESCS["Flickering Invisibility"], duration=5, type="BUFF"))
+                self.apply_status_logic(unit, StatusEffect("Flickering Invisibility", "[thistle3]⛆[/thistle3]", 1, STATUS_DESCS["Flickering Invisibility"], duration=3, type="BUFF"))
             f_invis = next((s for s in unit.status_effects if s.name == "Flickering Invisibility"), None)
             if f_invis:
                 poise = next((s for s in unit.status_effects if s.name == "Poise"), None)
@@ -1162,7 +1162,8 @@ class BattleManager:
         # Initialize specific variables
         sadism_bind_to_apply = 0
         self.current_skill_flickering_rupture_applied = False
-        
+        self.current_skill_ibara_rupture_applied = False # <--- ADD THIS
+
         # --- [STEP 1] [On Use] EFFECTS (Uses Parent Skill) ---
         if "[On Use]" in skill.description:
             if skill.effect_type == "BUFF_DEF_FLAT":
@@ -1240,8 +1241,8 @@ class BattleManager:
             # ACT 4 IBARA NINJA
             if skill.effect_type == "IBARA_ACT4_SPECIAL2":
                 invis = next((s for s in attacker.status_effects if s.name == "Invisibility"), None)
-                if not invis or invis.duration < 2:
-                    if invis: attacker.status_effects.remove(invis)
+                if invis.duration in [1,2]:
+                    if invis: attacker.status_effects.remove(invis) 
                     attacker.temp_modifiers["incoming_dmg_flat"] = attacker.temp_modifiers.get("incoming_dmg_flat", 0) + 5
                     if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
                     attacker.next_turn_modifiers["incoming_dmg_flat"] = attacker.next_turn_modifiers.get("incoming_dmg_flat", 0) + 5
@@ -1271,13 +1272,13 @@ class BattleManager:
                 if eff == "KAGEROU_SPECIAL_1":
                     self.apply_status_logic(attacker, StatusEffect("Flickering Invisibility", "[violet]⛆[/violet]", 0, "Takes -Count Base Damage from skills (max -5).", duration=1, type="BUFF"))
                 elif eff == "KAGEROU_SPECIAL_2":
-                    self.apply_status_logic(attacker, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 0, "Deal and take +(Count/11) Final Damage.", duration=5, type="BUFF"))
+                    self.apply_status_logic(attacker, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 0, STATUS_DESCS["Leaking Bloodlust"], duration=5, type="BUFF"))
                 elif eff == "KAGEROU_SPECIAL_4":
-                    self.apply_status_logic(attacker, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 0, "Deal and take +(Count/11) Final Damage.", duration=3, type="BUFF"))   
+                    self.apply_status_logic(attacker, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 0, STATUS_DESCS["Leaking Bloodlust"], duration=6, type="BUFF"))   
             # Skill IV is a normal skill, so it's safely checked on the skill itself
             if skill.effect_type == "KAGEROU_SPECIAL_7":
                 self.apply_status_logic(attacker, StatusEffect("Flickering Invisibility", "[violet]⛆[/violet]", 0, "Takes -Count Base Damage from skills (max -5).", duration=1, type="BUFF"))
-                self.apply_status_logic(attacker, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 0, "Deal and take +(Count/11) Final Damage.", duration=10, type="BUFF"))
+                self.apply_status_logic(attacker, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 0, STATUS_DESCS["Leaking Bloodlust"], duration=20, type="BUFF"))
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 20, "Boost Critical Hit chance.", duration=0))
 
             # ACT 4 KATAS (FIRST HALF UPDATE)
@@ -1494,16 +1495,20 @@ class BattleManager:
                         if p.effect_type == "PASSIVE_UNPREDICTABLE":
                             if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
                             attacker.next_turn_modifiers["final_dmg_reduction"] = attacker.next_turn_modifiers.get("final_dmg_reduction", 0) + 1
-
-                # --- THORN / OUTCAST BASE DAMAGE MODIFIERS ---
-                active_atk_passives = getattr(attacker, "passives", []) or (getattr(attacker.kata, "passives", []) if getattr(attacker, "kata", None) else [])
-                if any(p.effect_type == "PASSIVE_IBARA_THORN" for p in active_atk_passives):
-                    if "Benikawa" in target.name or "Shigemura" in target.name: base_dmg_val *= 0.50
-                    else: base_dmg_val *= 1.30
                 
+                # --- PASSIVE IBARA NINJA THORN (Damage Calc) ---
+                active_passives = getattr(attacker, "passives", []) or (getattr(attacker.kata, "passives", []) if getattr(attacker, "kata", None) else [])
+                if any(p.effect_type == "PASSIVE_IBARA_THORN" for p in active_passives):
+                    is_beni_shige = "Benikawa" in target.name or "Shigemura" in target.name
+                    if not is_beni_shige:
+                        base_dmg_val *= 1.30
+                    else:
+                        base_dmg_val *= 0.50
                 active_tgt_passives = getattr(target, "passives", []) or (getattr(target.kata, "passives", []) if getattr(target, "kata", None) else [])
                 if any(p.effect_type == "PASSIVE_IBARA_THORN" for p in active_tgt_passives):
-                    if "Benikawa" in attacker.name or "Shigemura" in attacker.name: base_dmg_val *= 1.50
+                    is_beni_shige = "Benikawa" in attacker.name or "Shigemura" in attacker.name
+                    if is_beni_shige:
+                        base_dmg_val *= 1.50
 
                 # --- ISOLATE THE ENEMY DYNAMIC BASE DAMAGE ---
                 if chip.effect_type == "ISOLATETHEENEMY_SPECIAL_TYPE1":
@@ -1867,12 +1872,12 @@ class BattleManager:
                 if getattr(target, "reflect_invis_damage", False):
                     invis = next((s for s in target.status_effects if s.name == "Invisibility"), None)
                     invis_count = invis.duration if invis else 0
-                    # Reflect is (Invisibility Count * 50%) * Damage
-                    reflect_amt = int((invis_count * 0.50) * damage)
+                    reflect_pct = invis_count * 0.50
+                    reflect_amt = int(damage * reflect_pct)
                     if reflect_amt > 0:
                         attacker.hp -= reflect_amt
-                        self.log(f"[purple4]Shadows reflect {reflect_amt} damage back to {attacker.name}![/purple4]")
-                    damage = 0
+                        self.log(f"[purple4]Invisibility reflects {reflect_amt} damage back to {attacker.name}![/purple4]")
+                    damage = 0 # Ensure target takes 0 damage
 
                 # --- LEAKING BLOODLUST FLAT DAMAGE ---
                 lb_atk = next((s for s in attacker.status_effects if s.name == "Leaking Bloodlust"), None)
@@ -2082,37 +2087,40 @@ class BattleManager:
                             target.next_turn_modifiers["final_dmg_reduction"] = target.next_turn_modifiers.get("final_dmg_reduction", 0) + 5
                             self.log(f"[bold green][Passive][/bold green] Blind Spots activated! {target.name} takes -5 Final Damage next turn!")
 
-                    # --- IBARA NINJA HIT LOGIC & 500 HP CUTOFF ---
-                    active_tgt_passives = getattr(target, "passives", []) or (getattr(target.kata, "passives", []) if getattr(target, "kata", None) else [])
-                    if any(p.effect_type == "PASSIVE_IBARA_INVISIBILITY" for p in active_tgt_passives):
-                        if "Benikawa" in attacker.name or "Shigemura" in attacker.name:
-                            if getattr(target, "invis_loss_guaranteed", False) or random.randint(1, 100) <= 50:
-                                target.invis_loss_guaranteed = False
-                                invis = next((s for s in target.status_effects if s.name == "Invisibility"), None)
-                                if invis:
-                                    invis.duration -= 1
-                                    self.log(f"[purple4]{target.name} lost 1 Invisibility from the strike![/purple4]")
-                                    if invis.duration <= 0:
-                                        target.status_effects.remove(invis)
-                                        self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, STATUS_DESCS["Bind"], duration=5))
-                                        self.apply_status_logic(target, StatusEffect("Invisibility", "[purple4]⛆[/purple4]", 0, STATUS_DESCS["Invisibility"], duration=4, type="BUFF"))
-                                        self.log(f"[bold gold1]Invisibility broken! {target.name} is severely Bound![/bold gold1]")
-                            else:
-                                target.invis_loss_guaranteed = True
-                                self.log(f"[dim purple4]The strike grazed {target.name}'s shadows... next hit will break them![/dim purple4]")
+                # --- IBARA NINJA HIT & THORN LOGIC ---
+                active_tgt_passives = getattr(target, "passives", []) or (getattr(target.kata, "passives", []) if getattr(target, "kata", None) else [])
+                if any(p.effect_type == "PASSIVE_IBARA_INVISIBILITY" for p in active_tgt_passives):
+                    is_beni_shige = "Benikawa" in attacker.name or "Shigemura" in attacker.name
+                    if not is_beni_shige:
+                        # Once per skill check
+                        if not getattr(self, "current_skill_ibara_rupture_applied", False):
+                            self.current_skill_ibara_rupture_applied = True
+                            self.apply_status_logic(attacker, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, STATUS_DESCS["Rupture"], duration=0))
+                    else:
+                        guaranteed = getattr(self, "ibara_invis_loss_guaranteed", False)
+                        if guaranteed or random.random() < 0.75:
+                            self.ibara_invis_loss_guaranteed = False
+                            invis = next((s for s in target.status_effects if s.name == "Invisibility"), None)
+                            if invis:
+                                invis.duration -= 1
+                                self.log(f"[purple4]{target.name} lost 1 Invisibility![/purple4]")
+                                if invis.duration <= 0:
+                                    target.status_effects.remove(invis)
+                                    self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, STATUS_DESCS["Bind"], duration=5))
+                                    self.apply_status_logic(target, StatusEffect("Invisibility", "[purple4]⛆[/purple4]", 0, STATUS_DESCS["Invisibility"], duration=3, type="BUFF"))
+                                    self.log(f"[bold purple4]Invisibility broken! {target.name} instantly gains 5 Bind and 3 Invisibility![/bold purple4]")
                         else:
-                            self.apply_status_logic(attacker, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, STATUS_DESCS["Rupture"], duration=1))
-                            self.log(f"[medium_spring_green]Striking the shadows ruptured {attacker.name}![/medium_spring_green]")
-                    if any(p.effect_type == "PASSIVE_IBARA_THORN" for p in active_tgt_passives):
-                        if target.hp <= 500:
-                            # UPDATED: Only ends battle if Invisibility is completely broken
-                            has_invis = any(s.name == "Invisibility" for s in target.status_effects)
-                            if not has_invis:
-                                self.log(f"[purple4]{target.name}'s shadows shatter completely! Battle over![/purple4]")
-                                time.sleep(3.00)
-                                self.won = True
-                                self.is_battle_over = True
-                                return
+                            self.ibara_invis_loss_guaranteed = True
+                            self.log(f"[dim]{target.name} evaded the Invisibility break... next hit is guaranteed to break![/dim]")
+
+                # Thorn / Outcast Battle End Trigger
+                if any(p.effect_type == "PASSIVE_IBARA_THORN" for p in active_tgt_passives):
+                    invis = next((s for s in target.status_effects if s.name == "Invisibility"), None)
+                    if target.hp <= 500 and not invis:
+                        self.log(f"[bold purple4]{target.name} yields the battle! Thorn/Outcast activated![/bold purple4]")
+                        self.is_battle_over = True
+                        self.won = True
+                        return
 
                     # --- ATTACKER ORDER TRACKER ---
                     order_list = self.ally_attacker_order if attacker in self.allies else self.enemy_attacker_order
@@ -2226,7 +2234,7 @@ class BattleManager:
                         f_invis = next((s for s in target.status_effects if s.name == "Flickering Invisibility"), None)
                         if not f_invis:
                             self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, STATUS_DESCS["Bind"], duration=5))
-                            self.apply_status_logic(target, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 1, STATUS_DESCS["Leaking Bloodlust"], duration=30, type="BUFF"))
+                            self.apply_status_logic(target, StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 1, STATUS_DESCS["Leaking Bloodlust"], duration=40, type="BUFF"))
                             self.apply_status_logic(target, StatusEffect("Flickering Invisibility", "[thistle3]⛆[/thistle3]", 1, STATUS_DESCS["Flickering Invisibility"], duration=5, type="BUFF"))
                             self.log(f"[bold red3]Invisibility broken! {target.name} leaks bloodlust![/bold red3]")
 
@@ -2785,18 +2793,21 @@ class BattleManager:
                     target = __import__('random').choice(ruptured_targets) if ruptured_targets else __import__('random').choice(living)
                     self.log(f"[bold magenta]-> {attacker.name} switches focus to {target.name}![/bold magenta]")
 
-            # --- IBARA NINJA EFFECTS ---
-            elif chip.effect_type == "IBARA_ACT4_SPECIAL1":
+            # --- IBARA NINJA SKILLS ---
+            if chip.effect_type == "IBARA_ACT4_SPECIAL1":
                 invis = next((s for s in attacker.status_effects if s.name == "Invisibility"), None)
-                # Requires 3+ Invisibility
                 if invis and invis.duration >= 3:
                     if any(s.name == "Bleed" for s in target.status_effects):
                         self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 1, STATUS_DESCS["Bleed"], duration=2, type="DEBUFF"))
-                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 5, STATUS_DESCS["Bleed"], duration=0, type="DEBUFF"))
+                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 5, STATUS_DESCS["Bleed"], duration=1, type="DEBUFF"))
                 self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 1, STATUS_DESCS["Bleed"], duration=2, type="DEBUFF"))
-                
-                # The unconditional +2 Bleed Count still applies regardless of Invisibility!
-                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 1, STATUS_DESCS["Bleed"], duration=2, type="DEBUFF"))
+            elif chip.effect_type == "IBARA_ACT4_SPECIAL2":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 8, STATUS_DESCS["Poise"], duration=0))
+            elif chip.effect_type == "IBARA_ACT4_SPECIAL3":
+                if is_crit:
+                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 4, STATUS_DESCS["Bleed"], duration=1, type="DEBUFF"))
+                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 1, STATUS_DESCS["Bleed"], duration=4, type="DEBUFF"))
+                    self.apply_status_logic(attacker, StatusEffect("Invisibility", "[purple4]⛆[/purple4]", 0, STATUS_DESCS["Invisibility"], duration=1, type="BUFF"))
 
             # --- TEN THOUSAND BLOSSOM BROTHERHOOD EFFECTS ---
             elif chip.effect_type == "POISE_RUPTURE_SINKING_SPECIAL1":

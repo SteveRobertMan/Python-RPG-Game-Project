@@ -590,6 +590,8 @@ def run_game():
                         62: story_manager.play_stage_4_17_end,
                         63: story_manager.play_stage_4_18_end,
                         66: story_manager.play_stage_4_21_end,
+                        70: story_manager.play_stage_4_25_end,
+                        71: story_manager.play_stage_4_26_end
                     }
 
                     if should_play_story:

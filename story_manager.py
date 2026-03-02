@@ -11816,7 +11816,6 @@ def play_stage_4_25_start():
     
     show_story_box("", "We honor this fight.", is_narrator=True)
 
-
 def play_stage_4_25_end():
     # --- AKASUKE'S POV ---
     show_story_box("", "********* ◆ *********\nAkasuke’s POV", is_narrator=True)
@@ -12107,7 +12106,7 @@ def play_stage_4_26_end():
     
     show_story_box("", "Liwei grunted, using Mei’s hand to finally push himself up from the shallow water. He looked completely battered, but his signature grin was back.", is_narrator=True)
     
-    show_story_box("Liwei", "“Next? Next, we stay for a little celebratory feast!! You kids are way too tired to travel. You’ll stay the night in one of the luxury inns here in Sector III, and you can leave for Kasakura in the morning.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
+    show_story_box("Liwei", "“Next? Next, we stay for a little celebratory feast!! You kids are way too tired to travel. You’ll stay the night here, and you can leave for Kasakura in the morning.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
     
     show_story_box("", "He looked around at the ruined Pagoda and the ash-covered venue.", is_narrator=True)
     
@@ -12118,7 +12117,7 @@ def play_stage_4_26_end():
     show_story_box("Liwei", "“...I formally thank the Kasakura Vanguard. For everything you’ve done for my hometown.”", affiliation="Yunhai Association Bai Division 1st Unit Captain")
     
     show_story_box("", "Mei stepped forward, standing beside him. She sheathed her Jian and bowed just as deeply, her golden eyes filled with genuine gratitude.", is_narrator=True)
-    show_story_box("", "Akasuke smiled, rubbing the back of my neck nervously.", is_narrator=True)
+    show_story_box("", "Akasuke smiled, rubbing the back of his neck nervously.", is_narrator=True)
     
     show_story_box("Akasuke", "“Ah… please, raise your heads, senpais. There’s no need for such formalities between friends.”", affiliation="Kasakura High School Student / Seven Wonders")
     

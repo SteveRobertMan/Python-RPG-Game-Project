@@ -96,7 +96,9 @@ STATUS_DESCS = {
     "Blossom": "Upon taking damage, gain (Count/3) Rupture Potency, then take fixed damage according to gained amount (Max 5 Damage), then reduce count by 1. Max Count: 99",
     "Malice": "Upon taking damage, gain (Count/3) Sinking Potency, then take fixed damage according to gained amount (Max 5 Damage), then reduce count by 1. Max Count: 99",
     "Flickering Invisibility": "Takes -Count Base Damage from skills (max -5). Apply the following effects when owning at least 1 Count:\nTurn Start and End: Fix this unit’s Poise Count to exactly 1. Max Count: 5",
-    "Leaking Bloodlust": "Deal and take +(Count/11) Final Damage (Max +/- 5). Take +(Count/33)x more damage from the effects of Bleed (min +1x, max +3x). At 99 Count, deal and take +30% Final Damage from Critical Hits. Max Count: 99"
+    "Leaking Bloodlust": "Deal and take +(Count/11) Final Damage (Max +/- 5). Take +(Count/33)x more damage from the effects of Bleed (min +1x, max +3x). At 99 Count, deal and take +30% Final Damage from Critical Hits. Max Count: 99",
+    "Vibrant Invisibility": "Critical Hit damage +(Count*8%, max 40%)\nApply the following effects when owning at least 1 Count:\nTurn Start and End: Heal by (Poise Count-1, max 7), then fix this unit’s Poise Count to exactly 1. At 1+ Count, lose 1 Count at start of turn. At 3+ Count, when hit, take -(Count) Base Damage and reduce Count by 1. Max Count: 5",
+    "Ink [墨]": "Let X = Sinking Potency OR Count (random)\nLet Y = ‘Yunhai Association Xiangyun | Yokubukai Natsume’\nStart of turn, if the owning unit is not Y, convert this effect to (Count*3)X, apply to self, then copy and redistribute to another random unit in the field who is not Y. Start of turn, if the owning unit is Y, deal +(Count/2) Base Damage (Max +3) this turn. Max Count: 6"
 }
 
 class Skill:

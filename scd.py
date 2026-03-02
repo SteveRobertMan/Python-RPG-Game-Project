@@ -811,12 +811,10 @@ def get_kata_data_by_name(name):
         k = Kata("Ibara Ninja | ‘The Untouchable’", "Naganohara", 4, "I", res, desc)
         k.source_key = name
         
-        v_invis_desc = "Critical Hit damage +(Count*8%, max 40%)\nApply the following effects when owning at least 1 Count:\nTurn Start and End: Heal by (Poise Count-1, max 7), then fix this unit’s Poise Count to exactly 1. Max Count: 5"
-        
         s1_c1 = Chip(base_damage=5, effect_type="KAGEROU_NAGANOHARA_SPECIAL1")
         s1_c2 = Chip(base_damage=7, effect_type="KAGEROU_NAGANOHARA_SPECIAL1")
-        s1_desc = "[On Hit] If target has Bleed, Inflict Bleed Potency\n       [On Hit] Inflict Bleed Count\n       [On Hit] Gain Poise Potency\n       [On Critical Hit] It this unit has Vibrant Invisibility, gain Poise Potency"
-        s1_insp = "◈ Damage: 5\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 3 Bleed Count\n       [On Hit] Gain 3 Poise Potency\n       [On Critical Hit] It this unit has Vibrant Invisibility, gain 5 Poise Potency\n       ◈ Damage: 7\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 3 Bleed Count\n       [On Hit] Gain 3 Poise Potency\n       [On Critical Hit] It this unit has Vibrant Invisibility, gain 5 Poise Potency"
+        s1_desc = "[On Hit] If target has Bleed, Inflict Bleed Potency\n       [On Hit] Inflict Bleed Count\n       [On Hit] Gain Poise Potency\n       [On Critical Hit] If this unit has Vibrant Invisibility, gain Poise Potency"
+        s1_insp = "◈ Damage: 5\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 3 Bleed Count\n       [On Hit] Gain 3 Poise Potency\n       [On Critical Hit] If this unit has Vibrant Invisibility, gain 5 Poise Potency\n       ◈ Damage: 7\n       [On Hit] If target has Bleed, Inflict 3 Bleed Potency\n       [On Hit] Inflict 3 Bleed Count\n       [On Hit] Gain 3 Poise Potency\n       [On Critical Hit] If this unit has Vibrant Invisibility, gain 5 Poise Potency"
         s1 = ChipSkill("Cutthroat Arm ◈◈", 1, EL_EROS, [s1_c1, s1_c2], description=s1_desc, inspect_description=s1_insp)
         
         s2_c1 = Chip(base_damage=8, effect_type="KAGEROU_NAGANOHARA_SPECIAL2")
@@ -836,13 +834,10 @@ def get_kata_data_by_name(name):
         desc = "Descriptionhere"
         k = Kata("Yunhai Association Xiangyun", "Natsume", 4, "I", res, desc)
         k.source_key = name
-        
-        ink_desc = "Let X = Sinking Potency OR Count (random)\nLet Y = ‘Yunhai Association Xiangyun | Yokubukai Natsume’\nStart of turn, if the owning unit is not Y, convert this effect to (Count*3)X, apply to self, then copy and redistribute to another random unit in the field who is not Y. Start of turn, if the owning unit is Y, deal +(Count/2) Base Damage (Max +3) this turn. Max Count: 6"
-        STATUS_DESCS["Ink [墨]"] = ink_desc  # Cache description
-        
+
         ex1 = Skill("Paint [畫]", 1, EL_LUDUS, 7, "[Combat Start] Add up all Sinking Potency + Count owned by all units in the field (excludes self), then gain (amount/10) Ink [墨] (max +4)\n       [On Hit] If this unit has Ink [墨], inflict 1 Ink [墨], then copy and distribute this unit’s owned Ink [墨] stacks between random units on the field (Prioritizes units with Sinking)", effect_type="YUNHAI_ADMIN_NATSUME_EX_HIT")
         k.appendable_skills = {"EX1": ex1}
-        
+
         s1_c1 = Chip(base_damage=8, effect_type="YUNHAI_ADMIN_NATSUME_SPECIAL1")
         s1 = ChipSkill("Coldness [寒冷]", 1, EL_LUDUS, [s1_c1], description="[On Use] Gain 6 Poise Potency\n       [On Hit] Inflict 5 Sinking Potency\n       [On Hit] Inflict 2 Sinking Count\n       [On Critical Hit] If this unit has 3+ Ink [墨], gain 1 Ink [墨]. Otherwise, gain 2 Ink [墨]", inspect_description="Base Damage: 8\n       [On Use] Gain 6 Poise Potency\n       [On Hit] Inflict 5 Sinking Potency\n       [On Hit] Inflict 2 Sinking Count\n       [On Critical Hit] If this unit has 3+ Ink [墨], gain 1 Ink [墨]. Otherwise, gain 2 Ink [墨]")
         
