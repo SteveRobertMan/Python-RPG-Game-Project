@@ -402,7 +402,9 @@ def run_game():
                         is_valid_node_battle = True
 
                 if is_valid_node_battle: 
-                    is_first_node_clear = stage_id not in config.player_data.get("cleared_stages", [])
+                    parent_stage = stage_id // 1000
+                    already_cleared_by_progression = config.player_data.get("latest_stage", -1) >= parent_stage
+                    is_first_node_clear = (stage_id not in config.player_data.get("cleared_stages", [])) and not already_cleared_by_progression
 
                     # --- 1. NODE REWARDS MAP ---
                     # stage_id : ( {First Clear Drops}, [(Drop Chance, "Item Name", Qty)] )
@@ -481,6 +483,8 @@ def run_game():
                             for item, qty in first_drops.items():
                                 rewards_text.append(f"{qty}x {item}")
                                 mats[item] = mats.get(item, 0) + qty
+                            # IMPORTANT: Immediately mark this specific node as cleared so it can't be farmed
+                            config.player_data.setdefault("cleared_stages", []).append(stage_id)
                         else:
                             for chance, item, qty in repeat_drops:
                                 if random.random() < chance:

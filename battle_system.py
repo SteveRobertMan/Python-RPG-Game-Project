@@ -325,7 +325,24 @@ class BattleManager:
                 self.process_turn_end_effects()
                 if self.check_win_condition() or self.check_loss_condition(): return
 
-            self.turn_count += 1
+            # ---------------------------------------------------------
+            # TUTORIAL STAGE LOGIC (Stage 0)
+            # ---------------------------------------------------------
+            if self.stage_id == 0:
+                if self.turn_count == 1:
+                    self.log("[yellow]Tutorial: Pick any unit to act first with number inputs (e.g. 1, 2)[/yellow]")
+                    self.log("[yellow]...Then pick a skill in hand, also by number (e.g. 1, 2)[/yellow]")
+                elif self.turn_count == 2:
+                    self.log("[yellow]Tutorial: Skills have differing tiers shown by the roman numerals (e.g. I, II)[/yellow]")
+                    self.log("[yellow]...A skill with a LOWER tier deals LESS damage when clashing against a HIGHER tier.[/yellow]")
+                    self.log("[yellow]...This is how you 'defend' against attacks in Kokoro No Kata.[/yellow]")
+                elif self.turn_count == 3:
+                    self.log("[yellow]Tutorial: Use the Unit Inspection Menu (Press V)[/yellow]")
+                    self.log("[yellow]...Use numbers and other input formats shown below the Inspect Menu to view different details.[/yellow]")
+                elif self.turn_count == 4:
+                    self.log("[yellow]Tutorial: Toggle the auto battler on and off (Press A)[/yellow]")
+                    self.log("[yellow]...To let your units automatically choose higher tiered skills every turn.[/yellow]")
+
             # ---------------------------------------------------------
             # SPECIAL STAGE 2-9 LOGIC: SURVIVE 5 TURNS
             # ---------------------------------------------------------

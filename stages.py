@@ -670,7 +670,7 @@ def get_enemy_database():
     ########################################
     
     thief = Entity("Underwear Thief", is_player=False)
-    thief.max_hp = 30
+    thief.max_hp = 40
     k_thief = Kata("Thief Intent", "Thief", 1, "0", [0.5, 1.2, 1.2, 1.2, 1.2, 0.5, 1.2])
     ts1 = Skill("Stumble Around", 1, EL_EROS, 0, "Does nothing")
     ts2 = Skill("Weak Bag Swing", 2, EL_AGAPE, 3, "")
