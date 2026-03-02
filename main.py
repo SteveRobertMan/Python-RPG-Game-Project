@@ -407,71 +407,71 @@ def run_game():
                     # --- 1. NODE REWARDS MAP ---
                     # stage_id : ( {First Clear Drops}, [(Drop Chance, "Item Name", Qty)] )
                     NODE_REWARDS_MAP = {
-                        5001: ({"Microchip": 2, "Microprocessor": 2}, [(0.25, "Cafeteria Melon Bread", 1)]),
-                        5002: ({"Microchip": 2, "Microprocessor": 2}, [(0.25, "Cafeteria Melon Bread", 1)]),
-                        5003: ({"Microchip": 2, "Microprocessor": 2, "Cafeteria Melon Bread": 2}, [(0.50, "Cafeteria Melon Bread", 1)]),
+                        5001: ({"Microchip": 2, "Microprocessor": 3}, [(0.25, "Cafeteria Melon Bread", 1)]),
+                        5002: ({"Microchip": 2, "Microprocessor": 3}, [(0.25, "Cafeteria Melon Bread", 1)]),
+                        5003: ({"Microchip": 2, "Microprocessor": 3}, [(0.25, "Cafeteria Melon Bread", 1)]),
                         
-                        10001: ({"Microchip": 2, "Microprocessor": 2}, [(0.30, "Microchip", 1)]),
-                        10002: ({"Microchip": 2, "Microprocessor": 2}, [(0.30, "Microchip", 1)]),
-                        10003: ({"Microchip": 3, "Microprocessor": 3}, [(0.30, "Microprocessor", 1)]),
-                        10004: ({"Microchip": 3, "Microprocessor": 3}, [(0.30, "Microprocessor", 1)]),
+                        10001: ({"Microchip": 2, "Microprocessor": 2}, [(0.40, "Cafeteria Melon Bread", 1)]),
+                        10002: ({"Microchip": 2, "Microprocessor": 2}, [(0.40, "Cafeteria Melon Bread", 1)]),
+                        10003: ({"Microchip": 2, "Microprocessor": 2}, [(0.40, "Cafeteria Melon Bread", 1)]),
+                        10004: ({"Microchip": 2, "Microprocessor": 2}, [(0.40, "Cafeteria Melon Bread", 1)]),
                         
-                        14001: ({"Cafeteria Melon Bread": 1, "Vending Machine Coffee": 1}, [(0.25, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
-                        14002: ({"Cafeteria Melon Bread": 1, "Vending Machine Coffee": 1}, [(0.25, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
+                        14001: ({"Microchip": 2, "Microprocessor": 2}, [(0.65, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
+                        14001: ({"Microchip": 2, "Microprocessor": 2}, [(0.65, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
                         
-                        15001: ({"Microchip": 1, "Microprocessor": 1}, [(0.25, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
-                        15002: ({"Microchip": 1, "Microprocessor": 1}, [(0.25, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
-                        15003: ({"Microchip": 1, "Microprocessor": 1}, [(0.25, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
+                        15001: ({"Microchip": 2, "Microprocessor": 3}, [(0.65, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
+                        15002: ({"Microchip": 2, "Microprocessor": 3}, [(0.65, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
+                        15003: ({"Microchip": 2, "Microprocessor": 3}, [(0.65, "Cafeteria Melon Bread", 1), (0.25, "Vending Machine Coffee", 1)]),
                         
-                        16001: ({"Microchip": 2}, [(0.50, "Vending Machine Coffee", 1)]),
-                        16002: ({"Microchip": 2}, [(0.50, "Vending Machine Coffee", 1)]),
-                        16003: ({"Vending Machine Coffee": 2}, [(0.50, "Vending Machine Coffee", 1)]),
-                        16004: ({"Vending Machine Coffee": 2}, [(0.50, "Vending Machine Coffee", 1)]),
-                        16005: ({"Cafeteria Melon Bread": 3}, [(0.50, "Vending Machine Coffee", 1)]),
+                        16001: ({"Microchip": 2, "Microprocessor": 3}, [(0.50, "Vending Machine Coffee", 1)]),
+                        16002: ({"Microchip": 2, "Microprocessor": 3}, [(0.50, "Vending Machine Coffee", 1)]),
+                        16003: ({"Microchip": 2, "Microprocessor": 3}, [(0.50, "Vending Machine Coffee", 1)]),
+                        16004: ({"Microchip": 2, "Microprocessor": 3}, [(0.50, "Vending Machine Coffee", 1)]),
+                        16005: ({"Microchip": 2, "Microprocessor": 3}, [(0.50, "Vending Machine Coffee", 1)]),
                         
-                        32001: ({"Microchip": 2}, [(0.25, "Sports Water Bottle", 1)]),
-                        32002: ({"Microchip": 2}, [(0.25, "Sports Water Bottle", 1)]),
-                        32003: ({"Sports Water Bottle": 3}, [(0.25, "Sports Water Bottle", 1)]),
+                        32001: ({"Microchip": 3}, [(0.25, "Sports Water Bottle", 1)]),
+                        32002: ({"Microchip": 3}, [(0.25, "Sports Water Bottle", 1)]),
+                        32003: ({"Microchip": 3}, [(0.25, "Sports Water Bottle", 1)]),
                         
-                        34001: ({"Sports Water Bottle": 1, "Microprocessor": 2}, [(0.65, "Microchip", 1)]),
-                        34002: ({"Sports Water Bottle": 1, "Microprocessor": 2}, [(0.65, "Microchip", 1)]),
-                        34003: ({"Sports Water Bottle": 1, "Microprocessor": 2}, [(0.65, "Microchip", 1)]),
+                        34001: ({"Microchip": 2, "Microprocessor": 2}, [(0.50, "Sports Water Bottle", 1)]),
+                        34002: ({"Microchip": 2, "Microprocessor": 2}, [(0.50, "Sports Water Bottle", 1)]),
+                        34003: ({"Microchip": 2, "Microprocessor": 2}, [(0.50, "Sports Water Bottle", 1)]),
                         
-                        41001: ({"Microchip": 1}, [(0.375, "Cafeteria Melon Bread", 1), (0.375, "Vending Machine Coffee", 1), (0.375, "Sports Water Bottle", 1)]),
-                        41002: ({"Microchip": 1}, [(0.375, "Cafeteria Melon Bread", 1), (0.375, "Vending Machine Coffee", 1), (0.375, "Sports Water Bottle", 1)]),
-                        41003: ({"Microchip": 1}, [(0.375, "Cafeteria Melon Bread", 1), (0.375, "Vending Machine Coffee", 1), (0.375, "Sports Water Bottle", 1)]),
-                        41004: ({"Microchip": 1}, [(0.375, "Cafeteria Melon Bread", 1), (0.375, "Vending Machine Coffee", 1), (0.375, "Sports Water Bottle", 1)]),
+                        41001: ({"Microchip": 3}, [(0.375, "Cafeteria Melon Bread", 1), (0.375, "Vending Machine Coffee", 1), (0.375, "Sports Water Bottle", 1)]),
+                        41002: ({"Microchip": 3}, [(0.375, "Cafeteria Melon Bread", 1), (0.375, "Vending Machine Coffee", 1), (0.375, "Sports Water Bottle", 1)]),
+                        41003: ({"Microchip": 3}, [(0.375, "Cafeteria Melon Bread", 1), (0.375, "Vending Machine Coffee", 1), (0.375, "Sports Water Bottle", 1)]),
+                        41004: ({"Microchip": 3}, [(0.375, "Cafeteria Melon Bread", 1), (0.375, "Vending Machine Coffee", 1), (0.375, "Sports Water Bottle", 1)]),
 
-                        56001: ({"Yunhai Herbal Powder": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        56002: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        56003: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        56004: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        56005: ({"Yunhai Herbal Powder": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
+                        56001: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        56002: ({"Microprocessor": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        56003: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        56004: ({"Microprocessor": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        56005: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
 
-                        57001: ({"Yunhai Herbal Powder": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        57002: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        57003: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        57004: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        57005: ({"Yunhai Herbal Powder": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
+                        57001: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        57002: ({"Microprocessor": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        57003: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        57004: ({"Microprocessor": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        57005: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
 
-                        58001: ({"Yunhai Herbal Powder": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        58002: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        58003: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        58004: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        58005: ({"Yunhai Herbal Powder": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
+                        58001: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        58002: ({"Microprocessor": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        58003: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        58004: ({"Microprocessor": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
+                        58005: ({"Microchip": 3}, [(0.25, "Yunhai Herbal Powder", 1)]),
 
-                        60001: ({"Yunhai Herbal Powder": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        60002: ({"Microchip": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
-                        60003: ({"Yunhai Herbal Powder": 1}, [(0.15, "Yunhai Herbal Powder", 1)]),
+                        60001: ({"Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
+                        60002: ({"Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
+                        60003: ({"Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
 
-                        68001: ({"Microprocessor": 2}, [(0.15, "Jade Microchip", 1)]),
-                        68002: ({"Microprocessor": 2}, [(0.15, "Jade Microchip", 1)]),
-                        68003: ({"Microprocessor": 2}, [(0.15, "Jade Microchip", 1)]),
-                        68004: ({"Microprocessor": 2}, [(0.15, "Jade Microchip", 1)]),
+                        68001: ({"Jade Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
+                        68002: ({"Jade Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
+                        68003: ({"Jade Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
+                        68004: ({"Jade Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
 
-                        69001: ({"Microchip": 2}, [(0.15, "Jade Microchip", 1)]),
-                        69002: ({"Microchip": 2}, [(0.15, "Jade Microchip", 1)]),
-                        69003: ({"Microchip": 2}, [(0.15, "Jade Microchip", 1)]),
+                        69001: ({"Jade Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
+                        69002: ({"Jade Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
+                        69003: ({"Jade Microchip": 3}, [(0.50, "Yunhai Herbal Powder", 1)]),
                     }
 
                     # Apply Dynamic Rewards
@@ -520,7 +520,7 @@ def run_game():
                                 16: (story_manager.play_stage_2_5_end, None),
                                 38: (story_manager.play_stage_3_15_end, None),
                                 41: (story_manager.play_stage_3_19_end, "[bold magenta]NEW MEMBER: Naganohara[/bold magenta]"),
-                                56: (story_manager.play_stage_4_11_end, "[bold magenta]NEW MEMBER: Natsume[/bold magenta]\n[bold magenta]NEW MEMBER: Hana[/bold magenta]\n[bold magenta]NEW MEMBER: Kagaku[/bold magenta]"),
+                                56: (story_manager.play_stage_4_11_end, "[bold magenta]NEW MEMBERS: Natsume, Hana, Kagaku"),
                                 57: (story_manager.play_stage_4_12_end, None),
                                 58: (story_manager.play_stage_4_13_end, None),
                                 60: (story_manager.play_stage_4_15_end, None),
@@ -551,12 +551,11 @@ def run_game():
                 # --- STANDARD STAGES REWARDS ---
                 else:
                     # Grouping Stages by Reward Types
-                    group_3chip_3proc = [2, 4, 6, 7, 18, 19, 20, 21, 25, 26, 28, 29, 31]
-                    group_2proc_1water = [33, 35, 36, 37, 38, 39, 40]
-                    group_2chip_2proc = [49, 50, 51]
-                    group_yunhai = [52, 53, 56, 57, 58, 60]
-                    group_5jade = [62, 63, 70]
-                    group_1jade = [64, 65, 66, 68, 69, 71]
+                    group_chipproc_bread = [2, 4, 6, 7]
+                    group_chipproc_coffee = [2, 4, 6, 7, 18, 19, 20, 21]
+                    group_chipproc_bottle = [25, 26, 28, 29, 31, 33, 35, 36, 37, 38, 39, 40]
+                    group_chipproc_herb = [49, 50, 51, 52, 53, 56, 57, 58, 60, 62, 63, 64, 65, 66]
+                    group_jadechip_herb = [68, 69, 70, 71]
                     
                     # Dictionary routing for POST-battle stories (Standard Stages)
                     STORY_ENDS = {
@@ -599,34 +598,25 @@ def run_game():
                             STORY_ENDS[stage_id]()
                             
                         # Apply First Clear Rewards Based on Groups
-                        if stage_id in group_3chip_3proc:
-                            amt = 5 if stage_id == 7 else 3
-                            rewards_text.extend([f"{amt}x Microchip", f"{amt}x Microprocessor"])
-                            mats["Microchip"] = mats.get("Microchip", 0) + amt
-                            mats["Microprocessor"] = mats.get("Microprocessor", 0) + amt
-                        
-                        elif stage_id in group_2proc_1water:
-                            rewards_text.extend(["2x Microprocessor", "1x Sports Water Bottle"])
+                        if stage_id in group_chipproc_bread:
+                            rewards_text.extend([f"2x Microchip", f"2x Microprocessor"])
+                            mats["Microchip"] = mats.get("Microchip", 0) + 2
                             mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
-                            mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
-                            
-                        elif stage_id in group_2chip_2proc:
+                        elif stage_id in group_chipproc_coffee:
                             rewards_text.extend(["2x Microchip", "2x Microprocessor"])
                             mats["Microchip"] = mats.get("Microchip", 0) + 2
                             mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
-                            
-                        elif stage_id in group_yunhai:
-                            rewards_text.extend(["1x Yunhai Herbal Powder", "1x Microprocessor"])
-                            mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
-                            mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
-                            
-                        elif stage_id in group_5jade:
-                            rewards_text.extend(["5x Jade Microchip"])
-                            mats["Jade Microchip"] = mats.get("Jade Microchip", 0) + 5
-                            
-                        elif stage_id in group_1jade:
-                            rewards_text.extend(["1x Jade Microchip"])
-                            mats["Jade Microchip"] = mats.get("Jade Microchip", 0) + 1
+                        elif stage_id in group_chipproc_bottle:
+                            rewards_text.extend(["2x Microchip", "2x Microprocessor"])
+                            mats["Microchip"] = mats.get("Microchip", 0) + 2
+                            mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        elif stage_id in group_chipproc_herb:
+                            rewards_text.extend(["2x Microchip", "2x Microprocessor"])
+                            mats["Microchip"] = mats.get("Microchip", 0) + 2
+                            mats["Microprocessor"] = mats.get("Microprocessor", 0) + 2
+                        elif stage_id in group_jadechip_herb:
+                            rewards_text.extend(["3x Jade Microchip"])
+                            mats["Jade Microchip"] = mats.get("Jade Microchip", 0) + 3
 
                         # Update Progress
                         if config.player_data["latest_stage"] < stage_id: 
@@ -637,19 +627,16 @@ def run_game():
 
                     else:
                         # Apply Repeat Clear Rewards
-                        if stage_id in group_3chip_3proc:
-                            if random.random() < 0.65: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
-                            if random.random() < 0.65: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
-                        
-                        elif stage_id in group_2chip_2proc:
-                            if random.random() < 0.7: rewards_text.append("1x Microchip"); mats["Microchip"] = mats.get("Microchip", 0) + 1
-                            if random.random() < 0.7: rewards_text.append("1x Microprocessor"); mats["Microprocessor"] = mats.get("Microprocessor", 0) + 1
-                            
-                        elif stage_id in group_yunhai:
-                            if random.random() < 0.45: rewards_text.append("1x Yunhai Herbal Powder"); mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
-                            
-                        elif stage_id in group_5jade + group_1jade:
-                            if random.random() < 0.3: rewards_text.append("1x Jade Microchip"); mats["Jade Microchip"] = mats.get("Jade Microchip", 0) + 1
+                        if stage_id in group_chipproc_bread:
+                            if random.random() < 0.25: rewards_text.append("1x Cafeteria Melon Bread"); mats["Cafeteria Melon Bread"] = mats.get("Cafeteria Melon Bread", 0) + 1
+                        elif stage_id in group_chipproc_coffee:
+                            if random.random() < 0.25: rewards_text.append("1x Vending Machine Coffee"); mats["Vending Machine Coffee"] = mats.get("Vending Machine Coffee", 0) + 1
+                        elif stage_id in group_chipproc_bottle:
+                            if random.random() < 0.25: rewards_text.append("1x Sports Water Bottle"); mats["Sports Water Bottle"] = mats.get("Sports Water Bottle", 0) + 1
+                        elif stage_id in group_chipproc_herb:
+                            if random.random() < 0.25: rewards_text.append("1x Yunhai Herbal Powder"); mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
+                        elif stage_id in group_jadechip_herb:
+                            if random.random() < 0.25: rewards_text.append("1x Yunhai Herbal Powder"); mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
 
                     config.current_state = config.STATE_MAIN_MENU
 
@@ -703,36 +690,36 @@ def run_game():
             # req_idx : (Story_Function, [Reward String List], {Material Update Dict})
             STORY_STAGES = {
                 # --- ACT 1 ---
-                0:  (story_manager.play_stage_1_1_story, ["3x Microchip", "3x Microprocessor"], {"Microchip": 3, "Microprocessor": 3}),
-                2:  (story_manager.play_stage_1_3_story, ["3x Microchip", "3x Microprocessor"], {"Microchip": 3, "Microprocessor": 3}),
-                7:  (story_manager.play_stage_1_8_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                8:  (story_manager.play_stage_1_9_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
+                0:  (story_manager.play_stage_1_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                2:  (story_manager.play_stage_1_3_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                7:  (story_manager.play_stage_1_8_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                8:  (story_manager.play_stage_1_9_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
                 10: (story_manager.play_stage_1_11_story, ["5x Microchip"], {"Microchip": 5}),
                 # --- ACT 2 ---
-                11: (story_manager.play_stage_2_1_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                12: (story_manager.play_stage_2_2_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                16: (story_manager.play_stage_2_6_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                21: (story_manager.play_stage_2_11_story, ["3x Microchip", "3x Microprocessor"], {"Microchip": 3, "Microprocessor": 3}),
+                11: (story_manager.play_stage_2_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                12: (story_manager.play_stage_2_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                16: (story_manager.play_stage_2_6_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                21: (story_manager.play_stage_2_11_story, ["5x Microchip"], {"Microchip": 5}),
                 # --- ACT 3 ---
-                22: (story_manager.play_stage_3_1_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                23: (story_manager.play_stage_3_2_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                26: (story_manager.play_stage_3_5_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                29: (story_manager.play_stage_3_8_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                39: (story_manager.play_stage_3_18_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
+                22: (story_manager.play_stage_3_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                23: (story_manager.play_stage_3_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                26: (story_manager.play_stage_3_5_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                29: (story_manager.play_stage_3_8_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                39: (story_manager.play_stage_3_18_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
                 42: (story_manager.play_stage_3_21_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
                 43: (story_manager.play_stage_3_22_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
                 44: (story_manager.play_stage_3_23_story, ["5x Microchip"], {"Microchip": 5}),
                 # --- ACT 4 ---
-                45: (story_manager.play_stage_4_1_story, ["2x Microchip", "2x Microprocessor"], {"Microchip": 2, "Microprocessor": 2}),
-                46: (story_manager.play_stage_4_2_story, ["3x Sports Water Bottle"], {"Sports Water Bottle": 3}),
-                47: (story_manager.play_stage_4_3_story, ["3x Microchip"], {"Microchip": 3}),
-                53: (story_manager.play_stage_4_9_story, ["1x Yunhai Herbal Powder"], {"Yunhai Herbal Powder": 1}),
-                54: (story_manager.play_stage_4_10_story, ["1x Yunhai Herbal Powder"], {"Yunhai Herbal Powder": 1}),
-                58: (story_manager.play_stage_4_14_story, ["1x Yunhai Herbal Powder"], {"Yunhai Herbal Powder": 1}),
-                60: (story_manager.play_stage_4_16_story, ["3x Yunhai Herbal Powder"], {"Yunhai Herbal Powder": 3}),
-                66: (story_manager.play_stage_4_22_story, ["2x Jade Microchip"], {"Jade Microchip": 2}),
-                71: (story_manager.play_stage_4_27_story, ["2x Jade Microchip"], {"Jade Microchip": 2}),
-                72: (story_manager.play_stage_4_28_story, ["10x Microprocessor"], {"Microprocessor": 10}),
+                45: (story_manager.play_stage_4_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                46: (story_manager.play_stage_4_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                47: (story_manager.play_stage_4_3_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                53: (story_manager.play_stage_4_9_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                54: (story_manager.play_stage_4_10_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                58: (story_manager.play_stage_4_14_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                60: (story_manager.play_stage_4_16_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
+                66: (story_manager.play_stage_4_22_story, ["1x Jade Microchip"], {"Jade Microchip": 1}),
+                71: (story_manager.play_stage_4_27_story, ["1x Jade Microchip"], {"Jade Microchip": 1}),
+                72: (story_manager.play_stage_4_28_story, ["5x Jade Microchip"], {"Jade Microchip": 5}),
             }
 
             # req_idx : stage_id

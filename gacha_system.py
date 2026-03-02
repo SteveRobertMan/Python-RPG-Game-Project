@@ -23,10 +23,10 @@ class GachaSystem:
         self.pools = {
             "RATE UP: Act 4 PART 2: Steadfastness [勇往直前] || 『NeverTurnBack』": {
                 RARITY_4: [
-                    "Black Water Dock Master Natsume",
                     "Yunhai Association Enforcer Captain Kagaku Shamiko",
                     "Ibara Ninja | ‘Naganohara Tsukimiyama The Untouchable’",
-                    "Yunhai Association Xiangyun | Yokubukai Natsume"
+                    "Yunhai Association Xiangyun | Yokubukai Natsume",
+                    "General Of The Ten Thousand Blossom Brotherhood | Kaoru Hana"
                 ],
                 RARITY_3: [
                     "Kiryoku Gakuen Student Council Fairy | ‘Lake Strider’ Hana",

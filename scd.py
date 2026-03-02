@@ -44,6 +44,8 @@ blossom_1 = StatusEffect("Blossom", "[hot_pink]❀[/hot_pink]", 0, STATUS_DESCS[
 malice_1 = StatusEffect("Malice", "[hot_pink]♨[/hot_pink]", 0, STATUS_DESCS["Malice"], duration=1, type="DEBUFF")
 flickering_invisibility_1 = StatusEffect("Flickering Invisibility", "[thistle3]⛆[/thistle3]", 0, STATUS_DESCS["Flickering Invisibility"], duration=1, type="BUFF")
 leaking_bloodlust_1 = StatusEffect("Leaking Bloodlust", "[red3]✹[/red3]", 0, STATUS_DESCS["Leaking Bloodlust"], duration=1, type="BUFF")
+hopeless_blossom_1 = StatusEffect("Hopeless Blossom", "[hot_pink]❁[/hot_pink]", 0, STATUS_DESCS["Hopeless Blossom"], duration=1, type="DEBUFF")
+spirit_blade_1 = StatusEffect("Spirit Blade Unsealed [靈刃解封]", "[sea_green3]𖣐[/sea_green3]", 0, STATUS_DESCS["Spirit Blade Unsealed [靈刃解封]"], duration=1, type="BUFF")
 
 # --- KATA ID REGISTRY ---
 KATA_ID_MAP = {
@@ -81,7 +83,8 @@ KATA_ID_MAP = {
     32: "Yunhai Association Enforcer Captain Inami Yuri",
     33: "Yunhai Association Enforcer Captain Kagaku Shamiko",
     34: "Ibara Ninja | ‘Naganohara Tsukimiyama The Untouchable’",
-    35: "Yunhai Association Xiangyun | Yokubukai Natsume"
+    35: "Yunhai Association Xiangyun | Yokubukai Natsume",
+    36: "General Of The Ten Thousand Blossom Brotherhood | Kaoru Hana"
 }
 
 KATA_NAME_TO_ID = {v: k for k, v in KATA_ID_MAP.items()}
@@ -828,7 +831,7 @@ def get_kata_data_by_name(name):
         k.skill_pool_def = [(s1, 3), (s2, 3), (s3, 3)]
         return {"kata_obj": k, "max_hp": 72, "description": desc}
 
-    # --- NATSUME YOKUBUKAI ---
+    # --- YUNHAI XIANGYUN YOKUBUKAI NATSUME ---
     elif name == "Yunhai Association Xiangyun | Yokubukai Natsume":
         res = [1.0, 1.0, 1.1, 1.1, 0.7, 0.9, 1.1]
         desc = "Descriptionhere"
@@ -849,3 +852,49 @@ def get_kata_data_by_name(name):
         
         k.skill_pool_def = [(s1, 5), (s2, 3), (s3, 1)]
         return {"kata_obj": k, "max_hp": 80, "description": desc}
+
+    # --- GENERAL HANA ---
+    elif name == "General Of The Ten Thousand Blossom Brotherhood | Kaoru Hana":
+        res = [0.8, 1.1, 1.0, 0.8, 1.0, 1.1, 0.9]
+        desc = "Descriptionhere"
+        k = Kata("General Of The Ten Thousand Blossom Brotherhood", "Hana", 4, "I", res, desc)
+        k.source_key = name
+        
+        # S1: Break Through ◈◈ (I) (Ludus)
+        s1_desc = "[Combat Start] 2 Random allies of this unit take -2 and deal +2 Final Damage this turn (Prioritizes units using an Agape element skill)\n       [On Use] Select the current target and another random target for the following effect: Gain [(Rupture Count+Potency)/3] Hopeless Blossom\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count\n       [On Hit] Gain Poise Count"
+        s1_ins = "[Combat Start] 2 Random allies of this unit take -2 and deal +2 Final Damage this turn (Prioritizes units using an Agape element skill)\n       ◈ Base Damage: 5\n       [On Use] Select the current target and another random target for the following effect: Gain [(Rupture Count+Potency)/3] Hopeless Blossom\n       [On Hit] Inflict 3 Rupture Potency\n       [On Hit] Gain 3 Poise Count\n       ◈ Base Damage: 5\n       [On Hit] Inflict 4 Rupture Count"
+        s1_c1 = Chip(base_damage=5, effect_type="GENERAL_HANA_SPECIAL1")
+        s1_c2 = Chip(base_damage=5, effect_type="APPLY_STATUS")
+        s1_c2.status_effect = StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 1, STATUS_DESCS.get("Rupture", ""), duration=4, type="DEBUFF")
+        s1 = ChipSkill("Break Through ◈◈", 1, EL_LUDUS, [s1_c1, s1_c2], description=s1_desc, inspect_description=s1_ins, effect_type="GENERAL_HANA_CS1")
+        
+        # S2: Pointing A Path For The Lost (II) (Pragma)
+        s2_desc = "[Combat Start] Select the current target and another 2 random targets for the following effect: Take +30% damage from the effects of Bleed and Rupture this turn\n       [On Use] Gain 5 Poise Potency\n       [On Use] Gain 5 Poise Count\n       [On Hit] If target has 1+ Incoming Final Damage Reduction modifier value, reduce it by / 2 (min 0)\n       [On Hit] If target has 1+ Outgoing Final Damage Increase modifier value, reduce it by / 2 (min 0)\n       [On Critical Hit] Inflict 4 Hopeless Blossom"
+        s2 = Skill("Pointing A Path For The Lost", 2, EL_PRAGMA, 12, s2_desc, effect_type="GENERAL_HANA_SPECIAL2")
+        
+        # S3: The Immortal Points The Way [仙人指路] ◈◈◈◈ (III) (Agape)
+        s3_desc = "[Combat Start] 3 Random allies of this unit take -2 and deal +2 Final Damage this turn (Prioritizes units using an Eros element skill)\n       [On Use] Select the current target and another 2 random targets for the following effect: Gain [(Rupture Count+Potency)/3] Hopeless Blossom\n       [On Use] Gain Poise Potency\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Inflict Rupture Count\n       [On Critical Hit] Inflict Hopeless Blossom"
+        s3_ins = "[Combat Start] 3 Random allies of this unit take -2 and deal +2 Final Damage this turn (Prioritizes units using an Eros element skill)\n       ◈ Base Damage: 3\n       [On Use] Select the current target and another 2 random targets for the following effect: Gain [(Rupture Count+Potency)/3] Hopeless Blossom\n       [On Use] Gain 5 Poise Potency\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       [On Critical Hit] Inflict 3 Hopeless Blossom\n       ◈ Base Damage: 3\n       [On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count\n       [On Critical Hit] Inflict 3 Hopeless Blossom\n       ◈ Base Damage: 3\n       [On Critical Hit] Inflict 4 Hopeless Blossom"
+        s3_c1 = Chip(base_damage=3, effect_type="GENERAL_HANA_SPECIAL3")
+        s3_c2 = Chip(base_damage=3, effect_type="GENERAL_HANA_SPECIAL4")
+        s3_c3 = Chip(base_damage=3, effect_type="GENERAL_HANA_SPECIAL4")
+        s3_c4 = Chip(base_damage=3, effect_type="APPLY_STATUS_CRITICAL")
+        s3_c4.status_effect = StatusEffect("Hopeless Blossom", "[hot_pink]❁[/hot_pink]", 0, STATUS_DESCS.get("Hopeless Blossom", ""), duration=4, type="DEBUFF")
+        s3 = ChipSkill("The Immortal Points The Way [仙人指路] ◈◈◈◈", 3, EL_AGAPE, [s3_c1, s3_c2, s3_c3, s3_c4], description=s3_desc, inspect_description=s3_ins, effect_type="GENERAL_HANA_CS2")
+
+        # EX1: Move As A “Phantom [幻影]” (I) (Ludus)
+        ex1_desc = "[On Use] All enemies gain [(Rupture Count+Potency)/2] Hopeless Blossom\n       [Combat Start] All allies of this unit deal +5% Base Damage this turn for each unit using either an Eros or Agape skill (Max +30%)\n       [Combat Start] When hit, this unit and 2 other allies of this unit deal +2 Final Damage next turn (this effect cannot stack)\n       [Combat Start] This unit takes -30% Final Damage from attacks. When hit, there is a 50% chance to take -60% Final Damage instead."
+        ex1 = Skill("Move As A “Phantom [幻影]”", 1, EL_LUDUS, 0, ex1_desc, effect_type="GENERAL_HANA_SPECIAL5")
+
+        # EX2: The Great Ocean Receives a Hundred Rivers [海纳百川有容乃大] ◈◈◈ (IV) (Pragma)
+        ex2_desc = "[On Use] Select the current target and another 3 random targets for the following effect: Gain [(Rupture Count+Potency)/2]+10 Hopeless Blossom\n       [On Use] If this skill has already been used once during battle, gain Spirit Blade Unsealed [靈刃解封] next turn\n       [On Hit] Deal -30% Final Damage, then +5% Final Damage for every unit in the field using an Eros or Agape skill (Max +30%)\n       [On Hit] If target has Hopeless Blossom, heal self and another random ally of this unit for (Final Damage/2)\n       [On Hit] Inflict Rupture Potency\n       [On Hit] Switches to a new random target (Prioritizes units with Hopeless Blossom)"
+        ex2_ins = "◈ Base Damage: 4\n       [On Use] Select the current target and another 3 random targets for the following effect: Gain [(Rupture Count+Potency)/2]+10 Hopeless Blossom\n       [On Hit] Deal -30% Final Damage, then +5% Final Damage for every unit in the field using an Eros or Agape skill (Max +30%)\n       [On Hit] Inflict 5 Rupture Potency\n       [On Hit] Switches to a new random target (Prioritizes units with Hopeless Blossom)\n       ◈ Base Damage: 5\n       [On Hit] Deal -30% Final Damage, then +5% Final Damage for every unit in the field using an Eros or Agape skill (Max +30%)\n       [On Hit] If target has Hopeless Blossom, heal self and another random ally of this unit for (Final Damage/2)\n       [On Hit] Switches to a new random target (Prioritizes units with Hopeless Blossom)\n       ◈ Base Damage: 10\n       [On Use] If this skill has already been used once during battle, gain Spirit Blade Unsealed [靈刃解封] next turn\n       [On Hit] Deal -30% Final Damage, then +5% Final Damage for every unit in the field using an Eros or Agape skill (Max +30%)\n       [On Hit] Inflict 5 Rupture Potency"
+        s4_c1 = Chip(base_damage=4, effect_type="GENERAL_HANA_SPECIAL6")
+        s4_c2 = Chip(base_damage=5, effect_type="GENERAL_HANA_SPECIAL7")
+        s4_c3 = Chip(base_damage=10, effect_type="GENERAL_HANA_SPECIAL8")
+        ex2 = ChipSkill("The Great Ocean Receives a Hundred Rivers [海纳百川有容乃大] ◈◈◈", 4, EL_PRAGMA, [s4_c1, s4_c2, s4_c3], description=ex2_desc, inspect_description=ex2_ins, effect_type="GENERAL_HANA_EX2")
+
+        k.appendable_skills = {"EX1": ex1, "EX2": ex2}
+        k.skill_pool_def = [(s1, 4), (s2, 3), (s3, 2)]
+
+        return {"kata_obj": k, "max_hp": 84, "description": desc}

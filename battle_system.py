@@ -10,7 +10,7 @@ import config
 from ui_components import clear_screen, get_player_input
 from entities import ELEMENT_NAMES, STATUS_DESCS, get_element_color, get_tier_roman, to_subscript, StatusEffect
 
-DURATION_ONLY_EFFECTS = ["Bind", "Haste", "Pierce Fragility", "Riposte", "Paralysis", "Overheat", "Cloud Sword [云]", "Invisibility", "Blossom", "Malice", "Flickering Invisibility", "Leaking Bloodlust", "Vibrant Invisibility", "Ink [墨]"]
+DURATION_ONLY_EFFECTS = ["Bind", "Haste", "Pierce Fragility", "Riposte", "Paralysis", "Overheat", "Cloud Sword [云]", "Invisibility", "Blossom", "Malice", "Flickering Invisibility", "Leaking Bloodlust", "Vibrant Invisibility", "Ink [墨]", "Hopeless Blossom", "Spirit Blade Unsealed [靈刃解封]"]
 DUAL_STACK_EFFECTS =  ["Bleed", "Rupture", "Fairylight", "Poise", "Sinking", "Acceleration"]
 RUPTURE_LIST = ["Rupture", "Fairylight"]
 POISE_LIST = ["Poise", "Acceleration"]
@@ -169,6 +169,8 @@ class BattleManager:
         self.won = False
         self.auto_battle = False
         self.stage_id = stage_id
+        self.hana_blossom_tally = 0
+        self.hana_ex2_used_count = 0
         
         for unit in self.allies + self.enemies:
             unit.refresh_deck()
@@ -202,6 +204,8 @@ class BattleManager:
             self.brotherhood_triggered_allies = [] # Tracks distinct allied units (max 3)
             self.camaraderie_trigger_count = 0     # Tracks damage instances (max 3)
             self.yunhai_next_ally_buff = None
+            if getattr(self, "hana_blossom_tally", 0) >= 40:
+                self.hana_blossom_tally = 0
 
             for unit in self.allies + self.enemies:
                 unit.fading_form_stacks_this_turn = 0 # Stack tracker
@@ -497,6 +501,14 @@ class BattleManager:
                     else:
                         self.apply_status_logic(target, StatusEffect("Sinking", "[blue3]♆[/blue3]", 1, STATUS_DESCS["Sinking"], duration=val, type="DEBUFF"))
                     self.log(f"[grey27]Ink [墨] bursts! {unit.name} and {target.name} are inflicted with Sinking![/grey27]")
+        
+        # --- SPIRIT BLADE UNSEALED HEAL ---
+        sb = next((s for s in unit.status_effects if s.name == "Spirit Blade Unsealed [靈刃解封]"), None)
+        if sb:
+            heal_amt = min(8, ((unit.max_hp - unit.hp) // 10) * sb.duration)
+            if heal_amt > 0:
+                unit.hp += heal_amt
+                self.log(f"[sea_green3]{unit.name} heals {heal_amt} HP from Spirit Blade Unsealed![/sea_green3]")
 
     def resolve_combat_start_effects(self):
         activated_any = False
@@ -731,7 +743,7 @@ class BattleManager:
         elif skill.effect_type == "KAGEROU_NAGANOHARA_SPECIAL3":
             unit.temp_modifiers["incoming_dmg_flat"] -= 4
             unit.reflect_vibrant_invis_active = True
-        
+
         elif skill.effect_type == "YUNHAI_ADMIN_NATSUME_CS1":
             if any(s.name == "Ink [墨]" for s in unit.status_effects):
                 app_skills = getattr(unit, "appendable_skills", {})
@@ -746,6 +758,57 @@ class BattleManager:
             gain = min(4, total_sinking // 10)
             if gain > 0:
                 self.apply_status_logic(unit, StatusEffect("Ink [墨]", "[grey27][墨][/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=gain, type="BUFF"))
+        
+        elif skill.effect_type == "GENERAL_HANA_CS1":
+            team = self.allies if unit in self.allies else self.enemies
+            valid_allies = [a for a in team if a.hp > 0 and a != unit]
+            if valid_allies:
+                agape_users, other_users = [], []
+                for a in valid_allies:
+                    used_agape = any(s.element == 3 for s in a.turn_committed_skills) if a in self.allies else any(intent[0].element == 3 for intent in a.intents if intent[0])
+                    if used_agape: agape_users.append(a)
+                    else: other_users.append(a)
+                chosen = (agape_users + other_users)[:2]
+                for c in chosen:
+                    c.temp_modifiers["outgoing_dmg_flat"] = c.temp_modifiers.get("outgoing_dmg_flat", 0) + 2
+                    c.temp_modifiers["final_dmg_reduction"] = c.temp_modifiers.get("final_dmg_reduction", 0) + 2
+        elif skill.effect_type == "GENERAL_HANA_CS2":
+            team = self.allies if unit in self.allies else self.enemies
+            valid_allies = [a for a in team if a.hp > 0 and a != unit]
+            if valid_allies:
+                eros_users, other_users = [], []
+                for a in valid_allies:
+                    used_eros = any(s.element == 0 for s in a.turn_committed_skills) if a in self.allies else any(intent[0].element == 0 for intent in a.intents if intent[0])
+                    if used_eros: eros_users.append(a)
+                    else: other_users.append(a)
+                chosen = (eros_users + other_users)[:3]
+                for c in chosen:
+                    c.temp_modifiers["outgoing_dmg_flat"] = c.temp_modifiers.get("outgoing_dmg_flat", 0) + 2
+                    c.temp_modifiers["final_dmg_reduction"] = c.temp_modifiers.get("final_dmg_reduction", 0) + 2
+        elif skill.effect_type == "GENERAL_HANA_SPECIAL2":
+            # Lookup target since Combat Start context usually lacks it
+            target = None
+            if unit in self.allies:
+                target = next((t for u, s, t in self.ally_action_queue if u == unit and s == skill), None)
+            else:
+                target = next((t for s, t, _ in unit.intents if s == skill), None)
+            if target:
+                team = self.enemies if target in self.enemies else self.allies
+                valid = [u for u in team if u.hp > 0 and u != target]
+                chosen = [target]
+                if len(valid) >= 2: chosen.extend(random.sample(valid, 2))
+                else: chosen.extend(valid)
+                for c in chosen:
+                    c.temp_modifiers["bleed_rupture_vuln"] = True
+        elif skill.effect_type == "GENERAL_HANA_SPECIAL5":
+            team = self.allies if unit in self.allies else self.enemies
+            count = sum(1 for u in self.allies + self.enemies if u.hp > 0 and (any(s.element in [0, 3] for s in u.turn_committed_skills) if u in self.allies else any(intent[0].element in [0, 3] for intent in u.intents if intent[0])))
+            bonus = min(0.30, count * 0.05)
+            for a in team:
+                if a.hp > 0:
+                    a.temp_modifiers["outgoing_base_dmg_pct"] = a.temp_modifiers.get("outgoing_base_dmg_pct", 0) + bonus
+            unit.temp_modifiers["phantom_dmg_reduction"] = True
+            unit.temp_modifiers["phantom_retaliation"] = True
 
     def process_turn_end_effects(self):
         effects_triggered = False
@@ -826,6 +889,10 @@ class BattleManager:
                     unit.status_effects.append(haste_effect)
                 unit.pending_haste = 0
                 effects_triggered = True
+            
+            if getattr(unit, "pending_spirit_blade", 0) > 0:
+                self.apply_status_logic(unit, StatusEffect("Spirit Blade Unsealed [靈刃解封]", "[sea_green3]𖣐[/sea_green3]", 0, STATUS_DESCS.get("Spirit Blade Unsealed [靈刃解封]", ""), duration=unit.pending_spirit_blade, type="BUFF"))
+                unit.pending_spirit_blade = 0
 
             for effect in list(unit.status_effects):
                 if effect.name in DUAL_STACK_EFFECTS:
@@ -874,6 +941,11 @@ class BattleManager:
                     zhao.deck.insert(random.randint(0, len(zhao.deck)), copy.deepcopy(zhao.appendable_skills["EX3"]))
                     self.log(f"[hot_pink]Zhao Feng prepares his ultimate technique: 'Embrace The Moon'![/hot_pink]")
                 zhao.zf_tally = 0
+            
+            # --- GENERAL HANA KATA SPIRIT BLADE STATUS EFFECT ---
+            if getattr(unit, "pending_spirit_blade", 0) > 0:
+                self.apply_status_logic(unit, StatusEffect("Spirit Blade Unsealed [靈刃解封]", "[sea_green3]𖣐[/sea_green3]", 0, STATUS_DESCS.get("Spirit Blade Unsealed [靈刃解封]", ""), duration=unit.pending_spirit_blade, type="BUFF"))
+                unit.pending_spirit_blade = 0
                 
         self.clamp_akasuke1() # End of turn DOT clamp
 
@@ -1310,18 +1382,65 @@ class BattleManager:
                 else:
                     self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, STATUS_DESCS["Vibrant Invisibility"], duration=2, type="BUFF"))
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 13, STATUS_DESCS["Poise"], duration=0))
+            # --- NATSUME PER-CHIP BUFFS ---
+            if chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL2":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 5, STATUS_DESCS["Poise"], duration=2))
+            elif chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL1":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 6, STATUS_DESCS["Poise"], duration=2))
+            # --- GENERAL HANA EFFECTS ---
+            if skill.effect_type == "GENERAL_HANA_CS1":
+                team = self.enemies if target in self.enemies else self.allies
+                valid = [u for u in team if u.hp > 0 and u != target]
+                chosen = [target] + ([random.choice(valid)] if valid else [])
+                for c in chosen:
+                    rup = next((s for s in c.status_effects if s.name in RUPTURE_LIST), None)
+                    if rup:
+                        amt = (rup.potency + rup.duration) // 3
+                        if amt > 0:
+                            self.apply_status_logic(c, StatusEffect("Hopeless Blossom", "[hot_pink]❁[/hot_pink]", 0, STATUS_DESCS.get("Hopeless Blossom", ""), duration=amt, type="DEBUFF"))
+            elif skill.effect_type == "GENERAL_HANA_SPECIAL2":
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 5, STATUS_DESCS["Poise"], duration=5))
+            elif skill.effect_type == "GENERAL_HANA_CS2":
+                team = self.enemies if target in self.enemies else self.allies
+                valid = [u for u in team if u.hp > 0 and u != target]
+                chosen = [target]
+                if len(valid) >= 2: chosen.extend(random.sample(valid, 2))
+                else: chosen.extend(valid)
+                for c in chosen:
+                    rup = next((s for s in c.status_effects if s.name in RUPTURE_LIST), None)
+                    if rup:
+                        amt = (rup.potency + rup.duration) // 3
+                        if amt > 0:
+                            self.apply_status_logic(c, StatusEffect("Hopeless Blossom", "[hot_pink]❁[/hot_pink]", 0, STATUS_DESCS.get("Hopeless Blossom", ""), duration=amt, type="DEBUFF"))
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 5, STATUS_DESCS["Poise"], duration=0))
+            elif skill.effect_type == "GENERAL_HANA_SPECIAL5":
+                team = self.enemies if attacker in self.allies else self.allies
+                for e in team:
+                    if e.hp > 0:
+                        rup = next((s for s in e.status_effects if s.name in RUPTURE_LIST), None)
+                        if rup:
+                            amt = (rup.potency + rup.duration) // 2
+                            if amt > 0:
+                                self.apply_status_logic(e, StatusEffect("Hopeless Blossom", "[hot_pink]❁[/hot_pink]", 0, STATUS_DESCS.get("Hopeless Blossom", ""), duration=amt, type="DEBUFF"))
+            elif skill.effect_type == "GENERAL_HANA_EX2":
+                team = self.enemies if target in self.enemies else self.allies
+                valid = [u for u in team if u.hp > 0 and u != target]
+                chosen = [target]
+                if len(valid) >= 3: chosen.extend(random.sample(valid, 3))
+                else: chosen.extend(valid)
+                for c in chosen:
+                    rup = next((s for s in c.status_effects if s.name in RUPTURE_LIST), None)
+                    amt = ((rup.potency + rup.duration) // 2) + 10 if rup else 10
+                    self.apply_status_logic(c, StatusEffect("Hopeless Blossom", "[hot_pink]❁[/hot_pink]", 0, STATUS_DESCS.get("Hopeless Blossom", ""), duration=amt, type="DEBUFF"))
+                if getattr(self, "hana_ex2_used_count", 0) >= 1:
+                    attacker.pending_spirit_blade = getattr(attacker, "pending_spirit_blade", 0) + 1
+                self.hana_ex2_used_count = getattr(self, "hana_ex2_used_count", 0) + 1
 
         # --- PREPARE MULTI-HIT LOGIC ---
         chips_to_execute = getattr(skill, "chips", [skill])
 
         for chip_idx, chip in enumerate(chips_to_execute):
             chip.retoss_count = getattr(chip, "retoss_count", 0) # Track Retosses
-            
-            # --- NATSUME PER-CHIP BUFFS ---
-            if chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL2":
-                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 5, STATUS_DESCS["Poise"], duration=2))
-            elif chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL1":
-                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 6, STATUS_DESCS["Poise"], duration=2))
             
             # FIZZLE MECHANIC: If target died on previous hit, abort remaining hits
             if target.hp <= 0:
@@ -1469,6 +1588,12 @@ class BattleManager:
                     if self.check_black_water_dock_req(attacker):
                         base_dmg_val += 3
 
+                # --- ACT 4 KATAS (SECOND HALF UPDATE) ---
+                # --- SPIRIT BLADE UNSEALED BASE DAMAGE BONUS ---
+                if skill.element in [0, 3]:
+                    sb_buff = sum(next((s.duration for s in member.status_effects if s.name == "Spirit Blade Unsealed [靈刃解封]"), 0) for member in (self.allies if attacker in self.allies else self.enemies) if member.hp > 0 and member != attacker)
+                    base_dmg_val += sb_buff
+
                 # --- SOME BASIC PASSIVE LOOPS ---
                 active_passives = getattr(attacker, "passives", [])
                 if not active_passives and getattr(attacker, "kata", None):
@@ -1547,7 +1672,7 @@ class BattleManager:
                     base_dmg_reduction = min(5, v_invis_tgt.duration)
                     base_dmg_val -= base_dmg_reduction
                     v_invis_tgt.duration -= 1
-                    self.log(f"[aquamarine1]Vibrant Invisibility deflected {base_dmg_reduction} Base Damage! (Count -1)[/aquamarine1]")
+                    #self.log(f"[aquamarine1]Vibrant Invisibility reduced {base_dmg_reduction} Base Damage! (Count -1)[/aquamarine1]")
                     if v_invis_tgt.duration <= 0:
                         target.status_effects.remove(v_invis_tgt)
 
@@ -1721,6 +1846,9 @@ class BattleManager:
                                     sinking_targets = [u for u in living if any(s.name == "Sinking" for s in u.status_effects)]
                                     target = random.choice(sinking_targets) if sinking_targets else random.choice(living)
                                     self.log(f"[bold magenta]-> {attacker.name} retosses and switches focus to {target.name}![/bold magenta]")
+                        # --- SPIRIT BLADE UNSEALED BUFF ---
+                        sb = next((s for s in attacker.status_effects if s.name == "Spirit Blade Unsealed [靈刃解封]"), None)
+                        if sb: dmg = (dmg / 1.2) * (1.2 + (0.15 * sb.duration))
                         
                         ### --- Consume Poise Count (But not 'Acceleration' Unique Status Effect count) when landing crit --- ###
                         if poise_eff and poise_eff.duration > 0:
@@ -1796,6 +1924,25 @@ class BattleManager:
                 if cloud_sword_finisher_mult > 1.0:
                     self.log("[bold chartreuse1]Cloud Sword [云] Finisher unleashed![/bold chartreuse1]")
                     final_dmg *= cloud_sword_finisher_mult
+                
+                # --- GENERAL HANA EFFECTS
+                if chip.effect_type in ["GENERAL_HANA_SPECIAL6", "GENERAL_HANA_SPECIAL7", "GENERAL_HANA_SPECIAL8"]:
+                    count = sum(1 for u in self.allies + self.enemies if u.hp > 0 and (any(s.element in [0, 3] for s in u.turn_committed_skills) if u in self.allies else any(intent[0].element in [0, 3] for intent in u.intents if intent[0])))
+                    multiplier = -0.30 + min(0.30, count * 0.05)
+                    final_dmg *= (1.0 + multiplier)
+                # --- GENERAL HANA EX SKILL PHANTOM REDUCTION & RETALIATION ---
+                if getattr(target, "temp_modifiers", {}).get("phantom_dmg_reduction"):
+                    final_dmg *= (0.40 if random.choice([True, False]) else 0.70)
+                if getattr(target, "temp_modifiers", {}).get("phantom_retaliation"):
+                    if not getattr(target, "phantom_retaliated", False):
+                        target.phantom_retaliated = True
+                        team = self.allies if target in self.allies else self.enemies
+                        valid = [a for a in team if a.hp > 0 and a != target]
+                        chosen = [target]
+                        if len(valid) >= 2: chosen.extend(random.sample(valid, 2))
+                        else: chosen.extend(valid)
+                        for c in chosen:
+                            c.next_turn_modifiers["outgoing_dmg_flat"] = c.next_turn_modifiers.get("outgoing_dmg_flat", 0) + 2
 
                 # DEFENSE TIER REDUCTION (Uses Parent skill tier)
                 def_max_tier = self.get_avg_defense_tier(target)
@@ -2923,6 +3070,60 @@ class BattleManager:
                         self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF"))
                 elif chip.effect_type == "YUNHAI_YURI_SPECIAL1":
                     self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=0))
+                
+                # --- ACT 4 KATAS (SECOND HALF UPDATE) ---
+                if chip.effect_type == "GENERAL_HANA_SPECIAL1":
+                    self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, STATUS_DESCS["Rupture"], duration=0, type="DEBUFF"))
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=3))
+                elif chip.effect_type == "GENERAL_HANA_SPECIAL2":
+                    if target.temp_modifiers.get("final_dmg_reduction", 0) >= 1:
+                        target.temp_modifiers["final_dmg_reduction"] = target.temp_modifiers["final_dmg_reduction"] // 2
+                    if target.temp_modifiers.get("outgoing_dmg_flat", 0) >= 1:
+                        target.temp_modifiers["outgoing_dmg_flat"] = target.temp_modifiers["outgoing_dmg_flat"] // 2
+                    if is_crit:
+                        self.apply_status_logic(target, StatusEffect("Hopeless Blossom", "[hot_pink]❁[/hot_pink]", 0, STATUS_DESCS.get("Hopeless Blossom", ""), duration=4, type="DEBUFF"))
+                elif chip.effect_type in ["GENERAL_HANA_SPECIAL3", "GENERAL_HANA_SPECIAL4"]:
+                    self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, STATUS_DESCS["Rupture"], duration=2, type="DEBUFF"))
+                    if is_crit:
+                        self.apply_status_logic(target, StatusEffect("Hopeless Blossom", "[hot_pink]❁[/hot_pink]", 0, STATUS_DESCS.get("Hopeless Blossom", ""), duration=3, type="DEBUFF"))
+                elif chip.effect_type in ["GENERAL_HANA_SPECIAL6", "GENERAL_HANA_SPECIAL7", "GENERAL_HANA_SPECIAL8"]:
+                    if chip.effect_type in ["GENERAL_HANA_SPECIAL6", "GENERAL_HANA_SPECIAL8"]:
+                        self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 5, STATUS_DESCS["Rupture"], duration=0, type="DEBUFF"))
+                    if chip.effect_type == "GENERAL_HANA_SPECIAL7":
+                        if any(s.name == "Hopeless Blossom" for s in target.status_effects):
+                            heal_amt = max(1, damage // 2)
+                            attacker.hp = min(attacker.max_hp, attacker.hp + heal_amt)
+                            team = self.allies if attacker in self.allies else self.enemies
+                            valid = [a for a in team if a.hp > 0 and a != attacker]
+                            if valid:
+                                ally = random.choice(valid)
+                                ally.hp = min(ally.max_hp, ally.hp + heal_amt)
+                    if chip.effect_type in ["GENERAL_HANA_SPECIAL6", "GENERAL_HANA_SPECIAL7"]:
+                        team = self.enemies if target in self.enemies else self.allies
+                        valid = [u for u in team if u.hp > 0 and u != target]
+                        if valid:
+                            blossom_targets = [u for u in valid if any(s.name == "Hopeless Blossom" for s in u.status_effects)]
+                            target = random.choice(blossom_targets) if blossom_targets else random.choice(valid)
+                # --- HOPELESS BLOSSOM TRIGGER ---
+                hb = next((s for s in target.status_effects if s.name == "Hopeless Blossom"), None)
+                if hb:
+                    hb_dmg = max(1, hb.duration // 2)
+                    target.hp -= hb_dmg
+                    hb.duration -= 1
+                    self.log(f"[hot_pink]Hopeless Blossom deals {hb_dmg} damage to {target.name}![/hot_pink]")
+                    hana_unit = next((u for u in self.allies + self.enemies if "General Of The Ten Thousand Blossom Brotherhood" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name) and u.hp > 0), None)
+                    if hana_unit:
+                        old_tally = getattr(self, "hana_blossom_tally", 0)
+                        self.hana_blossom_tally = old_tally + hb_dmg
+                        
+                        if old_tally < 10 and self.hana_blossom_tally >= 10:
+                            hana_unit.deck.insert(random.randint(0, len(hana_unit.deck)), copy.deepcopy(hana_unit.appendable_skills["EX1"]))
+                            self.log(f"[hot_pink]Hana appends Move As A “Phantom [幻影]” to her deck![/hot_pink]")
+                        if old_tally < 30 and self.hana_blossom_tally >= 30:
+                            hana_unit.deck.insert(random.randint(0, len(hana_unit.deck)), copy.deepcopy(hana_unit.appendable_skills["EX2"]))
+                            self.log(f"[hot_pink]Hana appends The Great Ocean Receives a Hundred Rivers [海纳百川有容乃大] to her deck![/hot_pink]")
+                    if hb.duration <= 0:
+                        target.status_effects.remove(hb)
                 
                 # NEXT HIT BONUSES (MOVED TO STEP 3)
                 elif chip.effect_type == "ON_HIT_NEXT_TAKEN_FLAT": target.next_hit_taken_flat_bonus += chip.effect_val
