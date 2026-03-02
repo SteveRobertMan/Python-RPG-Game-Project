@@ -601,19 +601,46 @@ def manage_unit_loadout(unit, player_obj):
             for skill, count in sorted_pool:
                 # Formatting Data
                 c = get_element_color(skill.element)
-                # Roman Numeral conversion
-                tiers = ["", "I", "II", "III", "IV", "V"]
-                t_r = tiers[skill.tier] if 0 < skill.tier <= 5 else str(skill.tier)
+                t_r = get_tier_roman(skill.tier)
                 
                 # Header Line
                 header = f"x{count} [{c}]{skill.name}[/{c}] ({t_r}) [bold]Dmg: {skill.base_damage}[/bold]"
                 
+                # --- CHIP SKILL / DETAILED DESCRIPTION LOGIC ---
+                if hasattr(skill, "inspect_description") and skill.inspect_description:
+                    desc = skill.inspect_description
+                else:
+                    desc = skill.description if skill.description else ""
+                    
                 # Condition: Only add description line if description exists
-                if skill.description:
-                    deck_text += f"{header}\n       [light_green]{skill.description}[/light_green]\n"
+                if desc:
+                    formatted_desc = desc.replace("\n", "\n")
+                    deck_text += f"{header}\n       [light_green]{formatted_desc}[/light_green]\n"
                 else:
                     # No description: Just the header, then move to next line
                     deck_text += f"{header}\n"
+                    
+            # --- EXTERNAL SKILL POOL LOGIC ---
+            app_skills = getattr(unit.kata, "appendable_skills", None) if unit.kata else None
+            if app_skills:
+                deck_text += "\n[bold]External Skill Pool:[/bold]\n"
+                sorted_external = sorted(app_skills.items())
+                for idx, (_, skill) in enumerate(sorted_external):
+                    c = get_element_color(skill.element)
+                    t_r = get_tier_roman(skill.tier)
+                    
+                    header = f"[bold light_green]EX{idx+1}[/bold light_green]: [{c}]{skill.name}[/{c}] ({t_r}) [bold]Dmg: {skill.base_damage}[/bold]"
+                    
+                    if hasattr(skill, "inspect_description") and skill.inspect_description:
+                        desc = skill.inspect_description
+                    else:
+                        desc = skill.description if skill.description else ""
+                        
+                    if desc:
+                        formatted_desc = desc.replace("\n", "\n")
+                        deck_text += f"{header}\n       [light_green]{formatted_desc}[/light_green]\n"
+                    else:
+                        deck_text += f"{header}\n"
         else:
             deck_text = "[dim]No Kata or Skills available.[/dim]"
 

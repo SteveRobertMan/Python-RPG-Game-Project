@@ -1640,7 +1640,7 @@ def get_enemy_database():
     df_s3 = ChipSkill("Isolate The Enemy ◈◈◈", 3, EL_LUDUS, [df_s3_c1, df_s3_c2, df_s3_c3], description=df_s3_desc, inspect_description=df_s3_insp)
     k_ttbb_df.skill_pool_def = [(df_s1, 4), (df_s2, 2), (df_s3, 2)]
     df_p1 = Passive("Fading Form", "Take -70% Base Damage from skills. Take 300% Damage from the Status Effects Bleed and Rupture (counts Unique Effects). When taking damage from a skill that is not the element Eros or Agape, take -2 Final Damage next turn (this effect can stack up to 5 times, max -10 Final Damage)", "PASSIVE_FADING_FORM", color="grey74")
-    df_p2 = Passive("Nostalgia Of A Camaraderie", "On the first 3 times an ally of this unit from “Ten Thousand Blossom Brotherhood” takes damage from a skill, instantly heals (6-Order of allied unit attacker, minimum 0) HP (counts self, but does not heal self, this effect cannot stack)", "PASSIVE_CAMARADERIE", color="hot_pink")
+    df_p2 = Passive("Nostalgia Of A Camaraderie", "On the first 3 times an ally of this unit from “Ten Thousand Blossom Brotherhood” takes damage from a skill, instantly heals (6-Order of allied unit attacker, min 0) HP (counts self, but does not heal self, this effect cannot stack)", "PASSIVE_CAMARADERIE", color="hot_pink")
     k_ttbb_df.passives.extend([df_p1, df_p2])
     ttbb_df.equip_kata(k_ttbb_df)
     ttbb_df.description = "tenthousandblossombrotherhooddefender"
