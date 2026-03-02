@@ -468,7 +468,7 @@ class BattleManager:
         # --- INK [墨] TURN START LOGIC ---
         ink = next((s for s in unit.status_effects if s.name == "Ink [墨]"), None)
         if ink:
-            is_natsume = "Yokubukai Natsume" in (unit.kata.name if hasattr(unit, "kata") and unit.kata else unit.name)
+            is_natsume = "Yunhai Association Xiangyun | Yokubukai Natsume" in (unit.kata.name if hasattr(unit, "kata") and unit.kata else unit.name)
             if is_natsume:
                 bonus = min(3, ink.duration // 2)
                 unit.temp_modifiers["outgoing_base_dmg_flat"] = unit.temp_modifiers.get("outgoing_base_dmg_flat", 0) + bonus
@@ -490,7 +490,7 @@ class BattleManager:
                         self.apply_status_logic(target, StatusEffect("Sinking", "[blue3]♆[/blue3]", val, STATUS_DESCS["Sinking"], duration=1, type="DEBUFF"))
                     else:
                         self.apply_status_logic(target, StatusEffect("Sinking", "[blue3]♆[/blue3]", 1, STATUS_DESCS["Sinking"], duration=val, type="DEBUFF"))
-                    self.log(f"[grey27]Ink [墨] bursts! {unit.name} and {target.name} are drenched in Sinking![/grey27]")
+                    self.log(f"[grey27]Ink [墨] bursts! {unit.name} and {target.name} are inflicted with Sinking![/grey27]")
 
     def resolve_combat_start_effects(self):
         activated_any = False
@@ -736,7 +736,7 @@ class BattleManager:
             total_sinking = sum((next((s for s in u.status_effects if s.name == "Sinking"), None).potency + next((s for s in u.status_effects if s.name == "Sinking"), None).duration) for u in all_units if u.hp > 0 and u != unit and any(s.name == "Sinking" for s in u.status_effects))
             gain = min(4, total_sinking // 10)
             if gain > 0:
-                self.apply_status_logic(unit, StatusEffect("Ink [墨]", "[grey27]墨[/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=gain, type="BUFF"))
+                self.apply_status_logic(unit, StatusEffect("Ink [墨]", "[grey27][墨][/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=gain, type="BUFF"))
 
     def process_turn_end_effects(self):
         effects_triggered = False
@@ -1305,12 +1305,11 @@ class BattleManager:
 
             # ACT 4 KATAS (SECOND HALF UPDATE)
             if skill.effect_type == "KAGEROU_NAGANOHARA_SPECIAL3":
-                v_desc = "Critical Hit damage +(Count*8%, max 40%)\nApply the following effects when owning at least 1 Count:\nTurn Start and End: Heal by (Poise Count-1, max 7), then fix this unit’s Poise Count to exactly 1. Max Count: 5"
                 if not getattr(self, "naganohara_s3_used", False):
                     self.naganohara_s3_used = True
-                    self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, v_desc, duration=4, type="BUFF"))
+                    self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, STATUS_DESCS["Vibrant Invisibility"], duration=4, type="BUFF"))
                 else:
-                    self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, v_desc, duration=2, type="BUFF"))
+                    self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, STATUS_DESCS["Vibrant Invisibility"], duration=2, type="BUFF"))
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 13, STATUS_DESCS["Poise"], duration=0))
 
         # --- PREPARE MULTI-HIT LOGIC ---
@@ -1321,7 +1320,7 @@ class BattleManager:
             
             # --- NATSUME PER-CHIP BUFFS ---
             if chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL2":
-                self.apply_status_logic(attacker, StatusEffect("Ink [墨]", "[grey27]墨[/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=1, type="BUFF"))
+                self.apply_status_logic(attacker, StatusEffect("Ink [墨]", "[grey27][墨][/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=1, type="BUFF"))
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 5, STATUS_DESCS["Poise"], duration=2))
             elif chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL1":
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 6, STATUS_DESCS["Poise"], duration=0))
@@ -1703,13 +1702,12 @@ class BattleManager:
                             target.temp_modifiers["outgoing_dmg_flat"] -= 3
                             if any(s.name == "Bleed" for s in target.status_effects):
                                 bonus_crit_final_dmg += 3
-                            v_desc = "Critical Hit damage +(Count*8%, max 40%)\nApply the following effects when owning at least 1 Count:\nTurn Start and End: Heal by (Poise Count-1, max 7), then fix this unit’s Poise Count to exactly 1. Max Count: 5"
-                            self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, v_desc, duration=1, type="BUFF"))
+                            self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, STATUS_DESCS["Vibrant Invisibility"], duration=1, type="BUFF"))
                         # --- YUNHAI NATSUME CRIT TRIGGERS & RETOSS ---
                         elif chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL1":
                             ink = next((s for s in attacker.status_effects if s.name == "Ink [墨]"), None)
-                            gain = 1 if (ink and ink.duration >= 3) else 2
-                            self.apply_status_logic(attacker, StatusEffect("Ink [墨]", "[grey27]墨[/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=gain, type="BUFF"))
+                            gain = 2 if (ink and ink.duration >= 3) else 3
+                            self.apply_status_logic(attacker, StatusEffect("Ink [墨]", "[grey27][墨][/grey27]", 1, STATUS_DESCS["Ink [墨]"], duration=gain, type="BUFF"))
                         elif chip.effect_type in ["YUNHAI_ADMIN_NATSUME_SPECIAL2", "YUNHAI_ADMIN_NATSUME_SPECIAL3"]:
                             if chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL3":
                                 sink = next((s for s in target.status_effects if s.name == "Sinking"), None)
@@ -2922,7 +2920,7 @@ class BattleManager:
             elif chip.effect_type == "YUNHAI_ADMIN_NATSUME_EX_HIT":
                 ink = next((s for s in attacker.status_effects if s.name == "Ink [墨]"), None)
                 if ink:
-                    self.apply_status_logic(target, StatusEffect("Ink [墨]", "[grey27]墨[/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=1, type="BUFF"))
+                    self.apply_status_logic(target, StatusEffect("Ink [墨]", "[grey27][墨][/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=1, type="BUFF"))
                     dist_amt = ink.duration
                     all_units = self.allies + self.enemies
                     living = [u for u in all_units if u.hp > 0]
@@ -2930,7 +2928,7 @@ class BattleManager:
                     
                     for _ in range(dist_amt):
                         t = random.choice(sinking_targets) if sinking_targets else random.choice(living)
-                        self.apply_status_logic(t, StatusEffect("Ink [墨]", "[grey27]墨[/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=1, type="BUFF"))
+                        self.apply_status_logic(t, StatusEffect("Ink [墨]", "[grey27][墨][/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=1, type="BUFF"))
                     self.log(f"[grey27]{attacker.name} distributes {dist_amt} Ink [墨] across the field![/grey27]")
 
             """
