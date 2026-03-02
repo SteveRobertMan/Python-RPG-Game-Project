@@ -461,14 +461,19 @@ class BattleManager:
             poise = next((s for s in unit.status_effects if s.name == "Poise"), None)
             if poise and poise.duration > 1:
                 heal = min(7, poise.duration - 1)
-                unit.hp = min(unit.max_hp, unit.hp + heal)
-                poise.duration = 1
-                self.log(f"[aquamarine1]{unit.name} heals {heal} HP from Vibrant Invisibility![/aquamarine1]")
+                if heal >= 1:
+                    unit.hp = min(unit.max_hp, unit.hp + max(1, heal))
+                    poise.duration = 1
+                    self.log(f"[aquamarine1]{unit.name} heals {heal} HP from Vibrant Invisibility![/aquamarine1]")
+            if v_invis.duration <= 0:
+                unit.status_effects.remove(v_invis)
         
         # --- INK [墨] TURN START LOGIC ---
         ink = next((s for s in unit.status_effects if s.name == "Ink [墨]"), None)
         if ink:
-            is_natsume = "Yunhai Association Xiangyun | Yokubukai Natsume" in (unit.kata.name if hasattr(unit, "kata") and unit.kata else unit.name)
+            # Safely combine kata name and unit name to catch all variations of her identity
+            name_check = f"{unit.kata.name if hasattr(unit, 'kata') and unit.kata else ''} {unit.name}"
+            is_natsume = "Yunhai Association Xiangyun" in name_check and "Natsume" in name_check
             if is_natsume:
                 bonus = min(3, ink.duration // 2)
                 unit.temp_modifiers["outgoing_base_dmg_flat"] = unit.temp_modifiers.get("outgoing_base_dmg_flat", 0) + bonus
@@ -483,7 +488,8 @@ class BattleManager:
                     self.apply_status_logic(unit, StatusEffect("Sinking", "[blue3]♆[/blue3]", 1, STATUS_DESCS["Sinking"], duration=val, type="DEBUFF"))
                 # Redistribute to another random unit (not Natsume)
                 all_units = self.allies + self.enemies
-                valid = [u for u in all_units if u.hp > 0 and u != unit and "Yokubukai Natsume" not in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                valid = [u for u in all_units if u.hp > 0 and u != unit and not ("Yunhai Association Xiangyun" in f"{u.kata.name if hasattr(u, 'kata') and u.kata else ''} {u.name}" and "Natsume" in u.name)]
+                
                 if valid:
                     target = random.choice(valid)
                     if random.choice([True, False]):
@@ -635,13 +641,13 @@ class BattleManager:
         elif skill.effect_type == "KAGEROU_SPECIAL_7":
             unit.reflect_flickering_damage = True
 
-        elif skill.effect_type == "YUNHAI_AKASUKE_SPECIAL1":
+        if skill.effect_type == "YUNHAI_AKASUKE_SPECIAL1":
             team = self.allies if unit in self.allies else self.enemies
             for member in team:
                 if member.hp > 0:
                     name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
                     if "Yunhai Association" in name_check:
-                        member.temp_modifiers["final_dmg_reduction"] += 2
+                        member.temp_modifiers["incoming_dmg_flat"] = member.temp_modifiers.get("incoming_dmg_flat", 0) - 2
         elif skill.effect_type == "YUNHAI_AKASUKE_SPECIAL2":
             team = self.allies if unit in self.allies else self.enemies
             for member in team:
@@ -649,7 +655,7 @@ class BattleManager:
                     name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
                     if "Yunhai Association" in name_check:
                         member.temp_modifiers["outgoing_base_dmg_flat"] = member.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 2
-        elif skill.effect_type == "YUNHAI_NAGANOHARA_SPECIAL2":
+        if skill.effect_type == "YUNHAI_NAGANOHARA_SPECIAL2":
             team = self.allies if unit in self.allies else self.enemies
             for member in team:
                 if member.hp > 0:
@@ -721,9 +727,9 @@ class BattleManager:
             v_invis = next((s for s in unit.status_effects if s.name == "Vibrant Invisibility"), None)
             v_count = v_invis.duration if v_invis else 0
             self.apply_status_logic(unit, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", v_count * 2, STATUS_DESCS["Poise"], duration=0))
-            unit.temp_modifiers["incoming_dmg_flat"] += (6 - v_count)   
+            unit.temp_modifiers["incoming_dmg_flat"] += max(0, 3 - v_count)
         elif skill.effect_type == "KAGEROU_NAGANOHARA_SPECIAL3":
-            unit.temp_modifiers["incoming_dmg_flat"] += 2
+            unit.temp_modifiers["incoming_dmg_flat"] -= 4
             unit.reflect_vibrant_invis_active = True
         
         elif skill.effect_type == "YUNHAI_ADMIN_NATSUME_CS1":
@@ -757,7 +763,7 @@ class BattleManager:
 
                 if effect.name == "Bleed":
                     pass 
-                elif effect.name in ["Bind", "Poise", "Haste", "Overheat"]:
+                elif effect.name in ["Bind", "Poise", "Haste", "Overheat", "Vibrant Invisibility"]:
                     effect.duration -= 1
                 elif effect.name == "Fairylight":
                     old_duration = effect.duration
@@ -832,16 +838,6 @@ class BattleManager:
                     poise = next((s for s in unit.status_effects if s.name == "Poise"), None)
                     if not poise: self.apply_status_logic(unit, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=invis.duration))
                     elif poise.duration < invis.duration: poise.duration = invis.duration
-            
-            # --- VIBRANT INVISIBILITY TURN END POISE HEAL ---
-            v_invis = next((s for s in unit.status_effects if s.name == "Vibrant Invisibility"), None)
-            if v_invis:
-                poise = next((s for s in unit.status_effects if s.name == "Poise"), None)
-                if poise and poise.duration > 1:
-                    heal = min(7, poise.duration - 1)
-                    unit.hp = min(unit.max_hp, unit.hp + heal)
-                    poise.duration = 1
-                    self.log(f"[aquamarine1]{unit.name} heals {heal} HP from Vibrant Invisibility![/aquamarine1]")
 
             # --- End of Unit Loop: Transfer Sinking Tally ---
             unit.active_ls = getattr(unit, "pending_ls", 0)
@@ -1060,7 +1056,7 @@ class BattleManager:
                 self.ally_action_queue.append((winner, skill_to_use, target))
             
             self.render_battle_screen(active_unit=winner)
-            config.console.print(f"[bold yellow]AUTO:[/bold yellow] {winner.name} selects {skill_to_use.name} (Tier {get_tier_roman(skill_to_use.tier)})")
+            config.console.print(f"[bold yellow]AUTO:[/bold yellow] {winner.name} selects {skill_to_use.name} (Tier {get_tier_roman(skill_to_use.tier)})", highlight=False)
             time.sleep(0.3)
 
     def select_skill_for_ally(self, ally):
@@ -1290,12 +1286,12 @@ class BattleManager:
                 team = self.allies if attacker in self.allies else self.enemies
                 valid = [u for u in team if u.hp > 0]
                 if valid:
-                    yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                    yh = [u for u in valid if any(fac in (u.kata.name if hasattr(u, "kata") and u.kata else u.name) for fac in ["Yunhai Association", "Luoxia Gardening School", "Black Water Dock"])]
                     others = [u for u in valid if u not in yh]
                     pool = sorted(yh, key=lambda x: x.hp/x.max_hp) + sorted(others, key=lambda x: x.hp/x.max_hp)
                     target_to_heal = pool[0]
                     heal_amt = int(attacker.max_hp * 0.10)
-                    target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + heal_amt)
+                    target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + max(1, heal_amt))
                     self.log(f"[light_green]-> {attacker.name} Heals {target_to_heal.name} for {heal_amt}.[/light_green]")
             elif skill.effect_type == "GAIN_POISE_SPECIAL_4":
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=2))
@@ -1323,7 +1319,7 @@ class BattleManager:
                 self.apply_status_logic(attacker, StatusEffect("Ink [墨]", "[grey27][墨][/grey27]", 1, STATUS_DESCS.get("Ink [墨]", "Ink"), duration=1, type="BUFF"))
                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 5, STATUS_DESCS["Poise"], duration=2))
             elif chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL1":
-                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 6, STATUS_DESCS["Poise"], duration=0))
+                self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 6, STATUS_DESCS["Poise"], duration=2))
             
             # FIZZLE MECHANIC: If target died on previous hit, abort remaining hits
             if target.hp <= 0:
@@ -1543,6 +1539,15 @@ class BattleManager:
                 if any(p.effect_type == "PASSIVE_KAGEROU_INVISIBILITY" for p in active_tgt_passives):
                     f_invis = next((s for s in target.status_effects if s.name == "Flickering Invisibility"), None)
                     if f_invis: base_dmg_val -= min(5, f_invis.duration)
+                # --- VIBRANT INVISIBILITY BASE DMG REDUCTION (WHEN HIT) ---
+                v_invis_tgt = next((s for s in target.status_effects if s.name == "Vibrant Invisibility"), None)
+                if v_invis_tgt and v_invis_tgt.duration >= 3:
+                    base_dmg_reduction = min(5, v_invis_tgt.duration)
+                    base_dmg_val -= base_dmg_reduction
+                    v_invis_tgt.duration -= 1
+                    self.log(f"[aquamarine1]Vibrant Invisibility deflected {base_dmg_reduction} Base Damage! (Count -1)[/aquamarine1]")
+                    if v_invis_tgt.duration <= 0:
+                        target.status_effects.remove(v_invis_tgt)
 
                 # 2. Bind Penalty
                 bind_effect = next((s for s in attacker.status_effects if s.name == "Bind"), None)
@@ -1569,7 +1574,7 @@ class BattleManager:
                     for member in team:
                         if member.hp > 0:
                             name_check = member.kata.name if hasattr(member, "kata") and member.kata else member.name
-                            if "Yunhai Region" in name_check:
+                            if any(fac in name_check for fac in ["Yunhai Association", "Luoxia Gardening School", "Black Water Dock"]):
                                 member.temp_modifiers["outgoing_dmg_flat"] = member.temp_modifiers.get("outgoing_dmg_flat", 0) + 1
                 elif skill.effect_type == "YUNHAI_KAGAKU_SPECIAL4":
                     self.yunhai_next_ally_buff = {"base": 5, "captain": 7, "source": attacker}
@@ -1675,7 +1680,7 @@ class BattleManager:
                                     u.temp_modifiers["outgoing_dmg_mult"] *= 1.10
                             self.apply_status_logic(target, StatusEffect("Paralysis", "[orange1]ϟ[/orange1]", 1, STATUS_DESCS["Paralysis"], duration=2, type="DEBUFF"))
                         elif chip.effect_type == "YUNHAI_YURI_SPECIAL3":
-                            heal_amt = damage
+                            heal_amt = max(1, dmg)
                             team = self.allies if attacker in self.allies else self.enemies
                             for u in team:
                                 if "Yunhai Association" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name):
@@ -1686,7 +1691,7 @@ class BattleManager:
                         if chip.effect_type == "YUNHAI_KAGAKU_SPECIAL1":
                             self.yunhai_next_ally_buff = {"base": 2, "captain": 4, "source": attacker}
                         elif chip.effect_type in ["YUNHAI_KAGAKU_SPECIAL2", "YUNHAI_KAGAKU_SPECIAL3"]:
-                            heal_amt = damage * 2
+                            heal_amt = max(1, dmg * 2)
                             team = self.allies if attacker in self.allies else self.enemies
                             for u in team:
                                 if u.hp > 0:
@@ -1701,7 +1706,7 @@ class BattleManager:
                         elif chip.effect_type == "KAGEROU_NAGANOHARA_SPECIAL2":
                             target.temp_modifiers["outgoing_dmg_flat"] -= 3
                             if any(s.name == "Bleed" for s in target.status_effects):
-                                bonus_crit_final_dmg += 3
+                                bonus_crit_final_dmg += 5
                             self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, STATUS_DESCS["Vibrant Invisibility"], duration=1, type="BUFF"))
                         # --- YUNHAI NATSUME CRIT TRIGGERS & RETOSS ---
                         elif chip.effect_type == "YUNHAI_ADMIN_NATSUME_SPECIAL1":
@@ -1839,7 +1844,7 @@ class BattleManager:
                     living_teammates = [u for u in team if u.hp > 0]
                     if living_teammates:
                         lowest_unit = min(living_teammates, key=lambda u: u.hp / u.max_hp)
-                        heal_amt = damage
+                        heal_amt = max(1, damage)
                         lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
                         self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
                     damage = 0
@@ -1847,7 +1852,7 @@ class BattleManager:
                 # CUSTOM NON-DAMAGE & HEALING SKILLS
                 if chip.effect_type in ["SELF_HEAL_TYPE1", "EAGLE_SPECIAL_3", "JOKE_SKILL"]:
                     if chip.effect_type == "SELF_HEAL_TYPE1":
-                        heal_amt = damage
+                        heal_amt = max(1, damage)
                         attacker.hp = min(attacker.max_hp, attacker.hp + heal_amt)
                         self.log(f"[light_green]-> {attacker.name} Heals self for {heal_amt}.[/light_green]")
                         damage = 0
@@ -1856,7 +1861,7 @@ class BattleManager:
                         living_teammates = [u for u in team if u.hp > 0]
                         if living_teammates:
                             lowest_unit = min(living_teammates, key=lambda u: u.hp / u.max_hp)
-                            heal_amt = damage
+                            heal_amt = max(1, damage)
                             lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
                             self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
                             for a in living_teammates:
@@ -1939,7 +1944,7 @@ class BattleManager:
                         living_teammates = [u for u in team if u.hp > 0]
                         if living_teammates:
                             lowest_unit = min(living_teammates, key=lambda u: u.hp / u.max_hp)
-                            heal_amt = damage 
+                            heal_amt = max(1, damage)
                             lowest_unit.hp = min(lowest_unit.max_hp, lowest_unit.hp + heal_amt)
                             self.log(f"[light_green]-> {attacker.name} Heals {lowest_unit.name} for {heal_amt}.[/light_green]")
 
@@ -2085,40 +2090,40 @@ class BattleManager:
                             target.next_turn_modifiers["final_dmg_reduction"] = target.next_turn_modifiers.get("final_dmg_reduction", 0) + 5
                             self.log(f"[bold green][Passive][/bold green] Blind Spots activated! {target.name} takes -5 Final Damage next turn!")
 
-                # --- IBARA NINJA HIT & THORN LOGIC ---
-                active_tgt_passives = getattr(target, "passives", []) or (getattr(target.kata, "passives", []) if getattr(target, "kata", None) else [])
-                if any(p.effect_type == "PASSIVE_IBARA_INVISIBILITY" for p in active_tgt_passives):
-                    is_beni_shige = "Benikawa" in attacker.name or "Shigemura" in attacker.name
-                    if not is_beni_shige:
-                        # Once per skill check
-                        if not getattr(self, "current_skill_ibara_rupture_applied", False):
-                            self.current_skill_ibara_rupture_applied = True
-                            self.apply_status_logic(attacker, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, STATUS_DESCS["Rupture"], duration=0))
-                    else:
-                        guaranteed = getattr(self, "ibara_invis_loss_guaranteed", False)
-                        if guaranteed or random.random() < 0.75:
-                            self.ibara_invis_loss_guaranteed = False
-                            invis = next((s for s in target.status_effects if s.name == "Invisibility"), None)
-                            if invis:
-                                invis.duration -= 1
-                                self.log(f"[purple4]{target.name} lost 1 Invisibility![/purple4]")
-                                if invis.duration <= 0:
-                                    target.status_effects.remove(invis)
-                                    self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, STATUS_DESCS["Bind"], duration=5))
-                                    self.apply_status_logic(target, StatusEffect("Invisibility", "[purple4]⛆[/purple4]", 0, STATUS_DESCS["Invisibility"], duration=3, type="BUFF"))
-                                    self.log(f"[bold purple4]Invisibility broken! {target.name} instantly gains 5 Bind and 3 Invisibility![/bold purple4]")
+                    # --- IBARA NINJA HIT & THORN LOGIC ---
+                    active_tgt_passives = getattr(target, "passives", []) or (getattr(target.kata, "passives", []) if getattr(target, "kata", None) else [])
+                    if any(p.effect_type == "PASSIVE_IBARA_INVISIBILITY" for p in active_tgt_passives):
+                        is_beni_shige = "Benikawa" in attacker.name or "Shigemura" in attacker.name
+                        if not is_beni_shige:
+                            # Once per skill check
+                            if not getattr(self, "current_skill_ibara_rupture_applied", False):
+                                self.current_skill_ibara_rupture_applied = True
+                                self.apply_status_logic(attacker, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, STATUS_DESCS["Rupture"], duration=0))
                         else:
-                            self.ibara_invis_loss_guaranteed = True
-                            self.log(f"[dim]{target.name} evaded the Invisibility break... next hit is guaranteed to break![/dim]")
+                            guaranteed = getattr(self, "ibara_invis_loss_guaranteed", False)
+                            if guaranteed or random.random() < 0.75:
+                                self.ibara_invis_loss_guaranteed = False
+                                invis = next((s for s in target.status_effects if s.name == "Invisibility"), None)
+                                if invis:
+                                    invis.duration -= 1
+                                    self.log(f"[purple4]{target.name} lost 1 Invisibility![/purple4]")
+                                    if invis.duration <= 0:
+                                        target.status_effects.remove(invis)
+                                        self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, STATUS_DESCS["Bind"], duration=5))
+                                        self.apply_status_logic(target, StatusEffect("Invisibility", "[purple4]⛆[/purple4]", 0, STATUS_DESCS["Invisibility"], duration=3, type="BUFF"))
+                                        self.log(f"[bold purple4]Invisibility broken! {target.name} instantly gains 5 Bind and 3 Invisibility![/bold purple4]")
+                            else:
+                                self.ibara_invis_loss_guaranteed = True
+                                self.log(f"[dim]{target.name} evaded the Invisibility break... next hit is guaranteed to break![/dim]")
 
-                # Thorn / Outcast Battle End Trigger
-                if any(p.effect_type == "PASSIVE_IBARA_THORN" for p in active_tgt_passives):
-                    invis = next((s for s in target.status_effects if s.name == "Invisibility"), None)
-                    if target.hp <= 500 and not invis:
-                        self.log(f"[bold purple4]{target.name} yields the battle! Thorn/Outcast activated![/bold purple4]")
-                        self.is_battle_over = True
-                        self.won = True
-                        return
+                    # Thorn / Outcast Battle End Trigger
+                    if any(p.effect_type == "PASSIVE_IBARA_THORN" for p in active_tgt_passives):
+                        invis = next((s for s in target.status_effects if s.name == "Invisibility"), None)
+                        if target.hp <= 500 and not invis:
+                            self.log(f"[bold purple4]{target.name} yields the battle! Thorn/Outcast activated![/bold purple4]")
+                            self.is_battle_over = True
+                            self.won = True
+                            return
 
                     # --- ATTACKER ORDER TRACKER ---
                     order_list = self.ally_attacker_order if attacker in self.allies else self.enemy_attacker_order
@@ -2245,14 +2250,19 @@ class BattleManager:
                         valid = [u for u in team if u.hp > 0 and u != attacker]
                         yh = [u for u in valid if "Yunhai Association" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
                         others = [u for u in valid if u not in yh]
+                        # Add shuffles to ensure random selection while keeping prioritization
+                        random.shuffle(yh)
+                        random.shuffle(others)
                         for a in (yh + others)[:2]:
                             self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=2))
                     elif chip.effect_type == "YUNHAI_AKASUKE_SPECIAL2":
-                        self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, STATUS_DESCS["Rupture"], duration=2))
                         team = self.allies if attacker in self.allies else self.enemies
                         valid = [u for u in team if u.hp > 0 and u != attacker]
                         yh = [u for u in valid if "Yunhai Association" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
                         others = [u for u in valid if u not in yh]
+                        # Add shuffles to ensure random selection while keeping prioritization
+                        random.shuffle(yh)
+                        random.shuffle(others)
                         for a in (yh + others)[:2]:
                             self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=0))
                     elif chip.effect_type == "YUNHAI_NAGANOHARA_SPECIAL1":
@@ -2270,7 +2280,7 @@ class BattleManager:
                         team = self.allies if attacker in self.allies else self.enemies
                         valid = [u for u in team if u.hp > 0 and u != attacker]
                         if valid:
-                            yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                            yh = [u for u in valid if any(fac in (u.kata.name if hasattr(u, "kata") and u.kata else u.name) for fac in ["Yunhai Association", "Luoxia Gardening School", "Black Water Dock"])]
                             others = [u for u in valid if u not in yh]
                             target_to_heal = (sorted(yh, key=lambda x: x.hp/x.max_hp) + sorted(others, key=lambda x: x.hp/x.max_hp))[0]
                             target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + damage)
@@ -2282,16 +2292,16 @@ class BattleManager:
                         team = self.allies if attacker in self.allies else self.enemies
                         valid = [u for u in team if u.hp > 0 and u != attacker]
                         if valid:
-                            yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                            yh = [u for u in valid if any(fac in (u.kata.name if hasattr(u, "kata") and u.kata else u.name) for fac in ["Yunhai Association", "Luoxia Gardening School", "Black Water Dock"])]
                             others = [u for u in valid if u not in yh]
                             target_to_heal = (sorted(yh, key=lambda x: x.hp/x.max_hp) + sorted(others, key=lambda x: x.hp/x.max_hp))[0]
-                            target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + damage)
+                            target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + max(1, damage))
                             self.log(f"[light_green]-> {attacker.name} Heals {target_to_heal.name} for {damage}.[/light_green]")
                     elif chip.effect_type == "LUOXIA_HEAL_TYPE1":
                         team = self.allies if attacker in self.allies else self.enemies
                         valid = [u for u in team if u.hp > 0]
                         if valid:
-                            yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                            yh = [u for u in valid if any(fac in (u.kata.name if hasattr(u, "kata") and u.kata else u.name) for fac in ["Yunhai Association", "Luoxia Gardening School", "Black Water Dock"])]
                             others = [u for u in valid if u not in yh]
                             target_to_heal = (yh + others)[0]
                             target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + damage)
@@ -2301,10 +2311,10 @@ class BattleManager:
                             team = self.allies if attacker in self.allies else self.enemies
                             valid = [u for u in team if u.hp > 0]
                             if valid:
-                                yh = [u for u in valid if "Yunhai Region" in (u.kata.name if hasattr(u, "kata") and u.kata else u.name)]
+                                yh = [u for u in valid if any(fac in (u.kata.name if hasattr(u, "kata") and u.kata else u.name) for fac in ["Yunhai Association", "Luoxia Gardening School", "Black Water Dock"])]
                                 others = [u for u in valid if u not in yh]
                                 target_to_heal = (yh + others)[0]
-                                target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + damage)
+                                target_to_heal.hp = min(target_to_heal.max_hp, target_to_heal.hp + max(1, damage))
                                 self.log(f"[light_green]-> {attacker.name} Heals {target_to_heal.name} for {damage}.[/light_green]")
                     elif chip.effect_type == "LUOXIA_HANA_SPECIAL1":
                         if any(s.name in POISE_LIST for s in attacker.status_effects):
@@ -2461,7 +2471,7 @@ class BattleManager:
                 chosen_allies = random.sample(valid_allies, min(chip.effect_val, len(valid_allies)))
                 targets_to_heal = [attacker] + chosen_allies
                 for a in targets_to_heal:
-                    a.hp = min(a.max_hp, a.hp + damage)
+                    a.hp = min(a.max_hp, a.hp + max(1, damage))
                     self.log(f"[light_green]-> {attacker.name} Heals {a.name} for {damage}.[/light_green]")
                 damage = 0
 
