@@ -46,102 +46,71 @@ POISE_LIST = ["Poise", "Acceleration"]
 #   dealt", use the `damage` variable at the very end of the Step 2 calculation.
 #
 # -----------------------------------------------------------------------------------------------
-# 3. TIMING & LOGIC PLACEMENT (Where does my code go?)
+# 3. TIMING & LOGIC PLACEMENT (The [Step 1], [Step 2], [Step 3] Rule)
 # -----------------------------------------------------------------------------------------------
-# - [Combat Start]: Goes in `apply_combat_start_logic(self, unit, skill)`.
-# - [On Use]: Goes in `execute_skill` -> [STEP 1]. Runs ONCE per skill, regardless of hits.
-# - [Base Damage / Crit Buffs]: Goes in `execute_skill` -> [STEP 2] hit loop, before Final Damage 
-#   is locked.
-# - [On Hit] / [On Critical Hit]: Goes in `execute_skill` -> [STEP 3] ... BUT wait! 
-#   (!) CRITICAL RULE: These MUST go inside the `if damage > 0:` block! If an attack is negated 
-#   or misses (damage == 0), [On Hit] effects like Rupture or Healing should NOT trigger!
+# - [Combat Start]: Handled in `apply_combat_start_logic(self, unit, skill)`.
+# - [On Use]: Handled in `execute_skill` -> [STEP 1]. Runs exactly ONCE per skill, before any hits.
+# - [Base Damage / Crit Buffs]: Handled in `execute_skill` -> [STEP 2] hit loop, before Final Damage.
+# - [On Hit] / [On Critical Hit]: Handled in `execute_skill` -> [STEP 3] hit loop. 
+#   (!) CRITICAL RULE: [On Hit] effects (like applying Rupture, Healing, or Target Switching) 
+#   MUST be placed inside the `if damage > 0:` block! If an attack is negated or misses (damage == 0), 
+#   these effects should NOT trigger.
 #
 # -----------------------------------------------------------------------------------------------
-# 4. CHIP SKILLS vs. NORMAL SKILLS (The Traps)
+# 4. CHIP SKILLS vs. NORMAL SKILLS (The Trap)
 # -----------------------------------------------------------------------------------------------
-# - In the [STEP 2] hit loop, DO NOT check `skill.effect_type` for [On Hit] triggers if the unit 
-#   uses a ChipSkill. You MUST check `chip.effect_type`.
-# - Checking `skill.effect_type` inside the hit loop means the effect will either trigger for 
-#   every single chip (even if only one chip was supposed to have it) or fail completely.
+# - Inside the hit loops ([STEP 2] and [STEP 3]), DO NOT check `skill.effect_type` for [On Hit] 
+#   triggers if the unit uses a ChipSkill. You MUST check `chip.effect_type`.
+# - Checking `skill.effect_type` inside the hit loop causes the effect to either trigger for EVERY 
+#   single chip (even if only one chip was supposed to have it) or fail completely.
 #
 # -----------------------------------------------------------------------------------------------
-# 5. SAFE FACTION & NAME CHECKING
+# 5. SAFE FACTION & NAME CHECKING (Katas vs Base Identity)
 # -----------------------------------------------------------------------------------------------
-# Katas override unit identities. To check if a unit belongs to "Yunhai Association" or 
-# "Black Water Dock", ALWAYS use this exact safe-checking ternary logic:
+# - Katas override unit identities. To check if a unit belongs to a specific faction 
+#   (e.g., "Yunhai Association"), ALWAYS use this exact safe-checking ternary logic to avoid crashes:
 #   `name_check = target.kata.name if hasattr(target, "kata") and target.kata else target.name`
 #   `if "Yunhai Association" in name_check: ...`
 #
 # -----------------------------------------------------------------------------------------------
-# 6. GLOBAL TRACKERS (Next Ally Buffs, etc.)
+# 6. GLOBAL TURN TRACKERS ("Next Ally" Buffs)
 # -----------------------------------------------------------------------------------------------
-# If an effect says "Applies to the VERY NEXT ally to deal damage", initialize a tracker on `self`
-# inside `[On Use]`, then consume and set it back to `None` inside `[STEP 2]`. 
-# Clear it safely at the start of `battle_loop` to prevent bleed-over between turns.
-# Example: `self.yunhai_next_ally_buff = {"base": 5, "source": attacker}`
+# - If an effect says "Applies to the VERY NEXT ally to deal damage", initialize a tracker on `self`
+#   inside `[On Use]`, then consume and set it back to `None` inside `[STEP 2]`. 
+#   Example: `self.yunhai_next_ally_buff = {"base": 5, "source": attacker}`
+# - Always clear these trackers safely at the start of `battle_loop` to prevent bleed-over.
 #
 # -----------------------------------------------------------------------------------------------
 # 7. STATUS EFFECT FAMILIES (Lists)
 # -----------------------------------------------------------------------------------------------
-# When checking if a unit has "Rupture", do NOT just check `if s.name == "Rupture"`. 
-# Use `if any(s.name in RUPTURE_LIST for s in unit.status_effects):`. 
-# Why? Because variant effects (like "Fairylight") count as Rupture for conditionals.
-# Use `RUPTURE_LIST`, `POISE_LIST`, etc., defined at the top of the file.
+# - When checking if a unit has "Rupture", do NOT just check `if s.name == "Rupture"`. 
+#   Use `if any(s.name in RUPTURE_LIST for s in unit.status_effects):`. 
+#   Why? Because variant effects (like "Fairylight") count as Rupture for conditionals.
+#   Use `RUPTURE_LIST`, `POISE_LIST`, etc., defined at the top of the file.
 #
 # -----------------------------------------------------------------------------------------------
-# 8. TIMING & LOGIC PLACEMENT (The Step 1, 2, 3 Rule)
+# 8. DEFENSE TIERS & BRACING (The Reverse-Clash Mechanic)
 # -----------------------------------------------------------------------------------------------
-#    - [Combat Start]: Handled in `apply_combat_start_logic(self, unit, skill)`.
-#    - [On Use]: Handled in `execute_skill` -> [STEP 1]. Runs exactly ONCE per skill, before any hits.
-#    - [Base Damage / Crit Buffs]: Handled in `execute_skill` -> [STEP 2] hit loop, before Final Damage is calculated.
-#    - [On Hit] / [On Critical Hit]: Handled in `execute_skill` -> [STEP 3] hit loop. 
-#      (!) CRITICAL RULE: [On Hit] effects (like applying Rupture, Healing based on damage, or Target Switching) 
-#      MUST be placed inside the `if damage > 0:` block! If an attack is negated or misses (damage == 0), 
-#      these effects should NOT trigger.
+# - In Kokoro No Kata, using a HIGHER tier skill against a LOWER tier skill incurs a damage penalty 
+#   for the attacker (15% reduction per tier difference, up to 60%). 
+# - This acts as a "Bracing" mechanic: players can survive a boss's devastating Tier V ultimate by 
+#   purposely giving up offensive pressure and playing a Tier I skill to brace against the damage.
+# - Status Effects like `Paralysis` lower the attacker's perception of the target's defense tier, 
+#   effectively improving the target's bracing advantage and further impeding high-tier damage to
+#   not be able to damage through by much.
 #
 # -----------------------------------------------------------------------------------------------
-# 9. THE CHIP SKILL TRAP (`skill.effect_type` vs `chip.effect_type`)
-# -----------------------------------------------------------------------------------------------
-#    - Inside the hit loop ([STEP 2] and [STEP 3]), DO NOT check `skill.effect_type` for [On Hit] triggers 
-#      if the unit uses a ChipSkill. You MUST check `chip.effect_type`.
-#    - Checking `skill.effect_type` inside the hit loop causes the effect to either trigger for EVERY single 
-#      chip (even if only one chip was supposed to have it) or fail completely because Step 1 already ate the logic.
-#
-# -----------------------------------------------------------------------------------------------
-# 10. SAFE FACTION & NAME CHECKING (Katas vs. Base Identity)
-# -----------------------------------------------------------------------------------------------
-#    - When a unit equips a Kata, their "faction" or "identity" is tied to the Kata, not their base name. 
-#    - To check if a unit belongs to "Yunhai Association" or "Black Water Dock", ALWAYS use this exact 
-#      safe-checking ternary logic to avoid crash errors on enemies without katas:
-#      `name_check = target.kata.name if hasattr(target, "kata") and target.kata else target.name`
-#      `if "Yunhai Association" in name_check: ...`
-#
-# -----------------------------------------------------------------------------------------------
-# 11. GLOBAL TURN TRACKERS ("Next Ally" Buffs)
-# -----------------------------------------------------------------------------------------------
-#    - If a skill says "Applies a buff to the VERY NEXT ally to deal damage" (e.g., Kagaku's S1/S3), 
-#      you cannot use `temp_modifiers` because you don't know who the next ally will be.
-#    - Instead, initialize a tracker on `self` inside `[On Use]` or `[On Critical Hit]`: 
-#      `self.yunhai_next_ally_buff = {"base": 5, "source": attacker}`
-#    - Then, consume it inside `[STEP 2]` when a valid ally attacks, and immediately set it back to `None`.
-#    - Always clear these trackers safely at the start of `battle_loop` to prevent bleed-over between turns.
-# 
-# -----------------------------------------------------------------------------------------------
-# 12. RETOSS MECHANIC
+# 9. RETOSS MECHANIC
 # -----------------------------------------------------------------------------------------------
 # - To immediately reuse a chip (Retoss), we track `chip.retoss_count`. If conditions are met
-# - and `chip.retoss_count < MAX`, we `new_chip = copy.deepcopy(chip)`, increment its `retoss_count`,
-# - and `chips_to_execute.insert(chip_idx + 1, new_chip)`. The Python loop will naturally execute it next.
+#   and `chip.retoss_count < MAX`, we `new_chip = copy.deepcopy(chip)`, increment its `retoss_count`,
+#   and `chips_to_execute.insert(chip_idx + 1, new_chip)`. The loop naturally executes it next.
 #
 # -----------------------------------------------------------------------------------------------
-# 13. CONVERT vs GAIN
+# 10. CONVERT vs GAIN vs DISTRIBUTE vs REDISTRIBUTE
 # -----------------------------------------------------------------------------------------------
-# - "Convert": The unit LOSES the specified stacks to gain the new effect. (e.g. Convert (Rupture Potency/3) to Bleed Potency)
-# - "Gain" based on X: The unit KEEPS the original stacks and just gains the new effect. (e.g. Gain (Rupture Potency/3) Bleed Potency)
-#
-# -----------------------------------------------------------------------------------------------
-# 14. DISTRIBUTE vs REDISTRIBUTE
-# -----------------------------------------------------------------------------------------------
+# - "Convert": The unit LOSES the specified stacks to gain the new effect.
+# - "Gain" based on X: The unit KEEPS original stacks and just gains the new effect based on them.
 # - "Distribute": Split a specific amount of stacks one-by-one among valid random targets.
 # - "Redistribute": Calculate a payload (e.g., Sinking value), apply it to the original owner, 
 #   then copy that exact payload and give it to another valid random unit on the field.
@@ -278,6 +247,33 @@ class BattleManager:
 
             # Assign targets and enemy intents SLOT BY SLOT
             self.assign_round_targets()
+            # ---------------------------------------------------------
+            # TUTORIAL STAGE LOGIC (Stage 0)
+            # ---------------------------------------------------------
+            if self.stage_id == 0:
+                if self.turn_count == 1:
+                    self.log("[yellow]Tutorial: Pick any unit to act first with number inputs (e.g. 1, 2)[/yellow]")
+                    self.log("[yellow]...Then pick a skill in hand, also by number (e.g. 1, 2)[/yellow]")
+                elif self.turn_count == 2:
+                    self.log("[yellow]Tutorial: Skills have differing tiers shown by the roman numerals (e.g. I, II)[/yellow]")
+                    self.log("[yellow]...A skill with a HIGHER tier deals LESS damage when clashing against a LOWER tier.[/yellow]")
+                    self.log("[yellow]...This is how you 'defend' against attacks in Kokoro No Kata.[/yellow]")
+                elif self.turn_count == 3:
+                    self.log("[yellow]Tutorial: Use the Unit Inspection Menu (Press V)[/yellow]")
+                    self.log("[yellow]...Use numbers and other input formats shown below the Inspect Menu to view different details.[/yellow]")
+                elif self.turn_count == 4:
+                    self.log("[yellow]Tutorial: Toggle the auto battler on and off (Press A)[/yellow]")
+                    self.log("[yellow]...To let your units automatically choose higher tiered skills every turn.[/yellow]")
+            # ---------------------------------------------------------
+            # SPECIAL STAGE 2-9 LOGIC: SURVIVE 5 TURNS
+            # ---------------------------------------------------------
+            if self.stage_id == 20 and self.turn_count == 3:
+                self.log("[yellow]The enemy is overwhelming![/yellow]")
+                self.log("[yellow]Your objective: survive the encounter...[/yellow]")
+            if self.stage_id == 20 and self.turn_count == 6:
+                self.won = True
+                return True
+            # ---------------------------------------------------------
 
             # --- COMMAND PHASE ---
             self.handle_player_command_phase()
@@ -325,34 +321,7 @@ class BattleManager:
                 self.process_turn_end_effects()
                 if self.check_win_condition() or self.check_loss_condition(): return
 
-            # ---------------------------------------------------------
-            # TUTORIAL STAGE LOGIC (Stage 0)
-            # ---------------------------------------------------------
-            if self.stage_id == 0:
-                if self.turn_count == 1:
-                    self.log("[yellow]Tutorial: Pick any unit to act first with number inputs (e.g. 1, 2)[/yellow]")
-                    self.log("[yellow]...Then pick a skill in hand, also by number (e.g. 1, 2)[/yellow]")
-                elif self.turn_count == 2:
-                    self.log("[yellow]Tutorial: Skills have differing tiers shown by the roman numerals (e.g. I, II)[/yellow]")
-                    self.log("[yellow]...A skill with a LOWER tier deals LESS damage when clashing against a HIGHER tier.[/yellow]")
-                    self.log("[yellow]...This is how you 'defend' against attacks in Kokoro No Kata.[/yellow]")
-                elif self.turn_count == 3:
-                    self.log("[yellow]Tutorial: Use the Unit Inspection Menu (Press V)[/yellow]")
-                    self.log("[yellow]...Use numbers and other input formats shown below the Inspect Menu to view different details.[/yellow]")
-                elif self.turn_count == 4:
-                    self.log("[yellow]Tutorial: Toggle the auto battler on and off (Press A)[/yellow]")
-                    self.log("[yellow]...To let your units automatically choose higher tiered skills every turn.[/yellow]")
-
-            # ---------------------------------------------------------
-            # SPECIAL STAGE 2-9 LOGIC: SURVIVE 5 TURNS
-            # ---------------------------------------------------------
-            if self.stage_id == 20 and self.turn_count == 3:
-                self.log("[yellow]The enemy is overwhelming![/yellow]")
-                self.log("[yellow]Your objective: survive the encounter...[/yellow]")
-            if self.stage_id == 20 and self.turn_count == 6:
-                self.won = True
-                return True
-            # ---------------------------------------------------------
+            self.turn_count += 1
             
     def apply_status_modifiers(self, unit):
         for effect in unit.status_effects:

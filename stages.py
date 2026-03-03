@@ -1151,7 +1151,7 @@ def get_enemy_database():
     g_s2 = ChipSkill("Pinning ◈◈", 2, EL_STORGE, [s2_c1, s2_c2], description=s2_desc_brief, inspect_description=s2_desc_inspect)
     k_guard.skill_pool_def = [(g_s1, 4), (g_s2, 4)]
     guard.equip_kata(k_guard)
-    guard.description = "infiltratingyunhaiborderguarddesc"
+    guard.description = "Found manning a makeshift roadblock outside the Westward Megastructure, these rugged thugs attempt to pass themselves off as official Yunhai border patrol trainees. However, their stained, ill-fitting uniforms and use of underworld hand signals quickly give away their true nature. Armed with heavy, solid metal batons, they completely lack the traditional Yunhai martial discipline, opting instead to swing with the pure, brutish intent to shatter skulls."
     guard.unlock_stage_id = 49
 
     guard_leader = Entity("Infiltrating Yunhai Border Guard Leader", is_player=False)
@@ -1176,7 +1176,7 @@ def get_enemy_database():
     gl_s3 = Skill("Lightweight Armor", 3, EL_LUDUS, 0, "[Combat Start] This unit takes -3 Final Damage this turn\n       [Combat Start] Gain 3 Haste next turn", effect_type="LIGHTWEIGHT_SPECIAL", effect_val=3)
     k_guard_leader.skill_pool_def = [(gl_s1, 3), (gl_s2, 3), (gl_s3, 2)]
     guard_leader.equip_kata(k_guard_leader)
-    guard_leader.description = "infiltratingyunhaiborderguardleaderdesc"
+    guard_leader.description = "The orchestrator of the fake border blockade sent by the underworld to turn away unwanted visitors from entering the Megastructure. While he wields his steel baton with enough violent authority to command his group of thugs, his overconfidence shatters quickly once his disguise is blown. He ultimately proved to be no match for a true martial artist, getting dropped by Akasuke in mere minutes without the Vanguard leader even breaking a sweat."
     guard_leader.unlock_stage_id = 50
 
     #######################################
@@ -1203,7 +1203,7 @@ def get_enemy_database():
     ls_s3 = Skill("Centerline Punch", 3, EL_STORGE, 10, ls_s3_desc, effect_type="POISE_RUPTURE_SPECIAL_TYPE1", effect_val=3)
     k_luoxia.skill_pool_def = [(ls_s1, 5), (ls_s2, 2), (ls_s3, 2)]
     luoxia_student.equip_kata(k_luoxia)
-    luoxia_student.description = "luoxiamartialartspractitionerstudent"
+    luoxia_student.description = "A dedicated student of the Luoxia Gardening School clad in a traditional green and white training uniform. They boast insane body conditioning and physical density, easily capable of chopping through thick stacks of roof tiles bare-handed. While their mindset is solid enough to rigidly stick to their martial techniques even under immense pressure, they lack the real combat experience needed to counter foreign, unpredictable fighting styles."
     luoxia_student.unlock_stage_id = 52
 
     #################################
@@ -1238,7 +1238,7 @@ def get_enemy_database():
     n_s3 = ChipSkill("Star Fall Thrust [墜星刺] ◈◈◈◈", 3, EL_PRAGMA, [n_s3_c1, n_s3_c2, n_s3_c3, n_s3_c4], description=n_s3_desc, inspect_description=n_s3_insp)
     k_natsume.skill_pool_def = [(n_s1, 3), (n_s2, 2), (n_s3, 2)]
     natsume.equip_kata(k_natsume)
-    natsume.description = "natsumestrangekatadescription"
+    natsume.description = "An anomaly born from an uncontrolled Kata Scaling, this terrifying entity wears the face of Yokubukai Natsume but possesses none of her usual hesitation or warmth. Clad in a traditional, floor-length gray Changpao robe, her taller, more mature form radiates a gloomy, suffocating aura that makes gravity itself feel doubled. She wields a dark Jian with fluid, physics-defying speed, leaving behind thick, suspended trails of jet-black ink matter with every swing to seamlessly box in her prey. The sheer, overwhelming pressure she exudes is enough to completely paralyze seasoned martial artists in terror and force elite Yunhai Enforcers to their knees through ingrained biological instinct alone."
     natsume.unlock_stage_id = 53
 
     ######################################
@@ -1254,7 +1254,7 @@ def get_enemy_database():
     gfg_p1 = Passive("For The Golden Fist", "When attacking, if target has Bleed, deal +2 Final Damage", "PASSIVE_GOLDEN_FIST", 2, color="yellow")
     k_gfg.passives.append(gfg_p1)
     gf_gangster.equip_kata(k_gfg)
-    gf_gangster.description = "goldenfistuniongangsterdescription"
+    gf_gangster.description = "A member of the Golden Fist Union, the first of the local Megastructure gangs to swarm Luoxia Gardening School the moment the Association's presence vanished. While the frontline grunts blindly rush forward in a chaotic tidal wave with standard metal batons, the thugs in the back utilize deadly Stone Slings, launching jagged rocks at the velocity of a bullet to overwhelm their targets through sheer volume."
     gf_gangster.unlock_stage_id = 56
     
     gf_leader = Entity("Golden Fist Union Gangster Leader", is_player=False)
@@ -1270,7 +1270,7 @@ def get_enemy_database():
     gfl_p2 = Passive("Crude Command", "When this unit is present, all of this unit’s allies from “Golden Fist Union” take -2 Final Damage from attacks (does not stack)", "PASSIVE_CRUDE_COMMAND", 2, color="yellow")
     k_gfl.passives.extend([gfl_p1, gfl_p2])
     gf_leader.equip_kata(k_gfl)
-    gf_leader.description = "goldenfistuniongangsterleaderdescription"
+    gf_leader.description = "A scarred brute leading the Golden Fist Union's assault, armed with a jagged metal pipe, gleaming overweight armor, and a loud, arrogant laugh. Despite his intimidating size and boastful attitude, his role as 'Boss' is entirely fleeting; once he is inevitably crushed into the dirt by Akasuke's hook kick, another hotheaded thug simply steps up to take his place in the endless, unorganized mob."
     gf_leader.unlock_stage_id = 56
 
     ####################################
@@ -1291,7 +1291,7 @@ def get_enemy_database():
     bw_p1 = Passive("The Dock’s Spearplay", "When attacking, if target has Paralysis, inflict 1 Rupture Potency", "PASSIVE_DOCK_SPEARPLAY", 1, color="blue")
     k_bw.passives.append(bw_p1)
     bw_gangster.equip_kata(k_bw)
-    bw_gangster.description = "blackwaterdockgangster"
+    bw_gangster.description = "A slightly more organized class of thug from the Black Water Dock gang, who wait to launch their grueling assault under the cover of midnight. Proving to be a significant step up from the usual street rabble, these gangsters wield specialized Monk Spears retrofitted with hidden electric tasers, aiming to shock and burn their exhausted opponents into submission."
     bw_gangster.unlock_stage_id = 57
 
     bw_leader = Entity("Black Water Dock Gangster Leader", is_player=False)
@@ -1313,7 +1313,7 @@ def get_enemy_database():
     bw_l_p2 = Passive("Returning Current", "When this unit gets hit, if attacker has Paralysis, inflict 2 Rupture Count", "PASSIVE_RETURNING_CURRENT", 2, color="blue")
     k_bw_leader.passives.extend([bw_l_p1, bw_l_p2])
     bw_leader.equip_kata(k_bw_leader)
-    bw_leader.description = "blackwaterdockgangsterleader"
+    bw_leader.description = "An elite fighter of the Black Water Dock who spearheads the second wave against the Kasakura Vanguard. Armed with a high-voltage taser Monk Spear and leading a moderately disciplined squad, he relies on the cover of darkness and the Vanguard's accumulating physical fatigue to press the attack, leaving painful burns and bruises in his wake."
     bw_leader.unlock_stage_id = 57
 
     #######################################
@@ -1344,7 +1344,7 @@ def get_enemy_database():
     tmg_p1 = Passive("Ruthlessness", "When attacking, deal +1 Base Damage for every chip used within this turn", "PASSIVE_RUTHLESSNESS", 1, color="red")
     k_tmg.passives.append(tmg_p1)
     tmg_gangster.equip_kata(k_tmg)
-    tmg_gangster.description = "twinmountaingategangster"
+    tmg_gangster.description = "Arriving just as the morning fog lifts, these thugs march into battle proudly chanting the name of the Twin Mountain Gate. Though they attempt to display tactical caution, their discipline shatters the moment their pride is provoked, leading them to blindly stampede into the Luoxia courtyard—only to be swiftly crushed by an aerial ambush from Yuri and Hana."
     tmg_gangster.unlock_stage_id = 58
 
     tmg_leader = Entity("Twin Mountain Gate Gangster Leader", is_player=False)
@@ -1376,7 +1376,7 @@ def get_enemy_database():
     tmg_l_p2 = Passive("Unpredictable", "Take -1 Final Damage for every chip used within this turn on the next turn", "PASSIVE_UNPREDICTABLE", 2, color="red")
     k_tmg_leader.passives.extend([tmg_l_p1, tmg_l_p2])
     tmg_leader.equip_kata(k_tmg_leader)
-    tmg_leader.description = "twinmountaingategangsterleader"
+    tmg_leader.description = "A burly gangster who leads the Twin Mountain Gate's daybreak assault, easily identifiable by the heavy twin axes strapped to his back. Though he possesses enough wits to initially suspect a trap upon finding Luoxia School's gates ajar, his fragile temper gets the better of him, commanding his entire army into a furious, headlong rush that seals their swift defeat."
     tmg_leader.unlock_stage_id = 58
 
     #############################
@@ -1427,7 +1427,7 @@ def get_enemy_database():
     m_p3 = Passive("Impediment - Severed Arm [障礙－斷臂]", "Deal -50% Final Damage with attacks\nTake 200% Final Damage from attacks", "PASSIVE_SEVERED_ARM", 3, color="grey74")
     k_miyu.passives.extend([m_p1, m_p2, m_p3])
     miyu.equip_kata(k_miyu)
-    miyu.description = "miyudescription"
+    miyu.description = "Posing as the diligent Secretary to Kasakura's Student Council President, Miyu is, in reality, a ruthless elite operative serving the mysterious mastermind known only as 'The Boss'. Clad in a pristine Kasakura uniform draped with an elegant Yunhai capelet, she adjusts her obsidian glasses before dismantling opponents with flawless, high-speed Wing Chun. The true secret to her overwhelming, physics-defying strength lies hidden beneath her skin: she is a heavily augmented cyborg equipped with advanced mechanical servos and pneumatic joints, capable of fending off the entire Kasakura Vanguard simultaneously. Despite her cold, hyper-logical, and calculating demeanor, her stoic facade easily shatters into profound, blushing frustration when her loudmouthed partner 'Chloe' blatantly disregards operational protocol."
     miyu.unlock_stage_id = 62
     miyu.appendable_skills = {2: m_s3, 4: m_s4, 7: m_s5}
 
@@ -1467,7 +1467,7 @@ def get_enemy_database():
     mei_p3 = Passive("Ingrained Command", "This unit’s max Paralysis stack count is fixed at 1. At the start of every second turn, gain 1 Paralysis. If this unit has Paralysis, take -50% Final Damage from attacks", "PASSIVE_INGRAINED_COMMAND", color="sea_green1")
     k_mei.passives.extend([mei_p1, mei_p2, mei_p3])
     mei.equip_kata(k_mei)
-    mei.description = "meidescription"
+    mei.description = "The formidable Captain of the Yunhai Association's 2nd Unit, clad in a pristine white Tang Suit and a heavy cloak woven with glittering cloud patterns. Despite possessing a perfectly sane mind and harboring genuine camaraderie for the Kasakura Vanguard, Mei is tragically forced to draw her Jian against them, driven by an absolute, biological obedience to the Megastructure's Administrator. While her heart aches at the unwanted betrayal, her body flawlessly carries out the subconscious command, wielding her paralyzing suppressive sword with a fluid, hyper-aggressive elegance that proves exactly why she stands at the pinnacle of the Association's enforcers."
     mei.unlock_stage_id = 63
 
     ################################################
@@ -1503,7 +1503,7 @@ def get_enemy_database():
     bb_p2 = Passive("Frontline Fighter", "If this unit is the first of their team to take damage this turn, this unit deals +5 Final Damage this turn.\nAt the start of turn, gain 1 Haste for the next turn. After activating, this effect can occur once again every 2 turns", "PASSIVE_FRONTLINE_FIGHTER", color="red")
     k_bb.passives.extend([bb_p1, bb_p2])
     bb_foot.equip_kata(k_bb)
-    bb_foot.description = "bloodbrokenguardfootsoldier"
+    bb_foot.description = "A ghastly, physical manifestation of ancient malice summoned by the legendary Scroll of the Nine Armies. Clad head-to-toe in rusted, heavy armor plates that billow thick, unnatural gray smoke from their joints, these bulky phantoms charge into battle bathed in a blinding, blood-red light. Mindlessly driven by the broken ceasefire of a bygone era, they wield heavy, rusted polearms and halberds, blindly hacking through rival armies and jade pillars alike with absolute disregard for collateral damage."
     bb_foot.unlock_stage_id = 64
 
     #################################################
@@ -1548,7 +1548,7 @@ def get_enemy_database():
     jr_p2 = Passive("Blind Spots", "If this unit is the first of their team to take damage this turn, this unit takes -5 Final Damage next turn.\nWhen there is at least one unit with this passive, at the start of turn, all allied units with Bind gain 2 Bind next turn. After activating, this effect can occur once again every 2 turns", "PASSIVE_BLIND_SPOTS", color="green")
     k_jr.passives.extend([jr_p1, jr_p2])
     jr_foot.equip_kata(k_jr)
-    jr_foot.description = "jaderainmonasteryfootsoldier"
+    jr_foot.description = "Summoned from the depths of the Yunhai Region's violent history to wage eternal war, these spectral warriors radiate a toxic, neon-green aura. Wearing jagged, lightweight armor optimized for aggressive mobility, they unleash hollow, echoing war cries as they flood the Pagoda's corridors. Wielding dual curved blades with lethal, ghostly efficiency, they hurl themselves into the chaotic crossfire against the red army, ruthlessly cutting down any unfortunate stragglers that block their path to the enemy."
     jr_foot.unlock_stage_id = 65
 
     ####################################
@@ -1578,7 +1578,7 @@ def get_enemy_database():
     ib_p2 = Passive("Invisibility", "Battle Start: Gain 4 Invisibility\nWhen this unit is hit by a unit who is not “Benikawa” or “Shigemura”, inflict 4 Rupture Potency to the attacker (once per skill / activates only for one chip from a chip skill).\nWhen this unit is hit by a unit who is “Benikawa” or “Shigemura”, there is a 75% chance to lose 1 Invisibility. If the chance fails, the next hit received by any unit will have a 100% chance instead\nWhenever this unit’s Invisibility reaches 0, instantly gain 5 Bind and 3 Invisibility", "PASSIVE_IBARA_INVISIBILITY", color="purple4")
     k_ibara.passives.extend([ib_p1, ib_p2])
     ibara.equip_kata(k_ibara)
-    ibara.description = "ibaraninjadescription"
+    ibara.description = "A notorious outcast of the hidden ninja world, branded as an 'Ibara' and perpetually hunted by his former kin. Despite his bulky, muscular build, this tactical mercenary utilizes a terrifying Awakened technique to erase his presence completely—masking his body heat, breathing, and even his bloodlust from normal senses. Wielding a short, lethal Wakizashi, he eschews typical ninja agility in favor of executing heavy, punishing strikes from absolute invisibility, taking a sick, sadistic pleasure in psychologically cornering and torturing his exhausted prey before going in for the kill."
     ibara.unlock_stage_id = 66
 
     ##############################################################
@@ -1612,7 +1612,7 @@ def get_enemy_database():
     lb_p2 = Passive("Nostalgia Of A Brotherhood", "The first 3 allied units to hit any unit from “Ten Thousand Blossom Brotherhood” instantly gains (6-Order of attacker) Rupture Potency", "PASSIVE_BROTHERHOOD", color="hot_pink")
     k_ttbb_lb.passives.extend([lb_p1, lb_p2])
     ttbb_lb.equip_kata(k_ttbb_lb)
-    ttbb_lb.description = "tenthousandblossombrotherhoodlinebreaker"
+    ttbb_lb.description = "A spectral warrior summoned by the Scroll of the Nine Armies, radiating a bright, cherry-blossom pink aura. Serving as the aggressive frontline for their crumbling General, these ancient foot soldiers wield a lethal variety of rusted, traditional bladed weapons. Bound by the broken ceasefire of a forgotten era, they silently splash through the flooded marble of Sector III's grand plazas, throwing themselves relentlessly into the chaotic crossfire to shatter enemy formations with sheer, overwhelming numbers."
     ttbb_lb.unlock_stage_id = 68
 
     ###########################################################
@@ -1643,7 +1643,7 @@ def get_enemy_database():
     df_p2 = Passive("Nostalgia Of A Camaraderie", "On the first 3 times an ally of this unit from “Ten Thousand Blossom Brotherhood” takes damage from a skill, instantly heals (6-Order of allied unit attacker, min 0) HP (counts self, but does not heal self, this effect cannot stack)", "PASSIVE_CAMARADERIE", color="hot_pink")
     k_ttbb_df.passives.extend([df_p1, df_p2])
     ttbb_df.equip_kata(k_ttbb_df)
-    ttbb_df.description = "tenthousandblossombrotherhooddefender"
+    ttbb_df.description = "Towering above the standard ranks of the Ten Thousand Blossom Brotherhood, these hulking phantom brutes act as an impenetrable wall of ghostly steel. Cloaked in the same cherry-blossom pink miasma as their brethren, they wield massive, ancient metal shields designed to absorb devastating blows and halt enemy advances dead in their tracks. Unfazed by pain or fatigue, these spectral heavyweights stand steadfast in the shallow waters of the Megastructure."
     ttbb_df.unlock_stage_id = 69
 
     ######################################
@@ -1687,7 +1687,7 @@ def get_enemy_database():
     zh_p3 = Passive("The Vanguard Who Breaks Through Enemy Lines", "At turn 3, if there are none of this unit’s allies, summon a “Ten Thousand Blossom Brotherhood Linebreaker” or “Ten Thousand Blossom Brotherhood Defender” with 50 fixed Max HP. When there are none of this unit's allies, this unit can summon again 2 turns after the ally dies\nTally the amount of turns passed and this unit is able to append skills based on:\nAfter two turns, if this unit has never reached 280 or less HP, draw the skill “Liao” [撩] into deck. Otherwise, draw the skill Encroaching Malice instead\nAfter four turns, if this unit has never reached 280 or less HP, draw the skill “Liao” [撩] into deck. Otherwise, draw the skill Embrace The Moon [怀中抱月] instead\nAfter four turns, reset the Tally", "PASSIVE_ZHAOFENG_VANGUARD", color="hot_pink")
     k_zhao.passives.extend([zh_p1, zh_p2, zh_p3])
     zhao.equip_kata(k_zhao)
-    zhao.description = "zhaofengdescription"
+    zhao.description = "The honorable, ancient General of the Ten Thousand Blossom Brotherhood, known across history as 'The Vanguard Who Breaks Through Enemy Lines'. Summoned to the modern era by the Scroll of the Nine Armies, Zhao Feng is physically crumbling; his tattered armor bears the scars of endless wars, and the right half of his face has been entirely consumed by a swirling, dark pink miasma of pure Phenomena energy. Despite his ruined state, the old phantom’s warrior pride remains unbroken. Wielding a chipped, rusted Jian infused with suffocating pink malice, he stands as the absolute core of his army in the flooded musical plaza—a tragic, legendary figure who ultimately recognizes the Kasakura Vanguard's steadfast resolve, gracefully accepting defeat rather than extinguishing the bright potential of a new generation."
     zhao.unlock_stage_id = 70
 
     ######################################################
@@ -1724,7 +1724,7 @@ def get_enemy_database():
     kag_p2 = Passive("Flickering Invisibility", "Battle Start: Gain 3 Flickering Invisibility\nWhen this unit is hit by a unit who is not “Benikawa” or “Shigemura”, inflict (Flickering Invisibility Count) Rupture Potency to the attacker (max 5, once per skill / activates only for one chip per skill).\nWhen this unit is hit by a unit who is “Benikawa” or “Shigemura”, there is a 50% chance to lose 1 Flickering Invisibility if the very next unit to hit this hit is not “Benikawa” or “Shigemura”. If the chance fails, the next hit received by any unit will have a 100% chance instead\nWhenever this unit’s Flickering Invisibility reaches 0, instantly gain 5 Bind, 40 Leaking Bloodlust, and 5 Flickering Invisibility", "PASSIVE_KAGEROU_INVISIBILITY", color="thistle3")
     k_kag.passives.extend([kag_p1, kag_p2])
     kagerou.equip_kata(k_kag)
-    kagerou.description = "ibaraninjadescription"
+    kagerou.description = "Driven to the brink of exhaustion and bleeding heavily from a massive gash dealt by Captain Liwei, the outcast ninja drops his stealthy psychological torture for a desperate final stand in the flooded musical plaza. Arrogantly boasting the fake, stolen title of 'Kagerou The Untouchable', this bulky assassin acts as a cowardly scavenger, waiting for the Kasakura Vanguard to tire themselves out against the Nine Armies before striking with his lethal Wakizashi. With his signature invisibility technique flickering and failing, he attempts to ground himself and charge a terrifying, unseen pressure attack—only to be swiftly brought down and brutally exposed as a cheap knock-off by the true legends of the ninja world."
     kagerou.unlock_stage_id = 66
     
     ################################################

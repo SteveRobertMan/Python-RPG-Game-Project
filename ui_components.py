@@ -109,7 +109,7 @@ def draw_stage_select_menu(unlocked_stage):
                 ("2-7", "Kokoro’s Echo ♖", 17),
                 ("2-8", "Heart's Burden ♖", 18),
                 ("2-9", "Chains Of Fury ♖", 19),
-                ("2-10", "Iron & Fists ♖", 20),
+                ("2-10", "Iron & Fists ♕", 20),
                 ("2-11", "Parallaxis Scorer 🕮", 21),
             ]
 

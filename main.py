@@ -521,7 +521,7 @@ def run_game():
                                 10: (story_manager.play_stage_1_10_end, None),
                                 14: (story_manager.play_stage_2_3_end, None),
                                 15: (story_manager.play_stage_2_4_end, "[bold magenta]NEW MEMBER: Shigemura[/bold magenta]"),
-                                16: (story_manager.play_stage_2_5_end, None),
+                                16: (story_manager.play_stage_2_5_end, "[bold green]NEW FEATURE: PARALLAXIS SCORER (GACHA) UNLOCKED![/bold green]"),
                                 38: (story_manager.play_stage_3_15_end, None),
                                 41: (story_manager.play_stage_3_19_end, "[bold magenta]NEW MEMBER: Naganohara[/bold magenta]"),
                                 56: (story_manager.play_stage_4_11_end, "[bold magenta]NEW MEMBERS: Natsume, Hana, Kagaku"),
@@ -562,44 +562,48 @@ def run_game():
                     group_jadechip_herb = [68, 69, 70, 71]
                     
                     # Dictionary routing for POST-battle stories (Standard Stages)
+                    # stage_id : (Story Function, Optional Special Reward String)
                     STORY_ENDS = {
                         # --- ACT 1 ---
-                        2: story_manager.play_stage_1_2_end,
-                        4: story_manager.play_stage_1_4_end,
-                        6: story_manager.play_stage_1_6_end,
-                        7: story_manager.play_stage_1_7_end,
+                        2: (story_manager.play_stage_1_2_end, None),
+                        4: (story_manager.play_stage_1_4_end, "[bold magenta]NEW MEMBER: Benikawa[/bold magenta]"),
+                        6: (story_manager.play_stage_1_6_end, None),
+                        7: (story_manager.play_stage_1_7_end, None),
                         # --- ACT 2 ---
-                        18: story_manager.play_stage_2_7_end,
-                        19: story_manager.play_stage_2_8_end,
-                        20: story_manager.play_stage_2_9_end,
-                        21: story_manager.play_stage_2_10_end,
+                        18: (story_manager.play_stage_2_7_end, None),
+                        19: (story_manager.play_stage_2_8_end, None),
+                        20: (story_manager.play_stage_2_9_end, None),
+                        21: (story_manager.play_stage_2_10_end, None),
                         # --- ACT 3 ---
-                        29: story_manager.play_stage_3_7_end,
-                        31: story_manager.play_stage_3_9_end,
-                        33: story_manager.play_stage_3_11_end,
-                        37: story_manager.play_stage_3_15_end,
-                        38: story_manager.play_stage_3_16_end,
-                        39: story_manager.play_stage_3_17_end,
+                        29: (story_manager.play_stage_3_7_end, None),
+                        31: (story_manager.play_stage_3_9_end, None),
+                        33: (story_manager.play_stage_3_11_end, None),
+                        37: (story_manager.play_stage_3_15_end, None),
+                        38: (story_manager.play_stage_3_16_end, None),
+                        39: (story_manager.play_stage_3_17_end, None),
                         # --- ACT 4 ---
-                        49: story_manager.play_stage_4_4_end,   
-                        50: story_manager.play_stage_4_5_end,
-                        51: story_manager.play_stage_4_6_end,
-                        52: story_manager.play_stage_4_7_end,
-                        53: story_manager.play_stage_4_8_end,
-                        56: story_manager.play_stage_4_11_end,
-                        57: story_manager.play_stage_4_12_end,
-                        58: story_manager.play_stage_4_13_end,
-                        60: story_manager.play_stage_4_15_end,
-                        62: story_manager.play_stage_4_17_end,
-                        63: story_manager.play_stage_4_18_end,
-                        66: story_manager.play_stage_4_21_end,
-                        70: story_manager.play_stage_4_25_end,
-                        71: story_manager.play_stage_4_26_end
+                        49: (story_manager.play_stage_4_4_end, None),   
+                        50: (story_manager.play_stage_4_5_end, None),
+                        51: (story_manager.play_stage_4_6_end, None),
+                        52: (story_manager.play_stage_4_7_end, None),
+                        53: (story_manager.play_stage_4_8_end, None),
+                        56: (story_manager.play_stage_4_11_end, None),
+                        57: (story_manager.play_stage_4_12_end, None),
+                        58: (story_manager.play_stage_4_13_end, None),
+                        60: (story_manager.play_stage_4_15_end, None),
+                        62: (story_manager.play_stage_4_17_end, None),
+                        63: (story_manager.play_stage_4_18_end, None),
+                        66: (story_manager.play_stage_4_21_end, None),
+                        70: (story_manager.play_stage_4_25_end, None),
+                        71: (story_manager.play_stage_4_26_end, None)
                     }
 
                     if should_play_story:
                         if stage_id in STORY_ENDS:
-                            STORY_ENDS[stage_id]()
+                            end_func, extra_reward = STORY_ENDS[stage_id]
+                            end_func()
+                            if extra_reward:
+                                rewards_text.append(extra_reward)
                             
                         # Apply First Clear Rewards Based on Groups
                         if stage_id in group_chipproc_bread:
@@ -666,7 +670,6 @@ def run_game():
             if config.player_data.get("node_progress"):
                 config.current_state = config.STATE_NODE_SELECT
                 continue
-
             clear_screen()
             console.print(Panel("[bold]MAIN MENU[/bold]", style="blue"))
             console.print(f"Current Stage: {config.player_data.get('latest_stage', 0)}")
@@ -680,50 +683,57 @@ def run_game():
             if choice == "1":
                 config.current_state = config.STATE_STAGE_SELECT
             elif choice == "2": 
-                gacha_system.run_gacha_menu()
-                config.player_data["materials"]["Microchip"] = player.currencies["microchips"]
-                config.player_data["materials"]["Microprocessor"] = player.currencies["microprocessors"]
-                config.player_data["materials"]["Jade Microchip"] = player.currencies["jade microchips"]
-            elif choice == "3": config.current_state = config.STATE_COUNCIL_LOGS
+                # Check if Stage 2-5 (ID 16) is cleared
+                if config.player_data.get("latest_stage", 0) >= 16:
+                    gacha_system.run_gacha_menu()
+                    config.player_data["materials"]["Microchip"] = player.currencies["microchips"]
+                    config.player_data["materials"]["Microprocessor"] = player.currencies["microprocessors"]
+                    config.player_data["materials"]["Jade Microchip"] = player.currencies["jade microchips"]
+                else:
+                    console.print("[bold red]Undiscovered: Clear Stage 2-5 to unlock the Parallaxis Scorer.[/bold red]")
+                    time.sleep(1.0)
+            elif choice == "3": 
+                config.current_state = config.STATE_COUNCIL_LOGS
             elif choice == "4": 
                 config.current_state = config.STATE_PARTY_MANAGEMENT
-            elif choice == "5": confirm_quit()
+            elif choice == "5": 
+                confirm_quit()
             
         elif config.current_state == config.STATE_STAGE_SELECT:
             # --- STAGE DEFINITION MAPS ---
             # req_idx : (Story_Function, [Reward String List], {Material Update Dict})
             STORY_STAGES = {
                 # --- ACT 1 ---
-                0:  (story_manager.play_stage_1_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                2:  (story_manager.play_stage_1_3_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                7:  (story_manager.play_stage_1_8_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                8:  (story_manager.play_stage_1_9_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                10: (story_manager.play_stage_1_11_story, ["5x Microchip"], {"Microchip": 5}),
+                0:(story_manager.play_stage_1_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                2:(story_manager.play_stage_1_3_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                7:(story_manager.play_stage_1_8_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                8:(story_manager.play_stage_1_9_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                10:(story_manager.play_stage_1_11_story, ["5x Microchip"], {"Microchip": 5}, None),
                 # --- ACT 2 ---
-                11: (story_manager.play_stage_2_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                12: (story_manager.play_stage_2_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                16: (story_manager.play_stage_2_6_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                21: (story_manager.play_stage_2_11_story, ["5x Microchip"], {"Microchip": 5}),
+                11:(story_manager.play_stage_2_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                12:(story_manager.play_stage_2_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                16:(story_manager.play_stage_2_6_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                21:(story_manager.play_stage_2_11_story, ["5x Microchip"], {"Microchip": 5}),
                 # --- ACT 3 ---
-                22: (story_manager.play_stage_3_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                23: (story_manager.play_stage_3_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                26: (story_manager.play_stage_3_5_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                29: (story_manager.play_stage_3_8_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                39: (story_manager.play_stage_3_18_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                42: (story_manager.play_stage_3_21_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                43: (story_manager.play_stage_3_22_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                44: (story_manager.play_stage_3_23_story, ["5x Microchip"], {"Microchip": 5}),
+                22:(story_manager.play_stage_3_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                23:(story_manager.play_stage_3_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                26:(story_manager.play_stage_3_5_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                29:(story_manager.play_stage_3_8_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                39:(story_manager.play_stage_3_18_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                42:(story_manager.play_stage_3_21_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                43:(story_manager.play_stage_3_22_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                44:(story_manager.play_stage_3_23_story, ["5x Microchip"], {"Microchip": 5}),
                 # --- ACT 4 ---
-                45: (story_manager.play_stage_4_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                46: (story_manager.play_stage_4_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                47: (story_manager.play_stage_4_3_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                53: (story_manager.play_stage_4_9_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                54: (story_manager.play_stage_4_10_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                58: (story_manager.play_stage_4_14_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                60: (story_manager.play_stage_4_16_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}),
-                66: (story_manager.play_stage_4_22_story, ["1x Jade Microchip"], {"Jade Microchip": 1}),
-                71: (story_manager.play_stage_4_27_story, ["1x Jade Microchip"], {"Jade Microchip": 1}),
-                72: (story_manager.play_stage_4_28_story, ["5x Jade Microchip"], {"Jade Microchip": 5}),
+                45:(story_manager.play_stage_4_1_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                46:(story_manager.play_stage_4_2_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                47:(story_manager.play_stage_4_3_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                53:(story_manager.play_stage_4_9_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                54:(story_manager.play_stage_4_10_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                58:(story_manager.play_stage_4_14_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                60:(story_manager.play_stage_4_16_story, ["1x Microchip", "1x Microprocessor"], {"Microchip": 1, "Microprocessor": 1}, None),
+                66:(story_manager.play_stage_4_22_story, ["1x Jade Microchip"], {"Jade Microchip": 1}, None),
+                71:(story_manager.play_stage_4_27_story, ["1x Jade Microchip"], {"Jade Microchip": 1}, None),
+                72:(story_manager.play_stage_4_28_story, ["5x Jade Microchip"], {"Jade Microchip": 5}, "[bold green]NEW GAMEMODE: LATTICE TRIAGE UNLOCKED![/bold green]"),
             }
 
             # req_idx : stage_id
@@ -781,9 +791,11 @@ def run_game():
                             console.print("[dim]Stage Cleared.[/dim]")
                             time.sleep(0.5)
                         else:
-                            story_func, rew_text, mat_dict = STORY_STAGES[req_idx]
+                            story_func, rew_text, mat_dict, extra_reward = STORY_STAGES[req_idx]
                             story_func()
                             console.print("[bold yellow]First Clear Rewards:[/bold yellow]")
+                            if extra_reward:
+                                rew_text.append(extra_reward)
                             for text in rew_text: console.print(text)
                             
                             mats = config.player_data["materials"]

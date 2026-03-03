@@ -651,7 +651,7 @@ def get_kata_data_by_name(name):
     # --- AKASUKE YUNHAI ASSOCIATION ---
     elif name == "Yunhai Association Enforcer Akasuke":
         res = [1.2, 0.8, 0.8, 1.0, 1.2, 1.0, 0.9]
-        desc = "Descriptionhere"
+        desc = "Akasuke Hanefuji here serves as a dedicated Enforcer within the Westward Megastructure's Yunhai Association. He trades his usual red coat for an immaculate white Tang Suit and a flowing, cloud-patterned cloak. His unruly red hair is pulled back tightly beneath a pristine white headband, though his signature black eyepatch remains, contrasting sharply with the uniform. Instead of relying purely on bare-knuckle brawling, he wields a traditional double-edged Jian with lethal grace.\n\nHe expertly blends the fluid, dance-like redirection of Yunhai swordsmanship with his own heavy, kinetic striking power, resulting in a highly aggressive suppression style that drops local gang threats in a single, perfectly calculated blow. Despite the rigid, insular discipline expected of the Association, his core remains unchanged: an overwhelming, compassionate sense of duty to protect the city's civilians from the shadows."
         k = Kata("Yunhai Association Enforcer", "Akasuke", 2, "I", res, desc)
         k.source_key = name
         s1 = Skill("Slicing", 1, EL_LUDUS, 7, "[On Hit] Inflict 2 Rupture Potency\n       [On Hit] Inflict 2 Rupture Count", effect_type="APPLY_RUPTURE_HEAVY_STACKS")
@@ -663,7 +663,7 @@ def get_kata_data_by_name(name):
     # --- NAGANOHARA YUNHAI ASSOCIATION ---
     elif name == "Yunhai Association Enforcer Naganohara":
         res = [0.9, 0.8, 0.8, 1.1, 1.1, 1.0, 1.2]
-        desc = "Descriptionhere"
+        desc = "Naganohara Tsukimiyama here proudly serves the Westward Megastructure as an unexpectedly cheerful Yunhai Association Enforcer. She trades her usual Kasakura uniform for a pristine white Tang Suit and a flowing, cloud-patterned cloak, though her signature pink twin-tails bounce just as energetically beneath her white uniform headband. Instead of acting with the strict, rigid stoicism typical of the Administration's guards, she wields her traditional Jian sword with a rhythmic, dance-like enthusiasm.\n\nDriven by a desperate courage to protect her peers and the city's civilians, she applies her terrifying adaptability to the Association's fluid swordsmanship, proving that an unbreakable, optimistic smile can be just as formidable as absolute discipline."
         k = Kata("Yunhai Association Enforcer", "Naganohara", 2, "I", res, desc)
         k.source_key = name
         s1 = Skill("Pointing", 1, EL_AGAPE, 6, "[On Hit] All of this unit’s allies from “Yunhai Association” deal +2 Final Damage\n       [On Hit] Inflict 2 Rupture Potency", effect_type="YUNHAI_NAGANOHARA_SPECIAL1")
@@ -675,7 +675,7 @@ def get_kata_data_by_name(name):
     # --- KAGAKU LUOXIA GARDENING SCHOOL ---
     elif name == "Luoxia Gardening School Student Kagaku":
         res = [1.0, 1.0, 1.0, 0.8, 1.1, 1.2, 1.1]
-        desc = "Descriptionhere"
+        desc = "Kagaku Shamiko trades her modern Kasakura lab coat for the traditional green and white training uniform of the Luoxia Gardening School, though her hair remains a chaotic, unkempt green mess from long nights of obsessive research. In this timeline, she channels her 'mad scientist' genius entirely into bio-engineering and botany, utilizing Luoxia's advanced greenhouses to concoct bizarre, highly effective stamina serums and medicinal herbs.\n\nIn combat, she applies her hyper-analytical mind to the school's rigorous bare-handed martial arts, striking pressure points and breaking defenses with clinical, experimental efficiency rather than raw, mindless power."
         k = Kata("Luoxia Gardening School Student", "Kagaku", 2, "I", res, desc)
         k.source_key = name
         s1_c1 = Chip(base_damage=2, effect_type="APPLY_STATUS")
@@ -700,7 +700,7 @@ def get_kata_data_by_name(name):
     # --- HANA LUOXIA GARDENING SCHOOL ---
     elif name == "Luoxia Gardening School Student Hana":
         res = [1.0, 1.2, 1.1, 0.9, 1.0, 1.0, 1.0]
-        desc = "Descriptionhere"
+        desc = "For Kaoru Hana, enrolling as a student at the Luoxia Gardening School is an absolute paradise. Wearing the traditional green and white uniform, she maintains her gentle, maiden-like demeanor, lovingly tending to rare Nepenthes cultivars and exotic medicinal herbs within the climate-controlled jade greenhouses. However, underneath her polite smile lies the insane physical conditioning of Luoxia's martial curriculum.\n\nShe defends her precious flowerbeds with devastating open-palm strikes and precise joint locks. Rowdy thugs who dare step on her meticulously tilled soil quickly learn the terrifying, bone-shattering strength hidden behind her motherly grace."
         k = Kata("Luoxia Gardening School Student", "Hana", 2, "I", res, desc)
         k.source_key = name
         s1 = Skill("Tend Soil", 1, EL_STORGE, 7, "[On Use] Gain 2 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Critical Hit] Gain 2 Poise Potency", effect_type="GAIN_POISE_SPECIAL_4", effect_val=2)
@@ -724,7 +724,7 @@ def get_kata_data_by_name(name):
     # --- SHIGEMURA BLACK WATER DOCK ---
     elif name == "Black Water Dock Gang Squad Leader Shigemura":
         res = [0.9, 0.9, 0.9, 1.1, 1.2, 1.1, 1.3]
-        desc = "Descriptionhere"
+        desc = "Fuyuyama Shigemura has abandoned his quiet life to embrace the ruthless, nocturnal underworld of the Westward Megastructure, leading an elite squad of the dreaded Black Water Dock gang. He trades his usual Kasakura uniform for practical, dark street clothes, keeping his violet eyes sharp and calculating under the cover of midnight. While his peers rely on chaotic numbers and blind aggression, Shigemura applies his genius-level intellect and stoic observation skills to coordinate brutal, highly efficient ambushes against rival factions.\n\nHe wields the gang's signature Monk Spear—specially retrofitted with high-voltage tasers—with lethal precision, but his true terror lies in his unnatural physical density and unbothered demeanor. Rather than relying on stealth, he nonchalantly steps directly into the line of fire, casually absorbing heavy impacts and halting charging enemies dead in their tracks before delivering a devastating, electrified counter-thrust. Despite his criminal standing and seemingly apathetic attitude, he remains fiercely protective of his squad, ensuring his subordinates survive the grueling gang wars of Sector II."
         k = Kata("Black Water Dock Gang Squad Leader", "Shigemura", 3, "I", res, desc)
         k.source_key = name
         s1 = Skill("Inward Parry [拿]", 1, EL_LUDUS, 4, "[On Hit] Gain 4 Poise Potency\n       [On Hit] This unit and a random ally of this unit (Prioritizes units from “Black Water Dock”) takes -20% Base Damage this turn", effect_type="BLACKWATER_SHIGEMURA_TYPE1")
@@ -737,7 +737,7 @@ def get_kata_data_by_name(name):
     # --- NATSUME BLACK WATER DOCK ---
     elif name == "Black Water Dock Master Natsume":
         res = [1.2, 0.9, 0.9, 1.1, 1.1, 1.0, 1.1]
-        desc = "Descriptionhere"
+        desc = "Yokubukai Natsume rules the nocturnal streets of Sector II as the undisputed Master of the Black Water Dock gang. Trading her high-tech monitors and comfortable beanbags for intimidating, dark underworld attire, her signature sleepy pink eyes now radiate the terrifying, lethargic confidence of an apex predator. Her messy dark blue hair falls freely as she casually rests a masterfully crafted, high-voltage Monk Spear over her shoulder, proving herself to be an unparalleled, albeit incredibly unmotivated, martial arts spear master.\n\nDespite her fearsome reputation, Natsume remains unapologetically lazy. In battle, she is exceptionally prideful, exerting only the absolute minimum effort required to execute flawless, devastating thrusts that effortlessly dismantle rival gangs. She achieves this overwhelming offensive pressure by relying entirely on her exceptionally close bond with her most trusted Squad Leader, Fuyuyama Shigemura.\n\nShe utilizes his dense, impenetrable physical defense solely to cover her blind spots, ensuring she never actually has to waste energy dodging an attack. Her absolute authority extends far beyond the battlefield; outside of combat, she treats her ruthless syndicate like personal attendants, regularly commanding Shigemura and her terrified underlings to run menial errands—from fetching her favorite late-night street food to meticulously polishing and maintaining her spear—while she comfortably naps away the responsibilities of leadership."
         k = Kata("Black Water Dock Master", "Natsume", 4, "I", res, desc)
         k.source_key = name
         s1 = Skill("Outward Parry [拦]", 1, EL_PRAGMA, 6, "[Combat Start] This skill’s effects only activate if there are at least 2 units from “Black Water Dock” in the team (counts self and defeated allies):\n       [On Use] Gain 3 Poise Potency\n       [On Use] Gain 2 Poise Count\n       [On Hit] All units from “Black Water Dock” take -2 Final Damage next turn", effect_type="BLACKWATER_NATSUME_TYPE1")
@@ -761,7 +761,7 @@ def get_kata_data_by_name(name):
     # --- YURI YUNHAI ASSOCIATION ---
     elif name == "Yunhai Association Enforcer Captain Inami Yuri":
         res = [0.9, 1.2, 1.2, 0.9, 1.0, 1.0, 1.2]
-        desc = "Descriptionhere"
+        desc = "Inami Yuri rises to the pinnacle of the Westward Megastructure's security as the formidable Captain of the Yunhai Association's 2nd Unit. Trading her usual rowdy brawler persona for an aura of absolute, unwavering discipline, she channels her natural confidence into a stoic, formal, and deeply cautious demeanor. Her signature silver ponytail is tied back with immaculate precision, and she commands instant respect in her pristine white Tang Suit and heavy, glittering cloud-patterned cloak.\n\nForsaking her bare-handed judo, Yuri wields a traditional Jian with fluid, hyper-aggressive elegance, capable of dismantling entire syndicates in the blink of an eye. Despite her rigid professionalism, her underlying kindness remains completely intact, especially when dealing with civilians or her closest confidant, Captain Kagaku.\n\nWhen the two fight side-by-side, their inhuman teamwork and telepathic synchronization create a seamless, suffocating vortex of steel that leaves enemies feeling as though they are being dismantled by a single, omnipresent force. Outside of their grueling shifts, Yuri's steadfast composure perfectly grounds her partner's loud charisma, making them an inseparable, complementary duo on the bustling streets of Sector II."
         k = Kata("Yunhai Association Enforcer Captain", "Yuri", 4, "I", res, desc)
         k.source_key = name
         s1 = Skill("Collapse / Snap [崩]", 1, EL_STORGE, 9, "[Combat Start] All of this unit’s allies with Poise gain 2 Poise Count. If affected units are from “Yunhai Association”, gain 3 Poise Count instead\n       [On Hit] Gain 3 Poise Potency\n       [On Critical Hit] Gain 3 Poise Potency", effect_type="YUNHAI_YURI_SPECIAL1")
@@ -788,7 +788,7 @@ def get_kata_data_by_name(name):
     # --- KAGAKU YUNHAI ASSOCIATION CAPTAIN ---
     elif name == "Yunhai Association Enforcer Captain Kagaku Shamiko":
         res = [0.8, 1.0, 0.9, 0.8, 1.0, 1.3, 1.1]
-        desc = "Descriptionhere"
+        desc = "Kagaku Shamiko abandons the isolation of her laboratory to become the radiant, highly charismatic Captain of the Yunhai Association's 1st Unit. Radiating a loud, boisterous confidence that naturally draws crowds of admiring locals, she wears her white Captain's uniform with a blatant, playful disregard for protocol—sleeves stubbornly rolled up to her elbows and pitch-black sunglasses casually perched on her nose. Her messy green hair is styled with a trendy, effortless flair that perfectly matches her highly sociable, fast-talking persona.\n\nWhile she acts like a slacking jokester to the public, her underlying 'mad scientist' genius is instead channeled into a terrifyingly high battle IQ; she wields her Jian with unorthodox, unpredictable mastery. Her true, overwhelming strength shines when she fights alongside her closest friend, Captain Yuri. Their bond is forged in absolute, platonic trust, resulting in a flawless combat rhythm that effortlessly traps and overwhelms their opponents. Once off-duty, Kagaku's vibrant, energetic nature effortlessly drags the stoic Yuri into the lively street markets to enjoy the local food, perfectly balancing her partner's rigid discipline."
         k = Kata("Yunhai Association Enforcer Captain", "Kagaku", 4, "I", res, desc)
         k.source_key = name
         
@@ -810,7 +810,7 @@ def get_kata_data_by_name(name):
     # --- NAGANOHARA TSUKIMIYAMA THE UNTOUCHABLE ---
     elif name == "Ibara Ninja | ‘Naganohara Tsukimiyama The Untouchable’":
         res = [1.1, 1.2, 1.0, 1.0, 0.9, 0.7, 0.7]
-        desc = "Descriptionhere"
+        desc = "In a profoundly dark and unique timeline, Naganohara Tsukimiyama exists as a notorious Ibara ninja, bearing the infamous mantle of 'The Untouchable'. Stripped completely of her signature bubbly optimism and even entirely lacking the arrogant sadism of the original Kagerou, she operates with a hollow, terrifying efficiency. Clad in heavy, dark tactical mercenary gear, her once-bright golden eyes are now dead, calculating, and devoid of emotion.\n\nShe is a true combat anomaly, possessing not only masterful shinobi stealth but also the devastating Vibration abilities characteristic of Fuyuyama Shigemura. By synthesizing these traits, Naganohara birthed her ingenious 'Vibrant Invisibility'—an absolute technique that simultaneously conceals her presence, violently deflects incoming attacks through high-frequency shielding, accelerates her movements to imperceptible speeds, and completely shatters targets from the inside out upon contact.\n\nHowever, her brutal, lightning-fast approach to ending fights in the absolute worst ways stems from a deeply traumatic reality check. Despite her genius awakening and immense pride in her original techniques, she was once effortlessly dismantled and brutally beaten by a mysterious Propagator of the Seditious Garden, who broke through her impenetrable defenses moments after their fight began. This absolute, humbling defeat forever shattered her worldview.\n\nNow wandering the underworld as a cold, efficient mercenary, she abides by a single, despairing philosophy: 'Unrivaled Under Heavens Is A Heat Haze.' She fights with the bleak, absolute understanding that there is no true 'Strongest' in the world, and no matter how brilliantly a warrior may shine, they are all destined to eventually fall."
         k = Kata("Ibara Ninja | ‘The Untouchable’", "Naganohara", 4, "I", res, desc)
         k.source_key = name
         
@@ -834,7 +834,7 @@ def get_kata_data_by_name(name):
     # --- YUNHAI XIANGYUN YOKUBUKAI NATSUME ---
     elif name == "Yunhai Association Xiangyun | Yokubukai Natsume":
         res = [1.0, 1.0, 1.1, 1.1, 0.7, 0.9, 1.1]
-        desc = "Descriptionhere"
+        desc = "Yokubukai Natsume ascends to the terrifying, absolute pinnacle of the Westward Megastructure as a 'Xiangyun' Administrator. Draped in a regal, floor-length gray Changpao robe with her long, dark blue hair flowing freely in an unnatural wind, she wields a dark Jian that commands an oppressive, suffocating gravity over the entire city. With a mere flick of her wrist, she can suspend sweeping, indestructible walls of jet-black ink matter to effortlessly trap her foes.\n\nTo Enforcers Akasuke, Yuri, Kagaku, and Naganohara, her sudden rise to power is a chilling tragedy; she was once their close friend and fellow student at Luoxia Gardening School, only to vanish and seize the throne overnight, becoming an unrecognizable, dreadful deity. Yet, behind this cold, absolute facade, Natsume remains entirely sane, harboring a quiet, aching affection for the comrades she left behind.\n\nHowever, the true terror of this Kata lies beyond her political might. When the original timeline's Kagaku attempted to observe this alternate universe, she met unprecedented, active interference. This Xiangyun Natsume possesses a level of power so unfathomable that she can instinctively sense multiversal observation and effortlessly block it across space-time.\n\nUltimately, Kagaku suspects this Natsume did not claim her throne out of ambition or malice, but deliberately threw away her peaceful life to brace for a catastrophic war—isolating herself at the top of the world to prepare to fight an incomprehensible, lurking threat that the current Kasakura Vanguard cannot even begin to fathom."
         k = Kata("Yunhai Association Xiangyun", "Natsume", 4, "I", res, desc)
         k.source_key = name
 
@@ -856,7 +856,7 @@ def get_kata_data_by_name(name):
     # --- GENERAL HANA ---
     elif name == "General Of The Ten Thousand Blossom Brotherhood | Kaoru Hana":
         res = [0.8, 1.1, 1.0, 0.8, 1.0, 1.1, 0.9]
-        desc = "Descriptionhere"
+        desc = "In the ancient, blood-soaked era of the original War of the Nine Armies, Kaoru Hana stands as the honorable General of the Ten Thousand Blossom Brotherhood. Unlike the rage-fueled, masculine war cries of the original Zhao Feng, Hana leads her forces with a gentle, quiet yet unyielding resolve; her soldiers affectionately insist on calling her 'Big Sis' amidst the carnage—an endearing title she long ago gave up trying to correct.\n\nEnveloped in a suffocating, glowing pink miasma, she wields a massive Jian blade on the frontlines. Through a flawless, harmonious blend of absolute peace of mind and unwavering determination, she can temporarily shatter her own sword to manifest a spiritually powered blade superweapon of unfathomable destructive force. While this technique elevates her peak strength to a level arguably beyond the original General's, Original Kagaku wisely notes that comparing two equally respectable war legends is a disservice to their shared history.\n\nWise, kind, and fiercely honorable, Hana understands that showing mercy on the battlefield is the ultimate disrespect to a mature adversary, and thus she strikes with lethal, unhesitating efficiency. However, her tale is a profound tragedy forged by the chaotic Phenomena energy of her era, which indiscriminately kept suffering fighters alive in a hellish cycle. By the time the ancient ceasefire birthed the Scroll of the Nine Armies, Hana had lost every single one of her beloved lieutenants and messengers, leaving her to eternally command a mindless, spectral horde. Yet, her spirit never falters.\n\nShe firmly believes that the political squabbles of future eras belong solely to the people of those eras. Bound to the ritual, her singular, eternal duty is simply to 'Destroy The Enemy.' She will continue to give her all, leading the Vanguard to break through enemy lines until the day her endless war finally ceases—and she can peacefully rest to reunite with her precious comrades once again."
         k = Kata("General Of The Ten Thousand Blossom Brotherhood", "Hana", 4, "I", res, desc)
         k.source_key = name
         

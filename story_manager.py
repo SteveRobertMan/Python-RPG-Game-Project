@@ -12450,3 +12450,76 @@ def play_stage_4_28_story():
     
     show_story_box("Boss", "“I approve the proposal.”", affiliation="Miyu's Benefactor")
     show_story_box("Boss", "“In fact… I am planning to go with you.”", affiliation="Miyu's Benefactor")
+
+def play_lattice_triage_prologue_story():
+    show_story_box("", "Akasuke’s POV", is_narrator=True)
+
+    show_story_box("", "The smell of burnt ozone, stale coffee, and discarded melon bread wrappers was practically permanently etched into my brain at this point.", is_narrator=True)
+
+    show_story_box("", "It had only been a few weeks since we returned from the brutal, non-stop gauntlet of the Westward Megastructure. My shattered shoulder was fully healed, thanks to the remaining effects of the Jade Serum, but our resources—and our funding—were completely tapped out.", is_narrator=True)
+
+    show_story_box("", "Kagaku stood at the center of her second lab, gesturing wildly toward the Parallaxis Scorer. It wasn't just glowing its usual humming blue anymore. It was spitting out a chaotic, swirling spectrum of colors—blood red, neon green, and void-like black.", is_narrator=True)
+
+    show_story_box("Kagaku", "I present to you all... the ultimate solution to our logistical and financial crisis!", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Yuri", "Kagaku, that thing looks like it’s about to blow up and take the entire school block with it. Please tell me ya didn’t hotwire the main power grid again.", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Kagaku", "Details, Yuri, details! Listen to me! Our life-or-death battles in Sector III taught me something crucial about the fundamental mechanics of how Katas work.", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Kagaku", "When we initiate a swap, we aren't just opening a door, grabbing an alternate version of ourselves, and closing it. We create a temporary bridge. A dimensional friction point where infinite timelines scrape against each other. I call this in-between space... 'The Lattice'.", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Natsume", "The Lattice. Sounds like an absolute headache waiting to happen. What does this have to do with our severe lack of military-grade microprocessors?", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Kagaku", "Everything! Using the data I gathered on the Yunhai Association's tech, I managed to stabilize a permanent gateway into The Lattice. Because it’s a chaotic mix of overlapping universes, timeline fragments physically crystallize there from the sheer friction.", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Kagaku", "We're talking raw, anomalous precious metals. Multiversal gems! Stuff that doesn't belong to any one universe, meaning it's completely safe to extract without causing a paradox! We go in, we mine the shiny rocks, we sell them to the highest bidders in the underworld, and boom! Unlimited funding for the custom Jade microchips we need to keep the Scorer running!", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Shigemura", "An uncharted dimensional void. Knowing our luck, it won’t be empty. What are the hostiles?", affiliation="Kasakura High School Student")
+
+    show_story_box("Kagaku", "Ah... well. About that.", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Kagaku", "Since it’s a junction of our past Kata connections and timeline echoes, the space is populated by... concepts. Physical echoes of things we've already fought and the places we've been.", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Benikawa", "Wait. You mean we get to fight the Heiwa delinquents, the Riposte Gang swordsmen, AND those creepy ancient phantom soldiers of the Nine Armies all in one place? At the same time?", affiliation="Benikawa Ninja Clan")
+
+    show_story_box("Benikawa", "Sign me up! I was starting to get bored of normal gravity anyway~.", affiliation="Benikawa Ninja Clan")
+
+    show_story_box("Naganohara", "Are you crazy?! I don't want to fight the Nine Armies again! I'm still having nightmares about that giant guy with the halberd!", affiliation="Kasakura High School Student")
+
+    show_story_box("Akasuke", "We need to master our Katas anyway. The Megastructure proved that there are absolute monsters out there like Kesler, Koharu, and the Starguards. If The Lattice provides us with a limitless training ground to push our limits, and the funds we need to keep our Trump Card running...", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("", "I looked at the swirling, chaotic portal humming in the center of the room.", is_narrator=True)
+
+    show_story_box("", "The memory of the white steam rolling off my shin—the very edges of a Phenomena—flashed in my mind.", is_thought=True)
+
+    show_story_box("Akasuke", "Then we don't have a choice. We dive in.", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("", "We stepped onto the machine's central platform.", is_narrator=True)
+
+    show_story_box("", "Blue light swallowed us whole, but it didn't fade into a new uniform or a stolen identity this time. It dragged us downward, pulling us straight through the fabric of reality.", is_narrator=True)
+
+    show_story_box("", "When my boots hit solid ground, the world around me was a shattered, breathtaking mosaic.", is_narrator=True)
+
+    show_story_box("", "Above us, the ominous, blood-red sky of the Nine Armies' ritual bled seamlessly into the sterile, fluorescent lighting of the cruise ship's lower maintenance decks. Beneath our feet, the smooth, luxurious jade tiles of the Yunhai Pagoda transitioned sharply into the cracked, rain-slicked asphalt of Kasakura’s back alleys.", is_narrator=True)
+
+    show_story_box("", "It was a beautiful, terrifying amalgamation of our entire journey.", is_narrator=True)
+
+    show_story_box("Hana", "Oh my... Look at the flora here. There are glowing crystalline flowers growing directly out of the concrete! The ecosystem is completely hybridized!", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Yuri", "Heads up, guys! We've got company!", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("", "From the shifting, misty archways ahead, silhouettes began to form.", is_narrator=True)
+
+    show_story_box("", "A low-level Kasakura street thug stood shoulder-to-shoulder with a highly trained, sandy-coated Riposte Gang Squad Leader. Behind them, the eerie green glow of a spectral swordsman from the Nine Armies flickered into existence, entirely unbothered by its modern allies.", is_narrator=True)
+
+    show_story_box("", "It was an impossible alliance, born purely from the chaos of our own multiversal footprints.", is_narrator=True)
+
+    show_story_box("Shigemura", "A complete breakdown of logic and faction loyalty. They possess no allegiance other than absolute hostility towards our presence here.", affiliation="Kasakura High School Student")
+
+    show_story_box("Natsume", "I'm tracking thermal signatures and energy spikes. Kagaku was right. The enemies here are dropping crystallized dimensional fragments when defeated. The shiny metals are forming right at their cores. Those are our targets.", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("", "I raised my fists, letting the familiar blue energy of my Kata ignite around my body. The rest of the Vanguard followed suit, their distinct auras lighting up the fragmented, overlapping void.", is_narrator=True)
+
+    show_story_box("Akasuke", "Alright, Vanguard! Our mission here is simple! Farm the precious materials, master the Katas, and don't let the ghosts of our past beat us down!", affiliation="Kasakura High School Student / Seven Wonders")
+
+    show_story_box("Akasuke", "Welcome to The Lattice. Let's clear them out!", affiliation="Kasakura High School Student / Seven Wonders")
