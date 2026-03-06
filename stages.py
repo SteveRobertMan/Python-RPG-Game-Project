@@ -237,11 +237,9 @@ def load_stage_enemies(stage_id):
     elif stage_id == 5001:
         for label in ["A", "B", "C"]:
             enemies.append(spawn("Class-Skipping Freshman", label))
-
     elif stage_id == 5002:
         for label in ["A", "B", "C", "D"]:
             enemies.append(spawn("Kidnapper Hooligan", label))
-
     elif stage_id == 5003:
         for label in ["A", "B"]:
             enemies.append(spawn("Class-Skipping Freshman", label))
@@ -582,6 +580,7 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Twin Mountain Gate Gangster", "A"))
         enemies.append(spawn("Twin Mountain Gate Gangster", "B"))
         enemies.append(spawn("Twin Mountain Gate Gangster", "C"))
+        enemies.append(spawn("Twin Mountain Gate Gangster", "D"))
     elif stage_id == 60001:
         enemies.append(spawn("Golden Fist Union Gangster", "A"))
         enemies.append(spawn("Golden Fist Union Gangster", "B"))
@@ -660,7 +659,7 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Zhao Feng"))
     elif stage_id == 71:
         enemies.append(spawn("Ibara Ninja - 'Kagerou The Untouchable'"))
-
+    
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
 
@@ -1423,7 +1422,7 @@ def get_enemy_database():
     for c in m_s5.chips: c.is_temporary = True
     # === PASSIVES ===
     m_p1 = Passive("Wing Chun [詠春]", "Tally amount of Critical Hits this unit performs throughout battle. Append these skills randomly into Skill Pool when the Tally reaches the following numbers:\n2 Critical Hits – ‘Tan Sau [攤手]’\n4 Critical Hits – ‘Lifting Hand [問手]’\n7 Critical Hits – ‘Question Mark Kick [問號踢]’\nAfter reaching 7 Critical Hits, immediately reset the Tally.", "PASSIVE_WING_CHUN", 1, color="pale_turquoise1")
-    m_p2 = Passive("Acceleration [加速度]", "At start of turn, convert all Poise Potency and Poise Count and add to Acceleration Potency and Acceleration Count, respectively. Then, if this unit has 30 [Acceleration Potency+Count], remove all Acceleration, Pick Up 1 Pace, and gain 1 Overheat. This effect can occur 3 times\nIf this unit already has 6+ Pace, instead, remove 70% of Acceleration Potency and Acceleration Count each, then gain 2 Overheat.", "PASSIVE_ACCELERATION", 2, color="pale_turquoise1")
+    m_p2 = Passive("Acceleration [加速度]", "At the start of turn, convert all Poise Potency and Poise Count and add to Acceleration Potency and Acceleration Count, respectively. Then, if this unit has 30 [Acceleration Potency+Count], remove all Acceleration, Pick Up 1 Pace, and gain 1 Overheat. This effect can occur 3 times\nIf this unit already has 6+ Pace, instead, remove 70% of Acceleration Potency and Acceleration Count each, then gain 2 Overheat.", "PASSIVE_ACCELERATION", 2, color="pale_turquoise1")
     m_p3 = Passive("Impediment - Severed Arm [障礙－斷臂]", "Deal -50% Final Damage with attacks\nTake 200% Final Damage from attacks", "PASSIVE_SEVERED_ARM", 3, color="grey74")
     k_miyu.passives.extend([m_p1, m_p2, m_p3])
     miyu.equip_kata(k_miyu)
