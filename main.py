@@ -1,11 +1,14 @@
 import sys
 import time
 import random
+import copy
+import math
 from rich.panel import Panel 
 from rich.console import Console 
 import config
 import scd
 from player_state import player
+import ui_components
 
 if not hasattr(config, "console"): config.console = Console()
 if not hasattr(config, "current_state"):
@@ -23,6 +26,7 @@ if not hasattr(config, "current_state"):
 console = config.console
     
 import stages
+import lattice_encounters
 import story_manager
 from ui_components import draw_title_screen, get_player_input, clear_screen, draw_stage_select_menu, draw_council_logs_menu, draw_bestiary_menu, draw_material_logs, draw_node_select_menu, draw_party_management_menu
 from save_system import save_manager
@@ -128,6 +132,63 @@ def console_print_load_prompt():
         console.print("[bold red]Invalid Save Strip![/bold red]")
         get_player_input("Press Enter to return to Title...")
 
+def terminate_lattice_run(run_state, is_victory=False):
+    """Calculates final rewards, updates player profile, and cleans up the run."""
+    stats = run_state.get("cleared_stats", {"battles": 0, "elites": 0, "bosses": 0, "events": 0})
+    highest_day = run_state.get("day", 1)
+    lattice_name = run_state.get("lattice", "Stable Lattice")
+    
+    # Random Multipliers
+    xp_mult = random.uniform(1.01, 1.50)
+    man_mult = random.uniform(1.01, 1.50)
+    
+    # --- XP CALCULATION ---
+    # Formula: [[(Battles*2)+(Elites*3)+(Events*1)+(Bosses*4)]*(Highest Day)]*Random Multiplier
+    base_xp = (stats["battles"] * 2) + (stats["elites"] * 3) + (stats["events"] * 1) + (stats["bosses"] * 4)
+    gained_xp = math.floor((base_xp * highest_day) * xp_mult)
+    
+    # --- MANUSCRIPT CALCULATION ---
+    # Formula: [[(Battles/3)+(Elites/2)+(Events/2)+(Bosses/2)]+(Highest Day)+1]*Random Multiplier
+    base_man = (stats["battles"] / 3.0) + (stats["elites"] / 2.0) + (stats["events"] / 2.0) + (stats["bosses"] / 2.0)
+    gained_manuscripts = math.floor((base_man + highest_day + 1) * man_mult)
+
+    # --- APPLY TO PLAYER PROFILE ---
+    from player_state import player
+    from save_system import save_manager
+    import ui_components
+    
+    player.lattice_xp[lattice_name] = player.lattice_xp.get(lattice_name, 0) + gained_xp
+    player.manuscripts_owned[lattice_name] = player.manuscripts_owned.get(lattice_name, 0) + gained_manuscripts
+    
+    # Handle Level Ups
+    current_lvl = player.lattice_levels.get(lattice_name, 1)
+    # XP Req Formula: 20 + (Current Required / 20) -> Approx: 20 + (Lvl * 1) for simplicity unless recursive is strictly needed
+    while True:
+        req_xp = int(20 + sum([(20 + (i * 1)) / 20 for i in range(1, current_lvl)]))
+        if player.lattice_xp[lattice_name] >= req_xp:
+            player.lattice_xp[lattice_name] -= req_xp
+            current_lvl += 1
+            player.lattice_levels[lattice_name] = current_lvl
+        else:
+            break
+
+    # Clean up the run state
+    save_manager.delete_lattice_run()
+    config.run_state = None
+    config.player_data["lattice_mode"] = False
+    
+    # Display Results UI
+    ui_components.clear_screen()
+    ui_components.print_header(f"LATTICE TRIAGE COMPLETE")
+    ui_components.config.console.print(f"Status: {'[green]SURVIVED[/green]' if is_victory else '[red]VANGUARD DEFEATED[/red]'}")
+    ui_components.config.console.print(f"Days Reached: {highest_day}")
+    ui_components.config.console.print(f"Battles: {stats['battles']} | Elites: {stats['elites']} | Events: {stats['events']} | Bosses: {stats['bosses']}\n")
+    ui_components.config.console.print(f"[bold cyan]+ {gained_xp} {lattice_name} XP[/bold cyan] (Current Level: {current_lvl})")
+    ui_components.config.console.print(f"[bold yellow]+ {gained_manuscripts} {lattice_name} Manuscripts[/bold yellow]")
+    
+    ui_components.get_player_input("\nPress Enter to return to the Hub...")
+    config.current_state = config.STATE_LATTICE_MENU
+
 def confirm_quit():
     clear_screen()
     console.print(Panel("Are you sure you want to quit?", style="bold red"))
@@ -188,6 +249,263 @@ def get_equipped_data(unit_name):
             "description": found_unit.description 
         }
     return None
+
+def is_map_fully_connected(grid, start_pos, total_nodes):
+    """Flood-fill algorithm to verify all nodes are reachable."""
+    size = len(grid)
+    visited = set()
+    queue = [start_pos]
+    visited.add(start_pos)
+    node_count = 0
+
+    while queue:
+        x, y = queue.pop(0)
+        # Check adjacent (Up, Down, Left, Right)
+        for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < size and 0 <= ny < size:
+                if (nx, ny) not in visited and grid[ny][nx] != '☒':
+                    visited.add((nx, ny))
+                    queue.append((nx, ny))
+                    if grid[ny][nx] != '☑': # If it's a real playable node
+                        node_count += 1
+                        
+    return node_count >= total_nodes
+
+def generate_lattice_map(day):
+    """Generates the procedural map and guarantees playability."""
+    size = min(5 + (day * 2), 11) # Caps at 11 for sane rendering, though can grow
+    raw_node_amount = int(((size ** 2) / 2) * random.uniform(0.60, 1.30))
+    moves = int((raw_node_amount * 2) * random.uniform(0.40, 1.20))
+    
+    while True:
+        # Create empty grid filled with walls
+        grid = [['☒' for _ in range(size)] for _ in range(size)]
+        center = size // 2
+        player_pos = (center, center)
+        grid[center][center] = '☑' # Mark starting space as a cleared space
+        
+        # Calculate Node Distribution
+        battles = int(raw_node_amount * 0.50)
+        elites = int(raw_node_amount * 0.10)
+        events = int(raw_node_amount * 0.30)
+        empties = max(1, raw_node_amount - battles - elites - events)
+        
+        total_real_nodes = battles + elites + events
+        nodes_to_place = ['☑'] * empties + ['⛞'] * battles + ['▣'] * events + ['𖣯'] * elites
+        random.shuffle(nodes_to_place)
+        
+        # Phase 1: Place adjacent empties (Safe Nodes)
+        adjacents = [(center, center-1), (center, center+1), (center-1, center), (center+1, center)]
+        placed_empties = 0
+        for ax, ay in adjacents:
+            if placed_empties < empties and 0 <= ax < size and 0 <= ay < size:
+                grid[ay][ax] = '☑'
+                nodes_to_place.remove('☑')
+                placed_empties += 1
+                
+        # Phase 2: Random walk generation
+        current_options = []
+        for ax, ay in adjacents:
+             if grid[ay][ax] != '☒' and grid[ay][ax] != '✾':
+                 current_options.append((ax, ay))
+                 
+        if not current_options:
+            continue # Failed generation, retry
+
+        placed = 0
+        while nodes_to_place and placed < 1000: # Timeout prevention
+            placed += 1
+            node_type = nodes_to_place.pop(0)
+            
+            # Find an existing non-wall tile to branch from
+            branch_points = []
+            for y in range(size):
+                for x in range(size):
+                    if grid[y][x] != '☒' and grid[y][x] != '✾':
+                        # Check if it has at least one adjacent wall
+                        has_wall = False
+                        for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+                            nx, ny = x + dx, y + dy
+                            if 0 <= nx < size and 0 <= ny < size and grid[ny][nx] == '☒':
+                                has_wall = True
+                                break
+                        if has_wall:
+                            branch_points.append((x, y))
+            
+            if not branch_points: break
+            base_x, base_y = random.choice(branch_points)
+            
+            # Find an empty wall adjacent to this base
+            valid_targets = []
+            for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+                nx, ny = base_x + dx, base_y + dy
+                if 0 <= nx < size and 0 <= ny < size and grid[ny][nx] == '☒':
+                    valid_targets.append((nx, ny))
+            
+            if valid_targets:
+                tx, ty = random.choice(valid_targets)
+                grid[ty][tx] = node_type
+            else:
+                nodes_to_place.append(node_type) # Put back if failed
+                random.shuffle(nodes_to_place)
+
+        # Validate Pathfinding
+        if is_map_fully_connected(grid, player_pos, total_real_nodes):
+            return grid, player_pos, moves
+
+# --- REPLACE open_manuscript_shop IN main.py ---
+def open_manuscript_shop(lattice_name, run_state):
+    """The pre-run buff shop where players spend Manuscripts."""
+    from player_state import player
+    import ui_components
+    # Initialize run_state buff trackers if not present
+    if "manuscript_buffs" not in run_state:
+        run_state["manuscript_buffs"] = {
+            "strength": 0, "vitality": 0, "pathfinding": 0, "enfeeble": 0,
+            "riches": 0, "bargaining": 0, "treasure_hunter": 0, "boost": 0
+        }
+    buff_costs = [1, 2, 4, 6] # Example tier costs for Strength/Vitality (adjust per raw content for others if needed)
+    while True:
+        ui_components.clear_screen()
+        ui_components.print_header(f"MANUSCRIPT SHOP: {lattice_name}")
+        owned = player.manuscripts_owned.get(lattice_name, 0)
+        config.console.print(f"[bold yellow]Owned Manuscripts:[/bold yellow] {owned}\n")
+        # Display current levels
+        b = run_state["manuscript_buffs"]
+        config.console.print(f"Current Buffs:")
+        config.console.print(f"Strength Lvl {b['strength']} | Vitality Lvl {b['vitality']} | Pathfinding Lvl {b['pathfinding']} | Enfeeble Lvl {b['enfeeble']}")
+        config.console.print(f"Riches Lvl {b['riches']} | Bargain Lvl {b['bargaining']} | Treasure Lvl {b['treasure_hunter']} | Boost Lvl {b['boost']}\n")
+        config.console.print("[honeydew2][1] Upgrade Strength[/honeydew2]")
+        config.console.print("[honeydew2][2] Upgrade Vitality[/honeydew2]")
+        config.console.print("[honeydew2][3] Upgrade Pathfinding[/honeydew2]")
+        config.console.print("[honeydew2][4] Upgrade Enfeeble[/honeydew2]")
+        config.console.print("[honeydew2][5] Upgrade Riches[/honeydew2]")
+        config.console.print("[honeydew2][6] Upgrade Bargaining[/honeydew2]")
+        config.console.print("[honeydew2][7] Upgrade Treasure Hunter[/honeydew2]")
+        config.console.print("[honeydew2][8] Upgrade Boost[/honeydew2]")
+        config.console.print("[honeydew2][0] Done / Start Run[/honeydew2]")
+        choice = ui_components.get_player_input("Select Upgrade (or 0 to exit) > ")
+        if choice == "0": break
+        mapping = {"1": "strength", "2": "vitality", "3": "pathfinding", "4": "enfeeble", 
+                   "5": "riches", "6": "bargaining", "7": "treasure_hunter", "8": "boost"}
+        if choice in mapping:
+            stat = mapping[choice]
+            current_lvl = b[stat]
+            if current_lvl >= 4:
+                config.console.print("[red]Already at MAX level![/red]")
+            else:
+                cost = buff_costs[current_lvl] # Using uniform cost array for example
+                if owned >= cost:
+                    player.manuscripts_owned[lattice_name] -= cost
+                    run_state["manuscript_buffs"][stat] += 1
+                    config.console.print(f"[green]Upgraded {stat} to Lvl {current_lvl + 1}![/green]")
+                else:
+                    config.console.print(f"[red]Not enough Manuscripts! Need {cost}.[/red]")
+            ui_components.time.sleep(1)
+
+def generate_static_shop_items(lattice_name, owned_manifolds):
+    """Generates 6-8 shop items prioritizing unowned items and using correct rates."""
+    import random
+    
+    # Example placeholder pools (You will fill these with the raw content lists)
+    pool = {
+        "I": ["Cafeteria Melon Bread (I)", "Station Melon Bread (I)"], 
+        "II": ["Standard Kasakura Tracksuit (II)"],
+        "III": ["Kevlar Undersuit (III)"],
+        "IV": ["Chipped Broadsword (IV)"]
+    }
+    
+    num_items = random.randint(6, 8)
+    shop_inventory = []
+    
+    # Rule: 40% chance to guarantee Tier III, else 80% Tier II
+    first_tier = None
+    if random.random() < 0.40: first_tier = "III"
+    elif random.random() < 0.80: first_tier = "II"
+    
+    for i in range(num_items):
+        target_tier = "I"
+        if i == 0 and first_tier:
+            target_tier = first_tier
+        else:
+            roll = random.random()
+            if roll < 0.03: target_tier = "IV"
+            elif roll < 0.18: target_tier = "III"
+            elif roll < 0.50: target_tier = "II"
+            else: target_tier = "I"
+            
+        # Try to find unowned item of target tier
+        available = [m for m in pool[target_tier] if m not in owned_manifolds and m not in [x["name"] for x in shop_inventory]]
+        if not available:
+            # Fallback to lower tiers if empty
+            available = [m for t in ["I", "II", "III", "IV"] for m in pool[t] if m not in owned_manifolds and m not in [x["name"] for x in shop_inventory]]
+            
+        if available:
+            chosen = random.choice(available)
+            tier_val = {"I":1, "II":2, "III":3, "IV":4}.get(target_tier, 1)
+            price = int(80 * tier_val * random.uniform(0.80, 1.60))
+            shop_inventory.append({"name": chosen, "price": price, "locked": False, "tier": tier_val})
+            
+    return shop_inventory
+
+def open_static_shop(run_state):
+    """Interactive loop for the end-of-floor Static Shop."""
+    import ui_components
+    import random
+    
+    heals_left = 2
+    team_changes_left = 1
+    refresh_cost = int(50 * random.uniform(0.60, 1.20))
+    inventory = generate_static_shop_items(run_state["lattice"], run_state["owned_manifolds"])
+    
+    while True:
+        ui_components.clear_screen()
+        ui_components.print_header(f"STATIC SHOP - DAY {run_state['day']}")
+        config.console.print(f"[bold]Static Owned:[/bold] {config.STATIC_SYMBOL} {run_state['static']}\n")
+        
+        # Draw Inventory
+        for idx, item in enumerate(inventory):
+            if item["locked"]:
+                config.console.print(f"[{idx+1}] [dim]SOLD OUT[/dim]")
+            else:
+                config.console.print(f"[{idx+1}] {item['name']} - {config.STATIC_SYMBOL} {item['price']}")
+                
+        config.console.print("\n[H] Heal 30% HP (Cost: 100) " + f"[{heals_left} left]")
+        config.console.print(f"[T] Change Team (Cost: 100) [{team_changes_left} left]")
+        config.console.print(f"[R] Refresh Shop (Cost: {refresh_cost})")
+        config.console.print(f"[S] Sell Owned Manifolds")
+        config.console.print("\n[0] Exit Shop & Proceed to Boss / Next Day")
+        
+        choice = ui_components.get_player_input("Select > ").upper()
+        
+        if choice == "0":
+            break
+        elif choice.isdigit() and 1 <= int(choice) <= len(inventory):
+            idx = int(choice) - 1
+            item = inventory[idx]
+            if not item["locked"] and run_state["static"] >= item["price"]:
+                run_state["static"] -= item["price"]
+                item["locked"] = True
+                run_state["owned_manifolds"].append(item["name"])
+                config.console.print(f"[green]Bought {item['name']}![/green]")
+                ui_components.time.sleep(1)
+            elif not item["locked"]:
+                config.console.print("[red]Not enough Static![/red]")
+                ui_components.time.sleep(1)
+        elif choice == "H" and heals_left > 0 and run_state["static"] >= 100:
+            run_state["static"] -= 100
+            heals_left -= 1
+            for u_name, (hp, max_hp) in run_state["hp_data"].items():
+                run_state["hp_data"][u_name] = (min(max_hp, hp + int(max_hp * 0.30)), max_hp)
+            config.console.print("[green]Party Healed![/green]")
+            ui_components.time.sleep(1)
+        elif choice == "R" and run_state["static"] >= refresh_cost:
+            run_state["static"] -= refresh_cost
+            refresh_cost = int(refresh_cost * random.uniform(1.20, 1.40))
+            inventory = generate_static_shop_items(run_state["lattice"], run_state["owned_manifolds"])
+            config.console.print("[yellow]Shop Refreshed![/yellow]")
+            ui_components.time.sleep(1)
 
 def run_game():
     while True:
@@ -328,12 +646,15 @@ def run_game():
             if stage_id in [58001, 58002, 58003, 58004, 58005, 60001, 60002, 60003, 60004, 60005]:
                 party = [p for p in party if p.name != "Akasuke"]
 
-            enemies = stages.load_stage_enemies(stage_id)
-            if not enemies:
-                console.print("[red]Error: Enemies not found for this stage![/red]")
-                time.sleep(2)
-                config.current_state = config.STATE_MAIN_MENU
-                continue
+            if config.player_data.get("lattice_mode", False):
+                enemies = config.player_data.get("current_enemies", [])
+            else:
+                enemies = stages.load_stage_enemies(stage_id)
+                if not enemies:
+                    console.print("[red]Error: Enemies not found for this stage![/red]")
+                    time.sleep(2)
+                    config.current_state = config.STATE_MAIN_MENU
+                    continue
     
             if stage_id in [63,65]:
                 party = [member for member in party if member.name in ["Yuri","Benikawa","Shigemura","Hana"]]   
@@ -382,8 +703,20 @@ def run_game():
 
             if should_play_story and stage_id in STORY_STARTS:
                 STORY_STARTS[stage_id]()
+            
+            # Safely inject Lattice data into the battle system to prevent crashes
+            if config.player_data.get("lattice_mode", False):
+                battle_manager.is_lattice_mode = True
+                battle_manager.run_state = config.run_state
+                battle_manager.lattice_node_type = config.player_data.get("lattice_node_type", "battles")
+            else:
+                battle_manager.is_lattice_mode = False
 
             battle_manager.start_battle(party, enemies, stage_id)
+            
+            if config.player_data.get("lattice_mode", False):
+                config.player_data["lattice_mode"] = False # Safety reset
+                continue # CRITICAL: We need this to skip all the campaign rewards below and loop!
             
             clear_screen()
             if battle_manager.won:
@@ -645,7 +978,7 @@ def run_game():
                             if random.random() < 0.25: rewards_text.append("1x Yunhai Herbal Powder"); mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
                         elif stage_id in group_jadechip_herb:
                             if random.random() < 0.25: rewards_text.append("1x Yunhai Herbal Powder"); mats["Yunhai Herbal Powder"] = mats.get("Yunhai Herbal Powder", 0) + 1
-
+                    
                     config.current_state = config.STATE_MAIN_MENU
 
                 if rewards_text:
@@ -675,14 +1008,21 @@ def run_game():
             console.print(f"Current Stage: {config.player_data.get('latest_stage', 0)}")
             sync_currencies()
             console.print("\n[1] Stage Select")
-            console.print("[2] Gacha (Parallaxis)")
-            console.print("[3] Council Logs")
-            console.print("[4] Party Management") 
-            console.print("[5] Save & Quit")
+            console.print("[2] Lattice Triage")
+            console.print("[3] Gacha (Parallaxis)")
+            console.print("[4] Council Logs")
+            console.print("[5] Party Management") 
+            console.print("[6] Save & Quit")
             choice = get_player_input("Select Option: ")
             if choice == "1":
                 config.current_state = config.STATE_STAGE_SELECT
-            elif choice == "2": 
+            elif choice == "2":
+                if config.player_data.get("latest_stage", 0) >= 73:
+                    config.current_state = config.STATE_LATTICE_MENU
+                else:
+                    console.print("[bold red]Undiscovered: Clear Stage 4-28 to unlock Lattice Triage.[/bold red]")
+                    time.sleep(1.0)
+            elif choice == "3":
                 # Check if Stage 2-5 (ID 16) is cleared
                 if config.player_data.get("latest_stage", 0) >= 16:
                     gacha_system.run_gacha_menu()
@@ -692,11 +1032,11 @@ def run_game():
                 else:
                     console.print("[bold red]Undiscovered: Clear Stage 2-5 to unlock the Parallaxis Scorer.[/bold red]")
                     time.sleep(1.0)
-            elif choice == "3": 
-                config.current_state = config.STATE_COUNCIL_LOGS
             elif choice == "4": 
-                config.current_state = config.STATE_PARTY_MANAGEMENT
+                config.current_state = config.STATE_COUNCIL_LOGS
             elif choice == "5": 
+                config.current_state = config.STATE_PARTY_MANAGEMENT
+            elif choice == "6": 
                 confirm_quit()
             
         elif config.current_state == config.STATE_STAGE_SELECT:
@@ -922,6 +1262,159 @@ def run_game():
                     stage_id = start_id + idx
                     config.player_data["selected_stage"] = stage_id
                     config.current_state = config.STATE_BATTLE
+
+        # LATTICE TRIAGE MAP MENU
+        elif config.current_state == config.STATE_LATTICE_MENU:
+            lattice_choice = ui_components.draw_lattice_main_menu(config.player_data.get("latest_stage", 0))
+            
+            if lattice_choice == "0":
+                config.current_state = config.STATE_MAIN_MENU
+            elif lattice_choice in ["1", "2"]:
+                l_name = "Stable Lattice" if lattice_choice == "1" else "Steadfast Lattice"
+                action = ui_components.draw_lattice_hub_menu(l_name, player)
+                
+                if action == "0":
+                    continue
+                elif action == "1":
+                    # Start Run Setup
+                    run_state = save_manager.load_lattice_run()
+                    if not run_state:
+                        # New Run Init
+                        grid, pos, moves = generate_lattice_map(day=1)
+                        run_state = {
+                            "lattice": l_name,
+                            "day": 1,
+                            "static": 0,
+                            "moves": moves,
+                            "grid": grid,
+                            "pos": pos,
+                            "flux_color": "cyan" if lattice_choice == "1" else "sea_green1",
+                            "hp_data": {u.name: (u.hp, u.max_hp) for u in player.party}
+                        }
+                        # CALL THE SHOP AFTER run_state IS CREATED
+                        open_manuscript_shop(l_name, run_state)
+                        # Save the fully initialized run (with manuscript buffs)
+                        save_manager.save_lattice_run(run_state)
+                        
+                    config.run_state = run_state
+                    config.current_state = config.STATE_LATTICE_TRIAGE
+
+        # LATTICE TRIAGE MAP EXPLORATION
+        elif config.current_state == config.STATE_LATTICE_TRIAGE:
+            rs = config.run_state
+            rs["pos"] = tuple(rs["pos"])
+            ui_components.draw_lattice_map(
+                rs["grid"], len(rs["grid"]), rs["pos"], 
+                rs["day"], rs["flux_color"], rs["moves"], rs["static"]
+            )
+            
+            move = ui_components.get_player_input("").upper()
+            x, y = rs["pos"]
+            nx, ny = x, y
+            
+            if move == "W": ny -= 1
+            elif move == "S": ny += 1
+            elif move == "A": nx -= 1
+            elif move == "D": nx += 1
+            elif move == "0": # Exit to Menu and Save
+                save_manager.save_lattice_run(rs)
+                config.current_state = config.STATE_MAIN_MENU
+                continue
+                
+            # Bounds and Wall Check
+            if 0 <= nx < len(rs["grid"]) and 0 <= ny < len(rs["grid"]) and rs["grid"][ny][nx] != '☒':
+                target_node = rs["grid"][ny][nx]
+                move_cost = 1 if target_node == '☑' else 2
+                
+                if rs["moves"] >= move_cost:
+                    rs["moves"] -= move_cost
+                    rs["pos"] = (nx, ny)
+                    
+                    if target_node == '⛞' or target_node == '𖣯': # Normal or Elite Battle
+                        rs["grid"][ny][nx] = '☑' # Mark cleared
+                        save_manager.save_lattice_run(rs)
+                        
+                        # 1. Distinguish between Elites and Normal Battles
+                        is_elite = (target_node == '𖣯')
+                        if is_elite:
+                            possible_battles = [1000006, 1000009, 1000025, 1000034, 1000041, 1000049, 1000053, 1000063, 1000067, 1000070, 1000072, 1000083, 1000084, 1000090, 1000094]
+                        else:
+                            # Expand this list as needed from your Raw Content
+                            possible_battles = [1000001, 1000002, 1000003, 1000004, 1000005, 1000007, 1000008, 1000010, 1000011, 1000012, 1000013, 1000014]
+                        
+                        chosen_battle_id = random.choice(possible_battles)
+                        # Generate the enemies
+                        enemy_party = stages.get_lattice_battle_group(chosen_battle_id, rs["day"])
+                        
+                        # Set up battle state
+                        config.player_data["lattice_mode"] = True
+                        config.player_data["lattice_node_type"] = "elites" if is_elite else "battles" # Track for XP Calc
+                        config.player_data["current_enemies"] = enemy_party
+                        config.current_state = config.STATE_BATTLE
+                        
+                    elif target_node == '▣': # Event
+                        rs["grid"][ny][nx] = '☑'
+                        if "cleared_stats" not in rs: rs["cleared_stats"] = {}
+                        save_manager.save_lattice_run(rs)
+                        # --- CHECK FOR DELAYED / QUEUED EVENTS ---
+                        flags = rs.get("event_flags", {})
+                        chosen_event_id = None
+                        if rs["day"] == flags.get("jade_synthesis_day", -1): chosen_event_id = 13
+                        elif rs["day"] == flags.get("fairy_auction_day", -1): chosen_event_id = 16
+                        elif rs["day"] == flags.get("fairy_bidding_day", -1): chosen_event_id = 17
+                        elif rs["day"] == flags.get("underworld_crucible_day", -1): chosen_event_id = 19
+                        if not chosen_event_id:
+                            # Normal random pool (Now testing up to Event 20)
+                            valid_pool = [i for i in range(1, 21) if i not in [13, 16, 17, 19]]
+                            chosen_event_id = random.choice(valid_pool)
+                        survived = lattice_encounters.execute_lattice_event(chosen_event_id, rs, player)
+                        if survived == False:
+                            config.console.print("[bold red]The Vanguard has fallen to the anomalies of the Lattice...[/bold red]")
+                            ui_components.time.sleep(2)
+                            config.current_state = "LATTICE_CALCULATE_END"
+                        elif survived == "BATTLE":
+                            pass # Loops back into STATE_BATTLE
+                        else:
+                            rs["cleared_stats"]["events"] = rs["cleared_stats"].get("events", 0) + 1
+                            save_manager.save_lattice_run(rs)
+                else:
+                    config.console.print("[yellow]Floor ending...[/yellow]")
+                    ui_components.time.sleep(1)
+                    # 1. Run the Shop
+                    open_static_shop(rs)
+                    # 2. Boss Battle (If Day >= 3)
+                    if rs["day"] >= 3:
+                        # Fetch boss based on Flux, run battle state logic here just like Elite/Normal
+                        pass 
+                    # 3. Post-Boss / End of Day Reward
+                    ui_components.clear_screen()
+                    ui_components.print_header("DAY COMPLETE - REWARD")
+                    # (Generate 3 unowned manifolds here based on formula: Tier = (Day-1) + Chance)
+                    # For brevity, let's assume `reward_choices` is generated.
+                    reward_choices = ["Vending Machine Iced Tea (I)", "Hardcover Novel (II)", "Sandy Coat (II)"] 
+                    config.console.print("Choose 1 Manifold:")
+                    for i, r in enumerate(reward_choices):
+                        config.console.print(f"[{i+1}] {r}")
+                    while True:
+                        sel = ui_components.get_player_input("Select > ")
+                        if sel in ["1", "2", "3"]:
+                            chosen_reward = reward_choices[int(sel)-1]
+                            rs["owned_manifolds"].append(chosen_reward)
+                            break
+                    # 4. Progress to Next Day or End Gamemode
+                    if rs["day"] >= 5:
+                        config.current_state = "LATTICE_CALCULATE_END" # Win condition (Pass victory flag elsewhere)
+                    else:
+                        rs["day"] += 1
+                        # Restore HP
+                        for u_name, (hp, max_hp) in rs["hp_data"].items():
+                            rs["hp_data"][u_name] = (max_hp, max_hp)
+                        # Generate new map
+                        rs["grid"], rs["pos"], rs["moves"] = generate_lattice_map(rs["day"])
+                        save_manager.save_lattice_run(rs)
+        
+        elif config.current_state == "LATTICE_CALCULATE_END":
+            terminate_lattice_run(config.run_state, is_victory=False)
 
         elif config.current_state == config.STATE_COUNCIL_LOGS:
             draw_council_logs_menu()

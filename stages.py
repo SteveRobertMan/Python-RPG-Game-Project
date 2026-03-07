@@ -7,6 +7,82 @@ from player_state import player
 from scd import bleed_1, bleed_2, bleed_3, bleed_8, bind_1, rupture_1, rupture_2, rupture_3, rupture_6, rupturecount_2, bleedcount_2, bind_4, pierce_fragility_1, paralysis_2, blossom_1, malice_1
 from entities import Chip, ChipSkill, Passive
 
+def spawn_lattice_enemy(db_name, custom_name, day, hp_pct_mult, dmg_pct_mult, hp_flat=0, dmg_flat=0, extra_haste=0, pre_status=None):
+    """
+    Spawns an enemy for Lattice Triage, dynamically scaling its stats.
+    """
+    # 1. Fetch base enemy from database
+    base_enemy = next((e for e in get_enemy_database() if e.name == db_name), None)
+    if not base_enemy:
+        print(f"Error: Enemy {db_name} not found in database.")
+        return None
+        
+    # Deepcopy to prevent modifying the base database
+    enemy = copy.deepcopy(base_enemy)
+    
+    # 2. Rename if a custom string is provided
+    if custom_name:
+        enemy.name = custom_name
+        
+    # 3. Apply Health Scaling
+    # Formula: (Base + Flat) * (1 + (Day * Pct_Mult / 100))
+    bonus_pct = day * hp_pct_mult
+    enemy.max_hp = int((enemy.max_hp + hp_flat) * (1.0 + (bonus_pct / 100.0)))
+    enemy.hp = enemy.max_hp
+    
+    # 4. Apply Damage Scaling (Using hidden temp_modifiers)
+    if not hasattr(enemy, 'temp_modifiers'):
+        enemy.temp_modifiers = {}
+        
+    enemy.temp_modifiers["outgoing_dmg_pct"] = enemy.temp_modifiers.get("outgoing_dmg_pct", 0) + (day * dmg_pct_mult)
+    enemy.temp_modifiers["outgoing_dmg_flat"] = enemy.temp_modifiers.get("outgoing_dmg_flat", 0) + dmg_flat
+    
+    # 5. Apply Pre-Battle Statuses (e.g., Haste, Riposte)
+    if not hasattr(enemy, 'status_effects'):
+        enemy.status_effects = []
+        
+    if extra_haste > 0:
+        # Assuming StatusEffect class is importable/available
+        # enemy.status_effects.append(StatusEffect("Haste", "[yellow]>>[/yellow]", extra_haste, "Speed up", duration=1, type="BUFF"))
+        pass # TODO: Import StatusEffect from scd and append correctly
+        
+    if pre_status:
+        for stat_name, potency, count in pre_status:
+            pass # TODO: Append custom status like Leaking Bloodlust or Acceleration
+            
+    return enemy
+
+def get_lattice_battle_group(battle_id, day):
+    """
+    Returns the list of instantiated enemy objects for a specific Lattice battle ID.
+    """
+    enemies = []
+    
+    # --- PHASE 1: EARLY KASAKURA INCIDENTS ---
+    if battle_id == 1000001:
+        for i, lbl in enumerate(["A", "B", "C", "D", "E", "F"]):
+            e = spawn_lattice_enemy("Class-Skipping Freshman", f"Class-Skipping Freshman {lbl}", day, 20, 20, hp_flat=40, dmg_flat=5)
+            if e: enemies.append(e)
+            
+    elif battle_id == 1000002:
+        for lbl in ["A", "B", "C"]:
+            e1 = spawn_lattice_enemy("Class-Skipping Freshman", f"Class-Skipping Freshman {lbl}", day, 20, 20, hp_flat=40, dmg_flat=5)
+            e2 = spawn_lattice_enemy("Kidnapper Hooligan", f"Kidnapper Hooligan {lbl}", day, 20, 20, hp_flat=40, dmg_flat=5)
+            if e1: enemies.append(e1)
+            if e2: enemies.append(e2)
+            
+    # ... (You will expand IDs 1000003 through 1000096 here using this exact same pattern) ...
+    
+    # Example Phase 3 Boss: Kurogane
+    elif battle_id == 1000026:
+        boss = spawn_lattice_enemy("'Chain Reaper Of Heiwa' Kurogane", None, day, 25, 25, hp_flat=30, dmg_flat=5)
+        enemies.append(boss)
+        for lbl in ["A", "B"]:
+            enemies.append(spawn_lattice_enemy("Spike Bat Heiwa Seiritsu Delinquent", f"Spike Bat Heiwa Seiritsu Delinquent {lbl}", day, 25, 25, hp_flat=30, dmg_flat=5))
+            enemies.append(spawn_lattice_enemy("Chain Fist Heiwa Seiritsu Delinquent", f"Chain Fist Heiwa Seiritsu Delinquent {lbl}", day, 25, 25, hp_flat=30, dmg_flat=5))
+            enemies.append(spawn_lattice_enemy("Heiwa Seiritsu Delinquent Leader Fighter", f"Heiwa Seiritsu Delinquent Leader Fighter {lbl}", day, 25, 25, hp_flat=30, dmg_flat=5))
+    return enemies
+
 # --- PARTY MEMBER CREATION ---
 
 def create_akasuke(equipped_kata_data=None):
@@ -659,7 +735,7 @@ def load_stage_enemies(stage_id):
         enemies.append(spawn("Zhao Feng"))
     elif stage_id == 71:
         enemies.append(spawn("Ibara Ninja - 'Kagerou The Untouchable'"))
-    
+
     # Return ignoring any potential NoneType errors from typos in db
     return [e for e in enemies if e is not None]
 

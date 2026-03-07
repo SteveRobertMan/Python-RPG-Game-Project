@@ -10,7 +10,8 @@ class PlayerState:
     def __init__(self):
         self.currencies = {
             "microchips": 0, 
-            "microprocessors": 0 
+            "microprocessors": 0,
+            "jade_microchips": 0 
         }
         self.inventory = {
             "katas": [] 
@@ -18,6 +19,13 @@ class PlayerState:
         self.units = [] 
         self.unlocked_units = [] 
         self.party = [] 
+        self.lattice_xp = {"Stable Lattice": 0, "Steadfast Lattice": 0}
+        self.lattice_levels = {"Stable Lattice": 1, "Steadfast Lattice": 1}
+        self.manuscripts_owned = {"Stable Lattice": 0, "Steadfast Lattice": 0}
+        self.discovered_manifolds = []
+        self.discovered_events = []
+        self.discovered_endings = []
+        self.discovered_fluxes = []
 
     def add_unit(self, unit_name):
         # Prevent duplicates
@@ -58,6 +66,16 @@ class PlayerState:
                     self.currencies["microprocessors"] = mats.get("Microprocessor", 0)
                     
                     self.inventory["katas"] = loaded_data["katas"]
+
+                    ltc_data = loaded_data.get("lattice", {})
+                    if ltc_data:
+                        self.lattice_xp = ltc_data.get("xp", self.lattice_xp)
+                        self.lattice_levels = ltc_data.get("levels", self.lattice_levels)
+                        self.manuscripts_owned = ltc_data.get("manuscripts", self.manuscripts_owned)
+                        self.discovered_manifolds = ltc_data.get("d_man", [])
+                        self.discovered_events = ltc_data.get("d_evt", [])
+                        self.discovered_endings = ltc_data.get("d_end", [])
+                        self.discovered_fluxes = ltc_data.get("d_flx", [])
                     
                     # --- LOADOUT APPLICATION ---
                     loadouts = loaded_data.get("loadouts", {})

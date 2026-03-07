@@ -128,6 +128,10 @@ class BattleManager:
         self.won = False
         self.ally_action_queue = []
         self.auto_battle = False
+        self.is_lattice_mode = config.player_data.get("lattice_mode", False)
+        if self.is_lattice_mode:
+            self.run_state = config.run_state
+            self.owned_manifolds = self.run_state.get("owned_manifolds", [])
 
     def start_battle(self, allies, enemies, stage_id=0):
         self.allies = allies
@@ -141,33 +145,558 @@ class BattleManager:
         self.hana_blossom_tally = 0
         self.hana_ex2_used_count = 0
         
-        for unit in self.allies + self.enemies:
-            unit.refresh_deck()
-            # Draw Pace * 2 at the start of battle
-            unit.draw_skills(unit.pace * 2)
-            unit.status_effects = []
-            unit.nerve_disruption_turns = 0 
-            unit.pending_bind = 0
-            unit.pending_haste = 0
-            unit.pending_ls = 0
-            unit.active_ls = 0
+        # ==============================================================
+        # CRITICAL FIX: ALL LATTICE INIT MUST HAPPEN HERE FIRST
+        # ==============================================================
+        self.is_lattice_mode = config.player_data.get("lattice_mode", False)
+        if self.is_lattice_mode:
+            self.run_state = config.run_state
+            self.owned_manifolds = self.run_state.get("owned_manifolds", [])
+            self.lattice_node_type = config.player_data.get("lattice_node_type", "battles")
             
-            unit.temp_modifiers = {
-                "outgoing_dmg_mult": 1.0,
-                "incoming_dmg_mult": 1.0,
-                "incoming_dmg_flat": 0,
-                "final_dmg_reduction": 0
-            }
+            # Sync HP from the mid-run save state
+            for unit in self.allies:
+                if unit.name in self.run_state.get("hp_data", {}):
+                    saved_hp, saved_max_hp = self.run_state["hp_data"][unit.name]
+                    unit.hp = saved_hp
+                    unit.max_hp = saved_max_hp
 
+            # Initialize the massive Manifold State Tracker here
+            self.manifold_state = {
+                # [Tier I]
+                "bandage_roll_used": False,
+                "coffee_can_tally": 0,
+                "yuri_pragma_tally": 0,
+                "spiced_dough_elements": [],
+                "crushed_cig_pending": False,
+                "dmg_sources": {u.name: set() for u in self.allies},
+                "dmg_dealt_this_turn": {u.name: 0 for u in self.allies},
+                "enemy_skill_order": [],
+                "mochi_stick_triggers": 0,
+                "pom_pom_triggers": 0,
+                "frog_decoy_used": set(),
+                "first_skill_user": None,
+                "unique_skills_used": {u.name: set() for u in self.allies},
+                "iron_fist_triggered": False,
+                "cafeteria_bread_used": [],
+                "station_bread_used": [],
+                "metal_pipe_used": [],
+                "untucked_shirt_used": [],
+                "self_defense_club_tally": {},
+                # [Tier II]
+                "prev_turn_philia": 0,
+                "prev_turn_elements": set(),
+                "hotpot_elements": [],
+                "pancakes_used": {u.name: 0 for u in self.allies},
+                "pruning_shears_used": {u.name: False for u in self.allies},
+                "hana_pruning_tally": 0,
+                "phantom_dust_count": 0,
+                "phantom_dust_users": set(),
+                "terminal_triggered": {u.name: False for u in self.enemies},
+                "fg_baton_triggered": {u.name: False for u in self.allies},
+                "ls_ledger_triggered": {u.name: False for u in self.allies},
+                "ns_beret_triggered": {u.name: False for u in self.allies},
+                "ns_beret_tally": 0,
+                "agape_used_this_turn": False,
+                "philautia_used_this_turn": False,
+                "disc_schedule_elements": {u.name: set() for u in self.allies},
+                "turns_no_dmg": {u.name: 0 for u in self.allies},
+                "axe_heads_tally": {u.name: 0 for u in self.allies},
+                # [Tier III, IV, V]
+                "needle_first_atk": True,
+                "jade_array_count": 0,
+                "captain_sun_crits": {u.name: 0 for u in self.allies},
+                "gray_changpao_used": {u.name: False for u in self.allies},
+                "otafuku_trigger": 0,
+                "obsidian_tally": {u.name: 0 for u in self.allies},
+                "obsidian_crit_this_turn": {u.name: False for u in self.allies},
+                "obsidian_dmg_red_used": {u.name: 0 for u in self.allies},
+                "hopeless_blossom_trigger": {u.name: 0 for u in self.enemies},
+                "blaster_tally": {u.name: 0 for u in self.allies},
+                "azure_jade_used": False,
+                "azure_immortal_turn": {u.name: False for u in self.allies},
+                "queen_fairies_active": False,
+                "queen_fairies_tally": {u.name: 0 for u in self.allies},
+                "fairywings_active": False,
+                "sword_oil_active": False,
+                "servo_first_skill": True,
+                "chestplate_crit_buffs": {u.name: 0 for u in self.allies},
+                "fedora_ls_tally": {u.name: getattr(u, "ls_tally", 0) for u in self.enemies}
+            }
+            self.apply_manifold_combat_start()
+            
         self.render_battle_screen()
         time.sleep(1.0)
         self.battle_loop()
+        self.end_battle(self.won)
+
+    def apply_manifold_combat_start(self):
+        """Evaluates owned manifolds that trigger exactly at Combat Start."""
+        if not self.is_lattice_mode: return
+        # Shy Girl's Handmade Bento (I)
+        if "Shy Girl's Handmade Bento (I)" in self.owned_manifolds:
+            for a in self.allies:
+                bonus = int(a.max_hp * 0.20)
+                a.max_hp += bonus; a.hp += bonus
+        # Jumbo-Sized Nikujaga (I)
+        if "Jumbo-Sized Nikujaga (I)" in self.owned_manifolds:
+            for a in self.allies:
+                bonus = int(a.max_hp * 0.10)
+                a.max_hp += bonus; a.hp += bonus
+                a.temp_modifiers["lattice_perm_base_dmg"] = a.temp_modifiers.get("lattice_perm_base_dmg", 0) + 1
+        # Black Hair Bow (I)
+        if "Black Hair Bow (I)" in self.owned_manifolds:
+            valid = [a for a in self.allies if a.hp > 0]
+            if valid:
+                t = random.choice(valid)
+                heal = int(t.max_hp * 0.15)
+                t.hp = min(t.max_hp, t.hp + heal)
+                self.log(f"[light_green]Black Hair Bow healed {t.name} for {heal} HP![/light_green]")
+        # Iron Fist Wraps (I)
+        if "Iron Fist Wraps (I)" in self.owned_manifolds:
+            all_enemies_bleed = True
+            for e in self.enemies:
+                if e.hp > 0 and not any(s.name == "Bleed" for s in e.status_effects):
+                    all_enemies_bleed = False
+            if all_enemies_bleed and any(e.hp > 0 for e in self.enemies):
+                for a in self.allies:
+                    if a.hp > 0: a.pending_haste = getattr(a, "pending_haste", 0) + 1
+                self.log("[yellow1]Iron Fist Wraps granted all allies Haste next turn![/yellow1]")
+        # Dim Sum Har Gow (II), Standard Kasakura Tracksuit (II), 7 AM Gyudon (II)
+        if "Dim Sum Har Gow (II)" in self.owned_manifolds:
+            for a in self.allies: a.max_hp += int(a.max_hp * 0.30); a.hp += int(a.max_hp * 0.30)
+        if "Standard Kasakura Tracksuit (II)" in self.owned_manifolds:
+            for a in self.allies: a.max_hp += int(a.max_hp * (0.10 * self.run_state.get("day", 1))); a.hp += int(a.max_hp * (0.10 * self.run_state.get("day", 1)))
+        if "7 AM Gyudon (II)" in self.owned_manifolds:
+            for a in self.allies: 
+                a.max_hp += int(a.max_hp * 0.20); a.hp += int(a.max_hp * 0.20)
+                a.temp_modifiers["lattice_perm_base_dmg"] = a.temp_modifiers.get("lattice_perm_base_dmg", 0) + 2
+        # Hardcover Novel (II)
+        if "Hardcover Novel (II)" in self.owned_manifolds:
+            for a in self.allies:
+                dur = 4 if "Shigemura" in a.name else 2
+                a.temp_modifiers["hardcover_novel_dur"] = dur
+        # Polished Glasses (II)
+        if "Polished Glasses (II)" in self.owned_manifolds:
+            pragma_count = sum(1 for a in self.allies if hasattr(a, "kata") and any(s[0].element == 5 for s in a.kata.skill_pool_def))
+            for a in self.allies:
+                self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 5, STATUS_DESCS["Poise"], duration=5))
+                if pragma_count >= 3:
+                    self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=2))
+        # Raw Jade (II)
+        if "Raw Jade (II)" in self.owned_manifolds:
+            for e in self.enemies: e.temp_modifiers["raw_jade_pending"] = True
+            philia_count = sum(1 for a in self.allies if hasattr(a, "kata") and any(s[0].element == 1 for s in a.kata.skill_pool_def))
+            if philia_count >= 3 and any(e.hp > 0 for e in self.enemies):
+                self.apply_status_logic(random.choice([e for e in self.enemies if e.hp > 0]), StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, STATUS_DESCS["Rupture"], duration=3))
+        # Blank Report Papers (II)
+        if "Blank Report Papers (II)" in self.owned_manifolds:
+            for a in self.allies: a.temp_modifiers["blank_report_active"] = True
+        # Yunhai Energetic Herbs (II)
+        if "Yunhai Energetic Herbs (II)" in self.owned_manifolds:
+            if sum(1 for a in self.allies if hasattr(a, "kata") and any(s[0].element == 2 for s in a.kata.skill_pool_def)) >= 3:
+                for a in self.allies: a.temp_modifiers["outgoing_base_dmg_pct"] = a.temp_modifiers.get("outgoing_base_dmg_pct", 0) + 0.20
+            if sum(1 for e in self.enemies if hasattr(e, "kata") and any(s[0].element == 3 for s in e.kata.skill_pool_def)) >= 3:
+                for a in self.allies: a.temp_modifiers["incoming_base_dmg_pct"] = a.temp_modifiers.get("incoming_base_dmg_pct", 0) - 0.10
+        # Academy Lab Goggles (II)
+        if "Academy Lab Goggles (II)" in self.owned_manifolds:
+            if sum(1 for a in self.allies if hasattr(a, "kata") and any(s[0].element == 4 for s in a.kata.skill_pool_def)) >= 4:
+                for a in self.allies: a.temp_modifiers["lab_goggles_dur"] = 3
+        # ShinobiTech Tracker Bug (II)
+        if "ShinobiTech Tracker Bug (II)" in self.owned_manifolds and len(self.enemies) > 3 and getattr(self, "lattice_node_type", "") == "battles":
+            for e in self.enemies:
+                dmg = int(e.max_hp * 0.20)
+                e.hp = max(1, e.hp - dmg)
+        # Lotus-Leaf-Wrapped Lo Mai Gai (III)
+        if "Lotus-Leaf-Wrapped Lo Mai Gai (III)" in self.owned_manifolds:
+            for a in self.allies:
+                bonus = int(a.max_hp * (0.25 * self.run_state.get("day", 1)))
+                a.max_hp += bonus; a.hp += bonus
+        # Kevlar Undersuit (III)
+        if "Kevlar Undersuit (III)" in self.owned_manifolds:
+            for a in self.allies:
+                bonus = int(a.max_hp * 0.60)
+                a.max_hp += bonus; a.hp += bonus
+                a.temp_modifiers["lattice_perm_base_dmg"] = a.temp_modifiers.get("lattice_perm_base_dmg", 0) + 4
+        # Cloaking Device (III)
+        if "Cloaking Device (III)" in self.owned_manifolds:
+            for a in self.allies:
+                poise = next((s for s in a.status_effects if s.name in POISE_LIST), None)
+                if poise and poise.potency > 20:
+                    conversion = min(4, poise.potency - 20)
+                    poise.potency -= conversion
+                    poise.duration += conversion
+                # Damage reduction handled in execute_skill
+        # Formless Ink (III)
+        if "Formless Ink (III)" in self.owned_manifolds and self.enemies:
+            x_val = 10 + (len(self.enemies) * 3)
+            for _ in range(x_val):
+                target = random.choice([e for e in self.enemies if e.hp > 0])
+                if not target: break
+                pot_or_cnt = random.choice(["potency", "count"])
+                s_eff = next((s for s in target.status_effects if s.name == "Sinking"), None)
+                if not s_eff:
+                    self.apply_status_logic(target, StatusEffect("Sinking", "[blue3]♆[/blue3]", 1 if pot_or_cnt == "potency" else 0, STATUS_DESCS["Sinking"], duration=1 if pot_or_cnt == "count" else 0))
+                else:
+                    if pot_or_cnt == "potency": s_eff.potency += 1
+                    else: s_eff.duration += 1
+            for e in self.enemies:
+                if e.hp > 0:
+                    s_eff = next((s for s in e.status_effects if s.name == "Sinking"), None)
+                    if not s_eff:
+                        self.apply_status_logic(e, StatusEffect("Sinking", "[blue3]♆[/blue3]", 0, STATUS_DESCS["Sinking"], duration=3))
+                    elif s_eff.duration < 3:
+                        s_eff.duration = 3
+        # A Cuteness Comprehensive Guide: “Queen of Fairies” (IV) & "Fairywings" (IV)
+        fairylight_users = sum(1 for a in self.allies if hasattr(a, "kata") and any("Fairylight" in (s[0].description or "") for s in a.kata.skill_pool_def))
+        if "A Cuteness Comprehensive Guide: “Queen of Fairies” (IV)" in self.owned_manifolds and fairylight_users >= 3:
+            self.manifold_state["queen_fairies_active"] = True
+        if "“Fairywings” (IV)" in self.owned_manifolds and fairylight_users >= 3:
+            self.manifold_state["fairywings_active"] = True
+        # Sword Oil And Cloth (IV)
+        riposte_users = sum(1 for a in self.allies if hasattr(a, "kata") and any("Riposte" in (s[0].description or "") for s in a.kata.skill_pool_def))
+        if "Sword Oil And Cloth (IV)" in self.owned_manifolds and riposte_users >= 2:
+            self.manifold_state["sword_oil_active"] = True
+            for a in self.allies:
+                if hasattr(a, "kata") and any("Riposte" in (s[0].description or "") for s in a.kata.skill_pool_def):
+                    self.apply_status_logic(a, StatusEffect("Riposte", "[orange3]↶[/orange3]", 50, STATUS_DESCS["Riposte"], duration=1))
+                    # Add 5 Tier III skills to deck dynamically
+                    tier3_skills = [s[0] for s in a.kata.skill_pool_def if s[0].tier == 3]
+                    if tier3_skills and hasattr(a, "deck"):
+                        for _ in range(5):
+                            a.deck.append(copy.deepcopy(random.choice(tier3_skills)))
+
+    def apply_manifold_turn_start(self):
+        """Evaluates owned manifolds that trigger at the start of every turn."""
+        if not self.is_lattice_mode: return
+        
+        # Reset Per-Turn Trackers
+        self.manifold_state["mochi_stick_triggers"] = 0
+        self.manifold_state["pom_pom_triggers"] = 0
+        self.manifold_state["frog_decoy_triggered"] = False
+        self.manifold_state["enemy_skill_order"] = []
+        self.manifold_state["first_skill_user"] = None
+        self.manifold_state["cafeteria_bread_used"] = []
+        self.manifold_state["station_bread_used"] = []
+        self.manifold_state["metal_pipe_used"] = []
+        self.manifold_state["untucked_shirt_used"] = []
+        self.manifold_state["self_defense_club_tally"] = {}
+        for a in self.allies:
+            self.manifold_state["dmg_dealt_this_turn"][a.name] = 0
+        self.manifold_state["pancakes_used"] = {u.name: 0 for u in self.allies}
+        self.manifold_state["pruning_shears_used"] = {u.name: False for u in self.allies}
+        self.manifold_state["hana_pruning_tally"] = 0
+        self.manifold_state["phantom_dust_count"] = 0
+        self.manifold_state["ns_beret_tally"] = 0
+        self.manifold_state["agape_used_this_turn"] = False
+        self.manifold_state["philautia_used_this_turn"] = False
+        self.manifold_state["disc_schedule_elements"] = {u.name: set() for u in self.allies}
+        self.manifold_state["axe_heads_tally"] = {u.name: 0 for u in self.allies}
+        for u in self.enemies: self.manifold_state["terminal_triggered"][u.name] = False
+        for u in self.allies:
+            self.manifold_state["fg_baton_triggered"][u.name] = False
+            self.manifold_state["ls_ledger_triggered"][u.name] = False
+            self.manifold_state["ns_beret_triggered"][u.name] = False
+        self.manifold_state["needle_first_atk"] = True
+        self.manifold_state["jade_array_count"] = 0
+        self.manifold_state["otafuku_trigger"] = 0
+        for u in self.allies:
+            self.manifold_state["captain_sun_crits"][u.name] = 0
+            self.manifold_state["gray_changpao_used"][u.name] = False
+            self.manifold_state["obsidian_dmg_red_used"][u.name] = 0
+            if not self.manifold_state.get("obsidian_crit_this_turn", {}).get(u.name, True):
+                self.manifold_state["obsidian_tally"][u.name] = 0
+            self.manifold_state["obsidian_crit_this_turn"][u.name] = False
+        for u in self.enemies:
+            self.manifold_state["hopeless_blossom_trigger"][u.name] = 0
+        self.manifold_state["servo_first_skill"] = True
+        for a in self.allies: self.manifold_state["queen_fairies_tally"][a.name] = 0
+        
+        # Apply multi-turn buffs from Combat Start
+        for a in self.allies:
+            if "lattice_perm_base_dmg" in a.temp_modifiers:
+                a.temp_modifiers["outgoing_base_dmg_flat"] = a.temp_modifiers.get("outgoing_base_dmg_flat", 0) + a.temp_modifiers["lattice_perm_base_dmg"]
+        for a in self.allies:
+            if a.temp_modifiers.get("hardcover_novel_dur", 0) > 0:
+                a.temp_modifiers["outgoing_dmg_flat"] = a.temp_modifiers.get("outgoing_dmg_flat", 0) + 2
+                a.temp_modifiers["hardcover_novel_dur"] -= 1
+            if a.temp_modifiers.get("lab_goggles_dur", 0) > 0:
+                a.temp_modifiers["outgoing_base_dmg_flat"] = a.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 2
+                a.temp_modifiers["lab_goggles_dur"] -= 1
+
+        # School Special Curry (I)
+        if "School Special Curry (I)" in self.owned_manifolds:
+            valid = [a for a in self.allies if a.hp > 0]
+            if valid:
+                philia_users = [a for a in valid if hasattr(a, "kata") and any(s[0].element == 1 for s in a.kata.skill_pool_def)]
+                target = random.choice(philia_users) if philia_users else random.choice(valid)
+                target.temp_modifiers["outgoing_dmg_flat"] = target.temp_modifiers.get("outgoing_dmg_flat", 0) + 3
+        # Lab’s Empty Coffee Cans (I)
+        if "Lab’s Empty Coffee Cans (I)" in self.owned_manifolds:
+            valid_e = [e for e in self.enemies if e.hp > 0]
+            if valid_e:
+                self.apply_status_logic(random.choice(valid_e), StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, STATUS_DESCS["Rupture"], duration=1))
+        # Local Fried Spiced Dough (I)
+        if "Local Fried Spiced Dough (I)" in self.owned_manifolds:
+            elements = [4] + random.sample([0,1,2,3,5,6], 2) # Ludus(4) + 2 random elements
+            self.manifold_state["spiced_dough_elements"] = elements
+        # Pink Cheer Pom-Poms (I)
+        if "Pink Cheer Pom-Poms (I)" in self.owned_manifolds:
+            for e in self.enemies:
+                if e.hp > 0:
+                    dmg = max(1, int(3 * e.resistances[6])) # Philautia = 6
+                    e.hp -= dmg
+        # Shattered Custom Blaster (I)
+        if "Shattered Custom Blaster (I)" in self.owned_manifolds:
+            for e in self.enemies:
+                if e.hp > 0 and any(s.name in RUPTURE_LIST for s in e.status_effects):
+                    e.temp_modifiers["incoming_base_dmg_flat"] = e.temp_modifiers.get("incoming_base_dmg_flat", 0) + 1
+                    e.temp_modifiers["outgoing_base_dmg_flat"] = e.temp_modifiers.get("outgoing_base_dmg_flat", 0) - 1
+        # White Tang Suit (I)
+        if "White Tang Suit (I)" in self.owned_manifolds:
+            valid = [a for a in self.allies if a.hp > 0 and any(s.name in POISE_LIST for s in a.status_effects)]
+            if valid:
+                max_pot = max(valid, key=lambda a: next((s.potency for s in a.status_effects if s.name in POISE_LIST), 0))
+                max_cnt = max(valid, key=lambda a: next((s.duration for s in a.status_effects if s.name in POISE_LIST), 0))
+                max_pot.pending_haste = getattr(max_pot, "pending_haste", 0) + 1
+                max_cnt.pending_haste = getattr(max_cnt, "pending_haste", 0) + 1
+        # Underworld Bounty Poster (I)
+        if "Underworld Bounty Poster (I)" in self.owned_manifolds:
+            for a in self.allies:
+                if a.hp > 0 and len(self.manifold_state["dmg_sources"].get(a.name, set())) >= 2:
+                    a.temp_modifiers["outgoing_dmg_mult"] *= 1.10
+        # Blank Paper Talisman (I)
+        if "Blank Paper Talisman (I)" in self.owned_manifolds:
+            for a in self.allies:
+                if a.hp > 0 and hasattr(a, "kata"):
+                    agape_count = len(set(s[0].name for s in a.kata.skill_pool_def if s[0].element == 3))
+                    a.temp_modifiers["outgoing_dmg_flat"] = a.temp_modifiers.get("outgoing_dmg_flat", 0) + agape_count
+        # Cloud-Patterned Cloak (I)
+        if "Cloud-Patterned Cloak (I)" in self.owned_manifolds:
+            valid = [a for a in self.allies if a.hp > 0]
+            if valid:
+                for a in random.sample(valid, min(2, len(valid))):
+                    self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=0))
+                if all(any(s.name in POISE_LIST for s in a.status_effects) for a in valid):
+                    for a in valid:
+                        self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=2))
+        # Enforcer’s Standard Jian (I)
+        if "Enforcer’s Standard Jian (I)" in self.owned_manifolds:
+            valid = [a for a in self.allies if a.hp > 0]
+            if valid:
+                poise_users = [a for a in valid if hasattr(a, "kata") and any("Poise" in (s[0].description or "") for s in a.kata.skill_pool_def)]
+                target = random.choice(poise_users) if poise_users else random.choice(valid)
+                self.apply_status_logic(target, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=0))
+                if hasattr(target, "kata") and any(s[0].element == 4 for s in target.kata.skill_pool_def): # Ludus = 4
+                    self.apply_status_logic(target, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 0, STATUS_DESCS["Poise"], duration=2))
+        # Bandage Roll (I)
+        if "Bandage Roll (I)" in self.owned_manifolds and not self.manifold_state["bandage_roll_used"]:
+            valid = [a for a in self.allies if a.hp > 0 and a.hp < (a.max_hp * 0.5)]
+            if valid:
+                target = min(valid, key=lambda a: a.hp / a.max_hp)
+                heal = int(target.max_hp * random.uniform(0.20, 0.40))
+                target.hp = min(target.max_hp, target.hp + heal)
+                self.manifold_state["bandage_roll_used"] = True
+                self.log(f"[light_green]Bandage Roll patched up {target.name} for {heal} HP![/light_green]")
+        # Black Hair Bow (I) - Part 2
+        if "Black Hair Bow (I)" in self.owned_manifolds and self.manifold_state["yuri_pragma_tally"] >= 3:
+            valid = [a for a in self.allies if a.hp > 0]
+            if valid:
+                target = min(valid, key=lambda a: a.hp / a.max_hp)
+                heal = int(target.max_hp * 0.15)
+                target.hp = min(target.max_hp, target.hp + heal)
+                self.manifold_state["yuri_pragma_tally"] = 0
+                self.log(f"[light_green]Black Hair Bow (Yuri's Tally) healed {target.name} for {heal} HP![/light_green]")
+        # Crushed Cigarette (I) - Part 2
+        if "Crushed Cigarette (I)" in self.owned_manifolds and self.manifold_state["crushed_cig_pending"]:
+            for a in self.allies:
+                if a.hp > 0:
+                    self.apply_status_logic(a, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=2))
+            self.manifold_state["crushed_cig_pending"] = False
+        # Midnight Hotpot Leftovers (II)
+        if "Midnight Hotpot Leftovers (II)" in self.owned_manifolds and self.manifold_state.get("prev_turn_philia", 0) > 0:
+            triggers = min(2, self.manifold_state["prev_turn_philia"])
+            for _ in range(triggers):
+                elements = [2] + random.sample([0,1,3,4,5,6], 2) # Storge + 2
+                self.manifold_state["hotpot_elements"].extend(elements)
+        self.manifold_state["prev_turn_philia"] = 0
+        # Weapon-Maker's Blueprint (II)
+        if "Weapon-Maker's Blueprint (II)" in self.owned_manifolds:
+            for a in self.allies:
+                poise = next((s for s in a.status_effects if s.name in POISE_LIST), None)
+                if poise:
+                    if poise.duration >= 7: a.temp_modifiers["outgoing_base_dmg_flat"] = a.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 4
+                    else: a.temp_modifiers["outgoing_base_dmg_flat"] = a.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 2
+        # Sandy Coat (II)
+        if "Sandy Coat (II)" in self.owned_manifolds:
+            for a in self.allies:
+                a.temp_modifiers["incoming_dmg_flat"] = a.temp_modifiers.get("incoming_dmg_flat", 0) - 2
+                if hasattr(a, "kata") and any("Riposte" in (s[0].description or "") for s in a.kata.skill_pool_def):
+                    rip = next((s for s in a.status_effects if s.name == "Riposte"), None)
+                    rip_cnt = rip.potency if rip else 0
+                    gain = max(0, int((50 - rip_cnt) / 3))
+                    if gain > 0: self.apply_status_logic(a, StatusEffect("Riposte", "[orange3]↶[/orange3]", gain, STATUS_DESCS["Riposte"], duration=1))
+        # "KokuiP" Composer Headphones (II)
+        if '"KokuiP" Composer Headphones (II)' in self.owned_manifolds:
+            for el in self.manifold_state.get("prev_turn_elements", set()):
+                # We will handle the check in STEP 2
+                pass
+        self.manifold_state["prev_turn_elements"] = set()
+        # Winter Coat For An Observer (III)
+        if "Winter Coat For An Observer (III)" in self.owned_manifolds and self.turn_count >= 3:
+            bonus = self.turn_count - 1
+            for a in self.allies:
+                a.temp_modifiers["outgoing_dmg_flat"] = a.temp_modifiers.get("outgoing_dmg_flat", 0) + bonus
+        # ‘Jade Electronics’ Game Console (III)
+        if "‘Jade Electronics’ Game Console (III)" in self.owned_manifolds:
+            for e in self.enemies:
+                if e.hp > 0:
+                    self.apply_status_logic(e, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 3, STATUS_DESCS["Rupture"], duration=2))
+        # Obsidian Glasses (III)
+        if "Obsidian Glasses (III)" in self.owned_manifolds:
+            for a in self.allies:
+                s_eff = next((s for s in a.status_effects if s.name == "Sinking"), None)
+                if s_eff:
+                    s_eff.potency = max(0, s_eff.potency // 2)
+                    s_eff.duration = max(0, s_eff.duration // 2)
+                if hasattr(a, "ls_tally"): a.ls_tally = max(0, a.ls_tally // 2)
+        # Solidified Ink (III)
+        if "Solidified Ink (III)" in self.owned_manifolds:
+            for e in self.enemies:
+                if e.hp > 0 and getattr(e, "ls_tally", 0) >= 70:
+                    self.apply_status_logic(e, StatusEffect("Sinking", "[blue3]♆[/blue3]", 4, STATUS_DESCS["Sinking"], duration=4))
+                    e.temp_modifiers["incoming_base_dmg_flat"] = e.temp_modifiers.get("incoming_base_dmg_flat", 0) + 4
+        # Customized High Energy Blaster (III)
+        if "Customized High Energy Blaster (III)" in self.owned_manifolds:
+            for e in self.enemies:
+                if e.hp > 0 and any(s.name in RUPTURE_LIST for s in e.status_effects):
+                    e.temp_modifiers["incoming_base_dmg_flat"] = e.temp_modifiers.get("incoming_base_dmg_flat", 0) + 3
+                    e.temp_modifiers["outgoing_base_dmg_flat"] = e.temp_modifiers.get("outgoing_base_dmg_flat", 0) - 3
+        # Azure Jade Serum (IV) Resurrection Heal
+        if "Azure Jade Serum (IV)" in self.owned_manifolds:
+            for a in self.allies:
+                if self.manifold_state["azure_immortal_turn"].get(a.name, False):
+                    self.manifold_state["azure_immortal_turn"][a.name] = False
+                    heal = int(a.max_hp * 0.50)
+                    a.hp = min(a.max_hp, a.hp + heal)
+                    self.log(f"[cyan]Azure Jade Serum powerfully restored {a.name}'s HP![/cyan]")
+        # Complete Pneumatic Servo (IV)
+        if "Complete Pneumatic Servo (IV)" in self.owned_manifolds:
+            for a in self.allies:
+                s_eff = next((s for s in a.status_effects if s.name == "Sinking"), None)
+                if s_eff:
+                    s_eff.potency = max(0, s_eff.potency - int(s_eff.potency * 0.75))
+                    s_eff.duration = max(0, s_eff.duration - int(s_eff.duration * 0.75))
+                if hasattr(a, "ls_tally"): a.ls_tally = max(0, a.ls_tally - int(a.ls_tally * 0.75))
+                a.temp_modifiers["incoming_dmg_flat"] = a.temp_modifiers.get("incoming_dmg_flat", 0) - 2
+                # Poise to Acceleration Conversion
+                if hasattr(a, "kata") and any("Poise" in (s[0].description or "") for s in a.kata.skill_pool_def):
+                    has_unique = any("Unique Poise" in (s[0].description or "") for s in a.kata.skill_pool_def) or any("Unique Poise" in p.description for p in getattr(a, "passives", []))
+                    if not has_unique:
+                        poise = next((s for s in a.status_effects if s.name in POISE_LIST), None)
+                        if poise:
+                            conv_pot = max(1, poise.potency // 2)
+                            conv_cnt = max(1, poise.duration // 2)
+                            poise.potency -= conv_pot
+                            poise.duration -= conv_cnt
+                            self.apply_status_logic(a, StatusEffect("Acceleration", "[bold pale_turquoise1]>>[/bold pale_turquoise1]", conv_pot, STATUS_DESCS["Acceleration"], duration=conv_cnt))
+        # A General’s Rusted Chestplate (IV)
+        if "A General’s Rusted Chestplate (IV)" in self.owned_manifolds:
+            for a in self.allies:
+                poise = next((s for s in a.status_effects if s.name in POISE_LIST), None)
+                if poise: poise.duration += 1 # Offset the generic turn-start decay
+                
+                buffs = self.manifold_state["chestplate_crit_buffs"].get(a.name, 0)
+                if buffs > 0:
+                    a.temp_modifiers["outgoing_base_dmg_pct"] = a.temp_modifiers.get("outgoing_base_dmg_pct", 0) + (0.10 * buffs)
+            self.manifold_state["chestplate_crit_buffs"] = {u.name: 0 for u in self.allies}        
+        # Queen of Fairies (IV) Buff Distribution
+        if self.manifold_state.get("queen_fairies_active", False):
+            e_count = sum(1 for e in self.enemies if any(s.name == "Fairylight" for s in e.status_effects))
+            valid = [a for a in self.allies if a.hp > 0]
+            if valid and e_count > 0:
+                for _ in range(e_count):
+                    targets = random.sample(valid, min(3, len(valid)))
+                    for t in targets:
+                        if random.choice([True, False]):
+                            if not hasattr(t, "next_turn_modifiers"): t.next_turn_modifiers = {}
+                            t.next_turn_modifiers["outgoing_dmg_flat"] = t.next_turn_modifiers.get("outgoing_dmg_flat", 0) + 3
+                        else:
+                            t.pending_haste = getattr(t, "pending_haste", 0) + 3
+        # Fairywings (IV) Decay Nuke
+        if self.manifold_state.get("fairywings_active", False):
+            for e in self.enemies:
+                fl = next((s for s in e.status_effects if s.name == "Fairylight"), None)
+                if fl:
+                    lost = fl.duration - (fl.duration // 2)
+                    dmg = int(lost * 3.0 * e.resistances[3]) # Agape = 3
+                    if dmg > 0: e.hp -= max(1, dmg)
+        # Doodle Of The Nine Armies (V) Nuke
+        if "Doodle Of The Nine Armies (V)" in self.owned_manifolds:
+            for e in self.enemies:
+                rup = next((s for s in e.status_effects if s.name in RUPTURE_LIST), None)
+                if rup:
+                    dmg = min(999, rup.potency * rup.duration)
+                    if dmg > 0: e.hp -= dmg
+
+    def apply_manifold_turn_end(self):
+        """Evaluates owned manifolds that trigger at the end of the turn."""
+        if not self.is_lattice_mode: return
+        
+        # Decoy’s Sprinting Shoes (I)
+        if "Decoy’s Sprinting Shoes (I)" in self.owned_manifolds:
+            for a in self.allies:
+                if a.hp > 0 and self.manifold_state["dmg_dealt_this_turn"].get(a.name, 0) == 0:
+                    a.pending_haste = getattr(a, "pending_haste", 0) + 2
+        # Mercenary's Smoke Bomb & Twin Daggers (I)
+        for a in self.allies:
+            if a.hp > 0 and self.manifold_state["dmg_dealt_this_turn"].get(a.name, 0) == 0:
+                if not hasattr(a, "next_turn_modifiers"): a.next_turn_modifiers = {}
+                if "Mercenary's Smoke Bomb (I)" in self.owned_manifolds:
+                    a.next_turn_modifiers["incoming_base_dmg_flat"] = a.next_turn_modifiers.get("incoming_base_dmg_flat", 0) - 3
+                if "Mercenary's Twin Daggers (I)" in self.owned_manifolds:
+                    a.next_turn_modifiers["outgoing_base_dmg_flat"] = a.next_turn_modifiers.get("outgoing_base_dmg_flat", 0) + 3
+        # Hanefuji Healing Serum (I)
+        if "Hanefuji Healing Serum (I)" in self.owned_manifolds:
+            valid = [a for a in self.allies if a.hp > 0]
+            if valid:
+                sorted_allies = sorted(valid, key=lambda x: x.hp / x.max_hp)
+                t1 = sorted_allies[0]
+                t1.hp = min(t1.max_hp, t1.hp + int(t1.max_hp * 0.05))
+                if "Kagaku" in t1.name and len(sorted_allies) > 1:
+                    t2 = sorted_allies[1]
+                    t2.hp = min(t2.max_hp, t2.hp + int(t2.max_hp * 0.05))
+        # Bindings For Underwear Thieves (I)
+        if "Bindings For Underwear Thieves (I)" in self.owned_manifolds:
+            last_two = self.manifold_state.get("enemy_skill_order", [])[-2:]
+            for e in last_two:
+                if e.hp > 0:
+                    self.apply_status_logic(e, StatusEffect("Bind", "[gold1]⛓[/gold1]", 1, STATUS_DESCS["Bind"], duration=1))
+                    if not hasattr(e, "next_turn_modifiers"): e.next_turn_modifiers = {}
+                    e.next_turn_modifiers["incoming_base_dmg_flat"] = e.next_turn_modifiers.get("incoming_base_dmg_flat", 0) + 2
+        # Botanical Plant Tag (I)
+        if "Botanical Plant Tag (I)" in self.owned_manifolds:
+            for e in self.enemies:
+                if e.hp > 0:
+                    rup = next((s for s in e.status_effects if s.name in RUPTURE_LIST), None)
+                    if rup and (rup.potency + rup.duration) >= 20:
+                        e.pending_bind = getattr(e, "pending_bind", 0) + 2
+        # Punishing Rapier (III)
+        if "Punishing Rapier (III)" in self.owned_manifolds:
+            for a in self.allies:
+                if a.hp > 0 and hasattr(a, "kata") and any("Riposte" in (s[0].description or "") for s in a.kata.skill_pool_def):
+                    rip = next((s for s in a.status_effects if s.name == "Riposte"), None)
+                    cnt = rip.potency if rip else 0
+                    gain = max(0, int((50 - cnt) / 3))
+                    if gain > 0: self.apply_status_logic(a, StatusEffect("Riposte", "[orange3]↶[/orange3]", gain, STATUS_DESCS["Riposte"], duration=1))
 
     def battle_loop(self):
         while not self.is_battle_over:
             # --- START OF TURN PHASE ---
             self.first_ally_to_take_damage = None
             self.first_enemy_to_take_damage = None
+            if self.is_lattice_mode:
+                self.apply_manifold_turn_start()
             self.ally_attacker_order = []      # Tracks damage order
             self.enemy_attacker_order = []     # Tracks damage order
             self.brotherhood_triggered_allies = [] # Tracks distinct allied units (max 3)
@@ -320,7 +849,8 @@ class BattleManager:
             if not self.is_battle_over:
                 self.process_turn_end_effects()
                 if self.check_win_condition() or self.check_loss_condition(): return
-
+            if self.is_lattice_mode:
+                    self.apply_manifold_turn_end()
             self.turn_count += 1
             
     def apply_status_modifiers(self, unit):
@@ -1196,6 +1726,8 @@ class BattleManager:
                         if living: target = random.choice(living)
                         else: break
                     enemy.turn_committed_skills.append(skill)
+                    if self.is_lattice_mode:
+                        self.manifold_state["enemy_skill_order"].append(enemy)
                     # --- Empty the hand slot so they draw new cards next turn ---
                     if h_idx < len(enemy.hand):
                         enemy.hand[h_idx] = None
@@ -1421,6 +1953,53 @@ class BattleManager:
                 if getattr(self, "hana_ex2_used_count", 0) >= 1:
                     attacker.pending_spirit_blade = getattr(attacker, "pending_spirit_blade", 0) + 1
                 self.hana_ex2_used_count = getattr(self, "hana_ex2_used_count", 0) + 1
+        
+        # --- LATTICE TRIAGE ---
+        if self.is_lattice_mode and attacker in self.allies:
+            # Lab’s Empty Coffee Cans (I)
+            if "Lab’s Empty Coffee Cans (I)" in self.owned_manifolds and skill.element == 3: # Agape
+                self.manifold_state["coffee_can_tally"] = self.manifold_state.get("coffee_can_tally", 0) + 1
+                if self.manifold_state["coffee_can_tally"] >= 3:
+                    self.manifold_state["coffee_can_tally"] = 0
+                    for e in self.enemies:
+                        if e.hp > 0: self.apply_status_logic(e, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, STATUS_DESCS["Rupture"], duration=0))
+            # Black Hair Bow (I)
+            if "Black Hair Bow (I)" in self.owned_manifolds and "Yuri" in attacker.name and skill.element == 5: # Pragma
+                self.manifold_state["yuri_pragma_tally"] = self.manifold_state.get("yuri_pragma_tally", 0) + 1
+            # Broken Transceiver (I)
+            if "Broken Transceiver (I)" in self.owned_manifolds and not self.manifold_state.get("first_skill_user"):
+                self.manifold_state["first_skill_user"] = attacker.name
+                if skill.element == 6: # Philautia
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 4, STATUS_DESCS["Poise"], duration=3))
+                else:
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 3, STATUS_DESCS["Poise"], duration=2))
+            # Hard Chalk Eraser (I)
+            if "Hard Chalk Eraser (I)" in self.owned_manifolds:
+                unique_set = self.manifold_state["unique_skills_used"].setdefault(attacker.name, set())
+                if skill.name not in unique_set:
+                    unique_set.add(skill.name)
+                    if len(unique_set) % 3 == 0:
+                        attacker.pending_haste = getattr(attacker, "pending_haste", 0) + 2
+            # Record elements for Turn End / Next Turn
+            self.manifold_state["prev_turn_elements"].add(skill.element)
+            if skill.element == 1: self.manifold_state["prev_turn_philia"] = self.manifold_state.get("prev_turn_philia", 0) + 1
+            if skill.element == 3: self.manifold_state["agape_used_this_turn"] = True
+            if skill.element == 6: self.manifold_state["philautia_used_this_turn"] = True
+            # Severed Pneumatic Servo (II) - Tier III+ Poise dmg
+            if "Severed Pneumatic Servo (II)" in self.owned_manifolds and skill.tier >= 3 and "Poise" in (skill.description or ""):
+                attacker.temp_modifiers["outgoing_base_dmg_flat"] = attacker.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 2
+            # Disciplinary Committee Schedule (II)
+            if "Disciplinary Committee Schedule (II)" in self.owned_manifolds and skill.element in [2, 4, 5]: # Storge, Ludus, Pragma
+                if skill.element not in self.manifold_state["disc_schedule_elements"][attacker.name] and len(self.manifold_state["disc_schedule_elements"][attacker.name]) < 3:
+                    self.manifold_state["disc_schedule_elements"][attacker.name].add(skill.element)
+                    attacker.temp_modifiers["outgoing_base_dmg_flat"] = attacker.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 1
+                    if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                    attacker.next_turn_modifiers["outgoing_base_dmg_flat"] = attacker.next_turn_modifiers.get("outgoing_base_dmg_flat", 0) + 1
+            if "Complete Pneumatic Servo (IV)" in self.owned_manifolds and self.manifold_state.get("servo_first_skill", False):
+                    self.manifold_state["servo_first_skill"] = False
+                    pot = 7 if skill.element == 5 else 5
+                    cnt = 5 if skill.element == 5 else 4
+                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", pot, STATUS_DESCS["Poise"], duration=cnt))
 
         # --- PREPARE MULTI-HIT LOGIC ---
         chips_to_execute = getattr(skill, "chips", [skill])
@@ -1450,6 +2029,73 @@ class BattleManager:
                 # Dev Note: To implement tracking the next ally to strike (e.g. for faction specific buffs),
                 # we track the buff amount and source in battle_system's state. When a valid ally deals damage,
                 # we apply the buff to base_dmg_val and then clear the tracking variable so it only applies to the *very next* ally's hit.
+                
+                # --- LATTICE TRIAGE ---
+                if self.is_lattice_mode and attacker in self.allies:
+                    # Local Fried Spiced Dough (I)
+                    if "Local Fried Spiced Dough (I)" in self.owned_manifolds and skill.element in self.manifold_state.get("spiced_dough_elements", []):
+                        base_dmg_val += 1
+                    # Iron Fist Wraps (I)
+                    if "Iron Fist Wraps (I)" in self.owned_manifolds and not self.manifold_state.get("iron_fist_triggered", False):
+                        self.manifold_state["iron_fist_triggered"] = True
+                        if hasattr(attacker, "kata") and any("Bleed" in (s[0].description or "") for s in attacker.kata.skill_pool_def):
+                            base_dmg_val *= 1.20
+                    # Dented Belt (I)
+                    if "Dented Belt (I)" in self.owned_manifolds:
+                        bleed = next((s for s in target.status_effects if s.name == "Bleed"), None)
+                        if bleed and (bleed.potency + bleed.duration) >= 14:
+                            if hasattr(attacker, "kata") and any("Bleed" in (s[0].description or "") for s in attacker.kata.skill_pool_def):
+                                base_dmg_val *= 1.10
+                    # Midnight Hotpot Leftovers (II)
+                    if "Midnight Hotpot Leftovers (II)" in self.owned_manifolds and skill.element in self.manifold_state.get("hotpot_elements", []):
+                        base_dmg_val += 1
+                    # "KokuiP" Composer Headphones (II)
+                    if '"KokuiP" Composer Headphones (II)' in self.owned_manifolds and skill.element in self.manifold_state.get("prev_turn_elements", set()):
+                        base_dmg_val += 1
+                    # Blank Report Papers (II)
+                    if "Blank Report Papers (II)" in self.owned_manifolds:
+                        bonus = min(4, self.manifold_state["turns_no_dmg"].get(attacker.name, 0))
+                        base_dmg_val += bonus
+                    # Disciplinary Committee Schedule (II)
+                    if "Disciplinary Committee Schedule (II)" in self.owned_manifolds:
+                        p_eff = next((s for s in attacker.status_effects if s.name in POISE_LIST), None)
+                        if p_eff and (p_eff.potency + p_eff.duration) >= 16:
+                            base_dmg_val += 2
+                    # Punishing Rapier (III)
+                    if "Punishing Rapier (III)" in self.owned_manifolds and "Pierce Fragility" in (skill.description or ""):
+                        base_dmg_val += 2
+                    # Cloaking Device (III)
+                    if "Cloaking Device (III)" in self.owned_manifolds and skill.element == 6: # Philautia
+                        if any(s.name in POISE_LIST for s in attacker.status_effects):
+                            base_dmg_val = int(base_dmg_val * 1.15)
+                    # Jade Microprocessor Array (III)
+                    if "Jade Microprocessor Array (III)" in self.owned_manifolds and self.manifold_state["jade_array_count"] in [1, 4, 8]:
+                        if "Rupture" in (skill.description or ""):
+                            base_dmg_val += 2 if hasattr(skill, "chips") else 5
+                    # Obsidian Glasses (III)
+                    if "Obsidian Glasses (III)" in self.owned_manifolds:
+                        tally = self.manifold_state["obsidian_tally"].get(attacker.name, 0)
+                        if tally >= 6: base_dmg_val += 3
+                        elif tally >= 3: base_dmg_val += 2
+                    # Customized High Energy Blaster (III) (Ludus Consume)
+                    if "Customized High Energy Blaster (III)" in self.owned_manifolds and skill.element == 4: # Ludus
+                        base_dmg_val += self.manifold_state["blaster_tally"].get(attacker.name, 0)
+                        # Reset happens in on-hit to ensure it only resets after all chips calculate
+                    # Chipped Broadsword (IV)
+                    if "Chipped Broadsword (IV)" in self.owned_manifolds:
+                        base_dmg_val = int(base_dmg_val * 1.50)
+                    # Sword Oil And Cloth (IV)
+                    if self.manifold_state.get("sword_oil_active", False) and "Pierce Fragility" in (skill.description or ""):
+                        base_dmg_val += 4
+                    # White Fedora For The Right Occasion (IV)
+                    if "White Fedora For The Right Occasion (IV)" in self.owned_manifolds and any(s.name == "Sinking" for s in target.status_effects):
+                        tally = getattr(target, "ls_tally", 0)
+                        bonus_pct = (tally / 2.0) / 100.0
+                        base_dmg_val = int(base_dmg_val * (1.0 + bonus_pct))
+                    # Complete Pneumatic Servo (IV)
+                    if "Complete Pneumatic Servo (IV)" in self.owned_manifolds and skill.tier >= 3 and "Poise" in (skill.description or ""):
+                        base_dmg_val *= 2
+
                 if getattr(self, "yunhai_next_ally_buff", None) and getattr(self, "yunhai_next_ally_buff").get("source") != attacker:
                     buff_data = self.yunhai_next_ally_buff
                     if (attacker in self.allies and buff_data["source"] in self.allies) or (attacker in self.enemies and buff_data["source"] in self.enemies):
@@ -1801,7 +2447,7 @@ class BattleManager:
                             if v_invis:
                                 self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 5, STATUS_DESCS["Poise"], duration=0))
                         elif chip.effect_type == "KAGEROU_NAGANOHARA_SPECIAL2":
-                            target.temp_modifiers["outgoing_dmg_flat"] -= 3
+                            target.temp_modifiers["outgoing_dmg_flat"] = target.temp_modifiers.get("outgoing_dmg_flat", 0) - 3
                             if any(s.name == "Bleed" for s in target.status_effects):
                                 bonus_crit_final_dmg += 5
                             self.apply_status_logic(attacker, StatusEffect("Vibrant Invisibility", "[aquamarine1]⛆[/aquamarine1]", 0, STATUS_DESCS["Vibrant Invisibility"], duration=1, type="BUFF"))
@@ -1852,6 +2498,103 @@ class BattleManager:
                 final_dmg += attacker.temp_modifiers.get("outgoing_dmg_flat", 0)
                 final_dmg -= target.temp_modifiers["final_dmg_reduction"]
                 final_dmg += bonus_crit_final_dmg
+                if self.is_lattice_mode:
+                    if attacker in self.allies:
+                        # Mismatched Laces (I)
+                        if "Mismatched Laces (I)" in self.owned_manifolds and target.resistances[6] > 1.0: # Philautia
+                            if "Benikawa" in attacker.name:
+                                bonus_pct = min(0.40, 0.05 + (target.resistances[6] * 0.20))
+                            else:
+                                bonus_pct = min(0.20, 0.05 + (target.resistances[6] * 0.10))
+                            final_dmg *= (1.0 + bonus_pct)
+                        # Mini Weapons Cache (I)
+                        if "Mini Weapons Cache (I)" in self.owned_manifolds and chip_idx == len(chips_to_execute) - 1:
+                            debuffs = sum(1 for s in target.status_effects if getattr(s, "type", "") == "DEBUFF")
+                            if debuffs >= 3:
+                                final_dmg += 2
+                        # Mercenary’s Heavy Torn Sleeves (I)
+                        if "Mercenary’s Heavy Torn Sleeves (I)" in self.owned_manifolds and skill.element == 4: # Ludus
+                            order = len(self.ally_attacker_order) + (1 if attacker not in self.ally_attacker_order else 0)
+                            if order in [4, 5, 6]:
+                                final_dmg += 3
+                                heal = int((attacker.max_hp - attacker.hp) * 0.03)
+                                if heal > 0: attacker.hp = min(attacker.max_hp, attacker.hp + heal)
+                        # Punishing Rapier (III) Damage Taken
+                        if "Punishing Rapier (III)" in self.owned_manifolds and hasattr(attacker, "kata") and any("Pierce Fragility" in (s[0].description or "") for s in attacker.kata.skill_pool_def):
+                            if hasattr(skill, "chips"): final_dmg -= 2
+                            else: final_dmg += 2
+                        # Crusher’s Knuckle Dusters (III)
+                        if "Crusher’s Knuckle Dusters (III)" in self.owned_manifolds and any(s.name == "Bleed" for s in target.status_effects):
+                            final_dmg *= 1.20
+                        # Jade Microprocessor Array (III)
+                        if "Jade Microprocessor Array (III)" in self.owned_manifolds and self.manifold_state["jade_array_count"] in [1, 4, 8]:
+                            if "Rupture" in (skill.description or ""):
+                                if hasattr(skill, "chips"): final_dmg += 2
+                                else:
+                                    final_dmg *= 1.20
+                                    attacker.temp_modifiers["incoming_dmg_mult"] = attacker.temp_modifiers.get("incoming_dmg_mult", 1.0) * 0.80
+                        # ‘Jade Electronics’ Game Console (III)
+                        if "‘Jade Electronics’ Game Console (III)" in self.owned_manifolds and is_crit:
+                            rup = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
+                            if rup and (rup.potency + rup.duration) >= 20:
+                                x_count = sum(1 for a in self.allies if hasattr(a, "kata") and any("Rupture" in (s[0].description or "") and "Poise" in (s[0].description or "") for s in a.kata.skill_pool_def))
+                                bonus_pct = min(0.40, x_count * 0.05)
+                                final_dmg *= (1.0 + bonus_pct)
+                        # Obsidian Glasses (III)
+                        if "Obsidian Glasses (III)" in self.owned_manifolds and self.manifold_state["obsidian_tally"].get(attacker.name, 0) >= 6:
+                            final_dmg *= 1.10
+                        # Customized High Energy Blaster (III) (Rupture Mult)
+                        if "Customized High Energy Blaster (III)" in self.owned_manifolds and "Rupture" in (skill.description or ""):
+                            rup = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
+                            if rup:
+                                bonus_pct = min(0.50, (rup.potency + rup.duration) / 200.0) # /2% = /200
+                                final_dmg *= (1.0 + bonus_pct)
+                        # Complete Pneumatic Servo (IV) Eros Chip Crit
+                        if "Complete Pneumatic Servo (IV)" in self.owned_manifolds and is_crit and hasattr(skill, "chips") and skill.element == 0:
+                            acc = next((s for s in attacker.status_effects if s.name == "Acceleration"), None)
+                            if acc:
+                                bonus_pct = ((acc.potency + acc.duration) / 3.0) / 100.0
+                                final_dmg = int(final_dmg * (1.0 + bonus_pct))
+                        # A General’s Rusted Chestplate (IV) Crits
+                        if "A General’s Rusted Chestplate (IV)" in self.owned_manifolds and is_crit:
+                            if skill.element in [0, 3]: # Eros, Agape
+                                attacker.temp_modifiers["outgoing_base_dmg_pct"] = attacker.temp_modifiers.get("outgoing_base_dmg_pct", 0) + 0.10
+                                self.manifold_state["chestplate_crit_buffs"][attacker.name] = self.manifold_state["chestplate_crit_buffs"].get(attacker.name, 0) + 1
+                        # The Black Box (V)
+                        if "The Black Box (V)" in self.owned_manifolds and is_crit:
+                            final_dmg = int(final_dmg * 6.0) # +500% Base multiplier
+
+                    elif target in self.allies:
+                        # Untucked Uniform Shirt (I)
+                        if "Untucked Uniform Shirt (I)" in self.owned_manifolds and target.name not in self.manifold_state.get("untucked_shirt_used", []):
+                            final_dmg -= 2
+                        # Cloaking Device (III) defense
+                        if "Cloaking Device (III)" in self.owned_manifolds:
+                            poise = next((s for s in target.status_effects if s.name in POISE_LIST), None)
+                            if poise and poise.duration > 10: final_dmg -= 2
+                        # Crusher’s Knuckle Dusters (III) defense
+                        if "Crusher’s Knuckle Dusters (III)" in self.owned_manifolds and any(s.name == "Bleed" for s in attacker.status_effects):
+                            final_dmg *= 0.80
+                        # Obsidian Glasses (III) defense
+                        if "Obsidian Glasses (III)" in self.owned_manifolds and self.manifold_state["obsidian_dmg_red_used"].get(target.name, 0) < 6:
+                            self.manifold_state["obsidian_dmg_red_used"][target.name] += 1
+                            final_dmg -= 1
+                        # Chipped Broadsword (IV) Defense
+                        if "Chipped Broadsword (IV)" in self.owned_manifolds:
+                            final_dmg = int(final_dmg * 1.50)
+                        # Sword Oil And Cloth (IV) Defense
+                        if self.manifold_state.get("sword_oil_active", False) and hasattr(target, "kata") and any("Pierce Fragility" in (s[0].description or "") for s in target.kata.skill_pool_def):
+                            if hasattr(skill, "chips"): final_dmg -= 4
+                        # A General’s Rusted Chestplate (IV) Crit Defense
+                        if "A General’s Rusted Chestplate (IV)" in self.owned_manifolds and is_crit:
+                            final_dmg = int(final_dmg * 0.50)
+                        # Azure Jade Serum (IV) - Immortal Block (Execute before HP subtraction)
+                        if "Azure Jade Serum (IV)" in self.owned_manifolds and final_dmg >= target.hp:
+                            if not self.manifold_state["azure_jade_used"] or self.manifold_state["azure_immortal_turn"].get(target.name, False):
+                                self.manifold_state["azure_jade_used"] = True
+                                self.manifold_state["azure_immortal_turn"][target.name] = True
+                                final_dmg = target.hp - 1
+                                if final_dmg < 0: final_dmg = 0
 
                 # Acceleration Final Damage Reduction & Count Penalty
                 tgt_accel = next((s for s in target.status_effects if s.name == "Acceleration"), None)
@@ -2009,6 +2752,245 @@ class BattleManager:
 
                 # --- APPLY DAMAGE ---
                 if damage > 0:
+                    if self.is_lattice_mode:
+                        if attacker in self.allies:
+                            self.manifold_state["dmg_dealt_this_turn"][attacker.name] = self.manifold_state["dmg_dealt_this_turn"].get(attacker.name, 0) + damage
+                            # Cafeteria Melon Bread (I)
+                            if "Cafeteria Melon Bread (I)" in self.owned_manifolds and attacker.name not in self.manifold_state.get("cafeteria_bread_used", []):
+                                self.manifold_state["cafeteria_bread_used"].append(attacker.name)
+                                pct = 0.20 if skill.element == 3 else 0.10
+                                heal = int((attacker.max_hp - attacker.hp) * pct)
+                                if heal > 0: attacker.hp += heal
+                            # Station Melon Bread (I)
+                            if "Station Melon Bread (I)" in self.owned_manifolds and attacker.name not in self.manifold_state.get("station_bread_used", []):
+                                self.manifold_state["station_bread_used"].append(attacker.name)
+                                pct = 0.20 if skill.element == 0 else 0.10
+                                heal = int((attacker.max_hp - attacker.hp) * pct)
+                                if heal > 0: attacker.hp += heal
+                            # Vending Machine Iced Tea & Practice Kunai (I)
+                            if damage >= (target.max_hp * 0.02):
+                                if "Vending Machine Iced Tea (I)" in self.owned_manifolds:
+                                    self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, STATUS_DESCS["Rupture"], duration=0))
+                                if "Practice Kunai (I)" in self.owned_manifolds:
+                                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 2, STATUS_DESCS["Bleed"], duration=0, type="DEBUFF"))
+                            # Pink Cheer Pom-Poms (I)
+                            if "Pink Cheer Pom-Poms (I)" in self.owned_manifolds and "Naganohara" in attacker.name and target.hp <= (target.max_hp * 0.5):
+                                if self.manifold_state.get("pom_pom_triggers", 0) < 2:
+                                    self.manifold_state["pom_pom_triggers"] = self.manifold_state.get("pom_pom_triggers", 0) + 1
+                                    valid = [a for a in self.allies if a.hp > 0 and a != attacker]
+                                    if valid:
+                                        t = random.choice(valid)
+                                        t.temp_modifiers["outgoing_base_dmg_flat"] = t.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 1
+                                        if not hasattr(t, "next_turn_modifiers"): t.next_turn_modifiers = {}
+                                        t.next_turn_modifiers["outgoing_base_dmg_flat"] = t.next_turn_modifiers.get("outgoing_base_dmg_flat", 0) + 1
+                            # Makeshift Metal Pipe (I)
+                            if "Makeshift Metal Pipe (I)" in self.owned_manifolds and len(chips_to_execute) == 1 and attacker.name not in self.manifold_state.get("metal_pipe_used", []):
+                                self.manifold_state["metal_pipe_used"].append(attacker.name)
+                                target.temp_modifiers["incoming_dmg_flat"] = target.temp_modifiers.get("incoming_dmg_flat", 0) + 2
+                                if any(s.name == "Bleed" for s in target.status_effects):
+                                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, STATUS_DESCS["Bleed"], duration=0, type="DEBUFF"))
+                                else:
+                                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 1, STATUS_DESCS["Bleed"], duration=0, type="DEBUFF"))
+                            # Frog Decoy (I)
+                            if "Frog Decoy (I)" in self.owned_manifolds and not self.manifold_state.get("frog_decoy_triggered", False):
+                                self.manifold_state["frog_decoy_triggered"] = True
+                                valid = [e for e in self.enemies if e.hp > 0 and e != target]
+                                if valid:
+                                    targets = random.sample(valid, min(2 if skill.element == 3 else 1, len(valid)))
+                                    for t in targets:
+                                        t.hp -= max(1, damage // 2)
+                            elif target in self.allies:
+                                self.manifold_state["dmg_sources"].setdefault(target.name, set()).add(attacker.name)
+                                # Untucked Uniform Shirt (I) 
+                                if "Untucked Uniform Shirt (I)" in self.owned_manifolds and target.name not in self.manifold_state.get("untucked_shirt_used", []):
+                                    self.manifold_state["untucked_shirt_used"].append(target.name)
+                                # Self-Defense Club Gi (I)
+                                if "Self-Defense Club Gi (I)" in self.owned_manifolds:
+                                    tally = self.manifold_state["self_defense_club_tally"].get(target.name, 0)
+                                    if tally < 2:
+                                        self.manifold_state["self_defense_club_tally"][target.name] = tally + 1
+                                        self.apply_status_logic(attacker, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 2, STATUS_DESCS["Rupture"], duration=0))
+                            # Blank Report Papers (II) removal
+                            attacker.temp_modifiers["blank_report_active"] = False
+                            # Premium Shrimp Alfredo (II)
+                            if "Premium Shrimp Alfredo (II)" in self.owned_manifolds and skill.element == 4: # Ludus
+                                heal = int(damage * 0.20)
+                                if heal > 0: attacker.hp = min(attacker.max_hp, attacker.hp + heal)
+                            # Towering Souffle Pancakes (II)
+                            if "Towering Souffle Pancakes (II)" in self.owned_manifolds and (not hasattr(skill, "chips") or chip_idx == 0) and (skill.element == 5 or not hasattr(skill, "chips")):
+                                if self.manifold_state["pancakes_used"][attacker.name] < 3:
+                                    self.manifold_state["pancakes_used"][attacker.name] += 1
+                                    attacker.temp_modifiers["outgoing_dmg_flat"] = attacker.temp_modifiers.get("outgoing_dmg_flat", 0) + 2
+                                    attacker.temp_modifiers["incoming_dmg_flat"] = attacker.temp_modifiers.get("incoming_dmg_flat", 0) - 2
+                                    # Needs next turn logic appended
+                            # Comfy Blanket (II)
+                            if "Comfy Blanket (II)" in self.owned_manifolds and attacker.temp_modifiers.get("comfy_blanket_ready"):
+                                attacker.temp_modifiers["comfy_blanket_ready"] = False
+                                heal = int(attacker.max_hp * 0.10)
+                                attacker.hp = min(attacker.max_hp, attacker.hp + heal)
+                                if "Natsume" in attacker.name:
+                                    self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 2, STATUS_DESCS["Bind"], duration=2))
+                            # Plant Pruning Shears (II)
+                            if "Plant Pruning Shears (II)" in self.owned_manifolds and skill.element in [0, 2, 5]: # Eros, Storge, Pragma
+                                if not self.manifold_state["pruning_shears_used"][attacker.name] and (not hasattr(skill, "chips") or chip_idx == 0):
+                                    self.manifold_state["pruning_shears_used"][attacker.name] = True
+                                    target.temp_modifiers["incoming_dmg_flat"] = target.temp_modifiers.get("incoming_dmg_flat", 0) + 1
+                                if "Hana" in attacker.name and self.manifold_state["hana_pruning_tally"] < 2:
+                                    self.manifold_state["hana_pruning_tally"] += 1
+                                    target.temp_modifiers["outgoing_dmg_pct"] = target.temp_modifiers.get("outgoing_dmg_pct", 0) - 0.10
+                            # Plasma-Blue Lenses (II)
+                            if "Plasma-Blue Lenses (II)" in self.owned_manifolds and "Sinking" in (skill.description or "") and chip_idx == len(getattr(skill, "chips", [1])) - 1:
+                                s_eff = next((s for s in target.status_effects if s.name == "Sinking"), None)
+                                if s_eff and (s_eff.potency + s_eff.duration) >= 9:
+                                    self.apply_status_logic(target, StatusEffect("Sinking", "[blue3]♆[/blue3]", 3, STATUS_DESCS["Sinking"], duration=3))
+                            # Fairylight Trinity (Forest Guardian, Lake Strider, Nocturnal Beret)
+                            if "Fairylight" in (skill.description or "") and any(s.name in RUPTURE_LIST for s in target.status_effects):
+                                if "Forest Guardian’s Baton (II)" in self.owned_manifolds and not self.manifold_state["fg_baton_triggered"][attacker.name]:
+                                    self.manifold_state["fg_baton_triggered"][attacker.name] = True
+                                    self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, STATUS_DESCS["Fairylight"], duration=2))
+                                if "Lake Strider’s Ledger (II)" in self.owned_manifolds and not self.manifold_state["fg_baton_triggered"][attacker.name]:
+                                    self.manifold_state["fg_baton_triggered"][attacker.name] = True
+                                    self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, STATUS_DESCS["Fairylight"], duration=2))
+                                if "Nocturnal Secretary Beret (II)" in self.owned_manifolds and not self.manifold_state["fg_baton_triggered"][attacker.name]:
+                                    self.manifold_state["fg_baton_triggered"][attacker.name] = True
+                                    self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 2, STATUS_DESCS["Fairylight"], duration=2))
+                                # (Apply same for Lake Strider and Nocturnal Beret with their respective flags)
+                            # Double Axe Heads (II)
+                            if "Double Axe Heads (II)" in self.owned_manifolds and any(s.name == "Bleed" for s in target.status_effects):
+                                if self.manifold_state["axe_heads_tally"][attacker.name] < 10:
+                                    self.manifold_state["axe_heads_tally"][attacker.name] += 1
+                                    attacker.temp_modifiers["outgoing_dmg_flat"] = attacker.temp_modifiers.get("outgoing_dmg_flat", 0) + 1
+                            # Update First/Count trackers
+                            if not hasattr(skill, "chips") or chip_idx == 0:
+                                self.manifold_state["jade_array_count"] += 1
+                            # Crusher’s Knuckle Dusters (III)
+                            if "Crusher’s Knuckle Dusters (III)" in self.owned_manifolds and (not hasattr(skill, "chips") or chip_idx == 0):
+                                self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 3, STATUS_DESCS["Bleed"], duration=1, type="DEBUFF"))
+                            # ‘Nerve-Disruption’ Needle (III)
+                            if "‘Nerve-Disruption’ Needle (III)" in self.owned_manifolds:
+                                if self.manifold_state["needle_first_atk"] and skill.element == 6: # Philautia
+                                    self.manifold_state["needle_first_atk"] = False
+                                    if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
+                                    target.next_turn_modifiers["outgoing_base_dmg_pct"] = target.next_turn_modifiers.get("outgoing_base_dmg_pct", 0) - 0.30
+                                if is_crit and skill.element == 6:
+                                    target.pending_bind = getattr(target, "pending_bind", 0) + 1
+                            # Captain's Sunglasses (III)
+                            if "Captain's Sunglasses (III)" in self.owned_manifolds:
+                                rup = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
+                                if rup and rup.potency >= 5 and self.manifold_state["first_skill_user"] == attacker.name:
+                                    self.apply_status_logic(attacker, StatusEffect("Poise", "[light_cyan1]༄[/light_cyan1]", 2, STATUS_DESCS["Poise"], duration=2))
+                                x_count = sum(1 for a in self.allies if hasattr(a, "kata") and any("Rupture" in (s[0].description or "") and "Poise" in (s[0].description or "") for s in a.kata.skill_pool_def))
+                                if x_count >= 5 and is_crit and self.manifold_state["captain_sun_crits"][attacker.name] < 3:
+                                    self.manifold_state["captain_sun_crits"][attacker.name] += 1
+                                    self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 0, STATUS_DESCS["Rupture"], duration=2))
+                            # Gray Changpao (III)
+                            if "Gray Changpao (III)" in self.owned_manifolds and (not hasattr(skill, "chips") or chip_idx == 0):
+                                s_eff = next((s for s in target.status_effects if s.name == "Sinking"), None)
+                                if s_eff and (s_eff.potency + s_eff.duration) >= 10:
+                                    extra_dmg = int(s_eff.potency * target.resistances[4]) # Ludus
+                                    target.hp -= max(1, extra_dmg)
+                            # Otafuku Vigilante Mask (III)
+                            if "Otafuku Vigilante Mask (III)" in self.owned_manifolds:
+                                if self.manifold_state["dmg_dealt_this_turn"][attacker.name] == damage: # Exactly the 1st hit of the unit
+                                    self.manifold_state["otafuku_trigger"] += 1
+                                    if self.manifold_state["otafuku_trigger"] == 6 and "Rupture" in (skill.description or ""):
+                                        attacker.hp = min(attacker.max_hp, attacker.hp + int(attacker.max_hp * 0.20))
+                                        attacker.temp_modifiers["outgoing_base_dmg_flat"] = attacker.temp_modifiers.get("outgoing_base_dmg_flat", 0) + 3
+                                        attacker.temp_modifiers["incoming_dmg_flat"] = attacker.temp_modifiers.get("incoming_dmg_flat", 0) - 3
+                                        if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                                        attacker.next_turn_modifiers["outgoing_base_dmg_flat"] = attacker.next_turn_modifiers.get("outgoing_base_dmg_flat", 0) + 3
+                                        attacker.next_turn_modifiers["incoming_dmg_flat"] = attacker.next_turn_modifiers.get("incoming_dmg_flat", 0) - 3
+                                        if skill.element == 3: # Agape
+                                            for a in self.allies:
+                                                a.pending_haste = getattr(a, "pending_haste", 0) + 1
+                                                if not hasattr(a, "next_turn_modifiers"): a.next_turn_modifiers = {}
+                                                a.next_turn_modifiers["outgoing_dmg_flat"] = a.next_turn_modifiers.get("outgoing_dmg_flat", 0) + 3
+                            # Obsidian Glasses (III) (Crit Tally)
+                            if "Obsidian Glasses (III)" in self.owned_manifolds and is_crit:
+                                self.manifold_state["obsidian_crit_this_turn"][attacker.name] = True
+                                self.manifold_state["obsidian_tally"][attacker.name] += 1
+                            # Solidified Ink (III)
+                            if "Solidified Ink (III)" in self.owned_manifolds and any(s.name == "Sinking" for s in target.status_effects):
+                                s_eff = next(s for s in target.status_effects if s.name == "Sinking")
+                                target.ls_tally = getattr(target, "ls_tally", 0) + (s_eff.potency * 2)
+                            # Hopeless Blossoming (III)
+                            if "Hopeless Blossoming (III)" in self.owned_manifolds:
+                                if not hasattr(skill, "chips") or chip_idx == 0:
+                                    pot = 5 if skill.element in [3, 6] else 3
+                                    self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", pot, STATUS_DESCS["Rupture"], duration=0))
+                                rup = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
+                                if rup and rup.duration >= 10 and self.manifold_state["hopeless_blossom_trigger"][target.name] < 3:
+                                    self.manifold_state["hopeless_blossom_trigger"][target.name] += 1
+                                    self.apply_status_logic(target, StatusEffect("Hopeless Blossom", "[magenta]❁[/magenta]", 2, STATUS_DESCS["Hopeless Blossom"], duration=0, type="DEBUFF"))
+                            # Customized High Energy Blaster (III) (Eros tally & Ludus Reset)
+                            if "Customized High Energy Blaster (III)" in self.owned_manifolds:
+                                if skill.element == 0: # Eros
+                                    self.manifold_state["blaster_tally"][attacker.name] = min(10, self.manifold_state["blaster_tally"].get(attacker.name, 0) + 1)
+                                if skill.element == 4 and (not hasattr(skill, "chips") or chip_idx == len(skill.chips) - 1): # Ludus (Reset at end)
+                                    self.manifold_state["blaster_tally"][attacker.name] = 0
+                            # Queen of Fairies (IV)
+                            if self.manifold_state.get("queen_fairies_active", False):
+                                if "Rupture" in (skill.description or ""):
+                                    rup = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
+                                    if rup and self.manifold_state["queen_fairies_tally"][attacker.name] < 4:
+                                        self.manifold_state["queen_fairies_tally"][attacker.name] += 1
+                                        self.apply_status_logic(target, StatusEffect("Fairylight", "[spring_green1]𒀭[/spring_green1]", 7, STATUS_DESCS["Fairylight"], duration=7))
+                                    elif rup and (rup.potency + rup.duration) < 15:
+                                        self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 4, STATUS_DESCS["Rupture"], duration=3))
+                                rup_chk = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
+                                if rup_chk and rup_chk.duration <= 2:
+                                    rup_chk.duration += 1
+                            # Fairywings (IV)
+                            if self.manifold_state.get("fairywings_active", False):
+                                self.apply_status_logic(target, StatusEffect("Rupture", "[medium_spring_green]✧[/medium_spring_green]", 7, STATUS_DESCS["Rupture"], duration=0))
+                            # Resonance Crystal Anchor (IV)
+                            if "Resonance Crystal Anchor (IV)" in self.owned_manifolds:
+                                missing_pct = ((attacker.max_hp - attacker.hp) / attacker.max_hp) * 100
+                                val = min(20, missing_pct / 2.0)
+                                if hasattr(skill, "chips"):
+                                    dmg = max(1, int((val / len(skill.chips)) * target.resistances[5])) # Pragma
+                                else:
+                                    dmg = max(1, int(val * target.resistances[4])) # Ludus
+                                target.hp -= dmg
+                            # Sword Oil And Cloth (IV)
+                            if self.manifold_state.get("sword_oil_active", False) and "Pierce Fragility" in (skill.description or ""):
+                                pf = next((s for s in target.status_effects if s.name == "Pierce Fragility"), None)
+                                if pf:
+                                    attacker.pending_haste = getattr(attacker, "pending_haste", 0) + 3
+                                    if not hasattr(attacker, "next_turn_modifiers"): attacker.next_turn_modifiers = {}
+                                    attacker.next_turn_modifiers["outgoing_base_dmg_flat"] = attacker.next_turn_modifiers.get("outgoing_base_dmg_flat", 0) + 3
+                                    self.apply_status_logic(target, StatusEffect("Pierce Fragility", "[purple]◈[/purple]", 2, STATUS_DESCS.get("Pierce Fragility", ""), duration=2))
+                                    self.apply_status_logic(target, StatusEffect("Bind", "[gold1]⛓[/gold1]", 2, STATUS_DESCS["Bind"], duration=2))
+                                    if pf.duration >= 5 and (not hasattr(skill, "chips") or chip_idx == 0):
+                                        rip = next((s for s in attacker.status_effects if s.name == "Riposte"), None)
+                                        cnt = rip.potency if rip else 0
+                                        gain = max(0, int((50 - cnt) / 5))
+                                        if gain > 0: self.apply_status_logic(attacker, StatusEffect("Riposte", "[orange3]↶[/orange3]", gain, STATUS_DESCS["Riposte"], duration=1))
+                            # Thorn Harvesting Knife (IV)
+                            if "Thorn Harvesting Knife (IV)" in self.owned_manifolds:
+                                bleed = next((s for s in target.status_effects if s.name == "Bleed"), None)
+                                if bleed and (not hasattr(skill, "chips") or chip_idx == 0):
+                                    target.hp -= max(1, bleed.potency * 2) # Activates Bleed twice safely
+                                if skill.element in [0, 1] and bleed and bleed.potency >= 95 and bleed.duration >= 95:
+                                    target.temp_modifiers["incoming_base_dmg_flat"] = target.temp_modifiers.get("incoming_base_dmg_flat", 0) + 1
+                                    if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
+                                    target.next_turn_modifiers["incoming_base_dmg_flat"] = target.next_turn_modifiers.get("incoming_base_dmg_flat", 0) + 1 # Extends to next turns
+                                if is_crit and (not hasattr(skill, "chips") or chip_idx == 0):
+                                    self.apply_status_logic(target, StatusEffect("Bleed", "[red]💧︎[/red]", 5, STATUS_DESCS["Bleed"], duration=5, type="DEBUFF"))
+                            # Complete Pneumatic Servo (IV)
+                            if "Complete Pneumatic Servo (IV)" in self.owned_manifolds and is_crit:
+                                target.temp_modifiers["incoming_dmg_flat"] = target.temp_modifiers.get("incoming_dmg_flat", 0) + 4
+                                if not hasattr(target, "next_turn_modifiers"): target.next_turn_modifiers = {}
+                                target.next_turn_modifiers["incoming_dmg_flat"] = target.next_turn_modifiers.get("incoming_dmg_flat", 0) + 4
+                            # A General’s Rusted Chestplate (IV) Preservations
+                            if "A General’s Rusted Chestplate (IV)" in self.owned_manifolds:
+                                rup = next((s for s in target.status_effects if s.name in RUPTURE_LIST), None)
+                                if rup: rup.duration += 1
+                                if is_crit:
+                                    poise = next((s for s in attacker.status_effects if s.name in POISE_LIST), None)
+                                    if poise: poise.duration += 1
+
+                    # HP REDUCTION
                     target.hp -= damage
                     el_color = get_element_color(skill.element)
                     eff_text = " [bold yellow](WEAK!)[/]" if res_mult > 1.0 else (" [dim](Resist)[/]" if res_mult < 1.0 else "")
@@ -2078,8 +3060,17 @@ class BattleManager:
                             if any(p.effect_type == "PASSIVE_INTANGIBLE_FORM" for p in active_tgt_passives_rup): dmg_to_take *= 2
                             if any(p.effect_type == "PASSIVE_FADING_FORM" for p in active_tgt_passives): dmg_to_take *= 3
                             if any(p.effect_type == "PASSIVE_CRUMBLING_FORM" for p in active_tgt_passives): dmg_to_take *= 1.5
+                            if self.is_lattice_mode and "Charred Microchip (I)" in self.owned_manifolds and target in self.enemies:
+                                dmg_to_take *= 1.25
                             if not zhao_present:
                                 dmg_to_take = int(dmg_to_take)
+                            if self.is_lattice_mode:
+                                if "A General’s Rusted Chestplate (IV)" in self.owned_manifolds and target in self.allies:
+                                    dmg_to_take = int(dmg_to_take * 0.50)
+                                if self.manifold_state.get("fairywings_active", False) and target in self.enemies:
+                                    rupture_eff = next((s for s in target.status_effects if s.name == "Rupture"), None)
+                                    if rupture_eff.potency >= 95 and rupture_eff.duration >= 95:
+                                        dmg_to_take = int(dmg_to_take * 1.70)
                             target.hp -= dmg_to_take
                             rupture_eff.duration -= 1
                             self.log(f"[medium_spring_green]Rupture dealt {dmg_to_take} damage to {target.name}![/medium_spring_green]")
@@ -3133,6 +4124,18 @@ class BattleManager:
             if target.hp <= 0:
                 target.hp = 0
                 self.log(f"[bold red]{target.name} was defeated![/bold red]")
+            
+            if self.is_lattice_mode and target in self.enemies and attacker in self.allies:
+                # Fried Mochi Stick (I)
+                if "Fried Mochi Stick (I)" in self.owned_manifolds:
+                    if self.manifold_state.get("mochi_stick_triggers", 0) < 3:
+                        self.manifold_state["mochi_stick_triggers"] = self.manifold_state.get("mochi_stick_triggers", 0) + 1
+                        for a in self.allies:
+                            if not hasattr(a, "next_turn_modifiers"): a.next_turn_modifiers = {}
+                            a.next_turn_modifiers["outgoing_dmg_flat"] = a.next_turn_modifiers.get("outgoing_dmg_flat", 0) + 1
+                # Crushed Cigarette (I)
+                if "Crushed Cigarette (I)" in self.owned_manifolds and skill.element in [0, 1, 2]: # Eros, Philia, Storge
+                    self.manifold_state["crushed_cig_pending"] = True
 
             # --- DELAY BETWEEN CHIP HITS ---
             # If this is a multi-hit skill and not the last chip, render the current state and pause
@@ -3452,6 +4455,39 @@ Modifiers: {status_str}
         if all(a.hp <= 0 for a in self.allies):
             self.is_battle_over = True; self.won = False; return True
         return False
+
+    def end_battle(self, victory):
+        """Handles post-battle cleanup, healing, and state routing."""
+        if self.is_lattice_mode:
+            if victory:
+                # 1. DO NOT AUTO-HEAL TO FULL. Keep current HP.
+                # 2. Sync HP back to run_state
+                for unit in self.allies:  # <--- FIXED: Changed from player_party
+                    self.run_state["hp_data"][unit.name] = (unit.hp, unit.max_hp)
+                
+                # 3. Update Cleared Node Stats (Assume we pass node_type into BattleSystem, default to "battles")
+                node_type = config.player_data.get("lattice_node_type", "battles")
+                self.run_state["cleared_stats"][node_type] = self.run_state["cleared_stats"].get(node_type, 0) + 1
+                
+                # 4. Save and return to map
+                from save_system import save_manager
+                save_manager.save_lattice_run(self.run_state)
+                config.current_state = config.STATE_LATTICE_TRIAGE
+                return
+            else:
+                # Defeat in Lattice = Run Ends (Trigger Calculations)
+                config.current_state = "LATTICE_CALCULATE_END" # We will catch this in main.py
+                return
+        # --- NORMAL CAMPAIGN BEHAVIOR ---
+        else:
+            if victory:
+                for unit in self.allies:  # <--- FIXED: Changed from player_party
+                    unit.hp = unit.max_hp # Standard full heal
+                    unit.status_effects.clear()
+                    unit.temp_modifiers.clear()
+            else:
+                # Standard defeat routing handled by main.py usually
+                pass
 
     def clamp_akasuke1(self):
         zhao_alive = any(e.name == "Zhao Feng" and e.hp > 0 for e in self.enemies)

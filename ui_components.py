@@ -755,3 +755,115 @@ def open_equip_menu(unit, player_obj):
                 config.console.print(f"\n[green]Successfully equipped {selected_data['kata_obj'].name}![/green]")
                 time.sleep(1)
                 return
+
+# --- LATTICE TRIAGE GAMEMODE ---
+def draw_lattice_main_menu(latest_stage):
+    """Draws the main Lattice Selection screen."""
+    clear_screen()
+    print_header("THE LATTICE (TRIAGE)")
+    
+    msg = """
+[italic dim]The Lattice is the underlying "connective tissue" of the multiverse—a multi-dimensional
+grid that keeps timelines from drifting into total chaos. While regular humans see only a 
+linear progression of time, the Kasakura Vanguard possesses the technology to perceive 
+the synchronic intersections where these threads overlap.[/italic dim]
+    """
+    config.console.print(Align.center(msg), highlight=False)
+    config.console.print("\nSelect a Lattice to enter:\n")
+
+    # Stable Lattice
+    stable = Panel(
+        "Encounter enemies and events similar to past experiences and often within expected parameters\n"
+        "[bold cyan]Rewards:[/bold cyan] Microchip, Microprocessor",
+        title="[1] — Stable Lattice —", border_style="cyan"
+    )
+    config.console.print(stable)
+
+    # Steadfast Lattice
+    steadfast = Panel(
+        "Encounter enemies and events mostly related to the Yunhai Region’s deep history and past experiences during Mission Steadfastness\n"
+        "[bold cyan]Rewards:[/bold cyan] Microchip, Microprocessor, Jade Microchip",
+        title="[2] — Steadfast Lattice —", border_style="sea_green1"
+    )
+    config.console.print(steadfast)
+    
+    config.console.print("\n[0] Return to Main Menu")
+    
+    choice = get_player_input("Select > ")
+    return choice
+
+def draw_lattice_hub_menu(lattice_name, player_obj):
+    """Draws the detailed hub for a specific Lattice."""
+    while True:
+        clear_screen()
+        print_header(f"{lattice_name.upper()}")
+        
+        # Display Stats
+        lvl = player_obj.lattice_levels.get(lattice_name, 1)
+        xp = player_obj.lattice_xp.get(lattice_name, 0)
+        req_xp = int(20 + sum([(20 + (i * 1)) / 20 for i in range(1, lvl)])) # Simple formula representation
+        
+        manuscripts = player_obj.manuscripts_owned.get(lattice_name, 0)
+        
+        stats = f"[bold]Level:[/bold] {lvl}  |  [bold]XP:[/bold] {xp}/{req_xp}  |  [bold]Manuscripts:[/bold] {manuscripts}"
+        config.console.print(Panel(Align.center(stats), style="bold yellow"))
+        
+        menu = """
+[1] Enter Lattice / Continue Run
+[2] Discovered Manifolds
+[3] Discovered Events
+[4] Discovered Endings
+[5] Discovered Fluxes
+
+[C] Collect Level Up Rewards (If Available)
+[0] Return
+        """
+        config.console.print((menu),highlight=False)
+        choice = get_player_input("Select > ").upper()
+        
+        if choice in ["0", "1", "2", "3", "4", "5", "C"]:
+            return choice
+
+def draw_lattice_map(map_grid, size, player_pos, current_day, flux_color, moves_left, static_amt):
+    """
+    Renders the dynamic map grid.
+    map_grid is a 2D array of string symbols ('☑', '☒', '⛞', '▣', '𖣯', ' ')
+    player_pos is (x, y)
+    """
+    clear_screen()
+    print_header(f"DAY {current_day} EXPLORATION")
+    
+    # Top Status Bar
+    status_bar = Table.grid(expand=True)
+    status_bar.add_column(justify="left")
+    status_bar.add_column(justify="right")
+    status_bar.add_row(
+        f"[bold]Moves Left:[/bold] {moves_left}",
+        f"{config.STATIC_SYMBOL} [bold]Static:[/bold] {static_amt}"
+    )
+    config.console.print(Panel(status_bar, style="white"))
+    
+    # Render Grid
+    grid_display = ""
+    for y in range(size):
+        row_str = ""
+        for x in range(size):
+            if (x, y) == player_pos:
+                row_str += f"[bold honeydew2] ✾ [/] "
+            else:
+                symbol = map_grid[y][x]
+                if symbol == '☒': # Wall
+                    row_str += f"[dim] ☒ [/dim] "
+                elif symbol == '☑': # Cleared
+                    row_str += f"[bold {flux_color}] ☑ [/] "
+                elif symbol == '⛞': # Battle
+                    row_str += f"[red] ⛞ [/] "
+                elif symbol == '𖣯': # Elite
+                    row_str += f"[bold red] 𖣯 [/] "
+                elif symbol == '▣': # Event
+                    row_str += f"[bold yellow] ▣ [/bold yellow] "
+                else: # Empty / Error
+                    row_str += "   "
+        grid_display += row_str.rstrip() + "\n"
+        
+    config.console.print(Panel(Align.center(grid_display), border_style=flux_color, title="[W] Up | [S] Down | [A] Left | [D] Right"))

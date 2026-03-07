@@ -2,6 +2,8 @@ import config
 from entities import MATERIALS_DB
 # Import the ID Maps from SCD
 from scd import KATA_ID_MAP, KATA_NAME_TO_ID
+import json
+import os
 
 # Fixed Unit Order for Save/Load indexing
 UNIT_ORDER_MAP = [
@@ -22,7 +24,8 @@ class SaveManager:
             "latest_stage": -1,  
             "katas": [],   
             "materials": {},
-            "equipped": {} # [NEW] Stores {Unit_Index: Kata_ID}
+            "equipped": {},
+            "lattice": {}
         }
 
     def generate_save_strip(self, player_obj):
@@ -38,11 +41,12 @@ class SaveManager:
         if hasattr(player_obj, "currencies"):
             mc = player_obj.currencies.get("microchips", 0)
             mp = player_obj.currencies.get("microprocessors", 0)
-            strip += f"mat01:{mc}!mat02:{mp}!"
+            jm = player_obj.currencies.get("jade_microchips", 0)
+            strip += f"mat01:{mc}!mat02:{mp}!mat03:{jm}!"
 
         mats = config.player_data.get("materials", {})
         for name, qty in mats.items():
-            if name in MATERIALS_DB and name not in ["Microchip", "Microprocessor"]:
+            if name in MATERIALS_DB and name not in ["Microchip", "Microprocessor", "Jade Microchip"]:
                 mid = MATERIALS_DB[name].save_id
                 strip += f"mat{mid}:{qty}!"
         
@@ -63,7 +67,7 @@ class SaveManager:
                     kid = KATA_NAME_TO_ID[k_entry]
                     strip += f"kta{kid}=I!"
 
-        # 4. [NEW] Get Equipped Loadouts
+        # 4. Get Equipped Loadouts
         if hasattr(player_obj, "units"):
             for unit in player_obj.units:
                 # Use the Source Key (set in SCD) to identify the specific Kata version
@@ -77,6 +81,17 @@ class SaveManager:
                     if unit.kata.source_key in KATA_NAME_TO_ID:
                         k_id = KATA_NAME_TO_ID[unit.kata.source_key]
                         strip += f"u{u_id}=kta{k_id}!"
+        
+        # 5. Append Lattice Data
+        if hasattr(player_obj, "lattice_xp"):
+            strip += f"ltcX={player_obj.lattice_xp['Stable Lattice']},{player_obj.lattice_xp['Steadfast Lattice']}!"
+            strip += f"ltcL={player_obj.lattice_levels['Stable Lattice']},{player_obj.lattice_levels['Steadfast Lattice']}!"
+            strip += f"ltcM={player_obj.manuscripts_owned['Stable Lattice']},{player_obj.manuscripts_owned['Steadfast Lattice']}!"
+            
+            if player_obj.discovered_manifolds: strip += f"dMan={','.join(player_obj.discovered_manifolds)}!"
+            if player_obj.discovered_events: strip += f"dEvt={','.join(map(str, player_obj.discovered_events))}!"
+            if player_obj.discovered_endings: strip += f"dEnd={','.join(map(str, player_obj.discovered_endings))}!"
+            if player_obj.discovered_fluxes: strip += f"dFlx={','.join(map(str, player_obj.discovered_fluxes))}!"
 
         return strip
 
@@ -88,7 +103,13 @@ class SaveManager:
             "latest_stage": -1,
             "katas": [], 
             "materials": {},
-            "equipped": {} # [NEW]
+            "equipped": {},
+            "lattice": {
+                "xp": {"Stable Lattice": 0, "Steadfast Lattice": 0},
+                "levels": {"Stable Lattice": 1, "Steadfast Lattice": 1},
+                "manuscripts": {"Stable Lattice": 0, "Steadfast Lattice": 0},
+                "d_man": [], "d_evt": [], "d_end": [], "d_flx": []
+            }
         }
         
         id_to_name_mat = {m.save_id: name for name, m in MATERIALS_DB.items()}
@@ -130,7 +151,7 @@ class SaveManager:
                         })
                 except: pass
 
-            # [NEW] EQUIPPED LOADOUTS
+            # EQUIPPED LOADOUTS
             elif part.startswith("u"):
                 try:
                     # Format: u1=kta5
@@ -144,7 +165,44 @@ class SaveManager:
                         # Store in separate 'equipped' dict
                         loaded_data["equipped"][u_idx] = k_id
                 except: pass
+            
+            # LATTICE
+            elif part.startswith("ltcX="):
+                vals = part.replace("ltcX=", "").split(",")
+                loaded_data["lattice"]["xp"] = {"Stable Lattice": int(vals[0]), "Steadfast Lattice": int(vals[1])}
+            elif part.startswith("ltcL="):
+                vals = part.replace("ltcL=", "").split(",")
+                loaded_data["lattice"]["levels"] = {"Stable Lattice": int(vals[0]), "Steadfast Lattice": int(vals[1])}
+            elif part.startswith("ltcM="):
+                vals = part.replace("ltcM=", "").split(",")
+                loaded_data["lattice"]["manuscripts"] = {"Stable Lattice": int(vals[0]), "Steadfast Lattice": int(vals[1])}
+            elif part.startswith("dMan="): loaded_data["lattice"]["d_man"] = part.replace("dMan=", "").split(",")
+            elif part.startswith("dEvt="): loaded_data["lattice"]["d_evt"] = [int(x) for x in part.replace("dEvt=", "").split(",")]
+            elif part.startswith("dEnd="): loaded_data["lattice"]["d_end"] = [int(x) for x in part.replace("dEnd=", "").split(",")]
+            elif part.startswith("dFlx="): loaded_data["lattice"]["d_flx"] = [int(x) for x in part.replace("dFlx=", "").split(",")]
                 
         return loaded_data
+    
+    # Mid-Run Save Handlers (Dual-Save Architecture with the Lattice Triage gamemode)
+    def save_lattice_run(self, run_state_dict):
+        """Saves current mid-run status in JSON format."""
+        try:
+            with open("lattice_save.json", 'w', encoding='utf-8') as f:
+                json.dump(run_state_dict, f)
+        except Exception as e:
+            print(f"Failed to save Lattice Run: {e}")
+    def load_lattice_run(self):
+        """Returns the run dict if it exists, otherwise None."""
+        if os.path.exists("lattice_save.json"):
+            try:
+                with open("lattice_save.json", 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except:
+                return None
+        return None
+    def delete_lattice_run(self):
+        """Cleans up the mid-run save after victory/defeat/abandonment."""
+        if os.path.exists("lattice_save.json"):
+            os.remove("lattice_save.json")
 
 save_manager = SaveManager()
